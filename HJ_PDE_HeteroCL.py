@@ -4,6 +4,7 @@ import time
 import plotly.graph_objects as go
 from GridProcessing import *
 from ShapesFunctions import *
+from CustomGraphFunctions import *
 
 import math
 
@@ -27,105 +28,14 @@ lookback_length = 1.00
 t_step = 0.05
 
 
-# Custom function
-def my_abs(my_x):
-    abs_value = hcl.scalar(0, "abs_value", dtype=hcl.Float())
-    with hcl.if_(my_x > 0):
-        abs_value.v = my_x
-    with hcl.else_():
-        abs_value.v = -my_x
-    return abs_value[0]
+
 
 def HJ_PDE_solver(V_new, V_init, thetas ,t):
-    # Used for calculating time bound
-    #step_bound = hcl.scalar(0, "step_bound")
-    #delta_T = hcl.scalar(0, "delta_T")
+
     # These variables are used to dissipation calculation
     max_alpha1 = hcl.scalar(-1e9, "max_alpha1")
     max_alpha2 = hcl.scalar(-1e9, "max_alpha2")
     max_alpha3 = hcl.scalar(-1e9, "max_alpha3")
-
-    #def dynamics():
-
-    def my_sign(x):
-        sign = hcl.scalar(0, "sign", dtype=hcl.Float())
-        with hcl.if_(x == 0):
-            sign[0] = 0
-        with hcl.if_(x > 0):
-            sign[0] = 1
-        with hcl.if_(x < 0):
-            sign[0] = -1
-        return sign[0]
-
-    # Calculate spatial derivative
-    def spa_derivX(i,j,k):
-        left_deriv = hcl.scalar(0, "left_deriv")
-        right_deriv = hcl.scalar(0, "right_deriv")
-        with hcl.if_(i == 0):
-            left_boundary = hcl.scalar(0, "left_boundary")
-            left_boundary[0] =  V_init[i,j,k] + my_abs(V_init[i+1,j,k] - V_init[i,j,k]) * my_sign(V_init[i,j,k])
-            left_deriv[0] = (V_init[i,j,k] - left_boundary[0])/g.dx[0]
-            right_deriv[0] = (V_init[i+1,j,k] - V_init[i,j,k])/g.dx[0]
-        with hcl.elif_(i == V_init.shape[0] - 1):
-            right_boundary = hcl.scalar(0, "right_boundary")
-            right_boundary[0] = V_init[i,j,k] +my_abs(V_init[i,j,k] - V_init[i-1,j,k]) * my_sign(V_init[i,j,k])
-            left_deriv[0] = (V_init[i,j,k] - V_init[i-1,j,k])/g.dx[0]
-            right_deriv[0] = (right_boundary[0] -V_init[i,j,k])/g.dx[0]
-        with hcl.elif_(i != 0 and i != V_init.shape[0] -  1):
-            left_deriv[0] = (V_init[i, j, k] - V_init[i - 1, j, k]) / g.dx[0]
-            right_deriv[0] = (V_init[i + 1, j, k] - V_init[i, j, k]) / g.dx[0]
-        return left_deriv[0], right_deriv[0]
-
-    def spa_derivY(i,j,k):
-        left_deriv = hcl.scalar(0, "left_deriv")
-        right_deriv = hcl.scalar(0, "right_deriv")
-        with hcl.if_(j == 0):
-            left_boundary = hcl.scalar(0, "left_boundary")
-            left_boundary[0] = V_init[i, j, k] + my_abs(V_init[i, j + 1, k] - V_init[i, j, k]) * my_sign(
-                V_init[i, j, k])
-            left_deriv[0] = (V_init[i, j, k] - left_boundary[0]) / g.dx[1]
-            right_deriv[0] = (V_init[i, j + 1, k] - V_init[i, j, k]) / g.dx[1]
-        with hcl.elif_(j == V_init.shape[1] - 1):
-            right_boundary = hcl.scalar(0, "right_boundary")
-            right_boundary[0] = V_init[i, j, k] + my_abs(V_init[i, j, k] - V_init[i, j - 1, k]) * my_sign(
-                V_init[i, j, k])
-            left_deriv[0] = (V_init[i, j, k] - V_init[i, j - 1, k]) / g.dx[1]
-            right_deriv[0] = (right_boundary[0] - V_init[i, j, k]) / g.dx[1]
-        with hcl.elif_(j != 0 and j != V_init.shape[1] - 1):
-            left_deriv[0] = (V_init[i, j, k] - V_init[i, j - 1, k]) / g.dx[1]
-            right_deriv[0] = (V_init[i, j + 1, k] - V_init[i, j, k]) / g.dx[1]
-        return left_deriv[0], right_deriv[0]
-
-
-    def spa_derivT(i,j,k):
-        left_deriv = hcl.scalar(0, "left_deriv")
-        right_deriv = hcl.scalar(0, "right_deriv")
-        with hcl.if_(k == 0):
-            left_boundary = hcl.scalar(0, "left_boundary")
-            #left_boundary[0] = V_init[i,j,50]
-            left_boundary[0] = V_init[i, j, V_init.shape[2] - 1]
-            left_deriv[0] = (V_init[i, j, k] - left_boundary[0]) / g.dx[2]
-            right_deriv[0] = (V_init[i, j, k + 1] - V_init[i, j, k]) / g.dx[2]
-        with hcl.elif_(k == V_init.shape[2] - 1):
-            right_boundary = hcl.scalar(0, "right_boundary")
-            right_boundary[0] = V_init[i,j,0]
-            left_deriv[0] = (V_init[i, j, k] - V_init[i, j, k - 1]) / g.dx[2]
-            right_deriv[0] = (right_boundary[0] - V_init[i, j, k]) / g.dx[2]
-        with hcl.elif_(k != 0 and k != V_init.shape[2] - 1):
-            left_deriv[0] = (V_init[i, j, k] - V_init[i, j, k - 1]) / g.dx[2]
-            right_deriv[0] = (V_init[i, j ,k + 1] - V_init[i, j, k]) / g.dx[2]
-        return left_deriv[0], right_deriv[0]
-
-    def step_bound(): # Function to calculate time step
-        stepBoundInv = hcl.scalar(0, "stepBoundInv")
-        stepBound    = hcl.scalar(0, "stepBound")
-        stepBoundInv[0] = max_alpha1[0]/g.dx[0] + max_alpha2[0]/g.dx[1] + max_alpha3[0]/g.dx[2]
-
-        stepBound[0] = 0.8/stepBoundInv[0]
-        with hcl.if_(stepBound > t_step):
-            stepBound[0] = t_step
-        time = stepBound[0]
-        return time
 
     # Calculate Hamiltonian for every grid point in V_init
     with hcl.Stage("Hamiltonian"):
