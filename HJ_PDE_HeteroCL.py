@@ -5,6 +5,7 @@ import plotly.graph_objects as go
 from GridProcessing import *
 from ShapesFunctions import *
 from CustomGraphFunctions import *
+from DubinsCar import *
 
 import math
 
@@ -22,6 +23,8 @@ import math
 g = grid(np.array([-5.0, -5.0, -math.pi]), np.array([5.0, 5.0, math.pi]), 3 ,np.array([100,100,100]), 2)
 # Use the grid to initialize initial value function
 shape = CyclinderShape(g, 3, np.zeros(3), 1)
+# Define my car
+myCar = DubinsCar(x=np.array([0,0,0]), wMax=1, speed=1, dMax=np.array([0,0,0]), uMode="min", dMode="max")
 
 # Look-back lenght and time step
 lookback_length = 1.00
@@ -36,6 +39,77 @@ def HJ_PDE_solver(V_new, V_init, thetas ,t):
     max_alpha1 = hcl.scalar(-1e9, "max_alpha1")
     max_alpha2 = hcl.scalar(-1e9, "max_alpha2")
     max_alpha3 = hcl.scalar(-1e9, "max_alpha3")
+
+    # Calculate spatial derivative
+    def spa_derivX(i, j, k):
+        left_deriv = hcl.scalar(0, "left_deriv")
+        right_deriv = hcl.scalar(0, "right_deriv")
+        with hcl.if_(i == 0):
+            left_boundary = hcl.scalar(0, "left_boundary")
+            left_boundary[0] = V_init[i, j, k] + my_abs(V_init[i + 1, j, k] - V_init[i, j, k]) * my_sign(
+                V_init[i, j, k])
+            left_deriv[0] = (V_init[i, j, k] - left_boundary[0]) / g.dx[0]
+            right_deriv[0] = (V_init[i + 1, j, k] - V_init[i, j, k]) / g.dx[0]
+        with hcl.elif_(i == V_init.shape[0] - 1):
+            right_boundary = hcl.scalar(0, "right_boundary")
+            right_boundary[0] = V_init[i, j, k] + my_abs(V_init[i, j, k] - V_init[i - 1, j, k]) * my_sign(
+                V_init[i, j, k])
+            left_deriv[0] = (V_init[i, j, k] - V_init[i - 1, j, k]) / g.dx[0]
+            right_deriv[0] = (right_boundary[0] - V_init[i, j, k]) / g.dx[0]
+        with hcl.elif_(i != 0 and i != V_init.shape[0] - 1):
+            left_deriv[0] = (V_init[i, j, k] - V_init[i - 1, j, k]) / g.dx[0]
+            right_deriv[0] = (V_init[i + 1, j, k] - V_init[i, j, k]) / g.dx[0]
+        return left_deriv[0], right_deriv[0]
+
+    def spa_derivY(i, j, k):
+        left_deriv = hcl.scalar(0, "left_deriv")
+        right_deriv = hcl.scalar(0, "right_deriv")
+        with hcl.if_(j == 0):
+            left_boundary = hcl.scalar(0, "left_boundary")
+            left_boundary[0] = V_init[i, j, k] + my_abs(V_init[i, j + 1, k] - V_init[i, j, k]) * my_sign(
+                V_init[i, j, k])
+            left_deriv[0] = (V_init[i, j, k] - left_boundary[0]) / g.dx[1]
+            right_deriv[0] = (V_init[i, j + 1, k] - V_init[i, j, k]) / g.dx[1]
+        with hcl.elif_(j == V_init.shape[1] - 1):
+            right_boundary = hcl.scalar(0, "right_boundary")
+            right_boundary[0] = V_init[i, j, k] + my_abs(V_init[i, j, k] - V_init[i, j - 1, k]) * my_sign(
+                V_init[i, j, k])
+            left_deriv[0] = (V_init[i, j, k] - V_init[i, j - 1, k]) / g.dx[1]
+            right_deriv[0] = (right_boundary[0] - V_init[i, j, k]) / g.dx[1]
+        with hcl.elif_(j != 0 and j != V_init.shape[1] - 1):
+            left_deriv[0] = (V_init[i, j, k] - V_init[i, j - 1, k]) / g.dx[1]
+            right_deriv[0] = (V_init[i, j + 1, k] - V_init[i, j, k]) / g.dx[1]
+        return left_deriv[0], right_deriv[0]
+
+    def spa_derivT(i, j, k):
+        left_deriv = hcl.scalar(0, "left_deriv")
+        right_deriv = hcl.scalar(0, "right_deriv")
+        with hcl.if_(k == 0):
+            left_boundary = hcl.scalar(0, "left_boundary")
+            # left_boundary[0] = V_init[i,j,50]
+            left_boundary[0] = V_init[i, j, V_init.shape[2] - 1]
+            left_deriv[0] = (V_init[i, j, k] - left_boundary[0]) / g.dx[2]
+            right_deriv[0] = (V_init[i, j, k + 1] - V_init[i, j, k]) / g.dx[2]
+        with hcl.elif_(k == V_init.shape[2] - 1):
+            right_boundary = hcl.scalar(0, "right_boundary")
+            right_boundary[0] = V_init[i, j, 0]
+            left_deriv[0] = (V_init[i, j, k] - V_init[i, j, k - 1]) / g.dx[2]
+            right_deriv[0] = (right_boundary[0] - V_init[i, j, k]) / g.dx[2]
+        with hcl.elif_(k != 0 and k != V_init.shape[2] - 1):
+            left_deriv[0] = (V_init[i, j, k] - V_init[i, j, k - 1]) / g.dx[2]
+            right_deriv[0] = (V_init[i, j, k + 1] - V_init[i, j, k]) / g.dx[2]
+        return left_deriv[0], right_deriv[0]
+
+    def step_bound(): # Function to calculate time step
+        stepBoundInv = hcl.scalar(0, "stepBoundInv")
+        stepBound    = hcl.scalar(0, "stepBound")
+        stepBoundInv[0] = max_alpha1[0]/g.dx[0] + max_alpha2[0]/g.dx[1] + max_alpha3[0]/g.dx[2]
+
+        stepBound[0] = 0.8/stepBoundInv[0]
+        with hcl.if_(stepBound > t_step):
+            stepBound[0] = t_step
+        time = stepBound[0]
+        return time
 
     # Calculate Hamiltonian for every grid point in V_init
     with hcl.Stage("Hamiltonian"):
@@ -55,9 +129,9 @@ def HJ_PDE_solver(V_new, V_init, thetas ,t):
                     dV_dT_R = hcl.scalar(0, "dV_dT_R")
                     dV_dT = hcl.scalar(0, "dV_dT")
                     # Variables to keep track of dynamics
-                    dx_dt = hcl.scalar(0, "dx_dt")
-                    dy_dt = hcl.scalar(0, "dy_dt")
-                    dtheta_dt = hcl.scalar(0, "dtheta_dt")
+                    #dx_dt = hcl.scalar(0, "dx_dt")
+                    #dy_dt = hcl.scalar(0, "dy_dt")
+                    #dtheta_dt = hcl.scalar(0, "dtheta_dt")
 
                     # No tensor slice operation
                     dV_dx_L[0], dV_dx_R[0] = spa_derivX(i, j, k)
@@ -69,41 +143,30 @@ def HJ_PDE_solver(V_new, V_init, thetas ,t):
                     dV_dy[0] = (dV_dy_L + dV_dy_R) / 2
                     dV_dT[0] = (dV_dT_L + dV_dT_R) / 2
 
-                    # Declare optimal control
-                    uOpt = hcl.scalar(1, "uOpt")
-
-                    # Declare Velocity
-                    vel = hcl.scalar(1,"vel")
-
-                    # Assume that mode is min
-                    with hcl.if_(dV_dT > 0):
-                        uOpt.v = -uOpt.v
-
+                    # Use method of DubinsCar to solve optimal control instead
+                    uOpt = myCar.opt_ctrl((dV_dx[0], dV_dy[0], dV_dT[0]))
 
                     # Calculate dynamical rates of changes
-                    dx_dt[0] = vel.v * hcl.cos(thetas[k])
-                    dy_dt[0] = vel.v * hcl.sin(thetas[k])
-                    dtheta_dt[0] = uOpt.v
+                    dx_dt, dy_dt, dtheta_dt = myCar.dynamics(thetas[k], uOpt)
 
                     # Calculate Hamiltonian terms:
-                    V_new[i, j, k] =  -(dx_dt[0] * dV_dx[0] + dy_dt * dV_dy[0] + dtheta_dt[0] * dV_dT[0])
-                    #probe[i,j, k] = -(dx_dt[0] * dV_dx[0] + dy_dt * dV_dy[0] + dtheta_dt[0] * dV_dT[0])
+                    V_new[i, j, k] =  -(dx_dt * dV_dx[0] + dy_dt * dV_dy[0] + dtheta_dt * dV_dT[0])
 
                     # Calculate dissipation step
-                    dx_dt[0] = my_abs(dx_dt[0])
-                    dy_dt[0] = my_abs(dy_dt[0])
-                    dtheta_dt[0] = my_abs(dtheta_dt[0])
+                    dx_dt = my_abs(dx_dt)
+                    dy_dt = my_abs(dy_dt)
+                    dtheta_dt = my_abs(dtheta_dt)
                     diss = hcl.scalar(0, "diss")
-                    diss[0] = 0.5*((dV_dx_R[0] - dV_dx_L[0])*dx_dt[0] + (dV_dy_R[0] - dV_dy_L[0])*dy_dt[0] + (dV_dT_R[0] - dV_dT_L[0])* dtheta_dt[0])
+                    diss[0] = 0.5*((dV_dx_R[0] - dV_dx_L[0])*dx_dt + (dV_dy_R[0] - dV_dy_L[0])*dy_dt + (dV_dT_R[0] - dV_dT_L[0])* dtheta_dt)
                     V_new[i, j, k] = -(V_new[i, j, k] - diss[0])
 
                     # Calculate alphas
-                    with hcl.if_(dx_dt[0] > max_alpha1):
-                        max_alpha1[0] = dx_dt[0]
-                    with hcl.if_(dy_dt[0] > max_alpha2):
-                        max_alpha2[0] = dy_dt[0]
-                    with hcl.if_(dtheta_dt[0] > max_alpha3):
-                        max_alpha3[0] = dtheta_dt[0]
+                    with hcl.if_(dx_dt > max_alpha1):
+                        max_alpha1[0] = dx_dt
+                    with hcl.if_(dy_dt > max_alpha2):
+                        max_alpha2[0] = dy_dt
+                    with hcl.if_(dtheta_dt > max_alpha3):
+                        max_alpha3[0] = dtheta_dt
 
     # Determine time step
     hcl.update(t, lambda x: step_bound())
@@ -148,9 +211,7 @@ def main():
     # Inspect IR
     #print(hcl.lower(s))
 
-    # Build the code - VHLS code returned
-    #solve_pde = hcl.build(s, target="vhls")
-    #print(solve_pde)
+    # Build the code
     solve_pde = hcl.build(s)
 
     #print(f)
@@ -171,6 +232,7 @@ def main():
     execution_time = 0
     lookback_time = 0
 
+    print("I'm here\n")
     # Test the executable from heteroCL:
     while lookback_time <= lookback_length:
         # Start timing
@@ -188,9 +250,8 @@ def main():
 
         # Some information printing
         #print(t_minh)
-        #print("Computational time to integrate (s): {:.5f}".format(time.time() - start))
+        print("Computational time to integrate (s): {:.5f}".format(time.time() - start))
 
-    # Swap array for easier visualization compared to MATLAB
 
     #V = V_1.asnumpy()
     #V = np.swapaxes(V, 0,2)
@@ -199,17 +260,19 @@ def main():
     #probe = np.swapaxes(probe, 0, 2)
     #probe = np.swapaxes(probe, 1, 2)
     #print(V)
-    V_1 = V_1.asnumpy()
-    #print("Total kernel time (s): {:.5f}".format(execution_time))
-    #print("Finished solving\n")
+    #V_1 = V_1.asnumpy()
 
+    # Time info printing
+    print("Total kernel time (s): {:.5f}".format(execution_time))
+    print("Finished solving\n")
 
-    # Plotting function
+    # Plotting
+    print("Plotting beautiful plots. Please wait\n")
     fig = go.Figure(data=go.Isosurface(
         x=g.mg_X.flatten(),
         y=g.mg_Y.flatten(),
         z=g.mg_T.flatten(),
-        value=V_1.flatten(),
+        value=V_1.asnumpy().flatten(),
         colorscale='jet',
         isomin=0,
         surface_count=1,
@@ -217,6 +280,8 @@ def main():
         caps=dict(x_show=True, y_show=True)
     ))
     fig.show()
+
+    print("Please check the plot on your browser.")
 
 if __name__ == '__main__':
   main()
