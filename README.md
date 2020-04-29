@@ -6,7 +6,10 @@ This is an on going project in an attempt to solve Hamilton Jacobian partial dif
 *  Plotly. This library for visualization. ``` $pip install plotly==4.5.0 ```
 
 # Current code structure explanation
-GridProcessing.py includes api to create a grid structure. ShapesFunctions.py has functions to initilize value functions. HJ_PDE_HeteroCL.py is where HJ pde is solved and visualized.
-
-# Running sample code
-``` python3 HJ_PDE_HeteroCL.py ```
+* user_definer.py: specify grid numbers, dynamic systems intialization, initial value function ,computation method.
+* solver.py: Compute HJ PDE, the end result is V1 value function
+* dynamics/ : User's dynamical system specification
+* Shapes/ShapesFunctions.py : Add-in functions for calculating different intial value functions
+* computeGraphs/CustomGraphFunctions.py: Ready-to-user HeteroCL style utility functions 
+# Running
+``` python3 solver.py ```
