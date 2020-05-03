@@ -4,7 +4,7 @@ class grid:
   def __init__(self, min, max, dims ,pts_each_dim, pDim):
         self.max = max
         self.min = min
-        self.dims = dims
+        self.dims = len(pts_each_dim)
         self.pts_each_dim = pts_each_dim
         self.pDim = pDim
 
@@ -26,9 +26,9 @@ class grid:
             self.vs.append(tmp)
 
         # Turn pts_each_dim to complex numbers to input into meshgrid
-        complex_x = complex(0, pts_each_dim[0])
-        complex_y = complex(0, pts_each_dim[1])
-        complex_z = complex(0, pts_each_dim[2])
+        #self.compl = []
+        #for i in range(self.dim):
+        #    self.compl.append(complex(0, pts_each_dim[i]))
 
         # Grid 's meshgrid
-        self.mg_X, self.mg_Y, self.mg_T = np.mgrid[self.min[0]:self.max[0]: complex_x, self.min[1]:self.max[1]: complex_y, self.min[2]:self.max[2]: complex_z]
+        #self.mg_X, self.mg_Y, self.mg_T = np.mgrid[self.min[0]:self.max[0]: complex_x, self.min[1]:self.max[1]: complex_y, self.min[2]:self.max[2]: complex_z]

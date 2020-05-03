@@ -1,9 +1,10 @@
 import heterocl as hcl
 import numpy as np
 import time
-import plotly.graph_objects as go
+#import plotly.graph_objects as go
 
 from computeGraphs.CustomGraphFunctions import *
+from Plots.plotting_utilities import *
 from user_definer import *
 from argparse import ArgumentParser
 
@@ -16,7 +17,7 @@ def main():
     ################### PARSING ARGUMENTS FROM USERS #####################
 
     parser = ArgumentParser()
-    parser.add_argument("-p", "--plot", default=False, type=bool)
+    parser.add_argument("-p", "--plot", default=True, type=bool)
     # Print out LLVM option only
     parser.add_argument("-l", "--llvm", default=False, type=bool)
     args = parser.parse_args()
@@ -52,7 +53,7 @@ def main():
         [V_f, V_init, deriv_diff1, deriv_diff2, deriv_diff3, deriv_diff4, x1, x2, x3, x4, t, l0], graph_4D)
 
     # Inspect the LLVM code
-    print(hcl.lower(s))
+    #print(hcl.lower(s))
     ################# INITIALIZE DATA TO BE INPUT INTO GRAPH ##########################
 
     print("Initializing\n")
@@ -140,20 +141,7 @@ def main():
 
     ##################### PLOTTING #####################
     if args.plot:
-        print("Plotting beautiful plots. Please wait\n")
-        fig = go.Figure(data=go.Isosurface(
-            x=g.mg_X.flatten(),
-            y=g.mg_Y.flatten(),
-            z=g.mg_T.flatten(),
-            value=V_1.flatten(),
-            colorscale='jet',
-            isomin=0,
-            surface_count=1,
-            isomax=0,
-            caps=dict(x_show=True, y_show=True)
-        ))
-        fig.show()
-        print("Please check the plot on your browser.")
+        plot_isosurface(g, V_1.asnumpy(), [0, 1, 3])
 
     # V1 is the final value array, fill in anything to use it
 

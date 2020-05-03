@@ -12,7 +12,6 @@ def CyclinderShape3D(grid, ignore_dim, center, radius):
 
 def Cylinder6D(grid, ignore_dims):
     data = np.zeros(grid.pts_each_dim)
-
     for i in range(0, 6):
         if i + 1 not in ignore_dims:
             # This works because of broadcasting
@@ -27,6 +26,15 @@ def Cylinder4D(grid, ignore_dims):
             # This works because of broadcasting
             data = data + np.power(grid.vs[i], 2)
     data = np.sqrt(data)
+    return data
+
+def CylinderShape(grid, ignore_dims, center, radius):
+    data = np.zeros(grid.pts_each_dim)
+    for i in range(0, grid.dims):
+        if i + 1 not in ignore_dims:
+            # This works because of broadcasting
+            data = data + np.power(grid.vs[i] - center[i], 2)
+    data = np.sqrt(data) - radius
     return data
 
 # Range is a list of list of ranges
@@ -46,5 +54,4 @@ def Rectangle4D(grid, range):
                                   -x2 + range[2][0], x2 - range[2][1],
                                   -x3 + range[3][0], x3 - range[3][1]]
                     data[i0, i1, i2, i3] = min(range_list)
-
     return data
