@@ -209,7 +209,7 @@ def spa_derivX2_4d(i, j, k, l, V, g): #
             right_boundary = hcl.scalar(0, "right_boundary")
             right_boundary[0] = V[i, j, k, l] + my_abs(V[i, j, k, l] - V[i, j - 1, k, l]) * my_sign(
                 V[i, j, k, l])
-            left_deriv[0] = (V[i, j - 1, k, l] - V[i, j, k, l]) / g.dx[1]
+            left_deriv[0] = (V[i, j, k, l] - V[i, j - 1, k, l]) / g.dx[1]
             right_deriv[0] = (right_boundary[0] - V[i, j, k, l]) / g.dx[1]
         with hcl.elif_(j != 0 and j != V.shape[1] - 1):
             left_deriv[0] = (V[i, j, k, l] - V[i, j - 1, k, l]) / g.dx[1]
@@ -802,8 +802,11 @@ def graph_4D(V_new, V_init, deriv_diff1, deriv_diff2, deriv_diff3, deriv_diff4, 
                         dx1_dt, dx2_dt, dx3_dt, dx4_dt = my_object.dynamics(t, (x1[i], x2[j], x3[k], x4[l]), uOpt, dOpt)
 
                         # Calculate Hamiltonian terms:
-                        V_new[i, j, k, l] =  -(dx1_dt * dV_dx1[0] + dx2_dt * dV_dx2[0] + dx3_dt * dV_dx3[0] + dx4_dt * dV_dx4[0])    
-                        
+                        V_new[i, j, k, l] =  -(dx1_dt * dV_dx1[0] + dx2_dt * dV_dx2[0] + dx3_dt * dV_dx3[0] + dx4_dt * dV_dx4[0])
+
+                        # Debugging
+                        #V_new[i, j, k, l] = dV_dx2[0]
+
                         # Get derivMin
                         with hcl.if_(dV_dx1_L[0] < min_deriv1[0]):
                             min_deriv1[0] = dV_dx1_L[0]
@@ -847,6 +850,7 @@ def graph_4D(V_new, V_init, deriv_diff1, deriv_diff2, deriv_diff3, deriv_diff4, 
                             max_deriv4[0] = dV_dx4_R[0]
 
     # Calculate dissipation amount
+
     with hcl.Stage("Dissipation"):
          # Storing alphas
         alpha1 = hcl.scalar(0, "alpha1")
@@ -925,7 +929,7 @@ def graph_4D(V_new, V_init, deriv_diff1, deriv_diff2, deriv_diff3, deriv_diff4, 
                         with hcl.if_(alpha3 > max_alpha3):
                             max_alpha3[0] = alpha3[0]
                         with hcl.if_(alpha4 > max_alpha4):
-                            max_alpha4[0] = alpha4[0]
+                            max_alpha4[0] = alpha4[0] 
 
     # Determine time step
     delta_t = hcl.compute((1,), lambda x: step_bound(), name="delta_t")
@@ -937,7 +941,7 @@ def graph_4D(V_new, V_init, deriv_diff1, deriv_diff2, deriv_diff3, deriv_diff4, 
     #if compMethod == 'maxVWithCStraint':
     #    result = hcl.update(V_new, lambda i, j, k, l: maxVWithCStraint(i, j, k, l))
     if compMethod == 'minVWithVInit':
-        result = hcl.update(V_new, lambda i, j, k, l: minVWithVInit(i, j, k, l))
+        result = hcl.update(V_new, lambda i, j, k, l: minVWithVInit(i, j, k, l)) 
     # Copy V_new to V_init
     hcl.update(V_init, lambda i, j, k, l: V_new[i, j, k, l])
     return result
