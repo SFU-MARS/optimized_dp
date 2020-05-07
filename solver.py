@@ -92,11 +92,11 @@ def main():
 
     # Accessing the hamiltonian stage
     s_H = graph_4D.Hamiltonian
-    #s_D = graph_4D.Dissipation
+    s_D = graph_4D.Dissipation
 
     #
     s[s_H].parallel(s_H.i)
-    #s[s_D].parallel(s_D.i)
+    s[s_D].parallel(s_D.i)
 
     # Inspect IR
     #if args.llvm:
@@ -126,9 +126,11 @@ def main():
                        list_x1, list_x2, list_x3, list_x4, t_minh, l0)
 
              tNow = np.asscalar((t_minh.asnumpy())[0])
+             # Just debugging
+             #tNow = 100
 
-             if lookback_time != 0: # Exclude first time of the computation
-                 execution_time += time.time() - start
+             #if lookback_time != 0: # Exclude first time of the computation
+             execution_time += time.time() - start
 
              # Some information printing
              print(t_minh)
@@ -138,6 +140,7 @@ def main():
     # Time info printing
     print("Total kernel time (s): {:.5f}".format(execution_time))
     print("Finished solving\n")
+
 
     ##################### PLOTTING #####################
     if args.plot:
