@@ -28,7 +28,7 @@ my_car = DubinsCar4D()
 Initial_value_f = CylinderShape(g, [3,4], np.zeros(4), 1)
 
 # Look-back lenght and time step
-lookback_length = 2.0
+lookback_length = 0.2
 t_step = 0.05
 
 tau = np.arange(start = 0, stop = lookback_length + t_step, step = t_step)
