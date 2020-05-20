@@ -1,7 +1,7 @@
 import numpy as np
 
 class grid:
-  def __init__(self, min, max, dims ,pts_each_dim, pDim):
+  def __init__(self, min, max, dims ,pts_each_dim, pDim=[]):
         self.max = max
         self.min = min
         self.dims = len(pts_each_dim)

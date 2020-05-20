@@ -55,3 +55,19 @@ def Rectangle4D(grid, range):
                                   -x3 + range[3][0], x3 - range[3][1]]
                     data[i0, i1, i2, i3] = min(range_list)
     return data
+
+def Rectangle6D(grid):
+    #data = np.zeros(grid.pts_each_dim)
+    #x1 = np.reshape(grid.vs[0], (25, 25, 25, 25, 25, 25))
+    data = np.maximum(grid.vs[0] - 0.05, -grid.vs[0] - 0.05)
+    data = np.maximum(data,  grid.vs[1] - 0.08)
+    data = np.maximum(data, -grid.vs[1] - 0.08)
+    data = np.maximum(data,  grid.vs[2] - 1.04)
+    data = np.maximum(data, -grid.vs[2] + 0.94)
+    data = np.maximum(data,  grid.vs[3] - 0.15)
+    data = np.maximum(data, -grid.vs[3] - 0.15)
+    data = np.maximum(data,  grid.vs[4] - 0.15)
+    data = np.maximum(data, -grid.vs[4] - 0.15)
+    data = np.maximum(data,  grid.vs[5] - 0.6)
+    data = np.maximum(data, -grid.vs[5] - 0.6)
+    return data

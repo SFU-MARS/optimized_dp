@@ -241,12 +241,12 @@ def graph_6D():
 
                                     # No tensor slice operation
                                     # dV_dx_L[0], dV_dx_R[0] = spa_derivX(i, j, k)
-                                    dV_dx1_L[0], dV_dx1_R[0] = spa_derivX6_6d(i, j, k, l, m, n, V_init, g)
-                                    dV_dx2_L[0], dV_dx2_R[0] = spa_derivX5_6d(i, j, k, l, m, n, V_init, g)
-                                    dV_dx3_L[0], dV_dx3_R[0] = spa_derivX4_6d(i, j, k, l, m, n, V_init, g)
-                                    dV_dx4_L[0], dV_dx4_R[0] = spa_derivX3_6d(i, j, k, l, m, n, V_init, g)
-                                    dV_dx5_L[0], dV_dx5_R[0] = spa_derivX2_6d(i, j, k, l, m, n, V_init, g)
-                                    dV_dx6_L[0], dV_dx6_R[0] = spa_derivX1_6d(i, j, k, l, m, n, V_init, g)
+                                    dV_dx1_L[0], dV_dx1_R[0] = spa_derivX1_6d(i, j, k, l, m, n, V_init, g)
+                                    dV_dx2_L[0], dV_dx2_R[0] = spa_derivX2_6d(i, j, k, l, m, n, V_init, g)
+                                    dV_dx3_L[0], dV_dx3_R[0] = spa_derivX3_6d(i, j, k, l, m, n, V_init, g)
+                                    dV_dx4_L[0], dV_dx4_R[0] = spa_derivX4_6d(i, j, k, l, m, n, V_init, g)
+                                    dV_dx5_L[0], dV_dx5_R[0] = spa_derivX5_6d(i, j, k, l, m, n, V_init, g)
+                                    dV_dx6_L[0], dV_dx6_R[0] = spa_derivX6_6d(i, j, k, l, m, n, V_init, g)
 
                                     # Saves spatial derivative diff into tables
                                     deriv_diff1[i, j, k, l, m, n] = dV_dx1_R[0] - dV_dx1_L[0]
