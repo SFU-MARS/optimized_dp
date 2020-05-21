@@ -455,6 +455,6 @@ def graph_4D():
     # Inspect IR
     # if args.llvm:
     #    print(hcl.lower(s))
-    print(hcl.lower(s))
+
     # Return executable
     return(hcl.build(s))
