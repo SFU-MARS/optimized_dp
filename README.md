@@ -1,7 +1,7 @@
 # Optimizing Dynamic Programming-Based Algorithms
 This is an on going project in an attempt to solve Hamilton Jacobian partial differential equation (HJ PDE) easier and faster on all available hardware platforms.
-#Update 21st/May/2020
-The repo currently works for 4 and 6 dimension systems. 6 dimension graph currently not work with disturbances. 
+# Update 21st/May/2020
+The repo currently works for 4 and 6 dimension systems on CPU. 6 dimension graph currently not work with disturbances. 
 
 # Dependencies
 * HeteroCL (http://heterocl.csl.cornell.edu/doc/installation.html) - A Python-based domain-specific language (DSL). The HeteroCL DSL provides a clean abstraction that decouples algorithm specification from three important types of hardware customization in compute, data types, and memory architectures. Follow the link to install HeteroCL.
