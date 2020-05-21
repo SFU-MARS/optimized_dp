@@ -35,6 +35,7 @@ def main():
     V_0 = hcl.asarray(my_shape)
     V_1 = hcl.asarray(np.zeros(tuple(g.pts_each_dim)))
     l0  = hcl.asarray(my_shape)
+    #probe = hcl.asarray(np.zeros(tuple(g.pts_each_dim)))
     #obstacle = hcl.asarray(cstraint_values)
 
     list_x1 = np.reshape(g.vs[0], g.pts_each_dim[0])
@@ -98,10 +99,10 @@ def main():
              print("Computational time to integrate (s): {:.5f}".format(time.time() - start))
              # Saving data into disk
 
+
     # Time info printing
     print("Total kernel time (s): {:.5f}".format(execution_time))
     print("Finished solving\n")
-
 
     ##################### PLOTTING #####################
     if args.plot:

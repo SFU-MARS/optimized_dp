@@ -2,7 +2,6 @@ import heterocl as hcl
 import numpy as np
 import time
 import math
-#from CustomGraphFunctions import *
 
 class Humanoid_6D:
     def __init__(self, x=[0,0,0,0,0,0], uMin=np.array([-0.5*0.1, -5.0, -1.0]), uMax=np.array([0.5*0.1, 5.0, 1.0]), dMin=np.array([0.0, 0.0, 0.0, 0.0])\
@@ -33,6 +32,12 @@ class Humanoid_6D:
         self.L = 1.2
         
     def opt_ctrl(self, t, state ,spat_deriv):
+        """
+        :param t: time t
+        :param state: tuple of coordinates in 6 dimensions
+        :param spat_deriv: spatial derivative in all dimensions
+        :return: tuple of optimal control
+        """
         # Optimal control 1, 2, 3
         uOpt1 = hcl.scalar(0, "uOpt1")
         uOpt2 = hcl.scalar(0, "uOpt2")
@@ -77,6 +82,10 @@ class Humanoid_6D:
         return (uOpt1[0], uOpt2[0], uOpt3[0])
 
     def optDstb(self, spat_deriv):
+        """
+        :param spat_deriv: spatial derivative in all dimensions
+        :return: tuple of optimal disturbance
+        """
         dOpt1 = hcl.scalar(0, "dOpt1")
         dOpt2 = hcl.scalar(0, "dOpt2")
         dOpt3 = hcl.scalar(0, "dOpt3")
@@ -85,7 +94,15 @@ class Humanoid_6D:
         dOpt6 = hcl.scalar(0, "dOpt6")
         return (dOpt1[0], dOpt2[0], dOpt3[0], dOpt4[0], dOpt5[0], dOpt6[0])
 
-    def dynamics(self, t,state, uOpt, dOpt): 
+    def dynamics(self, t,state, uOpt, dOpt):
+        """
+
+        :param t: time
+        :param state: tuple of grid coordinates in 6 dimensions
+        :param uOpt: tuple of optimal control
+        :param dOpt: tuple of optimal disturbances
+        :return: tuple of time derivates in all dimensions
+        """
         x1_dot = hcl.scalar(0, "x1_dot")
         x2_dot = hcl.scalar(0, "x2_dot")
         x3_dot = hcl.scalar(0, "x3_dot")

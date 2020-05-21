@@ -129,6 +129,8 @@ def graph_4D():
     V_init = hcl.placeholder(tuple(g.pts_each_dim), name="V_init", dtype=hcl.Float())
     l0 = hcl.placeholder(tuple(g.pts_each_dim), name="l0", dtype=hcl.Float())
     t = hcl.placeholder((2,), name="t", dtype=hcl.Float())
+    # probe = hcl.placeholder(tuple(g.pts_each_dim), name="probe", dtype=hcl.Float())
+
 
     # Positions vector
     x1 = hcl.placeholder((g.pts_each_dim[0],), name="x1", dtype=hcl.Float())
@@ -286,11 +288,38 @@ def graph_4D():
         # Calculate dissipation amount
 
         with hcl.Stage("Dissipation"):
+            #dOptU = hcl.compute((4,), lambda x: 0, "dOptU")
             # Storing alphas
+            dOptL1 = hcl.scalar(0, "dOptL1")
+            dOptL2 = hcl.scalar(0, "dOptL2")
+            dOptL3 = hcl.scalar(0, "dOptL3")
+            dOptL4 = hcl.scalar(0, "dOptL4")
+            # Find UPPER BOUND optimal disturbance
+            dOptU1 = hcl.scalar(0, "dOptL1")
+            dOptU2 = hcl.scalar(0, "dOptL2")
+            dOptU3 = hcl.scalar(0, "dOptL3")
+            dOptU4 = hcl.scalar(0, "dOptL4")
+
             alpha1 = hcl.scalar(0, "alpha1")
             alpha2 = hcl.scalar(0, "alpha2")
             alpha3 = hcl.scalar(0, "alpha3")
             alpha4 = hcl.scalar(0, "alpha4")
+            # Find LOWER BOUND optimal disturbance
+            dOptL1[0], dOptL2[0], dOptL3[0], dOptL4[0] = my_object.optDstb((min_deriv1[0], min_deriv2[0], \
+                                                                            min_deriv3[0], min_deriv4[0]))
+
+            dOptU1[0], dOptL2[0], dOptL3[0], dOptL4[0] = my_object.optDstb((max_deriv1[0], max_deriv2[0], \
+                                                                            max_deriv3[0], max_deriv4[0]))
+            uOptL1 = hcl.scalar(0, "uOptL1")
+            uOptL2 = hcl.scalar(0, "uOptL2")
+            uOptL3 = hcl.scalar(0, "uOptL3")
+            uOptL4 = hcl.scalar(0, "uOptL4")
+
+            # Find UPPER BOUND optimal disturbance
+            uOptU1 = hcl.scalar(0, "uOptU1")
+            uOptU2 = hcl.scalar(0, "uOptU2")
+            uOptU3 = hcl.scalar(0, "uOptU3")
+            uOptU4 = hcl.scalar(0, "uOptU4")
 
             with hcl.for_(0, V_init.shape[0], name="i") as i:
                 with hcl.for_(0, V_init.shape[1], name="j") as j:
@@ -306,71 +335,95 @@ def graph_4D():
                             dx_UL3 = hcl.scalar(0, "dx_UL3")
                             dx_UL4 = hcl.scalar(0, "dx_UL4")
 
-                            dx_LU1 = hcl.scalar(0, "dx_LU1")
-                            dx_LU2 = hcl.scalar(0, "dx_LU2")
-                            dx_LU3 = hcl.scalar(0, "dx_LU3")
-                            dx_LU4 = hcl.scalar(0, "dx_LU4")
-
                             dx_UU1 = hcl.scalar(0, "dx_UU1")
                             dx_UU2 = hcl.scalar(0, "dx_UU2")
                             dx_UU3 = hcl.scalar(0, "dx_UU3")
                             dx_UU4 = hcl.scalar(0, "dx_UU4")
 
+                            dx_LU1 = hcl.scalar(0, "dx_LU1")
+                            dx_LU2 = hcl.scalar(0, "dx_LU2")
+                            dx_LU3 = hcl.scalar(0, "dx_LU3")
+                            dx_LU4 = hcl.scalar(0, "dx_LU4")
+
                             # Find LOWER BOUND optimal control
-                            uOptL = my_object.opt_ctrl(t, (x1[i], x2[j], x3[k], x4[l]),
-                                                       (min_deriv1[0], min_deriv2[0], min_deriv3[0], min_deriv4[0]))
+                            uOptL1[0], uOptL2[0], uOptL3[0], uOptL4[0]= my_object.opt_ctrl(t, (x1[i], x2[j], x3[k], x4[l]),
+                                                                      (min_deriv1[0], min_deriv2[0], min_deriv3[0],
+                                                                       min_deriv4[0]))
+
                             # Find UPPER BOUND optimal control
-                            uOptU = my_object.opt_ctrl(t, (x1[i], x2[j], x3[k], x4[l]),
-                                                       (max_deriv1[0], max_deriv2[0], max_deriv3[0], max_deriv4[0]))
-                            # Find LOWER BOUND optimal disturbance
-                            dOptL = my_object.optDstb((min_deriv1[0], min_deriv2[0], min_deriv3[0], min_deriv4[0]))
-                            # Find UPPER BOUND optimal disturbance
-                            dOptU = my_object.optDstb((max_deriv1[0], max_deriv2[0], max_deriv3[0], max_deriv4[0]))
+                            uOptU1[0], uOptU2[0], uOptU3[0], uOptU4[0] = my_object.opt_ctrl(t, (x1[i], x2[j], x3[k], x4[l]),
+                                                                      (max_deriv1[0], max_deriv2[0], max_deriv3[0],
+                                                                       max_deriv4[0]))
 
                             # Find magnitude of rates of changes
                             dx_LL1[0], dx_LL2[0], dx_LL3[0], dx_LL4[0] = my_object.dynamics(t, (x1[i], x2[j], x3[k], x4[l]),
-                                                                                            uOptL, dOptL)
+                                                                                            (uOptL1[0], uOptL2[0],uOptL3[0], uOptL4[0]),\
+                                                                                            (dOptL1[0], dOptL2[0], dOptL3[0], dOptL4[0]))
+                            dx_LL1[0] = my_abs(dx_LL1[0])
+                            dx_LL2[0] = my_abs(dx_LL2[0])
+                            dx_LL3[0] = my_abs(dx_LL3[0])
+                            dx_LL4[0] = my_abs(dx_LL4[0])
+
                             dx_LU1[0], dx_LU2[0], dx_LU3[0], dx_LU4[0] = my_object.dynamics(t, (x1[i], x2[j], x3[k], x4[l]),
-                                                                                            uOptL, dOptU)
-                            dx_UL1[0], dx_UL2[0], dx_UL3[0], dx_UL4[0] = my_object.dynamics(t, (x1[i], x2[j], x3[k], x4[l]),
-                                                                                            uOptU, dOptL)
-                            dx_UU1[0], dx_UU2[0], dx_UU3[0], dx_UU4[0] = my_object.dynamics(t, (x1[i], x2[j], x3[k], x4[l]),
-                                                                                            uOptU, dOptU)
+                                                                                            (uOptL1[0], uOptL2[0],uOptL3[0], uOptL4[0]), \
+                                                                                            (dOptU1[0], dOptU2[0], dOptU3[0], dOptU4[0]))
+                            dx_LU1[0] = my_abs(dx_LU1[0])
+                            dx_LU2[0] = my_abs(dx_LU2[0])
+                            dx_LU3[0] = my_abs(dx_LU3[0])
+                            dx_LU4[0] = my_abs(dx_LU4[0])
 
                             # Calculate alpha
-                            alpha1[0] = my_max(my_abs(dx_LL1[0]), my_abs(dx_LU1[0]))
-                            alpha1[0] = my_max(alpha1[0], my_abs(dx_UL1[0]))
-                            alpha1[0] = my_max(alpha1[0], my_abs(dx_UU1[0]))
+                            alpha1[0] = my_max(dx_LL1[0], dx_LU1[0])
+                            alpha2[0] = my_max(dx_LL2[0], dx_LU2[0])
+                            alpha3[0] = my_max(dx_LL3[0], dx_LU3[0])
+                            alpha4[0] = my_max(dx_LL4[0], dx_LU4[0])
 
-                            alpha2[0] = my_max(my_abs(dx_LL2[0]), my_abs(dx_LU2[0]))
-                            alpha2[0] = my_max(alpha2[0], my_abs(dx_UL2[0]))
-                            alpha2[0] = my_max(alpha2[0], my_abs(dx_UU2[0]))
+                            #dx_UL3 = hcl.scalar(0, "dx_UL3")
+                            # dx_UL1[0], dx_UL2[0], dx_UL3[0], dx_UL4[0] = my_object.dynamics(t, (x1[i], x2[j], x3[k], x4[l]),
+                            #                                                                 uOptU, dOptL)
+                            dx_UL1[0], dx_UL2[0], dx_UL3[0], dx_UL4[0] = my_object.dynamics(t, (x1[i], x2[j], x3[k], x4[l]),\
+                                                                                            (uOptU1[0], uOptU2[0], uOptU3[0], uOptU4[0]), \
+                                                                                            (dOptL1[0], dOptL2[0], dOptL3[0], dOptL4[0]))
+                            dx_UL1[0] = my_abs(dx_UL1[0])
+                            dx_UL2[0] = my_abs(dx_UL2[0])
+                            dx_UL3[0] = my_abs(dx_UL3[0])
+                            dx_UL4[0] = my_abs(dx_UL4[0])
+                            # Calculate alpha
+                            alpha1[0] = my_max(alpha1[0], dx_UL1[0])
+                            alpha2[0] = my_max(alpha2[0], dx_UL2[0])
+                            alpha3[0] = my_max(alpha3[0], dx_UL3[0])
+                            alpha4[0] = my_max(alpha4[0], dx_UL4[0])
 
-                            alpha3[0] = my_max(my_abs(dx_LL3[0]), my_abs(dx_LU3[0]))
-                            alpha3[0] = my_max(alpha3[0], my_abs(dx_UL3[0]))
-                            alpha3[0] = my_max(alpha3[0], my_abs(dx_UU3[0]))
-
-                            alpha4[0] = my_max(my_abs(dx_LL4[0]), my_abs(dx_LU4[0]))
-                            alpha4[0] = my_max(alpha4[0], my_abs(dx_UL4[0]))
-                            alpha4[0] = my_max(alpha4[0], my_abs(dx_UU4[0]))
+                            dx_UU1[0], dx_UU2[0], dx_UU3[0], dx_UU4[0] = my_object.dynamics(t, (x1[i], x2[j], x3[k], x4[l]),
+                                                                                            (uOptU1[0], uOptU2[0], uOptU3[0], uOptU4[0]),\
+                                                                                            (dOptU1[0], dOptU2[0], dOptU3[0], dOptU4[0]))
+                            dx_UU1[0] = my_abs(dx_UU1[0])
+                            dx_UU2[0] = my_abs(dx_UU2[0])
+                            dx_UU3[0] = my_abs(dx_UU3[0])
+                            dx_UU4[0] = my_abs(dx_UU4[0])
+                            # Calculate alpha
+                            alpha1[0] = my_max(alpha1[0], dx_UU1[0])
+                            alpha2[0] = my_max(alpha2[0], dx_UU2[0])
+                            alpha3[0] = my_max(alpha3[0], dx_UU3[0])
+                            alpha4[0] = my_max(alpha4[0], dx_UU4[0])
 
                             diss = hcl.scalar(0, "diss")
                             diss[0] = 0.5 * (
-                                        deriv_diff1[i, j, k, l] * alpha1 + deriv_diff2[i, j, k, l] * alpha2 + deriv_diff3[
-                                    i, j, k, l] * alpha3 + deriv_diff4[i, j, k, l] * alpha4)
+                                        deriv_diff1[i, j, k, l] * alpha1[0] + deriv_diff2[i, j, k, l] * alpha2[0] + deriv_diff3[
+                                    i, j, k, l] * alpha3[0] + deriv_diff4[i, j, k, l] * alpha4[0])
 
                             # Finally
                             V_new[i, j, k, l] = -(V_new[i, j, k, l] - diss[0])
                             # Get maximum alphas in each dimension
 
                             # Calculate alphas
-                            with hcl.if_(alpha1 > max_alpha1):
+                            with hcl.if_(alpha1[0] > max_alpha1[0]):
                                 max_alpha1[0] = alpha1[0]
-                            with hcl.if_(alpha2 > max_alpha2):
+                            with hcl.if_(alpha2[0] > max_alpha2[0]):
                                 max_alpha2[0] = alpha2[0]
-                            with hcl.if_(alpha3 > max_alpha3):
+                            with hcl.if_(alpha3[0] > max_alpha3[0]):
                                 max_alpha3[0] = alpha3[0]
-                            with hcl.if_(alpha4 > max_alpha4):
+                            with hcl.if_(alpha4[0] > max_alpha4[0]):
                                 max_alpha4[0] = alpha4[0]
 
                                 # Determine time step
@@ -402,6 +455,6 @@ def graph_4D():
     # Inspect IR
     # if args.llvm:
     #    print(hcl.lower(s))
-
+    print(hcl.lower(s))
     # Return executable
     return(hcl.build(s))
