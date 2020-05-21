@@ -81,6 +81,7 @@ def main():
              start = time.time()
 
              print("Started running\n")
+
              # Run the execution and pass input into graph
              if g.dims == 4:
                 solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, t_minh, l0)
@@ -88,10 +89,8 @@ def main():
                 solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6, t_minh, l0)
 
              tNow = np.asscalar((t_minh.asnumpy())[0])
-             # Just debugging
-             #tNow = 100
 
-             #if lookback_time != 0: # Exclude first time of the computation
+             # Calculate computation time
              execution_time += time.time() - start
 
              # Some information printing

@@ -30,7 +30,40 @@ class Humanoid_6D:
         self.J = 0.125
         self.g = -9.81
         self.L = 1.2
-        
+
+    def dynamics(self, t,state, uOpt, dOpt):
+        """
+
+        :param t: time
+        :param state: tuple of grid coordinates in 6 dimensions
+        :param uOpt: tuple of optimal control
+        :param dOpt: tuple of optimal disturbances
+        :return: tuple of time derivates in all dimensions
+        """
+
+        # Set of differential equations describing the system
+        # x1_dot = x2
+        # x2_dot = ( g + u2) * (x1 + u1) /x3 + u3
+        # x3_dot = x4
+        # x4_dot = u2
+        # x5_dot = x6
+        # x6_dot = ( x3 / J ) * u3
+
+        x1_dot = hcl.scalar(0, "x1_dot")
+        x2_dot = hcl.scalar(0, "x2_dot")
+        x3_dot = hcl.scalar(0, "x3_dot")
+        x4_dot = hcl.scalar(0, "x4_dot")
+        x5_dot = hcl.scalar(0, "x5_dot")
+        x6_dot = hcl.scalar(0, "x6_dot")
+
+        x1_dot[0] = state[1]
+        x2_dot[0] = (self.g + uOpt[1])*(state[0] + uOpt[0])/state[2] + uOpt[2]
+        x3_dot[0] = state[3]
+        x4_dot[0] = uOpt[1]
+        x5_dot[0] = state[5]
+        x6_dot[0] = state[2] * uOpt[2]/ self.J
+        return (x1_dot[0], x2_dot[0], x3_dot[0], x4_dot[0], x5_dot[0], x6_dot[0])
+
     def opt_ctrl(self, t, state ,spat_deriv):
         """
         :param t: time t
@@ -38,6 +71,7 @@ class Humanoid_6D:
         :param spat_deriv: spatial derivative in all dimensions
         :return: tuple of optimal control
         """
+
         # Optimal control 1, 2, 3
         uOpt1 = hcl.scalar(0, "uOpt1")
         uOpt2 = hcl.scalar(0, "uOpt2")
@@ -94,26 +128,3 @@ class Humanoid_6D:
         dOpt6 = hcl.scalar(0, "dOpt6")
         return (dOpt1[0], dOpt2[0], dOpt3[0], dOpt4[0], dOpt5[0], dOpt6[0])
 
-    def dynamics(self, t,state, uOpt, dOpt):
-        """
-
-        :param t: time
-        :param state: tuple of grid coordinates in 6 dimensions
-        :param uOpt: tuple of optimal control
-        :param dOpt: tuple of optimal disturbances
-        :return: tuple of time derivates in all dimensions
-        """
-        x1_dot = hcl.scalar(0, "x1_dot")
-        x2_dot = hcl.scalar(0, "x2_dot")
-        x3_dot = hcl.scalar(0, "x3_dot")
-        x4_dot = hcl.scalar(0, "x4_dot")
-        x5_dot = hcl.scalar(0, "x5_dot")
-        x6_dot = hcl.scalar(0, "x6_dot")
-
-        x1_dot[0] = state[1]
-        x2_dot[0] = (self.g + uOpt[1])*(state[0] + uOpt[0])/state[2] + uOpt[2]
-        x3_dot[0] = state[3]
-        x4_dot[0] = uOpt[1]
-        x5_dot[0] = state[5]
-        x6_dot[0] = state[2] * uOpt[2]/ self.J
-        return (x1_dot[0], x2_dot[0], x3_dot[0], x4_dot[0], x5_dot[0], x6_dot[0])

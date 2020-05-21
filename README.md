@@ -1,5 +1,7 @@
 # Optimizing Dynamic Programming-Based Algorithms
 This is an on going project in an attempt to solve Hamilton Jacobian partial differential equation (HJ PDE) easier and faster on all available hardware platforms.
+#Update 21st/May/2020
+The repo currently works for 4 and 6 dimension systems. 6 dimension graph currently not work with disturbances. 
 
 # Dependencies
 * HeteroCL (http://heterocl.csl.cornell.edu/doc/installation.html) - A Python-based domain-specific language (DSL). The HeteroCL DSL provides a clean abstraction that decouples algorithm specification from three important types of hardware customization in compute, data types, and memory architectures. Follow the link to install HeteroCL.
@@ -10,6 +12,13 @@ This is an on going project in an attempt to solve Hamilton Jacobian partial dif
 * solver.py: Compute HJ PDE, the end result is V1 value function
 * dynamics/ : User's dynamical system specification
 * Shapes/ShapesFunctions.py : Add-in functions for calculating different intial value functions
-* computeGraphs/CustomGraphFunctions.py: Ready-to-user HeteroCL style utility functions 
+* computeGraphs/CustomGraphFunctions.py: Ready-to-user HeteroCL style utility functions
+
+# Tips to specify your own problem and use the final result
+* Create a class file in folder dynamics/ to specify your system characteristics
+* Use user_definer.py to specify grid, the object and computation method (ex. "maxWithVInit": calculating tube). Remember to import the file
+created earlier in user_definer.py
+* For large dimensional system (greater than 4), you may want to save the final value function for processing. In the file solver.py, at line 110, fill in anycodes to save it.
+* If you want to save value functions to disk by time step, fill in any code to save it at around line 100 inside the while loop.
 # Running
 ``` python3 solver.py ```

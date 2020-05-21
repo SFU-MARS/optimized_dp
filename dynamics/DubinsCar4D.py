@@ -31,8 +31,8 @@ class DubinsCar4D:
         # System dynamics
         # x_dot     = v * cos(theta) + d_1
         # y_dot     = v * sin(theta) + d_2
-        # v         = a
-        # theta     = w
+        # v_dot     = a
+        # theta_dot = w
 
         # Graph takes in 4 possible inputs, by default, for now
         opt_a = hcl.scalar(self.uMax[0], "opt_a")
@@ -60,8 +60,10 @@ class DubinsCar4D:
         :param spat_deriv: tuple of spatial derivative in all dimensions
         :return: a tuple of optimal disturbances
         """
+        # Graph takes in 4 possible inputs, by default, for now
         d1 = hcl.scalar(0, "d1")
         d2 = hcl.scalar(0, "d2")
+        # Just create and pass back, even though they're not used
         d3 = hcl.scalar(0, "d3")
         d4 = hcl.scalar(0, "d4")
         #with hcl.if_(self.dMode == "max"):
