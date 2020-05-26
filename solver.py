@@ -8,6 +8,7 @@ from Plots.plotting_utilities import *
 from user_definer import *
 from argparse import ArgumentParser
 from computeGraphs.graph_4D import *
+from computeGraphs.graph_5D import *
 from computeGraphs.graph_6D import *
 
 
@@ -63,6 +64,8 @@ def main():
     # Get executable
     if g.dims == 4:
         solve_pde = graph_4D()
+    if g.dims == 5:
+        solve_pde = graph_5D()
     if g.dims == 6:
         solve_pde = graph_6D()
 
@@ -85,6 +88,8 @@ def main():
              # Run the execution and pass input into graph
              if g.dims == 4:
                 solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, t_minh, l0)
+             if g.dims == 5:
+                solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, list_x5 ,t_minh, l0)
              if g.dims == 6:
                 solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6, t_minh, l0)
 

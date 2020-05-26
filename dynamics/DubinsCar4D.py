@@ -10,12 +10,11 @@ import computeGraphs
  theta_dot = w
  """
 class DubinsCar4D:
-    def __init__(self, x=[0,0,0,0], uMin = [-1,-1], uMax = [1,1], speed=1, dMin = [-0.25,-0.25], \
+    def __init__(self, x=[0,0,0,0], uMin = [-1,-1], uMax = [1,1], dMin = [-0.25,-0.25], \
                  dMax=[0.25,0.25], uMode="min", dMode="max"):
         self.x = x
         self.uMax = uMax
         self.uMin = uMin
-        self.speed = speed
         self.dMax = dMax
         self.dMin = dMin
         self.uMode = uMode
