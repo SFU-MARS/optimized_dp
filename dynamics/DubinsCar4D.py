@@ -20,7 +20,7 @@ class DubinsCar4D:
         self.uMode = uMode
         self.dMode = dMode
 
-    def opt_ctrl(self, t, state ,spat_deriv):
+    def opt_ctrl(self, t, state, spat_deriv):
         """
         :param t: time t
         :param state: tuple of coordinates
@@ -35,7 +35,7 @@ class DubinsCar4D:
 
         # Graph takes in 4 possible inputs, by default, for now
         opt_a = hcl.scalar(self.uMax[0], "opt_a")
-        opt_w = hcl.scalar(self.uMax[0], "opt_w")
+        opt_w = hcl.scalar(self.uMax[1], "opt_w")
         # Just create and pass back, even though they're not used
         in3   = hcl.scalar(0, "in3")
         in4   = hcl.scalar(0, "in4")
@@ -55,7 +55,6 @@ class DubinsCar4D:
 
     def optDstb(self, spat_deriv):
         """
-
         :param spat_deriv: tuple of spatial derivative in all dimensions
         :return: a tuple of optimal disturbances
         """
