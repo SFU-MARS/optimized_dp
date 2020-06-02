@@ -1,5 +1,6 @@
 # Optimizing Dynamic Programming-Based Algorithms
-This is an on going project in an attempt to solve Hamilton Jacobian partial differential equation (HJ PDE) easier and faster on all available hardware platforms.
+This is an on-going project in an attempt to make solving grid-based dynamic programming problems, such as Hamilton-Jacobi partial differential equations (HJ PDE) and table-based value iteration, easier and faster on all available hardware platforms.
+
 # Update 21st/May/2020
 The repo currently works for 4 and 6 dimension systems on CPU. 6 dimension graph currently not work with disturbances. 
 
