@@ -8,7 +8,7 @@ from user_definer import *
 def spa_derivX5_5d(i, j, k, l, m, V, g):  # Left -> right == Outer Most -> Inner Most
     left_deriv = hcl.scalar(0, "left_deriv")
     right_deriv = hcl.scalar(0, "right_deriv")
-    if 5 not in g.dims:
+    if 5 not in g.pDim:
         with hcl.if_(m == 0):
             left_boundary = hcl.scalar(0, "left_boundary")
             left_boundary[0] = V[i, j, k, l, m] + my_abs(V[i, j, k, l, m + 1] - V[i, j, k, l, m]) * my_sign(
@@ -45,7 +45,7 @@ def spa_derivX5_5d(i, j, k, l, m, V, g):  # Left -> right == Outer Most -> Inner
 def spa_derivX4_5d(i, j, k, l, m, V, g):  # Left -> right == Outer Most -> Inner Most
     left_deriv = hcl.scalar(0, "left_deriv")
     right_deriv = hcl.scalar(0, "right_deriv")
-    if 4 not in g.dims:
+    if 4 not in g.pDim:
         with hcl.if_(l == 0):
             left_boundary = hcl.scalar(0, "left_boundary")
             left_boundary[0] = V[i, j, k, l, m] + my_abs(V[i, j, k, l + 1, m] - V[i, j, k, l, m]) * my_sign(
@@ -82,7 +82,7 @@ def spa_derivX4_5d(i, j, k, l, m, V, g):  # Left -> right == Outer Most -> Inner
 def spa_derivX3_5d(i, j, k, l, m, V, g):  # Left -> right == Outer Most -> Inner Most
     left_deriv = hcl.scalar(0, "left_deriv")
     right_deriv = hcl.scalar(0, "right_deriv")
-    if 3 not in g.dims:
+    if 3 not in g.pDim:
         with hcl.if_(k == 0):
             left_boundary = hcl.scalar(0, "left_boundary")
             left_boundary[0] = V[i, j, k, l, m] + my_abs(V[i, j, k + 1, l, m] - V[i, j, k, l, m]) * my_sign(
@@ -119,7 +119,7 @@ def spa_derivX3_5d(i, j, k, l, m, V, g):  # Left -> right == Outer Most -> Inner
 def spa_derivX2_5d(i, j, k, l, m, V, g):  # Left -> right == Outer Most -> Inner Most
     left_deriv = hcl.scalar(0, "left_deriv")
     right_deriv = hcl.scalar(0, "right_deriv")
-    if 2 not in g.dims:
+    if 2 not in g.pDim:
         with hcl.if_(j == 0):
             left_boundary = hcl.scalar(0, "left_boundary")
             left_boundary[0] = V[i, j, k, l, m] + my_abs(V[i, j + 1, k, l, m] - V[i, j, k, l, m]) * my_sign(
@@ -156,7 +156,7 @@ def spa_derivX2_5d(i, j, k, l, m, V, g):  # Left -> right == Outer Most -> Inner
 def spa_derivX1_5d(i, j, k, l, m, V, g):  # Left -> right == Outer Most -> Inner Most
     left_deriv = hcl.scalar(0, "left_deriv")
     right_deriv = hcl.scalar(0, "right_deriv")
-    if 1 not in g.dims:
+    if 1 not in g.pDim:
         with hcl.if_(i == 0):
             left_boundary = hcl.scalar(0, "left_boundary")
             left_boundary[0] = V[i, j, k, l, m] + my_abs(V[i + 1, j, k, l, m] - V[i, j, k, l, m]) * my_sign(
