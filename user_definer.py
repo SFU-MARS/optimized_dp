@@ -50,7 +50,7 @@ Initial_value_f = CylinderShape(g, [3,4], np.zeros(4), 1)
 
 # Look-back lenght and time step
 lookback_length = 2.0
-t_step = 0.0
+t_step = 0.05
 
 small_number = 1e-5
 tau = np.arange(start = 0, stop = lookback_length + small_number, step = t_step)
