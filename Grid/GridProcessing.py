@@ -24,11 +24,3 @@ class grid:
             broadcast_map[i] = self.pts_each_dim[i]
             tmp = np.reshape(tmp, tuple(broadcast_map))
             self.vs.append(tmp)
-
-        # Turn pts_each_dim to complex numbers to input into meshgrid
-        #self.compl = []
-        #for i in range(self.dim):
-        #    self.compl.append(complex(0, pts_each_dim[i]))
-
-        # Grid 's meshgrid
-        #self.mg_X, self.mg_Y, self.mg_T = np.mgrid[self.min[0]:self.max[0]: complex_x, self.min[1]:self.max[1]: complex_y, self.min[2]:self.max[2]: complex_z]

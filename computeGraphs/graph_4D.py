@@ -100,6 +100,21 @@ def spa_derivX2_4d(i, j, k, l, V, g): #
             left_deriv[0] = (V[i, j, k, l] - V[i, j - 1, k, l]) / g.dx[1]
             right_deriv[0] = (V[i, j + 1, k, l] - V[i, j, k, l]) / g.dx[1]
         return left_deriv[0], right_deriv[0]
+    else:
+        with hcl.if_(j == 0):
+            left_boundary = hcl.scalar(0, "left_boundary")
+            left_boundary[0] = V[i, V.shape[1] - 1 , k, l]
+            left_deriv[0] = (V[i, j, k, l] - left_boundary[0]) / g.dx[1]
+            right_deriv[0] = (V[i, j + 1, k, l] - V[i, j, k, l]) / g.dx[1]
+        with hcl.elif_(j == V.shape[1] - 1):
+            right_boundary = hcl.scalar(0, "right_boundary")
+            right_boundary[0] = V[i, 0, k, l]
+            left_deriv[0] = (V[i, j, k, l] - V[i, j - 1, k, l]) / g.dx[1]
+            right_deriv[0] = (right_boundary[0] - V[i, j, k, l]) / g.dx[1]
+        with hcl.elif_(j != 0 and j != V.shape[1] - 1):
+            left_deriv[0] = (V[i, j, k, l] - V[i, j - 1, k, l]) / g.dx[1]
+            right_deriv[0] = (V[i, j + 1, k, l] - V[i, j, k, l]) / g.dx[1]
+        return left_deriv[0], right_deriv[0]
 
 def spa_derivX1_4d(i, j, k, l, V, g): # Left -> right == Outer Most -> Inner Most
     left_deriv = hcl.scalar(0, "left_deriv")
@@ -121,7 +136,21 @@ def spa_derivX1_4d(i, j, k, l, V, g): # Left -> right == Outer Most -> Inner Mos
             left_deriv[0] = (V[i, j, k, l] - V[i -1, j, k, l]) / g.dx[0]
             right_deriv[0] = (V[i + 1, j, k, l] - V[i, j, k, l]) / g.dx[0]
         return left_deriv[0], right_deriv[0]
-
+    else:
+        with hcl.if_(i == 0):
+            left_boundary = hcl.scalar(0, "left_boundary")
+            left_boundary[0] = V[V.shape[0] - 1, j, k, l]
+            left_deriv[0] = (V[i, j, k, l] - left_boundary[0]) / g.dx[0]
+            right_deriv[0] = (V[i + 1, j, k, l] - V[i, j, k, l]) / g.dx[0]
+        with hcl.elif_(i == V.shape[0] - 1):
+            right_boundary = hcl.scalar(0, "right_boundary")
+            right_boundary[0] = V[0, j, k, l]
+            left_deriv[0] = (V[i, j, k, l] - V[i - 1, j, k, l]) / g.dx[0]
+            right_deriv[0] = (right_boundary[0] - V[i, j, k, l]) / g.dx[0]
+        with hcl.elif_(i != 0 and i != V.shape[0] - 1):
+            left_deriv[0] = (V[i, j, k, l] - V[i -1, j, k, l]) / g.dx[0]
+            right_deriv[0] = (V[i + 1, j, k, l] - V[i, j, k, l]) / g.dx[0]
+        return left_deriv[0], right_deriv[0]
 
 ########################## 4D Graph definition #################################
 def graph_4D():
@@ -129,15 +158,14 @@ def graph_4D():
     V_init = hcl.placeholder(tuple(g.pts_each_dim), name="V_init", dtype=hcl.Float())
     l0 = hcl.placeholder(tuple(g.pts_each_dim), name="l0", dtype=hcl.Float())
     t = hcl.placeholder((2,), name="t", dtype=hcl.Float())
-    # probe = hcl.placeholder(tuple(g.pts_each_dim), name="probe", dtype=hcl.Float())
-
+    probe = hcl.placeholder(tuple(g.pts_each_dim), name="probe", dtype=hcl.Float())
 
     # Positions vector
     x1 = hcl.placeholder((g.pts_each_dim[0],), name="x1", dtype=hcl.Float())
     x2 = hcl.placeholder((g.pts_each_dim[1],), name="x2", dtype=hcl.Float())
     x3 = hcl.placeholder((g.pts_each_dim[2],), name="x3", dtype=hcl.Float())
     x4 = hcl.placeholder((g.pts_each_dim[3],), name="x4", dtype=hcl.Float())
-    def graph_create(V_new, V_init, x1, x2, x3, x4, t, l0):
+    def graph_create(V_new, V_init, x1, x2, x3, x4, t, l0, probe):
         # Specify intermediate tensors
         deriv_diff1 = hcl.compute(V_init.shape, lambda *x:0, "deriv_diff1")
         deriv_diff2 = hcl.compute(V_init.shape, lambda *x:0, "deriv_diff2")
@@ -177,14 +205,21 @@ def graph_4D():
             # t[0] = min_deriv2[0]
             return stepBound[0]
 
-            # Min with V_before
-
+        # Min with V_before
         def minVWithVInit(i, j, k, l):
             with hcl.if_(V_new[i, j, k, l] > V_init[i, j, k, l]):
                 V_new[i, j, k, l] = V_init[i, j, k, l]
 
+        def maxVWithVInit(i, j, k, l):
+            with hcl.if_(V_new[i, j, k, l] < V_init[i, j, k, l]):
+                V_new[i, j, k, l] = V_init[i, j, k, l]
+
         def maxVWithV0(i, j, k, l):  # Take the max
             with hcl.if_(V_new[i, j, k, l] < l0[i, j, k, l]):
+                V_new[i, j, k, l] = l0[i, j, k, l]
+
+        def minVWithV0(i, j, k, l):
+            with hcl.if_(V_new[i, j, k, l] > l0[i, j, k, l]):
                 V_new[i, j, k, l] = l0[i, j, k, l]
 
         # Calculate Hamiltonian for every grid point in V_init
@@ -411,7 +446,7 @@ def graph_4D():
                             diss[0] = 0.5 * (
                                         deriv_diff1[i, j, k, l] * alpha1[0] + deriv_diff2[i, j, k, l] * alpha2[0] + deriv_diff3[
                                     i, j, k, l] * alpha3[0] + deriv_diff4[i, j, k, l] * alpha4[0])
-
+                            probe[i, j, k, l] = alpha1[0]
                             # Finally
                             V_new[i, j, k, l] = -(V_new[i, j, k, l] - diss[0])
                             # Get maximum alphas in each dimension
@@ -429,18 +464,22 @@ def graph_4D():
                                 # Determine time step
         delta_t = hcl.compute((1,), lambda x: step_bound(), name="delta_t")
         # Integrate
-        # if compMethod == 'HJ_PDE':
         result = hcl.update(V_new, lambda i, j, k, l: V_init[i, j, k, l] + V_new[i, j, k, l] * delta_t[0])
+
+        # Different computation method check
         if compMethod == 'maxVWithV0':
             result = hcl.update(V_new, lambda i, j, k, l: maxVWithV0(i, j, k, l))
-        # if compMethod == 'maxVWithCStraint':
-        #    result = hcl.update(V_new, lambda i, j, k, l: maxVWithCStraint(i, j, k, l))
+        if compMethod == 'minVWithV0':
+            result = hcl.update(V_new, lambda i, j, k, l: minVWithV0(i, j, k, l))
         if compMethod == 'minVWithVInit':
             result = hcl.update(V_new, lambda i, j, k, l: minVWithVInit(i, j, k, l))
-            # Copy V_new to V_init
+        if compMethod == 'maxVWithVInit':
+            result = hcl.update(V_new, lambda i, j, k, l: maxVWithVInit(i, j, k, l))
+
+        # Copy V_new to V_init
         hcl.update(V_init, lambda i, j, k, l: V_new[i, j, k, l])
         return result
-    s = hcl.create_schedule([V_f, V_init, x1, x2, x3, x4, t, l0], graph_create)
+    s = hcl.create_schedule([V_f, V_init, x1, x2, x3, x4, t, l0, probe], graph_create)
     ##################### CODE OPTIMIZATION HERE ###########################
     print("Optimizing\n")
 

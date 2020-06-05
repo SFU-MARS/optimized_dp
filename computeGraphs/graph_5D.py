@@ -190,7 +190,7 @@ def spa_derivX1_5d(i, j, k, l, m, V, g):  # Left -> right == Outer Most -> Inner
         return left_deriv[0], right_deriv[0]
 
 
-########################## 6D graph definition ########################
+########################## 5D graph definition ########################
 
 # Note that t has 2 elements t1, t2
 def graph_5D():
@@ -255,14 +255,22 @@ def graph_5D():
             with hcl.if_(V_new[i, j, k, l, m] < l0[i, j, k, l, m]):
                 V_new[i, j, k, l, m] = l0[i, j, k, l, m]
 
+        def minVWithV0(i, j, k, l, m):  # Take the max
+            with hcl.if_(V_new[i, j, k, l, m] > l0[i, j, k, l, m]):
+                V_new[i, j, k, l, m] = l0[i, j, k, l, m]
+
         # Max(V, g )
-        def maxVWithCStraint(i, j, k, l, m):
-            with hcl.if_(V_new[i, j, k, l, m] < 5.0):
-                V_new[i, j, k, l, m] = 1.0
+        # def maxVWithCStraint(i, j, k, l, m):
+        #     with hcl.if_(V_new[i, j, k, l, m] < 5.0):
+        #         V_new[i, j, k, l, m] = 1.0
 
         # Min with V_before
         def minVWithVInit(i, j, k, l, m):
             with hcl.if_(V_new[i, j, k, l, m] > V_init[i, j, k, l, m]):
+                V_new[i, j, k, l, m] = V_init[i, j, k, l, m]
+
+        def maxVWithVInit(i, j, k, l, m):
+            with hcl.if_(V_new[i, j, k, l, m] < V_init[i, j, k, l, m]):
                 V_new[i, j, k, l, m] = V_init[i, j, k, l, m]
 
         # Calculate Hamiltonian for every grid point in V_init
@@ -319,7 +327,7 @@ def graph_5D():
                                         (dV_dx1[0], dV_dx2[0], dV_dx3[0], dV_dx4[0], dV_dx5[0]))
 
                                     # Find rates of changes based on dynamics equation
-                                    dx1_dt, dx2_dt, dx3_dt, dx4_dt, dx5_dt, dx6_dt = my_object.dynamics(t, (
+                                    dx1_dt, dx2_dt, dx3_dt, dx4_dt, dx5_dt = my_object.dynamics(t, (
                                     x1[i], x2[j], x3[k], x4[l], x5[m]), uOpt, dOpt)
 
                                     # Calculate Hamiltonian terms:
@@ -550,8 +558,10 @@ def graph_5D():
                             lambda i, j, k, l, m: V_init[i, j, k, l, m] + V_new[i, j, k, l, m] * delta_t[0])
         if compMethod == 'maxVWithV0':
             result = hcl.update(V_new, lambda i, j, k, l, m: maxVWithV0(i, j, k, l, m))
-        if compMethod == 'maxVWithCStraint':
-            result = hcl.update(V_new, lambda i, j, k, l, m: maxVWithCStraint(i, j, k, l, m))
+        if compMethod == 'minVWithV0':
+            result = hcl.update(V_new, lambda i, j, k, l, m: minVWithV0(i, j, k, l, m))
+        if compMethod == 'maxVWithVInit':
+            result = hcl.update(V_new, lambda i, j, k, l, m: maxVWithVInit(i, j, k, l, m))
         if compMethod == 'minVWithVInit':
             result = hcl.update(V_new, lambda i, j, k, l, m: minVWithVInit(i, j, k, l, m))
         # Copy V_new to V_init

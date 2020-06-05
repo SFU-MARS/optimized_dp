@@ -19,7 +19,7 @@ The repo currently works for 4 and 6 dimension systems on CPU. 6 dimension graph
 * Create a class file in folder dynamics/ to specify your system characteristics
 * Use user_definer.py to specify grid, the object and computation method (ex. "maxWithVInit": calculating tube). Remember to import the file
 created earlier in user_definer.py
-* For large dimensional system (greater than 4), you may want to save the final value function for processing. In the file solver.py, at line 110, fill in anycodes to save it.
-* If you want to save value functions to disk by time step, fill in any code to save it at around line 100 inside the while loop.
+* For large dimensional system (greater than 3), you may want to save the final value function for processing. In the file solver.py, at line 116, fill in anycodes to save it.
+* If you want to save value functions to disk by time step, fill in any code to save it at around line 108 inside the while loop.
 # Running
 ``` python3 solver.py ```

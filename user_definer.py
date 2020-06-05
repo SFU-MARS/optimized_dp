@@ -28,7 +28,7 @@ my_car = Humanoid_6D()
 # Use the grid to initialize initial value function
 Initial_value_f = Rectangle6D(g)
 
-# Look-back lenght and time step
+# Look-back length and time step
 lookback_length = 2.0
 t_step = 0.05
 
@@ -50,9 +50,10 @@ Initial_value_f = CylinderShape(g, [3,4], np.zeros(4), 1)
 
 # Look-back lenght and time step
 lookback_length = 2.0
-t_step = 0.05
+t_step = 0.0
 
-tau = np.arange(start = 0, stop = lookback_length + t_step, step = t_step)
+small_number = 1e-5
+tau = np.arange(start = 0, stop = lookback_length + small_number, step = t_step)
 print("Welcome to optimized_dp \n")
 
 # Use the following variable to specify the characteristics of computation
