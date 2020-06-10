@@ -3,7 +3,7 @@ from Grid.GridProcessing import grid
 from Shapes.ShapesFunctions import *
 
 # Specify the  file that includes dynamic systems
-from dynamics.Humannoid6D_sys1 import *
+from dynamics.DubinsCar import *
 from dynamics.DubinsCar4D import *
 import scipy.io as sio
 
@@ -39,7 +39,7 @@ print("Welcome to optimized_dp \n")
 compMethod = "minVWithVInit"
 my_object  = my_car
 my_shape = Initial_value_f """
-
+"""
 g = grid(np.array([-5.0, -5.0, -1.0, -math.pi]), np.array([5.0, 5.0, 1.0, math.pi]), 4, np.array([40, 40, 50, 50]), [3])
 
 # Define my object
@@ -59,6 +59,30 @@ print("Welcome to optimized_dp \n")
 # Use the following variable to specify the characteristics of computation
 compMethod = "none"
 my_object  = my_car
+my_shape = Initial_value_f
+"""
+g = grid(np.array([-5.0, -5.0, -math.pi]), np.array([5.0, 5.0, math.pi]), 3, np.array([80, 80, 80]), [2])
+
+# Define my object
+my_car = DubinsCar()
+
+# Use the grid to initialize initial value function
+Initial_value_f = CylinderShape(g, [3], np.zeros(3), 1)
+
+# Look-back lenght and time step
+lookback_length = 1.0
+t_step = 0.02
+
+small_number = 1e-5
+tau = np.arange(start = 0, stop = lookback_length + small_number, step = t_step)
+print("Welcome to optimized_dp \n")
+
+# Define your constraint_values array here and set constrainedDefined = True
+
+# Use the following variable to specify the characteristics of computation
+compMethod = ['minVWithV0', 'minVWithCStraint']
+my_object  = my_car
+constrainedDefined = False
 my_shape = Initial_value_f
 
 
