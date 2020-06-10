@@ -196,7 +196,10 @@ def spa_derivX1_5d(i, j, k, l, m, V, g):  # Left -> right == Outer Most -> Inner
 def graph_5D():
     V_f = hcl.placeholder(tuple(g.pts_each_dim), name="V_f", dtype=hcl.Float())
     V_init = hcl.placeholder(tuple(g.pts_each_dim), name="V_init", dtype=hcl.Float())
+    # Initial target set _ value function at t = 0 ~~ inputed by user
     l0 = hcl.placeholder(tuple(g.pts_each_dim), name="l0", dtype=hcl.Float())
+    # Constraint function ~~ input by user ( not time-variant for now)
+    G = hcl.placeholder(tuple(g.pts_each_dim), name="G", dtype=hcl.Float())
     t = hcl.placeholder((2,), name="t", dtype=hcl.Float())
 
     # Positions vector
@@ -206,7 +209,7 @@ def graph_5D():
     x4 = hcl.placeholder((g.pts_each_dim[3],), name="x4", dtype=hcl.Float())
     x5 = hcl.placeholder((g.pts_each_dim[4],), name="x5", dtype=hcl.Float())
 
-    def graph_create(V_new, V_init, x1, x2, x3, x4, x5, t, l0):
+    def graph_create(V_new, V_init, x1, x2, x3, x4, x5, t, l0, G):
         # Specify intermediate tensors
         deriv_diff1 = hcl.compute(V_init.shape, lambda *x: 0, "deriv_diff1")
         deriv_diff2 = hcl.compute(V_init.shape, lambda *x: 0, "deriv_diff2")
@@ -251,6 +254,7 @@ def graph_5D():
             # t[0] = min_deriv2[0]
             return stepBound[0]
 
+        # Comparison with the initial value function
         def maxVWithV0(i, j, k, l, m):  # Take the max
             with hcl.if_(V_new[i, j, k, l, m] < l0[i, j, k, l, m]):
                 V_new[i, j, k, l, m] = l0[i, j, k, l, m]
@@ -259,12 +263,16 @@ def graph_5D():
             with hcl.if_(V_new[i, j, k, l, m] > l0[i, j, k, l, m]):
                 V_new[i, j, k, l, m] = l0[i, j, k, l, m]
 
-        # Max(V, g )
-        # def maxVWithCStraint(i, j, k, l, m):
-        #     with hcl.if_(V_new[i, j, k, l, m] < 5.0):
-        #         V_new[i, j, k, l, m] = 1.0
+        # Comparison with the constraint function
+        def maxVWithCStraint(i, j, k, l, m):
+             with hcl.if_(V_new[i, j, k, l, m] < G[i, j, k, l, m]):
+                 V_new[i, j, k, l, m] = G[i, j, k, l, m]
 
-        # Min with V_before
+        def minVWithCStraint(i, j, k, l, m):
+             with hcl.if_(V_new[i, j, k, l, m] > G[i, j, k, l, m]):
+                 V_new[i, j, k, l, m] = G[i, j, k, l, m]
+
+        # Comparison with the previous value function of previous time step
         def minVWithVInit(i, j, k, l, m):
             with hcl.if_(V_new[i, j, k, l, m] > V_init[i, j, k, l, m]):
                 V_new[i, j, k, l, m] = V_init[i, j, k, l, m]
@@ -323,7 +331,7 @@ def graph_5D():
                                     uOpt = my_object.opt_ctrl(t, (x1[i], x2[j], x3[k], x4[l], x5[m]), (
                                     dV_dx1[0], dV_dx2[0], dV_dx3[0], dV_dx4[0], dV_dx5[0]))
                                     # Find optimal disturbance
-                                    dOpt = my_object.optDstb(
+                                    dOpt = my_object.optDstb(t, (x1[i], x2[j], x3[k], x4[l], x5[m]),
                                         (dV_dx1[0], dV_dx2[0], dV_dx3[0], dV_dx4[0], dV_dx5[0]))
 
                                     # Find rates of changes based on dynamics equation
@@ -420,12 +428,6 @@ def graph_5D():
             alpha4 = hcl.scalar(0, "alpha4")
             alpha5 = hcl.scalar(0, "alpha5")
 
-            # Find LOWER BOUND optimal disturbance
-            dOptL1[0], dOptL2[0], dOptL3[0], dOptL4[0], dOptL5[0] = my_object.optDstb(
-                (min_deriv1[0], min_deriv2[0], min_deriv3[0], min_deriv4[0], min_deriv5[0]))
-            # Find UPPER BOUND optimal disturbance
-            dOptU1[0], dOptU2[0], dOptU3[0], dOptU4[0], dOptU5[0] = my_object.optDstb(
-                (max_deriv1[0], max_deriv2[0], max_deriv3[0], max_deriv4[0], max_deriv5[0]))
             with hcl.for_(0, V_init.shape[0], name="i") as i:
                 with hcl.for_(0, V_init.shape[1], name="j") as j:
                     with hcl.for_(0, V_init.shape[2], name="k") as k:
@@ -454,6 +456,12 @@ def graph_5D():
                                     dx_UU3 = hcl.scalar(0, "dx_UU3")
                                     dx_UU4 = hcl.scalar(0, "dx_UU4")
                                     dx_UU5 = hcl.scalar(0, "dx_UU5")
+                                    # Find LOWER BOUND optimal disturbance
+                                    dOptL1[0], dOptL2[0], dOptL3[0], dOptL4[0], dOptL5[0] = my_object.optDstb(t, (x1[i], x2[j], x3[k], x4[l], x5[m]),
+                                        (min_deriv1[0], min_deriv2[0], min_deriv3[0], min_deriv4[0], min_deriv5[0]))
+                                    # Find UPPER BOUND optimal disturbance
+                                    dOptU1[0], dOptU2[0], dOptU3[0], dOptU4[0], dOptU5[0] = my_object.optDstb(t, (x1[i], x2[j], x3[k], x4[l], x5[m]),
+                                        (max_deriv1[0], max_deriv2[0], max_deriv3[0], max_deriv4[0], max_deriv5[0]))
 
                                     # Find LOWER BOUND optimal control
                                     uOptL1[0], uOptL2[0], uOptL3[0], uOptL4[0], uOptL5[0] = my_object.opt_ctrl(t, \
@@ -556,20 +564,24 @@ def graph_5D():
         # if compMethod == 'HJ_PDE':
         result = hcl.update(V_new,
                             lambda i, j, k, l, m: V_init[i, j, k, l, m] + V_new[i, j, k, l, m] * delta_t[0])
-        if compMethod == 'maxVWithV0':
+        if 'maxVWithV0' in compMethod:
             result = hcl.update(V_new, lambda i, j, k, l, m: maxVWithV0(i, j, k, l, m))
-        if compMethod == 'minVWithV0':
+        if 'minVWithV0' in compMethod:
             result = hcl.update(V_new, lambda i, j, k, l, m: minVWithV0(i, j, k, l, m))
-        if compMethod == 'maxVWithVInit':
+        if 'maxVWithVInit' in compMethod:
             result = hcl.update(V_new, lambda i, j, k, l, m: maxVWithVInit(i, j, k, l, m))
-        if compMethod == 'minVWithVInit':
+        if 'minVWithVInit' in compMethod:
             result = hcl.update(V_new, lambda i, j, k, l, m: minVWithVInit(i, j, k, l, m))
+        if 'minVWithCStraint' in compMethod:
+            result = hcl.update(V_new, lambda i, j, k, l, m: minVWithCStraint(i, j, k, l, m))
+        if 'maxVWithCStraint' in compMethod:
+            result = hcl.update(V_new, lambda i, j, k, l, m: maxVWithCStraint(i, j, k, l, m))
         # Copy V_new to V_init
         hcl.update(V_init, lambda i, j, k, l, m: V_new[i, j, k, l, m])
         return result
 
 
-    s = hcl.create_schedule([V_f, V_init, x1, x2, x3, x4, x5, t, l0], graph_create)
+    s = hcl.create_schedule([V_f, V_init, x1, x2, x3, x4, x5, t, l0, G], graph_create)
     ##################### CODE OPTIMIZATION HERE ###########################
     print("Optimizing\n")
 
