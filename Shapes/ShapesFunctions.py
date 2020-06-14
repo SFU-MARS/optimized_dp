@@ -71,3 +71,15 @@ def Rectangle6D(grid):
     data = np.maximum(data,  grid.vs[5] - 0.6)
     data = np.maximum(data, -grid.vs[5] - 0.6)
     return data
+    
+def ShapeRectangle(grid, target_min, target_max):
+    data = np.maximum(grid.vs[0] - target_max[0], -grid.vs[0] + target_min[0])
+    
+    for i in range(1, grid.dims):
+        data = np.maximum(data,  grid.vs[i] - target_max[i])
+        data = np.maximum(data, -grid.vs[1] + target_min[i])
+    
+    return data
+
+def Rect_around_point(grid, target_point):
+    return ShapeRectangle(grid, target_point - 1.5*grid.dx, target_point + 1.5*grid.dx)

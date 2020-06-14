@@ -64,7 +64,7 @@ class Humanoid_6D:
         x6_dot[0] = state[2] * uOpt[2]/ self.J
         return (x1_dot[0], x2_dot[0], x3_dot[0], x4_dot[0], x5_dot[0], x6_dot[0])
 
-    def opt_ctrl(self, t, state ,spat_deriv):
+    def opt_ctrl(self, t, state, spat_deriv):
         """
         :param t: time t
         :param state: tuple of coordinates in 6 dimensions
@@ -84,16 +84,22 @@ class Humanoid_6D:
         parSum= hcl.scalar(0, "parSum")
         
         with hcl.if_(self.uMode == "min"):
-            parSum[0] = spat_deriv[1] + spat_deriv[5]*state[2]/self.J
-            SumUU[0] = spat_deriv[1]*(self.g + self.uMax[1]) * (state[0] + self.uMax[0])/state[2] + spat_deriv[3] * self.uMax[1]
-            SumUL[0] = spat_deriv[1]*(self.g + self.uMax[1]) * (state[0] + self.uMin[0])/state[2] + spat_deriv[3] * self.uMax[1]
-            SumLU[0] = spat_deriv[1]*(self.g + self.uMin[1]) * (state[0] + self.uMax[0])/state[2] + spat_deriv[3] * self.uMin[1]
-            SumLL[0] = spat_deriv[1]*(self.g + self.uMin[1]) * (state[0] + self.uMin[0])/state[2] + spat_deriv[3] * self.uMin[1]
+            # everything containing (u1, u2) in Hamiltonian, for all combinations of u1 and u2
+            SumUU[0] = spat_deriv[1]*(self.g + self.uMax[1]) * (state[0] + self.uMax[0])/state[2] + \
+                       spat_deriv[3] * self.uMax[1]
+            SumUL[0] = spat_deriv[1]*(self.g + self.uMax[1]) * (state[0] + self.uMin[0])/state[2] + \
+                       spat_deriv[3] * self.uMax[1]
+            SumLU[0] = spat_deriv[1]*(self.g + self.uMin[1]) * (state[0] + self.uMax[0])/state[2] + \
+                       spat_deriv[3] * self.uMin[1]
+            SumLL[0] = spat_deriv[1]*(self.g + self.uMin[1]) * (state[0] + self.uMin[0])/state[2] + \
+                       spat_deriv[3] * self.uMin[1]
 
+            # try every combination of u1 and u2 and take minimum
             with hcl.if_(SumUU[0] > SumUL[0]):
                 uOpt1[0] = self.uMin[0]
                 uOpt2[0] = self.uMax[1]
                 SumUU[0] = SumUL[0]
+                
             with hcl.elif_(SumUU[0] < SumUL[0]):
                 uOpt1[0] = self.uMax[0]
                 uOpt2[0] = self.uMax[1]
@@ -107,9 +113,13 @@ class Humanoid_6D:
                 uOpt1[0] = self.uMin[0]
                 uOpt2[0] = self.uMin[1]
 
-            # Find third controls
+            # Find u3
+            # everything multiplied by u3 in Hamiltonian
+            parSum[0] = spat_deriv[1] + spat_deriv[5]*state[2]/self.J 
+            
             with hcl.if_(parSum[0] > 0):
                 uOpt3[0] = self.uMin[2]
+                
             with hcl.elif_(parSum[0] < 0):
                 uOpt3[0] = self.uMax[2]
                 
