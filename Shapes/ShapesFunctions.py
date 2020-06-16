@@ -71,7 +71,11 @@ def Rectangle6D(grid):
     data = np.maximum(data,  grid.vs[5] - 0.6)
     data = np.maximum(data, -grid.vs[5] - 0.6)
     return data
-    
+
+def HalfPlane(grid, target_min, dim):
+    data = grid.vs[dim] - target_min
+    return data
+
 def ShapeRectangle(grid, target_min, target_max):
     data = np.maximum(grid.vs[0] - target_max[0], -grid.vs[0] + target_min[0])
     

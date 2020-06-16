@@ -7,7 +7,7 @@ from computeGraphs.CustomGraphFunctions import *
 from Plots.plotting_utilities import *
 from user_definer import *
 from argparse import ArgumentParser
-from computeGraphs.graph_3D import *
+#from computeGraphs.graph_3D import *
 from computeGraphs.graph_4D import *
 from computeGraphs.graph_5D import *
 from computeGraphs.graph_6D import *
@@ -40,8 +40,12 @@ def main():
     V_1 = hcl.asarray(np.zeros(tuple(g.pts_each_dim)))
     l0  = hcl.asarray(my_shape)
     probe = hcl.asarray(np.zeros(tuple(g.pts_each_dim)))
+
+    constrainedDefined = True #Juan
+
     if constrainedDefined == False:
         G = hcl.asarray(np.zeros(tuple(g.pts_each_dim)))
+        # it should be -inf
     else:
         G = hcl.asarray(constraint_values)
     #obstacle = hcl.asarray(cstraint_values)
@@ -69,9 +73,9 @@ def main():
         list_x6 = hcl.asarray(list_x6)
 
     # Get executable
-    if g.dims == 3:
-        solve_pde = graph_3D()
-    elif g.dims == 4:
+    #if g.dims == 3:
+    #    solve_pde = graph_3D()
+    if g.dims == 4:
         solve_pde = graph_4D()
     elif g.dims == 5:
         solve_pde = graph_5D()
@@ -98,7 +102,6 @@ def main():
 
              # Run the execution and pass input into graph
              if g.dims == 3:
-                 print("Running 3D case\n")
                  solve_pde(V_1, V_0, list_x1, list_x2, list_x3, t_minh, l0, probe)
              elif g.dims == 4:
                 solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, t_minh, l0)
@@ -116,6 +119,7 @@ def main():
              print(t_minh)
              print("Computational time to integrate (s): {:.5f}".format(time.time() - start))
              # Saving data into disk
+             #print("".format(V_1.asnumpy()-))
 
 
     # Time info printing
@@ -130,9 +134,10 @@ def main():
     #print(V)
     #print(V_1.asnumpy())
 
+    sio.savemat('dataV.mat', {'dataV':V_1.asnumpy()})
     ##################### PLOTTING #####################
-    if args.plot:
-        plot_isosurface(g, V_1.asnumpy(), [0, 1, 2])
+    #if args.plot:
+    #    plot_isosurface(g, V_1.asnumpy(), [0, 1, 2])
 
 
 if __name__ == '__main__':
