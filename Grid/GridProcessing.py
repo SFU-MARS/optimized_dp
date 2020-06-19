@@ -1,6 +1,6 @@
 import numpy as np
 
-class grid:
+class Grid:
   def __init__(self, min, max, dims ,pts_each_dim, pDim=[]):
         self.max = max
         self.min = min

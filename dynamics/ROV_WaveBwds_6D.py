@@ -5,8 +5,9 @@ import math
 from computeGraphs.CustomGraphFunctions import my_abs
 
 class ROV_WaveBwds_6D:
-    def __init__(self, x=[0,0,0,0,0,0], uMin=np.array([-6, -15]), uMax=np.array([6, 15]), pMin=np.array([-0.2, -0.15]), pMax=np.array([0.2, 0.15]), dMin=np.array([-0.02, -0.02, -0.01, -0.01])\
-                 , dMax=np.array([0.02, 0.02, 0.01, 0.01]), dims=6, uMode="min", dMode="max"):
+    def __init__(self, x=[0, 0, 0, 0, 0, 0], uMin=np.array([-6, -15]), uMax=np.array([6, 15]), pMin=np.array([-0.2, -0.15]), pMax=np.array([0.2, 0.15]),
+                 dMin=np.array([-0.02, -0.02, -0.01, -0.01]), dMax=np.array([0.02, 0.02, 0.01, 0.01]),
+                 dims=6, uMode="min", dMode="max"):
         self.x = x
         self.uMode = uMode
         self.dMode = dMode

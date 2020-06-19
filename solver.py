@@ -113,6 +113,7 @@ def main():
     print("Finished solving\n")
 
     # V1 is the final value array, fill in anything to use it
+    # e.g. np.save("final_values", V_1.asnumpy())
 
 
 
