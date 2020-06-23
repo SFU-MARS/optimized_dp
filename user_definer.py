@@ -70,6 +70,8 @@ my_shape = Initial_value_f
 # DubinsCar 3D system
 """
 g = grid(np.array([-5.0, -5.0, -math.pi]), np.array([5.0, 5.0, math.pi]), 3, np.array([80, 80, 80]), [2])
+=======
+g = grid(np.array([-5.0, -5.0, -math.pi]), np.array([5.0, 5.0, math.pi]), 3, np.array([80, 80, 80]), [2])
 
 # Define my object
 my_car = DubinsCar()
@@ -91,10 +93,10 @@ print("Welcome to optimized_dp \n")
 compMethod = ['minVWithV0', 'minVWithCStraint']
 my_object  = my_car
 constrainedDefined = False
-my_shape = Initial_value_f
-"""
+my_shape = Initial_value_f"""
 
 # 5D Dubins Avoidance
+
 #g = grid(np.array([-20.0, -20.0, -math.pi, -10, -10]), np.array([20, 20, math.pi, 10, 10]), 5, np.array([40, 40, 20, 20, 20]), [2])
 g = grid(np.array([-20.0, -20.0, -math.pi, -5, -5]), np.array([20, 20, math.pi, 10, 10]), 5, np.array([40, 40, 20, 20, 20]), [2])
 
@@ -127,7 +129,8 @@ print("Welcome to optimized_dp \n")
 # Use the following variable to specify the characteristics of computation
 #compMethod = "none"
 #compMethod = "minVWithVInit"
-compMethod = "minVWithV0"
-#compMethod = ["minVWithV0","maxVWithCStraint"]
+#compMethod = "minVWithV0"
+#compMethod = ["minVWithV0","maxVWithCStraint"] #Juan
+compMethod = ['minVWithV0', 'minVWithCStraint'] 
 my_object  = my_object
 my_shape = Initial_value_f

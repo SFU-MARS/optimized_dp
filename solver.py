@@ -46,7 +46,7 @@ def main():
 
     if constrainedDefined == False:
         G = hcl.asarray(np.zeros(tuple(g.pts_each_dim)))
-        # it should be -inf
+        # Juan: it should be -inf?
     else:
         G = hcl.asarray(constraint_values)
     #obstacle = hcl.asarray(cstraint_values)
@@ -135,11 +135,11 @@ def main():
     #print(V)
     #print(V_1.asnumpy())
 
-    sio.savemat('dataV.mat', {'dataV':V_1.asnumpy()})
+    #sio.savemat('dataV.mat', {'dataV':V_1.asnumpy()})
+    sio.savemat('optimized_dubins_dubins_safe_V_circle_Radius_2_Speed_10_SafetyTime_15.mat', {'dataV':V_1.asnumpy()})
     ##################### PLOTTING #####################
     #if args.plot:
     #    plot_isosurface(g, V_1.asnumpy(), [0, 1, 2])
-
 
 if __name__ == '__main__':
   main()
