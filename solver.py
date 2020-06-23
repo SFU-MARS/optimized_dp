@@ -42,6 +42,7 @@ def main():
     probe = hcl.asarray(np.zeros(tuple(g.pts_each_dim)))
 
     constrainedDefined = True #Juan
+    #V1_old = np.memmap('V_1.npy',dtype='float32',mode='w+',shape=tuple(g.pts_each_dim)) #Juan
 
     if constrainedDefined == False:
         G = hcl.asarray(np.zeros(tuple(g.pts_each_dim)))
@@ -94,6 +95,7 @@ def main():
     for i in range (1, len(tau)):
         #tNow = tau[i-1]
         t_minh= hcl.asarray(np.array((tNow, tau[i])))
+        V1_old = V_1.asnumpy() #juan: it was added to check the convergence
         while tNow <= tau[i] - 1e-4:
              # Start timing
              start = time.time()
@@ -118,8 +120,7 @@ def main():
              # Some information printing
              print(t_minh)
              print("Computational time to integrate (s): {:.5f}".format(time.time() - start))
-             # Saving data into disk
-             #print("".format(V_1.asnumpy()-))
+        print("Difference respect to previous computation: {}".format(np.max(np.abs(V_1.asnumpy()-V1_old))))
 
 
     # Time info printing

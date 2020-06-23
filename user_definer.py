@@ -95,10 +95,12 @@ my_shape = Initial_value_f
 """
 
 # 5D Dubins Avoidance
-g = grid(np.array([-20.0, -20.0, -math.pi, -10, -10]), np.array([20, 20, math.pi, 10, 10]), 5, np.array([40, 40, 20, 20, 20]), [2])
+#g = grid(np.array([-20.0, -20.0, -math.pi, -10, -10]), np.array([20, 20, math.pi, 10, 10]), 5, np.array([40, 40, 20, 20, 20]), [2])
+g = grid(np.array([-20.0, -20.0, -math.pi, -5, -5]), np.array([20, 20, math.pi, 10, 10]), 5, np.array([40, 40, 20, 20, 20]), [2])
 
 # Define my object
-my_object = DubinsCar5DAvoid(x=[0,0,0,0,0], u_theta_max = math.pi/10, u_v_max=3, d_theta_max=math.pi/10, d_v_max=3, uMode="max", dMode="min")
+#my_object = DubinsCar5DAvoid(x=[0,0,0,0,0], u_theta_max = math.pi/10, u_v_max=3, d_theta_max=math.pi/10, d_v_max=3, uMode="max", dMode="min")
+my_object = DubinsCar5DAvoid(x=[0,0,0,0,0], u_theta_max = math.pi/2, u_v_max=3, d_theta_max=math.pi/2, d_v_max=3, uMode="max", dMode="min")
 
 # Use the grid to initialize initial value function
 
@@ -126,5 +128,6 @@ print("Welcome to optimized_dp \n")
 #compMethod = "none"
 #compMethod = "minVWithVInit"
 compMethod = "minVWithV0"
+#compMethod = ["minVWithV0","maxVWithCStraint"]
 my_object  = my_object
 my_shape = Initial_value_f
