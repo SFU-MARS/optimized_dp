@@ -120,7 +120,8 @@ def main():
              # Some information printing
              print(t_minh)
              print("Computational time to integrate (s): {:.5f}".format(time.time() - start))
-        print("Difference respect to previous computation: {}".format(np.max(np.abs(V_1.asnumpy()-V1_old))))
+        print("Max diff. from previous time step: {}".format(np.max(np.abs(V_1.asnumpy()-V1_old))))
+        print("Avg diff. from previous time step: {}".format(np.mean(np.abs(V_1.asnumpy()-V1_old))))
 
 
     # Time info printing

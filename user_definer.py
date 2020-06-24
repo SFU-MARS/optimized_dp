@@ -98,7 +98,7 @@ my_shape = Initial_value_f"""
 # 5D Dubins Avoidance
 
 #g = grid(np.array([-20.0, -20.0, -math.pi, -10, -10]), np.array([20, 20, math.pi, 10, 10]), 5, np.array([40, 40, 20, 20, 20]), [2])
-g = grid(np.array([-20.0, -20.0, -math.pi, -5, -5]), np.array([20, 20, math.pi, 10, 10]), 5, np.array([40, 40, 20, 20, 20]), [2])
+g = grid(np.array([-20.0, -20.0, 0, 0, 0]), np.array([20, 20, 2*math.pi, 10, 10]), 5, np.array([41, 41, 25, 25, 25]), [2])
 
 # Define my object
 #my_object = DubinsCar5DAvoid(x=[0,0,0,0,0], u_theta_max = math.pi/10, u_v_max=3, d_theta_max=math.pi/10, d_v_max=3, uMode="max", dMode="min")
@@ -111,17 +111,18 @@ my_object = DubinsCar5DAvoid(x=[0,0,0,0,0], u_theta_max = math.pi/2, u_v_max=3, 
 # for union of the two sets use min()
 # mode: minVWithV0
 
-Initial_value_f = np.minimum(CylinderShape(g, [3,4,5], np.zeros(5), 2), HalfPlane(g, 0.1, 3))
+Initial_value_f = np.minimum(CylinderShape(g, [3,4,5], np.zeros(5), 2), HalfPlane(g, 0.5, 3))
+Initial_value_f = np.minimum(Initial_value_f, -HalfPlane(g, 9.5, 3))
 
 
 # J: for vehicle number 2 (pursuer)
 # define a set x5 > vmin it is G (constraint_values)
 # mode:maxVWithCStraint
-constraint_values = -HalfPlane(g, 0.1, 4)
+constraint_values = np.minimum(-HalfPlane(g, 0.5, 4), HalfPlane(g, 9.5, 4))
 
 # Look-back lenght and time step
 lookback_length = 10.0
-t_step = 0.05
+t_step = 0.01
 
 tau = np.arange(start = 0, stop = lookback_length + t_step, step = t_step)
 print("Welcome to optimized_dp \n")
@@ -130,7 +131,8 @@ print("Welcome to optimized_dp \n")
 #compMethod = "none"
 #compMethod = "minVWithVInit"
 #compMethod = "minVWithV0"
-#compMethod = ["minVWithV0","maxVWithCStraint"] #Juan
-compMethod = ['minVWithV0', 'minVWithCStraint'] 
+compMethod = ["minVWithV0","maxVWithCStraint"] #Juan
+#compMethod = "maxVWithCStraint"
+
 my_object  = my_object
 my_shape = Initial_value_f

@@ -73,7 +73,8 @@ def Rectangle6D(grid):
     return data
 
 def HalfPlane(grid, target_min, dim):
-    data = grid.vs[dim] - target_min
+    data = np.zeros(grid.pts_each_dim)
+    data = data + grid.vs[dim] - target_min
     return data
 
 def ShapeRectangle(grid, target_min, target_max):
