@@ -121,8 +121,8 @@ Initial_value_f = np.minimum(Initial_value_f, -HalfPlane(g, 9.5, 3))
 constraint_values = np.minimum(-HalfPlane(g, 0.5, 4), HalfPlane(g, 9.5, 4))
 
 # Look-back lenght and time step
-lookback_length = 10.0
-t_step = 0.01
+lookback_length = 0.5
+t_step = 0.1
 
 tau = np.arange(start = 0, stop = lookback_length + t_step, step = t_step)
 print("Welcome to optimized_dp \n")

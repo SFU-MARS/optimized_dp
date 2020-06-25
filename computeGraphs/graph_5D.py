@@ -201,6 +201,7 @@ def graph_5D():
     # Constraint function ~~ input by user ( not time-variant for now)
     G = hcl.placeholder(tuple(g.pts_each_dim), name="G", dtype=hcl.Float())
     t = hcl.placeholder((2,), name="t", dtype=hcl.Float())
+    TTR = hcl.placeholder(tuple(g.pts_each_dim), name="TTR", dtype=hcl.Float())
 
     # Positions vector
     x1 = hcl.placeholder((g.pts_each_dim[0],), name="x1", dtype=hcl.Float())
@@ -209,7 +210,7 @@ def graph_5D():
     x4 = hcl.placeholder((g.pts_each_dim[3],), name="x4", dtype=hcl.Float())
     x5 = hcl.placeholder((g.pts_each_dim[4],), name="x5", dtype=hcl.Float())
 
-    def graph_create(V_new, V_init, x1, x2, x3, x4, x5, t, l0, G):
+    def graph_create(V_new, V_init, x1, x2, x3, x4, x5, t, l0, G, TTR):
         # Specify intermediate tensors
         deriv_diff1 = hcl.compute(V_init.shape, lambda *x: 0, "deriv_diff1")
         deriv_diff2 = hcl.compute(V_init.shape, lambda *x: 0, "deriv_diff2")
@@ -253,6 +254,11 @@ def graph_5D():
             t[0] = t[0] + stepBound[0]
             # t[0] = min_deriv2[0]
             return stepBound[0]
+
+        def updateTTR(i, j, k, l, m):
+            with hcl.if_(V_new[i, j, k, l, m] <= 0):
+                with hcl.if_(TTR[i, j, k, l ,m] <= t[0]): # min(TTR, t)
+                    TTR[i, j, k, l, m] = t[0]
 
         # Comparison with the initial value function
         def maxVWithV0(i, j, k, l, m):  # Take the max
@@ -578,10 +584,11 @@ def graph_5D():
             result = hcl.update(V_new, lambda i, j, k, l, m: maxVWithCStraint(i, j, k, l, m))
         # Copy V_new to V_init
         hcl.update(V_init, lambda i, j, k, l, m: V_new[i, j, k, l, m])
+        hcl.update(TTR, lambda i,j,k,l,m: updateTTR(i,j,k,l,m))
         return result
 
 
-    s = hcl.create_schedule([V_f, V_init, x1, x2, x3, x4, x5, t, l0, G], graph_create)
+    s = hcl.create_schedule([V_f, V_init, x1, x2, x3, x4, x5, t, l0, G, TTR], graph_create)
     ##################### CODE OPTIMIZATION HERE ###########################
     print("Optimizing\n")
 

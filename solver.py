@@ -49,6 +49,7 @@ def main():
         # Juan: it should be -inf?
     else:
         G = hcl.asarray(constraint_values)
+        TTR = hcl.asarray(100*np.ones(tuple(g.pts_each_dim)))
     #obstacle = hcl.asarray(cstraint_values)
 
     list_x1 = np.reshape(g.vs[0], g.pts_each_dim[0])
@@ -108,7 +109,7 @@ def main():
              elif g.dims == 4:
                 solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, t_minh, l0)
              elif g.dims == 5:
-                solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, list_x5 ,t_minh, l0, G)
+                solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, list_x5 ,t_minh, l0, G, TTR)
              elif g.dims == 6:
                 solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6, t_minh, l0)
 
@@ -137,7 +138,8 @@ def main():
     #print(V_1.asnumpy())
 
     #sio.savemat('dataV.mat', {'dataV':V_1.asnumpy()})
-    sio.savemat('optimized_dubins_dubins_safe_V_circle_Radius_2_Speed_10_SafetyTime_15.mat', {'dataV':V_1.asnumpy()})
+    sio.savemat('optimized_dubins_dubins_safe_V_circle_Radius_2_Speed_10_SafetyTime_15.mat',
+            {'dataV':V_1.asnumpy(), 'dataTTR':TTR.asnumpy()})
     ##################### PLOTTING #####################
     #if args.plot:
     #    plot_isosurface(g, V_1.asnumpy(), [0, 1, 2])
