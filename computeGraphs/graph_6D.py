@@ -344,25 +344,25 @@ def graph_6D():
 
         # Calculate dissipation amount
         with hcl.Stage("Dissipation"):
-            # uOptL1 = hcl.scalar(0, "uOptL1")
-            # uOptL2 = hcl.scalar(0, "uOptL2")
-            # uOptL3 = hcl.scalar(0, "uOptL3")
-            # uOptL4 = hcl.scalar(0, "uOptL4")
+            uOptL1 = hcl.scalar(0, "uOptL1")
+            uOptL2 = hcl.scalar(0, "uOptL2")
+            uOptL3 = hcl.scalar(0, "uOptL3")
+            uOptL4 = hcl.scalar(0, "uOptL4")
 
-            # uOptU1 = hcl.scalar(0, "uOptU1")
-            # uOptU2 = hcl.scalar(0, "uOptU2")
-            # uOptU3 = hcl.scalar(0, "uOptU3")
-            # uOptU4 = hcl.scalar(0, "uOptU4")
+            uOptU1 = hcl.scalar(0, "uOptU1")
+            uOptU2 = hcl.scalar(0, "uOptU2")
+            uOptU3 = hcl.scalar(0, "uOptU3")
+            uOptU4 = hcl.scalar(0, "uOptU4")
 
-            # dOptL1 = hcl.scalar(0, "dOptL1")
-            # dOptL2 = hcl.scalar(0, "dOptL2")
-            # dOptL3 = hcl.scalar(0, "dOptL3")
-            # dOptL4 = hcl.scalar(0, "dOptL4")
+            dOptL1 = hcl.scalar(0, "dOptL1")
+            dOptL2 = hcl.scalar(0, "dOptL2")
+            dOptL3 = hcl.scalar(0, "dOptL3")
+            dOptL4 = hcl.scalar(0, "dOptL4")
 
-            # dOptU1 = hcl.scalar(0, "dOptU1")
-            # dOptU2 = hcl.scalar(0, "dOptU2")
-            # dOptU3 = hcl.scalar(0, "dOptU3")
-            # dOptU4 = hcl.scalar(0, "dOptU4")
+            dOptU1 = hcl.scalar(0, "dOptU1")
+            dOptU2 = hcl.scalar(0, "dOptU2")
+            dOptU3 = hcl.scalar(0, "dOptU3")
+            dOptU4 = hcl.scalar(0, "dOptU4")
 
             # Storing alphas
             alpha1 = hcl.scalar(0, "alpha1")
@@ -373,10 +373,10 @@ def graph_6D():
             alpha6 = hcl.scalar(0, "alpha6")
 
             # Find LOWER BOUND optimal disturbance
-            dOptL = my_object.optDstb(
+            dOptL1[0], dOptL2[0], dOptL3[0], dOptL4[0] = my_object.optDstb(
                 (min_deriv1[0], min_deriv2[0], min_deriv3[0], min_deriv4[0], min_deriv5[0], min_deriv6[0]))
             # Find UPPER BOUND optimal disturbance
-            dOptU = my_object.optDstb(
+            dOptU1[0], dOptU2[0], dOptU3[0], dOptU4[0] = my_object.optDstb(
                 (max_deriv1[0], max_deriv2[0], max_deriv3[0], max_deriv4[0], max_deriv5[0], max_deriv6[0]))
             with hcl.for_(0, V_init.shape[0], name="i") as i:
                 with hcl.for_(0, V_init.shape[1], name="j") as j:
@@ -413,18 +413,18 @@ def graph_6D():
                                     dx_UU6 = hcl.scalar(0, "dx_UU6")
 
                                     # Find LOWER BOUND optimal control
-                                    uOptL = my_object.opt_ctrl(t, (x1[i], x2[j], x3[k], x4[l], x5[m], x6[n]), (
+                                    uOptL1[0], uOptL2[0], uOptL3[0], uOptL4[0] = my_object.opt_ctrl(t, (x1[i], x2[j], x3[k], x4[l], x5[m], x6[n]), (
                                     min_deriv1[0], min_deriv2[0], min_deriv3[0], min_deriv4[0], min_deriv5[0],
                                     min_deriv6[0]))
                                     # Find UPPER BOUND optimal control
-                                    uOptU = my_object.opt_ctrl(t, (x1[i], x2[j], x3[k], x4[l], x5[m], x6[n]), (
+                                    uOptU1[0], uOptU2[0], uOptU3[0], uOptU4[0] = my_object.opt_ctrl(t, (x1[i], x2[j], x3[k], x4[l], x5[m], x6[n]), (
                                     max_deriv1[0], max_deriv2[0], max_deriv3[0], max_deriv4[0], max_deriv5[0],
                                     max_deriv6[0]))
 
                                     # Get upper bound and lower bound rates of changes
                                     dx_LL1[0], dx_LL2[0], dx_LL3[0], dx_LL4[0], dx_LL5[0], dx_LL6[
-                                        0] = my_object.dynamics(t, (x1[i], x2[j], x3[k], x4[l], x5[m], x6[n]), uOptL,
-                                                                dOptL)
+                                        0] = my_object.dynamics(t, (x1[i], x2[j], x3[k], x4[l], x5[m], x6[n]), (uOptL1[0], uOptL2[0], uOptL3[0], uOptL4[0]),
+                                                                (dOptL1[0], dOptL2[0], dOptL3[0], dOptL4[0]))
                                     # Get absolute value of each
                                     dx_LL1[0] = my_abs(dx_LL1[0])
                                     dx_LL2[0] = my_abs(dx_LL2[0])
@@ -434,8 +434,8 @@ def graph_6D():
                                     dx_LL6[0] = my_abs(dx_LL6[0])
 
                                     dx_UL1[0], dx_UL2[0], dx_UL3[0], dx_UL4[0], dx_UL5[0], dx_UL6[
-                                        0] = my_object.dynamics(t, (x1[i], x2[j], x3[k], x4[l], x5[m], x6[n]), uOptU,
-                                                                dOptL)
+                                        0] = my_object.dynamics(t, (x1[i], x2[j], x3[k], x4[l], x5[m], x6[n]), (uOptU1[0], uOptU2[0], uOptU3[0], uOptU4[0]),
+                                                                (dOptL1[0], dOptL2[0], dOptL3[0], dOptL4[0]))
                                     # Get absolute value of each
                                     dx_UL1[0] = my_abs(dx_UL1[0])
                                     dx_UL2[0] = my_abs(dx_UL2[0])
@@ -453,8 +453,8 @@ def graph_6D():
                                     alpha6[0] = my_max(dx_UL6[0], dx_LL6[0])
 
                                     dx_LU1[0], dx_LU2[0], dx_LU3[0], dx_LU4[0], dx_LU5[0], dx_LU6[
-                                        0] = my_object.dynamics(t, (x1[i], x2[j], x3[k], x4[l], x5[m], x6[n]), uOptL,
-                                                                dOptU)
+                                        0] = my_object.dynamics(t, (x1[i], x2[j], x3[k], x4[l], x5[m], x6[n]), (uOptL1[0], uOptL2[0], uOptL3[0], uOptL4[0]),
+                                                                (dOptU1[0], dOptU2[0], dOptU3[0], dOptU4[0]))
                                     # Get absolute value of each
                                     dx_LU1[0] = my_abs(dx_LU1[0])
                                     dx_LU2[0] = my_abs(dx_LU2[0])
@@ -471,8 +471,8 @@ def graph_6D():
                                     alpha6[0] = my_max(alpha6[0], dx_LU6[0])
 
                                     dx_UU1[0], dx_UU2[0], dx_UU3[0], dx_UU4[0], dx_UU5[0], dx_UU6[
-                                        0] = my_object.dynamics(t, (x1[i], x2[j], x3[k], x4[l], x5[m], x6[n]), uOptU,
-                                                                dOptU)
+                                        0] = my_object.dynamics(t, (x1[i], x2[j], x3[k], x4[l], x5[m], x6[n]), (uOptU1[0], uOptU2[0], uOptU3[0], uOptU4[0]),
+                                                                (dOptU1[0], dOptU2[0], dOptU3[0], dOptU4[0]))
                                     dx_UU1[0] = my_abs(dx_UU1[0])
                                     dx_UU2[0] = my_abs(dx_UU2[0])
                                     dx_UU3[0] = my_abs(dx_UU3[0])
