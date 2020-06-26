@@ -49,7 +49,7 @@ def main():
         # Juan: it should be -inf?
     else:
         G = hcl.asarray(constraint_values)
-        TTR = hcl.asarray(100*np.ones(tuple(g.pts_each_dim)))
+        TTR = hcl.asarray(100*(my_shape>0)*np.ones(tuple(g.pts_each_dim)))
     #obstacle = hcl.asarray(cstraint_values)
 
     list_x1 = np.reshape(g.vs[0], g.pts_each_dim[0])
@@ -139,7 +139,7 @@ def main():
 
     #sio.savemat('dataV.mat', {'dataV':V_1.asnumpy()})
     sio.savemat('optimized_dubins_dubins_safe_V_circle_Radius_2_Speed_10_SafetyTime_15.mat',
-            {'dataV':V_1.asnumpy(), 'dataTTR':TTR.asnumpy()})
+            {'dataTTR':TTR.asnumpy()})
     ##################### PLOTTING #####################
     #if args.plot:
     #    plot_isosurface(g, V_1.asnumpy(), [0, 1, 2])

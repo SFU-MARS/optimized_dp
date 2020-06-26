@@ -257,7 +257,7 @@ def graph_5D():
 
         def updateTTR(i, j, k, l, m):
             with hcl.if_(V_new[i, j, k, l, m] <= 0):
-                with hcl.if_(TTR[i, j, k, l ,m] <= t[0]): # min(TTR, t)
+                with hcl.if_(TTR[i, j, k, l ,m] > t[0]): # min(TTR, t)
                     TTR[i, j, k, l, m] = t[0]
 
         # Comparison with the initial value function
