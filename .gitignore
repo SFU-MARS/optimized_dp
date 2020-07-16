@@ -1,3 +1,4 @@
 # Ignore the following files
 *.pyc
 *.png
+*.npy

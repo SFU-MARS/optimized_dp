@@ -12,9 +12,7 @@ from computeGraphs.graph_5D import *
 from computeGraphs.graph_6D import *
 import scipy.io as sio
 
-
-
-import scipy.io as sio
+import matplotlib.pyplot as plt
 
 import math
 
@@ -97,7 +95,8 @@ def main():
              if g.dims == 6:
                 solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6, t_minh, l0)
 
-             tNow = np.asscalar((t_minh.asnumpy())[0])
+             # tNow = np.asscalar((t_minh.asnumpy())[0])
+             tNow = (t_minh.asnumpy())[0].item() # Above line is deprecated since NumPy v1.16
 
              # Calculate computation time
              execution_time += time.time() - start
@@ -106,7 +105,8 @@ def main():
              print(t_minh)
              print("Computational time to integrate (s): {:.5f}".format(time.time() - start))
              # Saving data into disk
-
+             # if tNow >= tau[i] - 1e-4:
+             #    np.save('v1_brt.npy', V_1.asnumpy())
 
     # Time info printing
     print("Total kernel time (s): {:.5f}".format(execution_time))
@@ -117,8 +117,9 @@ def main():
 
 
     ##################### PLOTTING #####################
-    if args.plot:
-        plot_isosurface(g, V_1.asnumpy(), [0, 1, 3])
+    # if args.plot:
+    #     plot_isosurface(g, V_1.asnumpy(), [0, 1, 3])
+
 
 if __name__ == '__main__':
-  main()
+    main()
