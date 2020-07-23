@@ -66,7 +66,7 @@ class RelDyn_5D:
         x5_dot = hcl.scalar(0, "x5_dot")
 
         x1_dot[0] = (state[4] / self.l_r) * hcl.sin(uOpt[0]) * state[1] + state[3] * hcl.cos(state[2]) - state[4] * hcl.cos(uOpt[0])
-        x2_dot[0] = (-state[4] / self.l_r) * hcl.sin(uOpt[0]) * state[0] + state[3] * hcl.sin(state[2]) - state[4] * hcl.sin(uOpt[0])
+        x2_dot[0] = (- state[4] / self.l_r) * hcl.sin(uOpt[0]) * state[0] + state[3] * hcl.sin(state[2]) - state[4] * hcl.sin(uOpt[0])
         x3_dot[0] = dOpt[0] - (state[4] / self.l_r) * hcl.sin(uOpt[0])
         x4_dot[0] = dOpt[1]
         x5_dot[0] = uOpt[1]
@@ -89,42 +89,45 @@ class RelDyn_5D:
         # # Define some constant
         c1 = hcl.scalar(0, "c1")
         c2 = hcl.scalar(0, "c2")
-        atan_c2_c1 = hcl.scalar(0, "atan_c2_c1")
 
         # According to doc, c1, c2 are defined as follow
         c1[0] = spat_deriv[0] * (state[4] / self.l_r) * state[1] - spat_deriv[1] * (state[4] / self.l_r) * state[0] -\
                 spat_deriv[1] * state[4] - spat_deriv[2] * (state[4] / self.l_r)
         c2[0] = - spat_deriv[0] * state[4]
-        atan_c2_c1[0] = my_arctan((spat_deriv[0] * (state[4] / self.l_r) * state[1] - spat_deriv[1] * (state[4] / self.l_r) * state[0] - spat_deriv[1] * state[4] - spat_deriv[2] * (state[4] / self.l_r))/(- spat_deriv[0] * state[4]))
 
         with hcl.if_(self.uMode == "max"):
 
             # For uOpt1: beta_r
             with hcl.if_(c1[0] > 0):
-                with hcl.if_(self.dMin[0] <= (- np.arctan(c2[0] / c1[0]) + np.pi / 2) <= self.dMax[0]):
-                    uOpt1[0] = - np.arctan(c2[0] / c1[0]) + np.pi / 2
-                with hcl.if_((- np.arctan(c2[0] / c1[0]) + np.pi / 2) > self.dMax[0]):
-                    uOpt1[0] = self.dMax[0]
-                with hcl.if_((- np.arctan(c2[0] / c1[0]) + np.pi / 2) < self.dMin[0]):
-                    uOpt1[0] = self.dMin[0]
+                with hcl.if_(self.uMin[0] <= (- np.arctan(c2[0] / c1[0]) + np.pi / 2)):
+                    with hcl.if_((- np.arctan(c2[0] / c1[0]) + np.pi / 2) <= self.uMax[0]):
+                        uOpt1[0] = - np.arctan(c2[0] / c1[0]) + np.pi / 2
+                with hcl.if_((- np.arctan(c2[0] / c1[0]) + np.pi / 2) > self.uMax[0]):
+                    uOpt1[0] = self.uMax[0]
+                with hcl.if_((- np.arctan(c2[0] / c1[0]) + np.pi / 2) < self.uMin[0]):
+                    uOpt1[0] = self.uMin[0]
             with hcl.if_(c1[0] < 0):
-                with hcl.if_(self.dMin[0] <= (- np.arctan(c2[0] / c1[0]) - np.pi / 2) <= self.dMax[0]):
-                    uOpt1[0] = - np.arctan(c2[0] / c1[0]) - np.pi / 2
-                with hcl.if_((- np.arctan(c2[0] / c1[0]) - np.pi / 2) > self.dMax[0]):
-                    uOpt1[0] = self.dMax[0]
-                with hcl.if_((- np.arctan(c2[0] / c1[0]) - np.pi / 2) < self.dMin[0]):
-                    uOpt1[0] = self.dMin[0]
+                with hcl.if_(self.uMin[0] <= (- np.arctan(c2[0] / c1[0]) - np.pi / 2) <= self.uMax[0]):
+                    with hcl.if_((- np.arctan(c2[0] / c1[0]) - np.pi / 2) <= self.uMax[0]):
+                        uOpt1[0] = - np.arctan(c2[0] / c1[0]) - np.pi / 2
+                with hcl.if_((- np.arctan(c2[0] / c1[0]) - np.pi / 2) > self.uMax[0]):
+                    uOpt1[0] = self.uMax[0]
+                with hcl.if_((- np.arctan(c2[0] / c1[0]) - np.pi / 2) < self.uMin[0]):
+                    uOpt1[0] = self.uMin[0]
             with hcl.if_(c1[0] == 0):
                 with hcl.if_(c2[0] >= 0):
-                    with hcl.if_(self.dMin[0] <= 0 <= self.dMax[0]):
-                        uOpt1[0] = 0
-                    with hcl.if_((0 < self.dMin[0]) or (0 > self.dMax[0])):
-                        uOpt1[0] = my_min(my_abs(self.dMin[0]), my_abs(self.dMax[0]))
+                    with hcl.if_(self.uMin[0] <= 0):
+                        with hcl.if_(0 <= self.uMax[0]):
+                            uOpt1[0] = 0
+                    with hcl.if_(0 < self.uMin[0]):
+                        uOpt1[0] = my_min(my_abs(self.uMin[0]), my_abs(self.uMax[0]))
+                    with hcl.if_(0 > self.uMax[0]):
+                        uOpt1[0] = my_min(my_abs(self.uMin[0]), my_abs(self.uMax[0]))
                 with hcl.if_(c2[0] < 0):
-                    with hcl.if_(my_abs(self.dMin[0]) >= my_abs(self.dMax[0])):
-                        uOpt1[0] = my_abs(self.dMin[0])
-                    with hcl.if_(my_abs(self.dMin[0]) < my_abs(self.dMax[0])):
-                        uOpt1[0] = my_abs(self.dMax[0])
+                    with hcl.if_(my_abs(self.uMin[0]) >= my_abs(self.uMax[0])):
+                        uOpt1[0] = my_abs(self.uMin[0])
+                    with hcl.if_(my_abs(self.uMin[0]) < my_abs(self.uMax[0])):
+                        uOpt1[0] = my_abs(self.uMax[0])
 
             # For uOpt2: a_r
             with hcl.if_(spat_deriv[4] > 0):
