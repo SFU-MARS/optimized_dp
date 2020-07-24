@@ -58,12 +58,20 @@ class ProcessPrediction(object):
         for i in range(length):
             if i > 0 and traj_file['t_to_goal'][i - 1] != 0:
                 # Average over some horizon
+                if (traj_file['v_t'][i] - traj_file['v_t'][i - 1]) / self.time_step < - 10:
+                    print(traj_file['v_t'][i], traj_file['v_t'][i - 1])
                 acc_tmp.append((traj_file['v_t'][i] - traj_file['v_t'][i - 1]) / self.time_step)
                 if num % self.time_filter == 0:
-                    acceleration.append(np.sum(acc_tmp) / self.time_filter)
+                    # Mean
+                    acceleration.append(np.mean(acc_tmp))
+                    # Median
+                    # acceleration.append(np.median(acc_tmp))
                     acc_tmp = []
                 elif traj_file['t_to_goal'][i] == 0:
-                    acceleration.append(np.sum(acc_tmp) / (num % self.time_filter))
+                    # Mean
+                    acceleration.append(np.mean(acc_tmp))
+                    # Median
+                    # acceleration.append(np.median(acc_tmp))
                     acc_tmp = []
                 num += 1
             if traj_file['t_to_goal'][i] == 0:
@@ -84,10 +92,16 @@ class ProcessPrediction(object):
                 ang_v_tmp.append(angle_difference / self.time_step)
                 # Average over some time horizon
                 if num % self.time_filter == 0:
-                    angular_velociy.append(np.sum(ang_v_tmp) / self.time_filter)
+                    # Mean
+                    angular_velociy.append(np.mean(ang_v_tmp))
+                    # Median
+                    # angular_velociy.append(np.median(ang_v_tmp))
                     ang_v_tmp = []
                 elif traj_file['t_to_goal'][i] == 0:
-                    angular_velociy.append((np.sum(ang_v_tmp) / (num % self.time_filter)))
+                    # Mean
+                    angular_velociy.append(np.mean(ang_v_tmp))
+                    # Median
+                    # angular_velociy.append(np.median(ang_v_tmp))
                     ang_v_tmp = []
                 num += 1
                 # if np.abs(angle_difference / self.time_step) > 1:
