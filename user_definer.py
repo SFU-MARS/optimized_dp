@@ -74,14 +74,15 @@ my_shape = Initial_value_f
 g = grid(np.array([-10.0, -10.0, -math.pi, 0, 0]), np.array([10.0, 10.0, math.pi, 17, 17]), 5, np.array([41, 41, 31, 35, 35]), [2])
 
 # Define my object
-my_car = RelDyn_5D()
+my_car = RelDyn_5D(x=[0, 0, 0, 0, 0], uMin=np.array([-0.345, -5]), uMax=np.array([0.345, 3]),
+                   dMin=np.array([-math.pi / 6, -5]), dMax=np.array([math.pi / 6, 3]), dims=5, uMode="max", dMode="min")
 print("Computing relative dynamics 5D")
 
 # Use the grid to initialize initial value function
 Initial_value_f = CylinderShape(g, [3, 4, 5], np.zeros(5), 2)
 
 # Look-back length and time step
-lookback_length = 2.0
+lookback_length = 1
 t_step = 0.05
 
 small_number = 1e-5

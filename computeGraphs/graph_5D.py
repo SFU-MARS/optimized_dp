@@ -324,6 +324,7 @@ def graph_5D():
                                     dV_dx1[0], dV_dx2[0], dV_dx3[0], dV_dx4[0], dV_dx5[0]))
                                     # Find optimal disturbance
                                     dOpt = my_object.optDstb(
+                                        (x1[i], x2[j], x3[k], x4[l], x5[m]),
                                         (dV_dx1[0], dV_dx2[0], dV_dx3[0], dV_dx4[0], dV_dx5[0]))
 
                                     # Find rates of changes based on dynamics equation
@@ -422,9 +423,11 @@ def graph_5D():
 
             # Find LOWER BOUND optimal disturbance
             dOptL1[0], dOptL2[0], dOptL3[0], dOptL4[0], dOptL5[0] = my_object.optDstb(
+                (x1[i], x2[j], x3[k], x4[l], x5[m]),
                 (min_deriv1[0], min_deriv2[0], min_deriv3[0], min_deriv4[0], min_deriv5[0]))
             # Find UPPER BOUND optimal disturbance
             dOptU1[0], dOptU2[0], dOptU3[0], dOptU4[0], dOptU5[0] = my_object.optDstb(
+                (x1[i], x2[j], x3[k], x4[l], x5[m]),
                 (max_deriv1[0], max_deriv2[0], max_deriv3[0], max_deriv4[0], max_deriv5[0]))
             with hcl.for_(0, V_init.shape[0], name="i") as i:
                 with hcl.for_(0, V_init.shape[1], name="j") as j:

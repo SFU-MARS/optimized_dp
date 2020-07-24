@@ -13,7 +13,11 @@ def plot_isosurface(grid, V, dims_plot):
                                       grid.min[dim3]:grid.max[dim3]: complex_z]
 
         # Hardcode this number for now
-        V = V[:, :, 49, :]
+        # V = V[:, :, 49, :] # DubinsCar4D
+        # V = V[:, :, :, 0, 0] # RelDyn5D
+        # V = V[:, :, :, 34, 0]  # RelDyn5D
+        V = V[:, :, :, 34, 17]  # RelDyn5D
+
 
         print("Plotting beautiful plots. Please wait\n")
         fig = go.Figure(data=go.Isosurface(

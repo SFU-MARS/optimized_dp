@@ -2,7 +2,7 @@ import heterocl as hcl
 import numpy as np
 import math
 
-from helper.helper_math import my_arctan
+from helper.helper_math import my_atan
 from helper.helper_math import my_abs
 from helper.helper_math import my_min
 
@@ -27,8 +27,8 @@ class RelDyn_5D:
     Disturbance: dOpt = (dOpt[0], dOpt[1]) = (w_h, a_h)
 
     """
-    def __init__(self, x=[0, 0, 0, 0, 0], uMin=np.array([-0.2, -5]), uMax=np.array([0.2, 3]), dMin=np.array([-0.5, -5]),
-                 dMax=np.array([0.5, 3]), dims=5, uMode="max", dMode="min"):
+    def __init__(self, x=[0, 0, 0, 0, 0], uMin=np.array([-0.345, -5]), uMax=np.array([0.345, 3]), dMin=np.array([-math.pi / 6, -5]),
+                 dMax=np.array([math.pi / 6, 3]), dims=5, uMode="max", dMode="min"):
         self.x = x
         self.uMode = uMode
         self.dMode = dMode
@@ -50,7 +50,7 @@ class RelDyn_5D:
         self.l_r = 1.738
         self.l_f = 1.058
 
-    def dynamics(self, state, uOpt, dOpt):
+    def dynamics(self, t, state, uOpt, dOpt):
         """
 
         :param t:
@@ -95,47 +95,69 @@ class RelDyn_5D:
                 spat_deriv[1] * state[4] - spat_deriv[2] * (state[4] / self.l_r)
         c2[0] = - spat_deriv[0] * state[4]
 
+        # Define some intermediate variables to store
+        tmp1 = hcl.scalar(0, "tmp1")
+        tmp2 = hcl.scalar(0, "tmp2")
+        # Value these decision variable
+        tmp1[0] = - my_atan(c2[0] / c1[0]) + math.pi / 2
+        tmp2[0] = - my_atan(c2[0] / c1[0]) - math.pi / 2
+
+        # Store umin and umax
+        umin1 = hcl.scalar(0, "umin1")
+        umin2 = hcl.scalar(0, "umin2")
+        umax1 = hcl.scalar(0, "umax1")
+        umax2 = hcl.scalar(0, "umax2")
+        umin1[0] = self.uMin[0]
+        umin2[0] = self.uMin[1]
+        umax1[0] = self.uMax[0]
+        umax2[0] = self.uMax[1]
+
+        # Just create and pass back, even though they're not used
+        in3 = hcl.scalar(0, "in3")
+        in4 = hcl.scalar(0, "in4")
+        in5 = hcl.scalar(0, "in5")
+
         with hcl.if_(self.uMode == "max"):
 
             # For uOpt1: beta_r
             with hcl.if_(c1[0] > 0):
-                with hcl.if_(self.uMin[0] <= (- np.arctan(c2[0] / c1[0]) + np.pi / 2)):
-                    with hcl.if_((- np.arctan(c2[0] / c1[0]) + np.pi / 2) <= self.uMax[0]):
-                        uOpt1[0] = - np.arctan(c2[0] / c1[0]) + np.pi / 2
-                with hcl.if_((- np.arctan(c2[0] / c1[0]) + np.pi / 2) > self.uMax[0]):
-                    uOpt1[0] = self.uMax[0]
-                with hcl.if_((- np.arctan(c2[0] / c1[0]) + np.pi / 2) < self.uMin[0]):
-                    uOpt1[0] = self.uMin[0]
+                with hcl.if_(umin1[0] <= tmp1[0]):
+                    with hcl.if_(tmp1[0] <= umax1[0]):
+                        uOpt1[0] = tmp1[0]
+                with hcl.if_(tmp1[0] > umax1[0]):
+                    uOpt1[0] = umax1[0]
+                with hcl.if_(tmp1[0] < umin1[0]):
+                    uOpt1[0] = umin1[0]
             with hcl.if_(c1[0] < 0):
-                with hcl.if_(self.uMin[0] <= (- np.arctan(c2[0] / c1[0]) - np.pi / 2) <= self.uMax[0]):
-                    with hcl.if_((- np.arctan(c2[0] / c1[0]) - np.pi / 2) <= self.uMax[0]):
-                        uOpt1[0] = - np.arctan(c2[0] / c1[0]) - np.pi / 2
-                with hcl.if_((- np.arctan(c2[0] / c1[0]) - np.pi / 2) > self.uMax[0]):
-                    uOpt1[0] = self.uMax[0]
-                with hcl.if_((- np.arctan(c2[0] / c1[0]) - np.pi / 2) < self.uMin[0]):
-                    uOpt1[0] = self.uMin[0]
+                with hcl.if_(umin1[0] <= tmp2[0]):
+                    with hcl.if_(tmp2[0] <= umax1[0]):
+                        uOpt1[0] = tmp2[0]
+                with hcl.if_(tmp2[0] > umax1[0]):
+                    uOpt1[0] = umax1[0]
+                with hcl.if_(tmp2[0] < umin1[0]):
+                    uOpt1[0] = umin1[0]
             with hcl.if_(c1[0] == 0):
                 with hcl.if_(c2[0] >= 0):
-                    with hcl.if_(self.uMin[0] <= 0):
-                        with hcl.if_(0 <= self.uMax[0]):
+                    with hcl.if_(umin1[0] <= 0):
+                        with hcl.if_(0 <= umax1[0]):
                             uOpt1[0] = 0
-                    with hcl.if_(0 < self.uMin[0]):
-                        uOpt1[0] = my_min(my_abs(self.uMin[0]), my_abs(self.uMax[0]))
-                    with hcl.if_(0 > self.uMax[0]):
-                        uOpt1[0] = my_min(my_abs(self.uMin[0]), my_abs(self.uMax[0]))
+                    with hcl.if_(0 < umin1[0]):
+                        uOpt1[0] = my_min(my_abs(umin1[0]), my_abs(umax1[0]))
+                    with hcl.if_(0 > umax1[0]):
+                        uOpt1[0] = my_min(my_abs(umin1[0]), my_abs(umax1[0]))
                 with hcl.if_(c2[0] < 0):
-                    with hcl.if_(my_abs(self.uMin[0]) >= my_abs(self.uMax[0])):
-                        uOpt1[0] = my_abs(self.uMin[0])
-                    with hcl.if_(my_abs(self.uMin[0]) < my_abs(self.uMax[0])):
-                        uOpt1[0] = my_abs(self.uMax[0])
+                    with hcl.if_(my_abs(umin1[0]) >= my_abs(umax1[0])):
+                        uOpt1[0] = my_abs(umin1[0])
+                    with hcl.if_(my_abs(umin1[0]) < my_abs(umax1[0])):
+                        uOpt1[0] = my_abs(umax1[0])
 
             # For uOpt2: a_r
             with hcl.if_(spat_deriv[4] > 0):
-                uOpt2[0] = self.uMax[1]
+                uOpt2[0] = umax2[0]
             with hcl.if_(spat_deriv[4] <= 0):
-                uOpt2[0] = self.uMin[1]
+                uOpt2[0] = umin2[0]
 
-        return (uOpt1[0], uOpt2[0])
+        return (uOpt1[0], uOpt2[0], in3[0], in4[0], in5[0])
 
     def optDstb(self, state, spat_deriv):
         """
@@ -147,6 +169,11 @@ class RelDyn_5D:
 
         dOpt1 = hcl.scalar(0, "dOpt1")
         dOpt2 = hcl.scalar(0, "dOpt2")
+
+        # Just create and pass back, even though they're not used
+        in3 = hcl.scalar(0, "in3")
+        in4 = hcl.scalar(0, "in4")
+        in5 = hcl.scalar(0, "in5")
 
         with hcl.if_(self.uMode == "max"):
 
@@ -162,4 +189,4 @@ class RelDyn_5D:
             with hcl.if_(spat_deriv[3] <= 0):
                 dOpt2[0] = self.dMax[1]
 
-        return (dOpt1[0], dOpt2[0])
+        return (dOpt1[0], dOpt2[0], in3[0], in4[0], in5[0])

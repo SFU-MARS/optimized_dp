@@ -106,7 +106,7 @@ def main():
              print("Computational time to integrate (s): {:.5f}".format(time.time() - start))
              # Saving data into disk
              # if tNow >= tau[i] - 1e-4:
-             #    np.save('v1_brt.npy', V_1.asnumpy())
+             #    np.save('/home/anjianl/Desktop/project/optimized_dp/data/brs/reldyn5d_brs_t_02.npy', V_1.asnumpy())
 
     # Time info printing
     print("Total kernel time (s): {:.5f}".format(execution_time))
