@@ -14,6 +14,7 @@ def plot_isosurface(grid, V, dims_plot):
 
         # Hardcode this number for now
         # V = V[:, :, 49, :] # DubinsCar4D
+
         # V = V[:, :, :, 0, 0] # RelDyn5D
         # V = V[:, :, :, 34, 0]  # RelDyn5D
         V = V[:, :, :, 34, 17]  # RelDyn5D
@@ -31,6 +32,16 @@ def plot_isosurface(grid, V, dims_plot):
             isomax=0,
             caps=dict(x_show=True, y_show=True)
         ))
+        fig.update_layout(
+            title="t = 2.0s, v_human = 17m/s, v_robot = 8.5m/s"
+            # legend_title="Legend Title",
+            # font=dict(
+            #     family="Courier New, monospace",
+            #     size=18,
+            #     color="RebeccaPurple"
+            # )
+        )
+
         fig.show()
         print("Please check the plot on your browser.")
 

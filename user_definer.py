@@ -82,7 +82,7 @@ print("Computing relative dynamics 5D")
 Initial_value_f = CylinderShape(g, [3, 4, 5], np.zeros(5), 2)
 
 # Look-back length and time step
-lookback_length = 1
+lookback_length = 5.2
 t_step = 0.05
 
 small_number = 1e-5
@@ -90,7 +90,7 @@ tau = np.arange(start = 0, stop = lookback_length + small_number, step = t_step)
 print("Welcome to optimized_dp \n")
 
 # Use the following variable to specify the characteristics of computation
-compMethod = "none" # Reachable set
-# compMethod = "minVWithVInit" # Reachable tube
+# compMethod = "none" # Reachable set
+compMethod = "minVWithVInit" # Reachable tube
 my_object  = my_car
 my_shape = Initial_value_f

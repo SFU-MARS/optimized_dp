@@ -105,8 +105,8 @@ def main():
              print(t_minh)
              print("Computational time to integrate (s): {:.5f}".format(time.time() - start))
              # Saving data into disk
-             # if tNow >= tau[i] - 1e-4:
-             #    np.save('/home/anjianl/Desktop/project/optimized_dp/data/brs/reldyn5d_brs_t_02.npy', V_1.asnumpy())
+             if tNow == 0.5 or tNow == 1 or tNow == 1.5 or tNow == 2 or tNow == 2.5 or tNow == 3 or tNow == 3.5 or tNow == 4 or tNow == 4.5 or tNow == 5:
+                np.save('/home/anjianl/Desktop/project/optimized_dp/data/brs/0725-full_range-t5/reldyn5d_brs_t_%.2f.npy' % tNow, V_1.asnumpy())
 
     # Time info printing
     print("Total kernel time (s): {:.5f}".format(execution_time))
