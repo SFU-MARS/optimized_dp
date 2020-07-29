@@ -12,10 +12,6 @@ from computeGraphs.graph_5D import *
 from computeGraphs.graph_6D import *
 import scipy.io as sio
 
-
-
-import scipy.io as sio
-
 import math
 
 
