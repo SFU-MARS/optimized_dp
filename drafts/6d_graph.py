@@ -2,7 +2,7 @@ import heterocl as hcl
 import numpy as np
 import time
 import plotly.graph_objects as go
-from GridProcessing import *
+from GridProcessing import Grid
 from ShapesFunctions import *
 from CustomGraphFunctions import *
 from Humannoid6D_sys1 import *

@@ -113,12 +113,14 @@ def main():
     print("Finished solving\n")
 
     # V1 is the final value array, fill in anything to use it
+    # e.g. np.save("final_values", V_1.asnumpy())
 
 
 
     ##################### PLOTTING #####################
     if args.plot:
-        plot_isosurface(g, V_1.asnumpy(), [0, 1, 3])
+        # plot Value table when speed is maximum
+        plot_isosurface(g, V_1.asnumpy(), [0, 1, 3], g.pts_each_dim[2] - 1)
 
 if __name__ == '__main__':
   main()

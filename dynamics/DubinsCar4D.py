@@ -1,8 +1,6 @@
 import heterocl as hcl
-import numpy as np
-import time
-
 import computeGraphs
+
 """ 4D DUBINS CAR DYNAMICS IMPLEMENTATION 
  x_dot = v * cos(theta)
  y_dot = v * sin(theta)
@@ -10,14 +8,40 @@ import computeGraphs
  theta_dot = w
  """
 class DubinsCar4D:
-    def __init__(self, x=[0,0,0,0], uMin = [-1,-1], uMax = [1,1], dMin = [-0.25,-0.25], \
+    def __init__(self, x=[0,0,0,0], uMin = [-1,-1], uMax = [1,1], dMin = [-0.25,-0.25], 
                  dMax=[0.25,0.25], uMode="min", dMode="max"):
+        """Creates a Dublin Car with the following states: 
+           X position, Y position, acceleration, heading
+
+           The first element of user control and disturbance is acceleration
+           The second element of user control and disturbance is heading
+
+
+        Args:
+            x (list, optional): Initial state . Defaults to [0,0,0,0].
+            uMin (list, optional): Lowerbound of user control. Defaults to [-1,-1].
+            uMax (list, optional): Upperbound of user control. 
+                                   Defaults to [1,1].
+            dMin (list, optional): Lowerbound of disturbance to user control, . Defaults to [-0.25,-0.25].
+            dMax (list, optional): Upperbound of disturbance to user control. Defaults to [0.25,0.25].
+            uMode (str, optional): Accepts either "min" or "max".
+                                   * "min" : have optimal control reach goal
+                                   * "max" : have optimal control avoid goal
+                                   Defaults to "min".
+            dMode (str, optional): Accepts wiehter "min" or "max" and should be opposite of uMode. 
+                                   Defaults to "max".
+        """
         self.x = x
         self.uMax = uMax
         self.uMin = uMin
         self.dMax = dMax
         self.dMin = dMin
+        assert(uMode in ["min", "max"])
         self.uMode = uMode
+        if uMode == "min":
+            assert(dMode == "max")
+        else:
+            assert(dMode == "min")
         self.dMode = dMode
 
     def opt_ctrl(self, t, state, spat_deriv):
@@ -74,7 +98,6 @@ class DubinsCar4D:
                 d2[0] = self.dMax[1]
             with hcl.elif_(spat_deriv[1] < 0):
                 d2[0] = self.dMin[1]
-
         else:
             with hcl.if_(spat_deriv[0] > 0):
                 d1[0] = self.dMin[0]

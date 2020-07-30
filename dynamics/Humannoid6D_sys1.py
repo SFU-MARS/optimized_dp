@@ -4,8 +4,9 @@ import time
 import math
 
 class Humanoid_6D:
-    def __init__(self, x=[0,0,0,0,0,0], uMin=np.array([-0.5*0.1, -5.0, -1.0]), uMax=np.array([0.5*0.1, 5.0, 1.0]), dMin=np.array([0.0, 0.0, 0.0, 0.0])\
-                 , dMax=np.array([0.0, 0.0, 0.0, 0.0]), dims=6, uMode="min", dMode="max"):
+    def __init__(self, x=[0, 0, 0, 0, 0, 0], uMin=np.array([-0.5*0.1, -5.0, -1.0]), uMax=np.array([0.5*0.1, 5.0, 1.0]),
+                 dMin=np.array([0.0, 0.0, 0.0, 0.0]), dMax=np.array([0.0, 0.0, 0.0, 0.0]),
+                 dims=6, uMode="min", dMode="max"):
         self.x = x
         self.uMode = uMode
         self.dMode = dMode
