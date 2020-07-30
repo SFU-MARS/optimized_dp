@@ -7,16 +7,23 @@ import csv
 class ProcessPredictionV2(object):
 
     def __init__(self):
-
+        # Remote desktop
         self.file_dir_intersection = '/home/anjianl/Desktop/project/optimized_dp/data/csv_files_for_planner/intersection'
+        self.file_dir_roundabout = '/home/anjianl/Desktop/project/optimized_dp/data/csv_files_for_planner/roundabout'
+        # My laptop
+        # self.file_dir_intersection = '/Users/anjianli/Desktop/robotics/project/optimized_dp/data/csv_files_for_planner/intersection'
+        # self.file_dir_roundabout = '/Users/anjianli/Desktop/robotics/project/optimized_dp/data/csv_files_for_planner/roundabout'
+
         self.file_name_intersection = ['car_16_vid_09.csv', 'car_20_vid_09.csv', 'car_29_vid_09.csv',
                                        'car_36_vid_11.csv', 'car_50_vid_03.csv', 'car_112_vid_11.csv',
                                        'car_122_vid_11.csv']
-        self.file_dir_roundabout = '/home/anjianl/Desktop/project/optimized_dp/data/csv_files_for_planner/roundabout'
         self.file_name_roundabout = ['car_27.csv', 'car_122.csv']
 
         self.time_step = 0.1
         self.time_filter = 10
+
+        # Fit polynomial
+        self.degree = 5
 
     def read_prediction(self, file_name=None):
         """
@@ -93,7 +100,7 @@ class ProcessPredictionV2(object):
             y_t = np.asarray(raw_traj_seg['y_t'])
 
             # Fit a 5-degree polynomial
-            degree = 5
+            degree = self.degree
             weights_x = np.polyfit(t, x_t, degree)
             weights_y = np.polyfit(t, y_t, degree)
 
@@ -127,6 +134,7 @@ class ProcessPredictionV2(object):
         for poly_traj_seg in poly_traj:
 
             length = len(poly_traj_seg['x_t_poly'])
+            # Directly compute dx/dt, dy/dt
             dx_t = (poly_traj_seg['x_t_poly'][1:length] - poly_traj_seg['x_t_poly'][0:(length - 1)]) / self.time_step
             dy_t = (poly_traj_seg['y_t_poly'][1:length] - poly_traj_seg['y_t_poly'][0:(length - 1)]) / self.time_step
 
@@ -135,14 +143,24 @@ class ProcessPredictionV2(object):
             dy1_t = (poly_traj_seg['y_t_poly'][1:(length - 1)] - poly_traj_seg['y_t_poly'][0:(length - 2)]) / self.time_step
             dy2_t = (poly_traj_seg['y_t_poly'][2:length] - poly_traj_seg['y_t_poly'][1:(length - 1)]) / self.time_step
 
+            # Finite difference for derivative of x and y
+            # dx_t_fd, dy_t_fd = self.get_dx_dy_finite_difference(poly_traj_seg['x_t_poly'], poly_traj_seg['y_t_poly'])
+            # dx1_t_fd, dy1_t_fd = self.get_dx_dy_finite_difference(poly_traj_seg['x_t_poly'][0:-1], poly_traj_seg['y_t_poly'][0:-1])
+            # dx2_t_fd, dy2_t_fd = self.get_dx_dy_finite_difference(poly_traj_seg['x_t_poly'][1:], poly_traj_seg['y_t_poly'][1:])
+
             # Get acceleration
             v_t = np.sqrt(dx_t ** 2 + dy_t ** 2)
+            # v_t = np.sqrt(dx_t_fd ** 2 + dy_t_fd ** 2)
+
             a_t = (v_t[1:len(v_t)] - v_t[0:(len(v_t) - 1)]) / self.time_step
             acceleration_list.append(a_t)
 
             # Get omega (angular speed)
             orientation_1 = np.arctan2(dy1_t, dx1_t)
             orientation_2 = np.arctan2(dy2_t, dx2_t)
+            # orientation_1 = np.arctan2(dy1_t_fd, dx1_t_fd)
+            # orientation_2 = np.arctan2(dy2_t_fd, dx2_t_fd)
+
             omega_t = (orientation_2 - orientation_1) / self.time_step
             omega_list.append(omega_t)
 
@@ -151,6 +169,20 @@ class ProcessPredictionV2(object):
                 raise SystemExit(0)
 
         return acceleration_list, omega_list
+
+    def get_dx_dy_finite_difference(self, traj_x, traj_y):
+
+        length = len(traj_x)
+        x_t_1 = traj_x[0:(length - 2)]
+        x_t_2 = traj_x[2:length]
+
+        y_t_1 = traj_y[0:(length - 2)]
+        y_t_2 = traj_y[2:length]
+
+        dx_t_fd = (x_t_2 - x_t_1) / self.time_step
+        dy_t_fd = (y_t_2 - y_t_1) / self.time_step
+
+        return dx_t_fd, dy_t_fd
 
     def collect_action_from_group(self):
 
@@ -173,36 +205,6 @@ class ProcessPredictionV2(object):
                 action_list_roundabout.append([file_name, acc[index], omega[index]])
 
         return action_list_intersection, action_list_roundabout
-
-    def get_ang_diff(self, target, base):
-        """
-        Given target and base both in [-pi, pi], calculate signed angle difference of (target - base)
-
-        """
-
-        # If either target or base == 0, then return 0
-        if target == 0 or base == 0:
-            return 0
-        elif target > base:
-            if target - base <= np.pi:
-                return target - base
-            else:
-                return target - (base + 2 * np.pi)
-        elif target == base:
-            return 0
-        else:
-            return - self.get_ang_diff(base, target)
-
-        # # Doesn't consider target or base == 0
-        # if target > base:
-        #     if target - base <= np.pi:
-        #         return target - base
-        #     else:
-        #         return target - (base + 2 * np.pi)
-        # elif target == base:
-        #     return 0
-        # else:
-        #     return - self.get_ang_diff(base, target)
 
 if __name__ == "__main__":
     ProcessPredictionV2().collect_action_from_group()

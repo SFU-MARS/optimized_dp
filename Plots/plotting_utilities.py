@@ -17,7 +17,8 @@ def plot_isosurface(grid, V, dims_plot):
 
         # V = V[:, :, :, 0, 0] # RelDyn5D
         # V = V[:, :, :, 34, 0]  # RelDyn5D
-        V = V[:, :, :, 34, 17]  # RelDyn5D
+        # V = V[:, :, :, 34, 17]  # RelDyn5D
+        V = V[:, :, :, 17, 17]  # RelDyn5D
 
 
         print("Plotting beautiful plots. Please wait\n")
@@ -33,7 +34,7 @@ def plot_isosurface(grid, V, dims_plot):
             caps=dict(x_show=True, y_show=True)
         ))
         fig.update_layout(
-            title="t = 2.0s, v_human = 17m/s, v_robot = 8.5m/s"
+            title="t = 5.0s, v_human = 17m/s, v_robot = 8.5m/s"
             # legend_title="Legend Title",
             # font=dict(
             #     family="Courier New, monospace",

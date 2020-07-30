@@ -74,8 +74,20 @@ my_shape = Initial_value_f
 g = grid(np.array([-10.0, -10.0, -math.pi, 0, 0]), np.array([10.0, 10.0, math.pi, 17, 17]), 5, np.array([41, 41, 31, 35, 35]), [2])
 
 # Define my object
+# my_car = RelDyn_5D(x=[0, 0, 0, 0, 0], uMin=np.array([-0.345, -5]), uMax=np.array([0.345, 3]),
+#                    dMin=np.array([-math.pi / 6, -5]), dMax=np.array([math.pi / 6, 3]), dims=5, uMode="max", dMode="min")
+# TODO: Driving mode 1: d1: w_h, d2: a_h
+# d1: w_h in [-0.1, 0.1], d2: a_h in [-5, -2]
 my_car = RelDyn_5D(x=[0, 0, 0, 0, 0], uMin=np.array([-0.345, -5]), uMax=np.array([0.345, 3]),
-                   dMin=np.array([-math.pi / 6, -5]), dMax=np.array([math.pi / 6, 3]), dims=5, uMode="max", dMode="min")
+                   dMin=np.array([-0.1, -5]), dMax=np.array([0.1, -2]), dims=5, uMode="max", dMode="min")
+# TODO: Driving mode 2: d1: w_h, d2: a_h
+# d1: w_h in [-pi/6, pi/6], d2: a_h in [-2, 1]
+# my_car = RelDyn_5D(x=[0, 0, 0, 0, 0], uMin=np.array([-0.345, -5]), uMax=np.array([0.345, 3]),
+#                    dMin=np.array([-math.pi / 6, -2]), dMax=np.array([math.pi / 6, 1]), dims=5, uMode="max", dMode="min")
+# TODO: Driving mode 3: d1: w_h, d2: a_h
+# d1: w_h in [-0.2, 0.2], d2: a_h in [1, 3]
+# my_car = RelDyn_5D(x=[0, 0, 0, 0, 0], uMin=np.array([-0.345, -5]), uMax=np.array([0.345, 3]),
+#                    dMin=np.array([-0.2, 1]), dMax=np.array([0.2, 3]), dims=5, uMode="max", dMode="min")
 print("Computing relative dynamics 5D")
 
 # Use the grid to initialize initial value function
