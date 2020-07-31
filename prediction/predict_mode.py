@@ -20,7 +20,7 @@ class PredictMode(object):
 
     def get_action_from_prediction(self):
 
-        filename = self.file_dir_intersection + '/' + self.file_name_intersection[1]
+        filename = self.file_dir_intersection + '/' + self.file_name_intersection[0]
 
         acc_list, omega_list = ProcessPredictionV2().get_action_data(file_name=filename)
 

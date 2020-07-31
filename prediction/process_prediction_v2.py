@@ -110,8 +110,8 @@ class ProcessPredictionV2(object):
             poly_y_t = np.asarray([poly_y_func(t) for t in range(len(t))])
 
             # Plot the comparison
-            # plt.plot(t, x_t)
-            # plt.plot(t, poly_x_t)
+            # plt.plot(t, y_t)
+            # plt.plot(t, poly_y_t)
             # plt.show()
 
             # Form the polynomial trajectory list

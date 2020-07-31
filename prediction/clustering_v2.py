@@ -3,6 +3,7 @@ import pickle
 sys.path.append("/Users/anjianli/Desktop/robotics/project/optimized_dp")
 
 import numpy as np
+import math
 import matplotlib.pyplot as plt
 
 from sklearn.cluster import KMeans
@@ -44,7 +45,7 @@ class ClusteringV2(object):
 
         for i in range(len(acc_list)):
             # Filter those outside of physical bound
-            if (-5 <= acc_list[i] <= 3) and (-0.34 <= omega_list[i] <= 0.34):
+            if (-5 <= acc_list[i] <= 3) and (-math.pi / 6 <= omega_list[i] <= math.pi/6):
                 acc_omega.append([acc_list[i], omega_list[i]])
                 num_in_effect += 1
             # # No filter

@@ -27,8 +27,8 @@ class RelDyn_5D:
     Disturbance: dOpt = (dOpt[0], dOpt[1]) = (w_h, a_h)
 
     """
-    def __init__(self, x=[0, 0, 0, 0, 0], uMin=np.array([-0.345, -5]), uMax=np.array([0.345, 3]), dMin=np.array([-0.1, -5]),
-                 dMax=np.array([0.1, -2]), dims=5, uMode="max", dMode="min"):
+    def __init__(self, x=[0, 0, 0, 0, 0], uMin=np.array([-0.345, -5]), uMax=np.array([0.345, 3]), dMin=np.array([-math.pi / 6, -5]),
+                 dMax=np.array([math.pi / 6, 3]), dims=5, uMode="max", dMode="min"):
         self.x = x
         self.uMode = uMode
         self.dMode = dMode

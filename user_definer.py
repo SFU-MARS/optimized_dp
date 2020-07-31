@@ -74,12 +74,12 @@ my_shape = Initial_value_f
 g = grid(np.array([-10.0, -10.0, -math.pi, 0, 0]), np.array([10.0, 10.0, math.pi, 17, 17]), 5, np.array([41, 41, 31, 35, 35]), [2])
 
 # Define my object
-# my_car = RelDyn_5D(x=[0, 0, 0, 0, 0], uMin=np.array([-0.345, -5]), uMax=np.array([0.345, 3]),
-#                    dMin=np.array([-math.pi / 6, -5]), dMax=np.array([math.pi / 6, 3]), dims=5, uMode="max", dMode="min")
+my_car = RelDyn_5D(x=[0, 0, 0, 0, 0], uMin=np.array([-0.345, -5]), uMax=np.array([0.345, 3]),
+                   dMin=np.array([-math.pi / 6, -5]), dMax=np.array([math.pi / 6, 3]), dims=5, uMode="max", dMode="min")
 # TODO: Driving mode 1: d1: w_h, d2: a_h
 # d1: w_h in [-0.1, 0.1], d2: a_h in [-5, -2]
-my_car = RelDyn_5D(x=[0, 0, 0, 0, 0], uMin=np.array([-0.345, -5]), uMax=np.array([0.345, 3]),
-                   dMin=np.array([-0.1, -5]), dMax=np.array([0.1, -2]), dims=5, uMode="max", dMode="min")
+# my_car = RelDyn_5D(x=[0, 0, 0, 0, 0], uMin=np.array([-0.345, -5]), uMax=np.array([0.345, 3]),
+#                    dMin=np.array([-0.1, -5]), dMax=np.array([0.1, -2]), dims=5, uMode="max", dMode="min")
 # TODO: Driving mode 2: d1: w_h, d2: a_h
 # d1: w_h in [-pi/6, pi/6], d2: a_h in [-2, 1]
 # my_car = RelDyn_5D(x=[0, 0, 0, 0, 0], uMin=np.array([-0.345, -5]), uMax=np.array([0.345, 3]),
@@ -94,7 +94,7 @@ print("Computing relative dynamics 5D")
 Initial_value_f = CylinderShape(g, [3, 4, 5], np.zeros(5), 2)
 
 # Look-back length and time step
-lookback_length = 5.2
+lookback_length = 2.1
 t_step = 0.05
 
 small_number = 1e-5
@@ -103,6 +103,6 @@ print("Welcome to optimized_dp \n")
 
 # Use the following variable to specify the characteristics of computation
 # compMethod = "none" # Reachable set
-compMethod = "minVWithVInit" # Reachable tube
+compMethod = "minVWithV0" # Reachable tube
 my_object  = my_car
 my_shape = Initial_value_f

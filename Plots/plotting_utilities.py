@@ -16,9 +16,9 @@ def plot_isosurface(grid, V, dims_plot):
         # V = V[:, :, 49, :] # DubinsCar4D
 
         # V = V[:, :, :, 0, 0] # RelDyn5D
-        # V = V[:, :, :, 34, 0]  # RelDyn5D
+        V = V[:, :, :, 34, 0]  # RelDyn5D
         # V = V[:, :, :, 34, 17]  # RelDyn5D
-        V = V[:, :, :, 17, 17]  # RelDyn5D
+        # V = V[:, :, :, 34, 34]  # RelDyn5D
 
 
         print("Plotting beautiful plots. Please wait\n")
@@ -34,7 +34,7 @@ def plot_isosurface(grid, V, dims_plot):
             caps=dict(x_show=True, y_show=True)
         ))
         fig.update_layout(
-            title="t = 5.0s, v_human = 17m/s, v_robot = 8.5m/s"
+            title="t = 2.0s, v_human = 17m/s, v_robot = 17m/s, a_human in [-5, 3], w_human in [-pi/6, pi/6]"
             # legend_title="Legend Title",
             # font=dict(
             #     family="Courier New, monospace",
@@ -44,5 +44,6 @@ def plot_isosurface(grid, V, dims_plot):
         )
 
         fig.show()
+        # fig.write_image("/Users/anjianli/Desktop/robotics/project/prediction-reachability/reachable-set/t5_vh_8.5_vr_8.5_ah_-5_-2_wh_-0.1_0.1.png")
         print("Please check the plot on your browser.")
 

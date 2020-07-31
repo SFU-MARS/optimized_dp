@@ -106,7 +106,10 @@ def main():
              print("Computational time to integrate (s): {:.5f}".format(time.time() - start))
              # Saving data into disk
              if tNow == 0.5 or tNow == 1 or tNow == 1.5 or tNow == 2 or tNow == 2.5 or tNow == 3 or tNow == 3.5 or tNow == 4 or tNow == 4.5 or tNow == 5:
-                np.save('/home/anjianl/Desktop/project/optimized_dp/data/brs/0730-wh_-0.1_0.1-ah_-5_-2-t5/reldyn5d_brs_wh_-0.1_0.1-ah_-5_-2_t_%.2f.npy' % tNow, V_1.asnumpy())
+                # np.save('/home/anjianl/Desktop/project/optimized_dp/data/brs/0730-wh_-0.1_0.1-ah_-5_-2-t5/reldyn5d_brs_wh_-0.1_0.1-ah_-5_-2_t_%.2f.npy' % tNow, V_1.asnumpy())
+                # np.save('/home/anjianl/Desktop/project/optimized_dp/data/brs/0730-wh_full-ah_-2_1-t5/reldyn5d_brs_wh_full-ah_-2_1_t_%.2f.npy' % tNow, V_1.asnumpy())
+                # np.save('/home/anjianl/Desktop/project/optimized_dp/data/brs/0730-wh_-0.2_0.2-ah_1_3-t5/reldyn5d_brs_wh_-0.2_0.2-ah_1_3_t_%.2f.npy' % tNow, V_1.asnumpy())
+                np.save('/home/anjianl/Desktop/project/optimized_dp/data/brs/0730-full_range-t5/reldyn5d_brs_full_range_t_%.2f.npy' % tNow, V_1.asnumpy())
 
     # Time info printing
     print("Total kernel time (s): {:.5f}".format(execution_time))
