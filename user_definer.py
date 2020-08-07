@@ -58,10 +58,10 @@ print("Welcome to optimized_dp \n")
 
 '''
 Assign one of the following strings to `compMethod` to specify the characteristics of computation
-"none" -> BRS
-"minVwithV0" -> BRT
-"maxVwithVInit"
-"minVwithVInit"
+"none" -> compute Backward Reachable Set
+"minVwithV0" -> compute Backward Reachable Tube
+"maxVwithVInit" -> compute max V over time
+"minVwithVInit" compute min V over time
 '''
 compMethod = "none"
 my_object  = my_car
