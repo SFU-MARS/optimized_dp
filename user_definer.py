@@ -56,7 +56,13 @@ small_number = 1e-5
 tau = np.arange(start = 0, stop = lookback_length + small_number, step = t_step)
 print("Welcome to optimized_dp \n")
 
-# Use the following variable to specify the characteristics of computation
+'''
+Assign one of the following strings to `compMethod` to specify the characteristics of computation
+"none" -> BRS
+"minVwithV0" -> BRT
+"maxVwithVInit"
+"minVwithVInit"
+'''
 compMethod = "none"
 my_object  = my_car
 my_shape = Initial_value_f
