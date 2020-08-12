@@ -1,5 +1,6 @@
 import numpy as np
 import pickle
+import matplotlib.pyplot as plt
 
 from prediction.process_prediction_v2 import *
 
@@ -27,6 +28,17 @@ class PredictMode(object):
         acc_omega_list = []
         acc_omega = []
         num_in_effect = 0
+
+        # # Print each acc segment
+        # for acc in acc_list:
+        #     t = np.asarray(range(len(acc)))
+        #     plt.plot(t, acc)
+        #     plt.show()
+        # Print each omega segment
+        for omega in omega_list:
+            t = np.asarray(range(len(omega)))
+            plt.plot(t, omega)
+            plt.show()
 
         for i in range(len(acc_list)):
             for j in range(len(acc_list[i])):

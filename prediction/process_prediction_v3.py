@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import csv
 
 
-class ProcessPredictionV2(object):
+class ProcessPredictionV3(object):
 
     def __init__(self):
         # Remote desktop
@@ -50,9 +50,14 @@ class ProcessPredictionV2(object):
         poly_traj = self.fit_polynomial_traj(raw_traj)
 
         # Get raw actions from poly_traj
-        acc_list, omega_list = self.get_action(poly_traj)
+        raw_acc_list, raw_omega_list = self.get_action(poly_traj)
 
-        return acc_list, omega_list
+        # Filter out short episode, outliers (if the timestep has outliers), and get mean and variance over some
+        # time-span of mode
+        filtered_acc_mean_list, filtered_acc_variance_list, filtered_omega_mean_list, filtered_omega_variance_list = \
+            self.get_mean_variance(raw_acc_list, raw_omega_list)
+
+        return filtered_acc_mean_list, filtered_acc_variance_list, filtered_omega_mean_list, filtered_omega_variance_list
 
     def read_prediction(self, file_name=None):
         """
@@ -193,27 +198,69 @@ class ProcessPredictionV2(object):
 
         return dx_t_fd, dy_t_fd
 
+    def get_mean_variance(self, raw_acc_list, raw_omega_list):
+
+        filtered_acc_mean_list = []
+        filtered_acc_variance_list = []
+        filtered_omega_mean_list = []
+        filtered_omega_variance_list = []
+
+        filtered_acc_mean_tmp = []
+        filtered_acc_variance_tmp = []
+        filtered_omega_mean_tmp = []
+        filtered_omega_variance_tmp = []
+
+        episode_num = len(raw_acc_list)
+
+        for i in range(episode_num):
+            episode_len = np.shape(raw_acc_list[i])[0]
+            if episode_len < self.mode_time_span:
+                continue
+            for j in range(episode_len):
+                if j + self.mode_time_span <= episode_len:
+                    acc_span = raw_acc_list[i][j:j + self.mode_time_span]
+                    omega_span = raw_omega_list[i][j:j + self.mode_time_span]
+                    # If in the current timespan, there's a time step that is outside the action bound, filter out the this time span
+                    if (np.min(acc_span) >= self.acc_bound[0]) and (np.max(acc_span) <= self.acc_bound[1]) and \
+                            (np.min(omega_span) >= self.omega_bound[0]) and (np.max(omega_span) <= self.omega_bound[1]):
+                        filtered_acc_mean_tmp.append(np.mean(acc_span))
+                        filtered_acc_variance_tmp.append(np.var(acc_span))
+                        filtered_omega_mean_tmp.append(np.mean(omega_span))
+                        filtered_omega_variance_tmp.append(np.var(omega_span))
+            filtered_acc_mean_list.append(np.asarray(filtered_acc_mean_tmp))
+            filtered_acc_variance_list.append(np.asarray(filtered_acc_variance_tmp))
+            filtered_omega_mean_list.append(np.asarray(filtered_omega_mean_tmp))
+            filtered_omega_variance_list.append((np.asarray(filtered_omega_variance_tmp)))
+
+            filtered_acc_mean_tmp = []
+            filtered_acc_variance_tmp = []
+            filtered_omega_mean_tmp = []
+            filtered_omega_variance_tmp = []
+
+        return filtered_acc_mean_list, filtered_acc_variance_list, filtered_omega_mean_list, filtered_omega_variance_list
+
     def collect_action_from_group(self):
 
         # in the format of: (file, a_upper, a_lower, ang_v_upper, ang_v_lower)
-        action_list_intersection = []
-        action_list_roundabout = []
+        action_feature_list_intersection = []
+        action_feature_list_roundabout = []
 
         # For intersection scenario
         for file_name in self.file_name_intersection:
             full_file_name = self.file_dir_intersection + '/' + file_name
-            acc, omega = self.get_action_data(file_name=full_file_name)
-            for index in range(len(acc)):
-                action_list_intersection.append([file_name, acc[index], omega[index]])
+            acc_mean, acc_variance, omega_mean, omega_variance = self.get_action_data(file_name=full_file_name)
+            for index in range(len(acc_mean)):
+                action_feature_list_intersection.append([file_name, acc_mean[index], acc_variance[index], omega_mean[index], omega_variance[index]])
 
         # For roundabout scenario
         for file_name in self.file_name_roundabout:
             full_file_name = self.file_dir_roundabout + '/' + file_name
-            acc, omega = self.get_action_data(file_name=full_file_name)
-            for index in range(len(acc)):
-                action_list_roundabout.append([file_name, acc[index], omega[index]])
+            acc_mean, acc_variance, omega_mean, omega_variance = self.get_action_data(file_name=full_file_name)
+            for index in range(len(acc_mean)):
+                action_feature_list_roundabout.append(
+                    [file_name, acc_mean[index], acc_variance[index], omega_mean[index], omega_variance[index]])
 
-        return action_list_intersection, action_list_roundabout
+        return action_feature_list_intersection, action_feature_list_roundabout
 
 if __name__ == "__main__":
-    ProcessPredictionV2().collect_action_from_group()
+    ProcessPredictionV3().collect_action_from_group()

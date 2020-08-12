@@ -34,10 +34,15 @@ class PlotReldyn5D(object):
 
         # Slice the value function
         # Psi_relative, v_human, v_robot
-        val_1 = np.squeeze(V_1[:, :, 19, 34, 0])
-        val_2 = np.squeeze(V_2[:, :, 19, 34, 0])
-        val_3 = np.squeeze(V_3[:, :, 19, 34, 0])
-        val_4 = np.squeeze(V_4[:, :, 19, 34, 0])
+        # val_1 = np.squeeze(V_1[:, :, 19, 34, 0])
+        # val_2 = np.squeeze(V_2[:, :, 19, 34, 0])
+        # val_3 = np.squeeze(V_3[:, :, 19, 34, 0])
+        # val_4 = np.squeeze(V_4[:, :, 19, 34, 0])
+
+        val_1 = np.squeeze(V_1[:, :, 23, 24, 10])
+        val_2 = np.squeeze(V_2[:, :, 23, 24, 10])
+        val_3 = np.squeeze(V_3[:, :, 23, 24, 10])
+        val_4 = np.squeeze(V_4[:, :, 23, 24, 10])
 
         fig, ax = plt.subplots()
 
@@ -57,7 +62,7 @@ class PlotReldyn5D(object):
 
         ax.set_xlabel("x_relative")
         ax.set_ylabel("y_relative")
-        ax.set_title('Avoid set: psi_rel = pi/4, v_human = 17m/s, v_robot = 0m/s')
+        ax.set_title('Avoid set: psi_rel = pi/2, v_human = 12m/s, v_robot = 5m/s')
 
         plt.show()
 
