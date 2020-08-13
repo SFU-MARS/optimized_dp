@@ -25,6 +25,11 @@ class ClusteringV3(object):
 
         self.clustering_num = 5
 
+        # Clustering feature selection
+        self.clustering_feature_type = "5_default"
+        # self.clustering_feature_type = "only_mean"
+        # self.clustering_feature_type = "mean_and_variance"
+
         # Default driving mode
         self.default_m1_acc = -1
         self.default1_m1_omega = 0
@@ -88,14 +93,18 @@ class ClusteringV3(object):
     def get_clustering_feature(self, action_feature):
 
         # action_feature = [acc_mean, acc_variance, omega_mean, omega_variance]
-
-        clustering_feature = np.transpose(np.asarray([
-            action_feature[:, 0] - self.default_m1_acc, action_feature[:, 0] - self.default_m2_acc,
-            action_feature[:, 0] - self.default_m3_acc, action_feature[:, 0] - self.default_m4_acc,
-            action_feature[:, 0] - self.default_m5_acc,
-            action_feature[:, 2] - self.default1_m1_omega, action_feature[:, 2] - self.default1_m2_omega,
-            action_feature[:, 2] - self.default1_m3_omega, action_feature[:, 2] - self.default1_m4_omega,
-            action_feature[:, 2] - self.default1_m5_omega]))
+        if self.clustering_feature_type == "5_default":
+            clustering_feature = np.transpose(np.asarray([
+                action_feature[:, 0] - self.default_m1_acc, action_feature[:, 0] - self.default_m2_acc,
+                action_feature[:, 0] - self.default_m3_acc, action_feature[:, 0] - self.default_m4_acc,
+                action_feature[:, 0] - self.default_m5_acc,
+                action_feature[:, 2] - self.default1_m1_omega, action_feature[:, 2] - self.default1_m2_omega,
+                action_feature[:, 2] - self.default1_m3_omega, action_feature[:, 2] - self.default1_m4_omega,
+                action_feature[:, 2] - self.default1_m5_omega]))
+        elif self.clustering_feature_type == "only_mean":
+            clustering_feature = np.transpose(np.asarray([action_feature[:, 0], action_feature[:, 2]]))
+        elif self.clustering_feature_type == "mean_and_variance":
+            clustering_feature = action_feature
 
         normalized_clustering_feature = MinMaxScaler().fit_transform(clustering_feature)
 
