@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 
 from sklearn.cluster import KMeans
 from sklearn.datasets import make_blobs
+from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import MinMaxScaler
 
 from prediction.process_prediction_v3 import *
 
@@ -21,59 +23,96 @@ class ClusteringV3(object):
 
     def __init__(self):
 
-        self.clustering_num = 4
+        self.clustering_num = 5
+
+        # Default driving mode
+        self.default_m1_acc = -1
+        self.default1_m1_omega = 0
+
+        self.default_m2_acc = 0
+        self.default1_m2_omega = 0
+
+        self.default_m3_acc = 0
+        self.default1_m3_omega = 0.15
+
+        self.default_m4_acc = 0
+        self.default1_m4_omega = - 0.15
+
+        self.default_m5_acc = 1
+        self.default1_m5_omega = 0
 
     def get_clustering(self):
 
-        acc_list, omega_list = self.get_action()
+        # The action feature vector is [acc_mean, acc_variance, omega_mean, omega_variance]
+        action_feature_intersection, action_feature_list_roundabout = self.get_action_feature()
 
-        acc_omega, prediction = self.kmeans_clustering(acc_list, omega_list)
+        # Form clustering feature from action feature
+        clustering_feature_intersection = self.get_clustering_feature(action_feature_intersection)
 
-        self.plot_clustering(acc_omega, prediction)
+        # Kmeans on clustering feature
+        prediction = self.kmeans_clustering(clustering_feature_intersection)
 
-    def get_action(self):
+        # Visualization
+        self.plot_clustering(action_feature_intersection, clustering_feature_intersection, prediction)
 
-        action_list_intersection, action_list_roundabout = ProcessPredictionV3().collect_action_from_group()
+    def get_action_feature(self):
 
-        acc_list = np.asarray([])
-        omega_list = np.asarray([])
+        filename_action_feature_list_intersection, filename_action_feature_list_roundabout = ProcessPredictionV3().collect_action_from_group()
 
-        # Use intersection data
-        for action in action_list_intersection:
-            acc_list = np.append(acc_list, action[2])
-            omega_list = np.append(omega_list, action[4] * 100)
+        # Concatenate all the actions feature in a big list
+        action_feature_list_intersection = []
+        action_feature_list_roundabout = []
 
-        # # Use roundabout data
-        # for action in action_list_roundabout:
-        #     acc_list = np.append(acc_list, action[1])
-        #     omega_list = np.append(omega_list, action[2])
+        num_action_feature_intersection = 0
+        for action_feature in filename_action_feature_list_intersection:
+            for i in range(np.shape(action_feature[1])[0]):
+                # The action feature vector is [acc_mean, acc_variance, omega_mean, omega_variance]
+                action_feature_list_intersection.append([action_feature[1][i], action_feature[2][i], action_feature[3][i], action_feature[4][i]])
+                num_action_feature_intersection += 1
 
-        return acc_list, omega_list
+        action_feature_list_intersection = np.asarray(action_feature_list_intersection)
+        print("total number of action feature for intersection is ", num_action_feature_intersection)
 
-    def kmeans_clustering(self, acc_list, omega_list):
-        acc_omega = []
-        num_in_effect = 0
+        num_action_feature_roundabout = 0
+        for action_feature in filename_action_feature_list_roundabout:
+            for i in range(np.shape(action_feature[1])[0]):
+                # The action feature vector is [acc_mean, acc_variance, omega_mean, omega_variance]
+                action_feature_list_roundabout.append([action_feature[1][i], action_feature[2][i], action_feature[3][i], action_feature[4][i]])
+                num_action_feature_roundabout += 1
 
-        for i in range(len(acc_list)):
-            acc_omega.append([acc_list[i], omega_list[i]])
-            num_in_effect += 1
+        action_feature_list_roundabout = np.asarray(action_feature_list_roundabout)
+        print("total number of action feature for roundabout is ", num_action_feature_roundabout)
 
-        print("the effective action number is %.2f" % (num_in_effect / len(acc_list)))
-        print("total number of action is ", num_in_effect)
+        return action_feature_list_intersection, action_feature_list_roundabout
 
-        acc_omega = np.asarray(acc_omega)
+    def get_clustering_feature(self, action_feature):
 
-        # pred = KMeans(n_clusters=self.clustering_num, random_state=9).fit_predict(acc_omega)
-        kmeans_action = KMeans(n_clusters=self.clustering_num, random_state=9).fit(acc_omega)
-        pred = kmeans_action.predict(acc_omega)
+        # action_feature = [acc_mean, acc_variance, omega_mean, omega_variance]
 
-        return acc_omega, pred
+        clustering_feature = np.transpose(np.asarray([
+            action_feature[:, 0] - self.default_m1_acc, action_feature[:, 0] - self.default_m2_acc,
+            action_feature[:, 0] - self.default_m3_acc, action_feature[:, 0] - self.default_m4_acc,
+            action_feature[:, 0] - self.default_m5_acc,
+            action_feature[:, 2] - self.default1_m1_omega, action_feature[:, 2] - self.default1_m2_omega,
+            action_feature[:, 2] - self.default1_m3_omega, action_feature[:, 2] - self.default1_m4_omega,
+            action_feature[:, 2] - self.default1_m5_omega]))
 
-    def plot_clustering(self, data, prediction):
+        normalized_clustering_feature = MinMaxScaler().fit_transform(clustering_feature)
+
+        return normalized_clustering_feature
+
+    def kmeans_clustering(self, clustering_feature):
+
+        kmeans_action = KMeans(n_clusters=self.clustering_num, random_state=9).fit(clustering_feature)
+        pred = kmeans_action.predict(clustering_feature)
+
+        return pred
+
+    def plot_clustering(self, original_data, clustering_data, prediction):
 
         fig, ax = plt.subplots()
         for i in range(self.clustering_num):
-            ax.scatter(data[:, 0][prediction == i], data[:, 1][prediction == i], label='Cluster %d' % i)
+            ax.scatter(original_data[:, 0][prediction == i], original_data[:, 2][prediction == i], label='Cluster %d' % i)
         ax.set_xlabel('acceleration')
         ax.set_ylabel('angular_speed')
         ax.set_title('clustering_filter')

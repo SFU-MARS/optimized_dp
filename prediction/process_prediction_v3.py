@@ -242,25 +242,25 @@ class ProcessPredictionV3(object):
     def collect_action_from_group(self):
 
         # in the format of: (file, a_upper, a_lower, ang_v_upper, ang_v_lower)
-        action_feature_list_intersection = []
-        action_feature_list_roundabout = []
+        filename_action_feature_list_intersection = []
+        file_name_action_feature_list_roundabout = []
 
         # For intersection scenario
         for file_name in self.file_name_intersection:
             full_file_name = self.file_dir_intersection + '/' + file_name
             acc_mean, acc_variance, omega_mean, omega_variance = self.get_action_data(file_name=full_file_name)
             for index in range(len(acc_mean)):
-                action_feature_list_intersection.append([file_name, acc_mean[index], acc_variance[index], omega_mean[index], omega_variance[index]])
+                filename_action_feature_list_intersection.append([file_name, acc_mean[index], acc_variance[index], omega_mean[index], omega_variance[index]])
 
         # For roundabout scenario
         for file_name in self.file_name_roundabout:
             full_file_name = self.file_dir_roundabout + '/' + file_name
             acc_mean, acc_variance, omega_mean, omega_variance = self.get_action_data(file_name=full_file_name)
             for index in range(len(acc_mean)):
-                action_feature_list_roundabout.append(
+                file_name_action_feature_list_roundabout.append(
                     [file_name, acc_mean[index], acc_variance[index], omega_mean[index], omega_variance[index]])
 
-        return action_feature_list_intersection, action_feature_list_roundabout
+        return filename_action_feature_list_intersection, file_name_action_feature_list_roundabout
 
 if __name__ == "__main__":
     ProcessPredictionV3().collect_action_from_group()
