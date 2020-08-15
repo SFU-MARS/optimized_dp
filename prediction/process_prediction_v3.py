@@ -9,16 +9,18 @@ class ProcessPredictionV3(object):
 
     def __init__(self):
         # Remote desktop
-        self.file_dir_intersection = '/home/anjianl/Desktop/project/optimized_dp/data/csv_files_for_planner/intersection'
+        self.file_dir_intersection = '/home/anjianl/Desktop/project/optimized_dp/data/intersection-data'
         self.file_dir_roundabout = '/home/anjianl/Desktop/project/optimized_dp/data/csv_files_for_planner/roundabout'
         # My laptop
-        # self.file_dir_intersection = '/Users/anjianli/Desktop/robotics/project/optimized_dp/data/csv_files_for_planner/intersection'
+        # self.file_dir_intersection = '/Users/anjianli/Desktop/robotics/project/optimized_dp/data/intersection-data'
         # self.file_dir_roundabout = '/Users/anjianli/Desktop/robotics/project/optimized_dp/data/csv_files_for_planner/roundabout'
 
         # File name
         self.file_name_intersection = ['car_16_vid_09.csv', 'car_20_vid_09.csv', 'car_29_vid_09.csv',
                                        'car_36_vid_11.csv', 'car_50_vid_03.csv', 'car_112_vid_11.csv',
-                                       'car_122_vid_11.csv']
+                                       'car_122_vid_11.csv',
+                                       'car_38_vid_02.csv', 'car_52_vid_07.csv', 'car_73_vid_02.csv',
+                                       'car_118_vid_11.csv']
         self.file_name_roundabout = ['car_27.csv', 'car_122.csv']
 
         # Time step

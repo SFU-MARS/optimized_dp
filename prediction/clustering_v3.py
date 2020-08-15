@@ -26,23 +26,24 @@ class ClusteringV3(object):
         self.clustering_num = 5
 
         # Clustering feature selection
-        self.clustering_feature_type = "5_default"
-        # self.clustering_feature_type = "only_mean"
+        # self.clustering_feature_type = "5_default"
+        self.clustering_feature_type = "only_mean"
         # self.clustering_feature_type = "mean_and_variance"
 
         # Default driving mode
-        self.default_m1_acc = -1
+        # Decelerate
+        self.default_m1_acc = -1.5
         self.default1_m1_omega = 0
-
+        # Maintain
         self.default_m2_acc = 0
         self.default1_m2_omega = 0
-
+        # Turn Left
         self.default_m3_acc = 0
         self.default1_m3_omega = 0.15
-
+        # Turn right
         self.default_m4_acc = 0
         self.default1_m4_omega = - 0.15
-
+        # Accelerate
         self.default_m5_acc = 1
         self.default1_m5_omega = 0
 
@@ -104,7 +105,8 @@ class ClusteringV3(object):
         elif self.clustering_feature_type == "only_mean":
             clustering_feature = np.transpose(np.asarray([action_feature[:, 0], action_feature[:, 2]]))
         elif self.clustering_feature_type == "mean_and_variance":
-            clustering_feature = action_feature
+            clustering_feature = np.transpose(np.asarray([action_feature[:, 0], action_feature[:, 2],
+                                                          action_feature[:, 1], action_feature[:, 3]]))
 
         normalized_clustering_feature = MinMaxScaler().fit_transform(clustering_feature)
 
@@ -124,8 +126,7 @@ class ClusteringV3(object):
             ax.scatter(original_data[:, 0][prediction == i], original_data[:, 2][prediction == i], label='Cluster %d' % i)
         ax.set_xlabel('acceleration')
         ax.set_ylabel('angular_speed')
-        ax.set_title('clustering_filter')
-        # ax.set_title('clustering_no_filter')
+        ax.set_title(self.clustering_feature_type)
         ax.legend()
         plt.show()
 
