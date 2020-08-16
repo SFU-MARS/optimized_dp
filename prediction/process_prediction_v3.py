@@ -3,17 +3,25 @@ import pandas
 import math
 import matplotlib.pyplot as plt
 import csv
+import copy
 
 
 class ProcessPredictionV3(object):
 
     def __init__(self):
+
+        # Choose which scenario to use for clustering
+        # self.scenario_to_use = ["intersection", "roundabout"]
+        self.scenario_to_use = ["intersection"]
+        # self.scenario_to_use = ["roundabout"]
+
+        # Data directory
         # Remote desktop
         self.file_dir_intersection = '/home/anjianl/Desktop/project/optimized_dp/data/intersection-data'
-        self.file_dir_roundabout = '/home/anjianl/Desktop/project/optimized_dp/data/csv_files_for_planner/roundabout'
+        self.file_dir_roundabout = '/home/anjianl/Desktop/project/optimized_dp/data/roundabout-data'
         # My laptop
         # self.file_dir_intersection = '/Users/anjianli/Desktop/robotics/project/optimized_dp/data/intersection-data'
-        # self.file_dir_roundabout = '/Users/anjianli/Desktop/robotics/project/optimized_dp/data/csv_files_for_planner/roundabout'
+        # self.file_dir_roundabout = '/Users/anjianli/Desktop/robotics/project/optimized_dp/data/roundabout-data'
 
         # File name
         self.file_name_intersection = ['car_16_vid_09.csv', 'car_20_vid_09.csv', 'car_29_vid_09.csv',
@@ -244,25 +252,42 @@ class ProcessPredictionV3(object):
     def collect_action_from_group(self):
 
         # in the format of: (file, a_upper, a_lower, ang_v_upper, ang_v_lower)
-        filename_action_feature_list_intersection = []
-        file_name_action_feature_list_roundabout = []
+        filename_action_feature_list = []
+        filename_list = []
 
-        # For intersection scenario
-        for file_name in self.file_name_intersection:
-            full_file_name = self.file_dir_intersection + '/' + file_name
-            acc_mean, acc_variance, omega_mean, omega_variance = self.get_action_data(file_name=full_file_name)
-            for index in range(len(acc_mean)):
-                filename_action_feature_list_intersection.append([file_name, acc_mean[index], acc_variance[index], omega_mean[index], omega_variance[index]])
+        # Use both intersection and roundabout
+        for scenario in self.scenario_to_use:
+            if scenario == "intersection":
+                filename_list = copy.copy(self.file_name_intersection)
+                file_dir = copy.copy(self.file_dir_intersection)
+            elif scenario == "roundabout":
+                filename_list = copy.copy(self.file_name_roundabout)
+                file_dir = copy.copy(self.file_dir_roundabout)
+            for file_name in filename_list:
+                full_file_name = file_dir + '/' + file_name
+                acc_mean, acc_variance, omega_mean, omega_variance = self.get_action_data(file_name=full_file_name)
+                for index in range(len(acc_mean)):
+                    filename_action_feature_list.append(
+                        [file_name, acc_mean[index], acc_variance[index], omega_mean[index], omega_variance[index]])
 
-        # For roundabout scenario
-        for file_name in self.file_name_roundabout:
-            full_file_name = self.file_dir_roundabout + '/' + file_name
-            acc_mean, acc_variance, omega_mean, omega_variance = self.get_action_data(file_name=full_file_name)
-            for index in range(len(acc_mean)):
-                file_name_action_feature_list_roundabout.append(
-                    [file_name, acc_mean[index], acc_variance[index], omega_mean[index], omega_variance[index]])
+        # # Only use intersection scenario
+        # if self.scenario_to_use == "intersection":
+        #     for file_name in self.file_name_intersection:
+        #         full_file_name = self.file_dir_intersection + '/' + file_name
+        #         acc_mean, acc_variance, omega_mean, omega_variance = self.get_action_data(file_name=full_file_name)
+        #         for index in range(len(acc_mean)):
+        #             filename_action_feature_list.append([file_name, acc_mean[index], acc_variance[index], omega_mean[index], omega_variance[index]])
+        #
+        # # Only use roundabout scenario
+        # if self.scenario_to_use == "roundabout":
+        #     for file_name in self.file_name_roundabout:
+        #         full_file_name = self.file_dir_roundabout + '/' + file_name
+        #         acc_mean, acc_variance, omega_mean, omega_variance = self.get_action_data(file_name=full_file_name)
+        #         for index in range(len(acc_mean)):
+        #             filename_action_feature_list.append(
+        #                 [file_name, acc_mean[index], acc_variance[index], omega_mean[index], omega_variance[index]])
 
-        return filename_action_feature_list_intersection, file_name_action_feature_list_roundabout
+        return filename_action_feature_list
 
 if __name__ == "__main__":
     ProcessPredictionV3().collect_action_from_group()
