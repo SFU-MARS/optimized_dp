@@ -138,7 +138,7 @@ def main():
     #print(V_1.asnumpy())
 
     #sio.savemat('dataV.mat', {'dataV':V_1.asnumpy()})
-    sio.savemat('optimized_dubins_dubins_safe_V_circle_Radius_2_Speed_10_SafetyTime_15.mat',
+    sio.savemat('optimized_dubins_dubins_safe_V_circle_Radius_2_Speed_5_SafetyTime_5_2_max_turn_rate_pi_3.mat',
             {'dataTTR':TTR.asnumpy()})
     ##################### PLOTTING #####################
     #if args.plot:
