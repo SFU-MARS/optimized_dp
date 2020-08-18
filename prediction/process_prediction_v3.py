@@ -11,8 +11,8 @@ class ProcessPredictionV3(object):
     def __init__(self):
 
         # Choose which scenario to use for clustering
-        # self.scenario_to_use = ["intersection", "roundabout"]
-        self.scenario_to_use = ["intersection"]
+        self.scenario_to_use = ["intersection", "roundabout"]
+        # self.scenario_to_use = ["intersection"]
         # self.scenario_to_use = ["roundabout"]
 
         # Data directory
@@ -29,14 +29,16 @@ class ProcessPredictionV3(object):
                                        'car_122_vid_11.csv',
                                        'car_38_vid_02.csv', 'car_52_vid_07.csv', 'car_73_vid_02.csv',
                                        'car_118_vid_11.csv']
-        self.file_name_roundabout = ['car_27.csv', 'car_122.csv']
+        self.file_name_roundabout = ['car_27.csv', 'car_122.csv',
+                                     'car_51.csv', 'car_52.csv', 'car_131.csv', 'car_155.csv']
 
         # Time step
         self.time_step = 0.1
         self.time_filter = 10
 
         # Within a time span, we only specify single mode for the trajectory
-        self.mode_time_span = 20
+        # self.mode_time_span = 20
+        self.mode_time_span = 10
 
         # Action bound, used for filtering
         self.acc_bound = [-5, 3]
@@ -44,6 +46,10 @@ class ProcessPredictionV3(object):
 
         # Fit polynomial
         self.degree = 5
+
+        # Use velocity profile or not
+        self.use_velocity = True
+        # self.use_velocity = False
 
     def get_action_data(self, file_name=None):
         """
@@ -59,8 +65,12 @@ class ProcessPredictionV3(object):
         # Fit polynomial for x, y position: x(t), y(t)
         poly_traj = self.fit_polynomial_traj(raw_traj)
 
-        # Get raw actions from poly_traj
-        raw_acc_list, raw_omega_list = self.get_action(poly_traj)
+        if self.use_velocity:
+            # Get the acc from velocity profile provided
+            raw_acc_list, raw_omega_list = self.get_action_v_profile(raw_traj, poly_traj)
+        else:
+            # Get raw actions from poly_traj, here acc and omega are extracted from both poly_traj
+            raw_acc_list, raw_omega_list = self.get_action_poly(poly_traj)
 
         # Filter out short episode, outliers (if the timestep has outliers), and get mean and variance over some
         # time-span of mode
@@ -97,15 +107,18 @@ class ProcessPredictionV3(object):
         traj_seg = {}
         traj_seg['x_t'] = []
         traj_seg['y_t'] = []
+        traj_seg['v_t'] = []
 
         for i in range(length):
             traj_seg['x_t'].append(traj_file['x_t'][i])
             traj_seg['y_t'].append(traj_file['y_t'][i])
+            traj_seg['v_t'].append(traj_file['v_t'][i])
             if traj_file['t_to_goal'][i] == 0:
                 raw_traj.append(traj_seg)
                 traj_seg = {}
                 traj_seg['x_t'] = []
                 traj_seg['y_t'] = []
+                traj_seg['v_t'] = []
 
         return raw_traj
 
@@ -146,7 +159,7 @@ class ProcessPredictionV3(object):
 
         return poly_traj
 
-    def get_action(self, poly_traj):
+    def get_action_poly(self, poly_traj):
         """
         Extract acceleration and omega (angular speed) for each generated trajectory
 
@@ -194,6 +207,23 @@ class ProcessPredictionV3(object):
 
         return acceleration_list, omega_list
 
+    def get_action_v_profile(self, raw_traj, poly_traj):
+
+        acceleration_list = []
+        omega_list = []
+
+        # Only use omega data from poly_traj
+        _, omega_list = self.get_action_poly(poly_traj)
+
+        for raw_traj_seg in raw_traj:
+            length = len(raw_traj_seg['v_t'])
+            v_t = np.asarray(raw_traj_seg['v_t'])
+
+            a_t = (v_t[2:length] - v_t[0:(length - 2)]) / self.time_step
+            acceleration_list.append(a_t)
+
+        return acceleration_list, omega_list
+
     def get_dx_dy_finite_difference(self, traj_x, traj_y):
 
         length = len(traj_x)
@@ -222,17 +252,25 @@ class ProcessPredictionV3(object):
 
         episode_num = len(raw_acc_list)
 
+        num_all = 0
+        num_effective = 0
         for i in range(episode_num):
             episode_len = np.shape(raw_acc_list[i])[0]
+            # If the episode length is less than time span, filter it out
             if episode_len < self.mode_time_span:
                 continue
             for j in range(episode_len):
                 if j + self.mode_time_span <= episode_len:
+                    num_all += 1
+
                     acc_span = raw_acc_list[i][j:j + self.mode_time_span]
                     omega_span = raw_omega_list[i][j:j + self.mode_time_span]
                     # If in the current timespan, there's a time step that is outside the action bound, filter out the this time span
+                    # So we only leave those timespan that actions are within bound for all timestep
                     if (np.min(acc_span) >= self.acc_bound[0]) and (np.max(acc_span) <= self.acc_bound[1]) and \
                             (np.min(omega_span) >= self.omega_bound[0]) and (np.max(omega_span) <= self.omega_bound[1]):
+                        num_effective += 1
+
                         filtered_acc_mean_tmp.append(np.mean(acc_span))
                         filtered_acc_variance_tmp.append(np.var(acc_span))
                         filtered_omega_mean_tmp.append(np.mean(omega_span))
@@ -246,6 +284,8 @@ class ProcessPredictionV3(object):
             filtered_acc_variance_tmp = []
             filtered_omega_mean_tmp = []
             filtered_omega_variance_tmp = []
+
+        print("total number is", num_all, "effective number is", num_effective, "the ratio is {:.2f}".format(num_effective / num_all))
 
         return filtered_acc_mean_list, filtered_acc_variance_list, filtered_omega_mean_list, filtered_omega_variance_list
 

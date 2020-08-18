@@ -51,11 +51,16 @@ class ClusteringV3(object):
 
         self.scenario_to_use = ProcessPredictionV3().scenario_to_use
         if self.scenario_to_use == ["intersection", "roundabout"]:
-            self.scenario_name = "intersection + roundabout"
+            self.scenario_name = "intersection+roundabout"
         elif self.scenario_to_use == ["intersection"]:
             self.scenario_name = "intersection"
         elif self.scenario_to_use == ["roundabout"]:
             self.scenario_name = "roundabout"
+
+        if ProcessPredictionV3().use_velocity:
+            self.use_velocity = "use velocity"
+        else:
+            self.use_velocity = "only poly"
 
     def get_clustering(self):
 
@@ -129,7 +134,7 @@ class ClusteringV3(object):
             ax.scatter(original_data[:, 0][prediction == i], original_data[:, 2][prediction == i], label='Cluster %d' % i)
         ax.set_xlabel('acceleration')
         ax.set_ylabel('angular_speed')
-        title = self.scenario_name + ", " + self.clustering_feature_type + ", " + str(self.time_span) + " " + "time-span"
+        title = self.use_velocity + ", " + self.scenario_name + ", " + self.clustering_feature_type + ", " + str(self.time_span) + " " + "time-span"
         ax.set_title(title)
         ax.legend()
         plt.show()
