@@ -48,8 +48,13 @@ class ProcessPredictionV3(object):
         self.degree = 5
 
         # Use velocity profile or not
-        self.use_velocity = True
-        # self.use_velocity = False
+        # self.use_velocity = True
+        self.use_velocity = False
+
+        # For outliers, we choose whether to interpolate and replace the outliers
+        # The interpolation is: if the outliers is sandwiched by 2 normal value, then replace it with the mean of the former and latter
+        self.to_interpolate_outlier = True
+        # self.to_interpolate_outlier = False
 
     def get_action_data(self, file_name=None):
         """
@@ -201,6 +206,10 @@ class ProcessPredictionV3(object):
             omega_t = (orientation_2 - orientation_1) / self.time_step
             omega_list.append(omega_t)
 
+            # np.set_printoptions(precision=2)
+            # print("omega is", omega_t)
+            # print("min", np.min(omega_t),"max", np.max(omega_t))
+
             if len(a_t) != len(omega_t):
                 print("a_t and omega_t have different dimensions")
                 raise SystemExit(0)
@@ -219,8 +228,12 @@ class ProcessPredictionV3(object):
             length = len(raw_traj_seg['v_t'])
             v_t = np.asarray(raw_traj_seg['v_t'])
 
-            a_t = (v_t[2:length] - v_t[0:(length - 2)]) / self.time_step
+            a_t = (v_t[2:length] - v_t[0:(length - 2)]) / (2 * self.time_step)
             acceleration_list.append(a_t)
+
+            # np.set_printoptions(precision=2)
+            # print("acc is", a_t)
+            # print("min", np.min(a_t),"max", np.max(a_t))
 
         return acceleration_list, omega_list
 
@@ -259,12 +272,20 @@ class ProcessPredictionV3(object):
             # If the episode length is less than time span, filter it out
             if episode_len < self.mode_time_span:
                 continue
+
+            # Interpolate and replace the outlier for acc and omega
+            if self.to_interpolate_outlier:
+                acc_interpolate, omega_interpolate = self.to_interpolate(raw_acc_list[i], raw_omega_list[i])
+                raw_acc_list[i] = acc_interpolate
+                raw_omega_list[i] = omega_interpolate
+
             for j in range(episode_len):
                 if j + self.mode_time_span <= episode_len:
                     num_all += 1
 
                     acc_span = raw_acc_list[i][j:j + self.mode_time_span]
                     omega_span = raw_omega_list[i][j:j + self.mode_time_span]
+
                     # If in the current timespan, there's a time step that is outside the action bound, filter out the this time span
                     # So we only leave those timespan that actions are within bound for all timestep
                     if (np.min(acc_span) >= self.acc_bound[0]) and (np.max(acc_span) <= self.acc_bound[1]) and \
@@ -288,6 +309,33 @@ class ProcessPredictionV3(object):
         print("total number is", num_all, "effective number is", num_effective, "the ratio is {:.2f}".format(num_effective / num_all))
 
         return filtered_acc_mean_list, filtered_acc_variance_list, filtered_omega_mean_list, filtered_omega_variance_list
+
+    def to_interpolate(self, acc, omega):
+
+        len = np.shape(acc)[0]
+
+        for i in range(len):
+            if i != 0 and i != (len - 1):
+                if (not self.acc_in_bound(acc[i])) and (self.acc_in_bound(acc[i - 1])) and (self.acc_in_bound(acc[i + 1])):
+                    acc[i] = (acc[i - 1] + acc[i + 1]) / 2
+                if (not self.omega_in_bound(omega[i])) and (self.omega_in_bound(omega[i - 1])) and (self.omega_in_bound(omega[i + 1])):
+                    omega[i] = (omega[i - 1] + omega[i + 1]) / 2
+
+        return acc, omega
+
+    def acc_in_bound(self, acc):
+
+        if acc < self.acc_bound[0] or acc > self.acc_bound[1]:
+            return False
+        else:
+            return True
+
+    def omega_in_bound(self,omega):
+
+        if omega < self.omega_bound[0] or omega > self.omega_bound[1]:
+            return False
+        else:
+            return True
 
     def collect_action_from_group(self):
 
