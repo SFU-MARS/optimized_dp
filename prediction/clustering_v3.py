@@ -25,38 +25,45 @@ class ClusteringV3(object):
 
         self.to_plot = True
 
-        self.clustering_num = 5
+        self.clustering_num = 7
 
         # Clustering feature selection
-        # self.clustering_feature_type = "5_default"
+        # self.clustering_feature_type = "5_default_deviation"
+        # self.clustering_feature_type = "5_default_distance"
         self.clustering_feature_type = "only_mean"
         # self.clustering_feature_type = "mean_and_variance"
 
         # Default driving mode
         # Decelerate
         self.default_m1_acc = -1.5
-        self.default1_m1_omega = 0
+        self.default_m1_omega = 0
         # Maintain
         self.default_m2_acc = 0
-        self.default1_m2_omega = 0
+        self.default_m2_omega = 0
         # Turn Left
-        self.default_m3_acc = 0
-        self.default1_m3_omega = 0.15
+        self.default_m3_acc = 0.5
+        self.default_m3_omega = 0.25
         # Turn right
-        self.default_m4_acc = 0
-        self.default1_m4_omega = - 0.15
+        self.default_m4_acc = 0.5
+        self.default_m4_omega = - 0.25
         # Accelerate
-        self.default_m5_acc = 1
-        self.default1_m5_omega = 0
+        self.default_m5_acc = 1.3
+        self.default_m5_omega = 0
+        # Curve path left
+        self.default_m6_acc = 0.7
+        self.default_m6_omega = 0.1
+        # Curve path right
+        self.default_m7_acc = 0.7
+        self.default_m7_omega = - 0.1
 
         self.time_span = ProcessPredictionV3().mode_time_span
 
-        self.scenario_to_use = ProcessPredictionV3().scenario_to_use
-        if self.scenario_to_use == ["intersection", "roundabout"]:
+        # For plot comparison
+        if ProcessPredictionV3().scenario_to_use == ["intersection", "roundabout"]:
             self.scenario_name = "intersection+roundabout"
-        elif self.scenario_to_use == ["intersection"]:
+        elif ProcessPredictionV3().scenario_to_use == ["intersection"]:
             self.scenario_name = "intersection"
-        elif self.scenario_to_use == ["roundabout"]:
+        elif ProcessPredictionV3().scenario_to_use == ["roundabout"]:
             self.scenario_name = "roundabout"
 
         if ProcessPredictionV3().use_velocity:
@@ -103,14 +110,27 @@ class ClusteringV3(object):
     def get_clustering_feature(self, action_feature):
 
         # action_feature = [acc_mean, acc_variance, omega_mean, omega_variance]
-        if self.clustering_feature_type == "5_default":
+        if self.clustering_feature_type == "5_default_deviation":
             clustering_feature = np.transpose(np.asarray([
                 action_feature[:, 0] - self.default_m1_acc, action_feature[:, 0] - self.default_m2_acc,
                 action_feature[:, 0] - self.default_m3_acc, action_feature[:, 0] - self.default_m4_acc,
                 action_feature[:, 0] - self.default_m5_acc,
-                action_feature[:, 2] - self.default1_m1_omega, action_feature[:, 2] - self.default1_m2_omega,
-                action_feature[:, 2] - self.default1_m3_omega, action_feature[:, 2] - self.default1_m4_omega,
-                action_feature[:, 2] - self.default1_m5_omega
+                action_feature[:, 2] - self.default_m1_omega, action_feature[:, 2] - self.default_m2_omega,
+                action_feature[:, 2] - self.default_m3_omega, action_feature[:, 2] - self.default_m4_omega,
+                action_feature[:, 2] - self.default_m5_omega
+            ]))
+        elif self.clustering_feature_type == "5_default_distance":
+            clustering_feature = np.transpose(np.asarray([
+                np.sqrt((action_feature[:, 0] - self.default_m1_acc) ** 2 + (
+                            action_feature[:, 2] - self.default_m1_omega) ** 2),
+                np.sqrt((action_feature[:, 0] - self.default_m2_acc) ** 2 + (
+                            action_feature[:, 2] - self.default_m2_omega) ** 2),
+                np.sqrt((action_feature[:, 0] - self.default_m3_acc) ** 2 + (
+                            action_feature[:, 2] - self.default_m3_omega) ** 2),
+                np.sqrt((action_feature[:, 0] - self.default_m4_acc) ** 2 + (
+                            action_feature[:, 2] - self.default_m4_omega) ** 2),
+                np.sqrt((action_feature[:, 0] - self.default_m5_acc) ** 2 + (
+                            action_feature[:, 2] - self.default_m5_omega) ** 2),
             ]))
         elif self.clustering_feature_type == "only_mean":
             clustering_feature = np.transpose(np.asarray([action_feature[:, 0], action_feature[:, 2]]))
@@ -124,7 +144,17 @@ class ClusteringV3(object):
 
     def kmeans_clustering(self, clustering_feature):
 
-        kmeans_action = KMeans(n_clusters=self.clustering_num, random_state=9).fit(clustering_feature)
+        default_centroid = np.asarray([[self.default_m1_acc, self.default_m1_omega],
+                                       [self.default_m2_acc, self.default_m2_omega],
+                                       [self.default_m3_acc, self.default_m3_omega],
+                                       [self.default_m4_acc, self.default_m4_omega],
+                                       [self.default_m5_acc, self.default_m5_omega],
+                                       [self.default_m6_acc, self.default_m6_omega],
+                                       [self.default_m7_acc, self.default_m7_omega]
+                                       ])
+
+        # kmeans_action = KMeans(n_clusters=self.clustering_num, random_state=0).fit(clustering_feature)
+        kmeans_action = KMeans(n_clusters=self.clustering_num, init=default_centroid, n_init=10, max_iter=300).fit(clustering_feature)
         pred = kmeans_action.predict(clustering_feature)
 
         return pred
