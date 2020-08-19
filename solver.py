@@ -7,6 +7,7 @@ from computeGraphs.CustomGraphFunctions import *
 from Plots.plotting_utilities import *
 from user_definer import *
 from argparse import ArgumentParser
+from computeGraphs.graph_3D import *
 from computeGraphs.graph_4D import *
 from computeGraphs.graph_5D import *
 from computeGraphs.graph_6D import *
@@ -64,6 +65,8 @@ def main():
         list_x6 = hcl.asarray(list_x6)
 
     # Get executable
+    if g.dims == 3:
+        solve_pde = graph_3D()
     if g.dims == 4:
         solve_pde = graph_4D()
     if g.dims == 5:
@@ -90,6 +93,8 @@ def main():
              print("Started running\n")
 
              # Run the execution and pass input into graph
+             if g.dims == 3:
+                solve_pde(V_1, V_0, list_x1, list_x2, list_x3, t_minh, l0)
              if g.dims == 4:
                 solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, t_minh, l0)
              if g.dims == 5:
