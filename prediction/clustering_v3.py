@@ -25,13 +25,15 @@ class ClusteringV3(object):
 
         self.to_plot = True
 
-        self.clustering_num = 7
+        self.clustering_num = 5
 
         # Clustering feature selection
         # self.clustering_feature_type = "5_default_deviation"
         # self.clustering_feature_type = "5_default_distance"
         self.clustering_feature_type = "only_mean"
         # self.clustering_feature_type = "mean_and_variance"
+
+        self.personalize_initialization = False
 
         # Default driving mode
         # Decelerate
@@ -88,6 +90,8 @@ class ClusteringV3(object):
         # Find the action bound for each mode
         mode_action_bound = self.get_action_bound_for_mode(prediction, action_feature)
 
+        return mode_action_bound
+
     def get_action_feature(self):
 
         filename_action_feature_list = ProcessPredictionV3().collect_action_from_group()
@@ -103,7 +107,7 @@ class ClusteringV3(object):
                 num_action_feature += 1
 
         action_feature_list = np.asarray(action_feature_list)
-        print("total number of action feature is ", num_action_feature)
+        # print("total number of action feature is ", num_action_feature)
 
         return action_feature_list
 
@@ -152,9 +156,10 @@ class ClusteringV3(object):
                                        [self.default_m6_acc, self.default_m6_omega],
                                        [self.default_m7_acc, self.default_m7_omega]
                                        ])
-
-        # kmeans_action = KMeans(n_clusters=self.clustering_num, random_state=0).fit(clustering_feature)
-        kmeans_action = KMeans(n_clusters=self.clustering_num, init=default_centroid, n_init=10, max_iter=300).fit(clustering_feature)
+        if self.personalize_initialization:
+            kmeans_action = KMeans(n_clusters=self.clustering_num, init=default_centroid, n_init=10, max_iter=300).fit(clustering_feature)
+        else:
+            kmeans_action = KMeans(n_clusters=self.clustering_num, random_state=0).fit(clustering_feature)
         pred = kmeans_action.predict(clustering_feature)
 
         return pred
@@ -188,7 +193,8 @@ class ClusteringV3(object):
             omega_min = np.min(action_feature[prediction == mode, 2])
             omega_max = np.max(action_feature[prediction == mode, 2])
 
-            print("Mode {:d}: acc is in [{:.2f}, {:.2f}], omega is in [{:.2f}, {:.2f}]".format(mode, acc_min, acc_max, omega_min, omega_max))
+            # print("Mode {:d}: acc is in [{:.2f}, {:.2f}], omega is in [{:.2f}, {:.2f}]".format(mode, acc_min, acc_max, omega_min, omega_max))
+            mode = "Mode " + str(mode)
             mode_action_bound.append([mode, acc_min, acc_max, omega_min, omega_max])
 
         return mode_action_bound

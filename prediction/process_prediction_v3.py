@@ -38,7 +38,7 @@ class ProcessPredictionV3(object):
 
         # Within a time span, we only specify single mode for the trajectory
         # self.mode_time_span = 20
-        self.mode_time_span = 5
+        self.mode_time_span = 10
 
         # Action bound, used for filtering
         self.acc_bound = [-5, 3]
@@ -306,7 +306,7 @@ class ProcessPredictionV3(object):
             filtered_omega_mean_tmp = []
             filtered_omega_variance_tmp = []
 
-        print("total number is", num_all, "effective number is", num_effective, "the ratio is {:.2f}".format(num_effective / num_all))
+        # print("total number is", num_all, "effective number is", num_effective, "the ratio is {:.2f}".format(num_effective / num_all))
 
         return filtered_acc_mean_list, filtered_acc_variance_list, filtered_omega_mean_list, filtered_omega_variance_list
 
