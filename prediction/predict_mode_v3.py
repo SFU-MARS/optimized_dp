@@ -14,11 +14,11 @@ class PredictModeV3(object):
 
     def __init__(self):
 
-        # self.to_save_pred_mode = True
+        self.to_save_pred_mode = True
         self.to_plot_pred_mode = True
 #
-        self.to_save_pred_mode = False
-        # self.to_plot_pred_mode = False
+#         self.to_save_pred_mode = False
+#         self.to_plot_pred_mode = False
 
         # Which scenario to predict
         self.scenario_predict = "intersection"
@@ -65,7 +65,8 @@ class PredictModeV3(object):
                     self.plot_mode(mode_num_seq, mode_num_str, filter_acc, filter_omega)
 
                 figure_name = "intersection_" + file + "_plot " + str(i) + ".png"
-                file_path = "/Users/anjianli/Desktop/robotics/project/optimized_dp/result/poly_3/15_timesteps/predict_mode/"
+                file_path = "/Users/anjianli/Desktop/robotics/project/optimized_dp/result/poly_{:d}/{:d}_timesteps/predict_mode/".format(ProcessPredictionV3().degree, ProcessPredictionV3().mode_time_span)
+                # file_path = "/Users/anjianli/Desktop/robotics/project/optimized_dp/result/poly_3/5_timesteps/predict_mode/"
                 figure_path_name = file_path + figure_name
                 # print(figure_path_name)
                 if self.to_save_pred_mode:
@@ -168,7 +169,11 @@ class PredictModeV3(object):
         ax1.grid()
         ax1.set_ylabel('mode')
         ax1.set_xlabel('timestep')
-        ax1.set_title('0: accelerate, 1: stable, 2: decelerate, 3: left turn, 4: right turn, -1: other')
+        ax1.set_title('0: decelerate, 1: stable, 2: accelerate, 3: left turn, 4: right turn, -1: other')
+        # ax1.set_title('0: decelerate, 1: accelerate, 2: stable, 3: left turn, 4: right turn, -1: other')
+        # ax1.set_title('0: stable, 1: decelerate, 2: accelerate, 3: right turn, 4: left turn, -1: other')
+        # ax1.set_title('0: right turn, 1: stable, 2: decelerate, 3: left turn, 4: accelerate, -1: other')
+
 
         locs, labels = plt.xticks()
         plt.xticks(np.arange(0, np.shape(mode_num_seq)[0], step=ProcessPredictionV3().mode_time_span))
@@ -181,9 +186,10 @@ class PredictModeV3(object):
         ax3 = fig.add_subplot(313, sharex=ax1)
         ax3.plot(time_index, omega, 'o-', label="angular speed")
         ax3.set_ylabel('angular speed')
-        ax3.set_xlabel('bound: acc:[-5, 3], ang_v: [-pi/6, pi/6], 15 timestep')
+        label_name = "bound: acc:[-5, 3], ang_v: [-pi/6, pi/6]" + str(ProcessPredictionV3().mode_time_span) + "time span"
+        ax3.set_xlabel(label_name)
 
-        plt.show()
+        # plt.show()
 
 if __name__ == "__main__":
     PredictModeV3().predict_mode()

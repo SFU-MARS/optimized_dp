@@ -1,4 +1,5 @@
 import sys
+import os
 import pickle
 sys.path.append("/Users/anjianli/Desktop/robotics/project/optimized_dp")
 
@@ -23,7 +24,7 @@ class ClusteringV3(object):
 
     def __init__(self):
 
-        self.to_plot = True
+        self.to_plot = False
 
         self.clustering_num = 5
 
@@ -162,7 +163,35 @@ class ClusteringV3(object):
             kmeans_action = KMeans(n_clusters=self.clustering_num, random_state=0).fit(clustering_feature)
         pred = kmeans_action.predict(clustering_feature)
 
-        return pred
+        # Unify the mode: 0: decelerate, 1: stable, 2: accelerate, 3: left turn, 4: right turn
+        corrected_pred = np.ones((np.shape(pred)[0]))
+
+        acc_center = kmeans_action.cluster_centers_[:, 0]
+        omega_center = kmeans_action.cluster_centers_[:, 1]
+        new_mode = np.ones((self.clustering_num)) * 100
+
+        # Find old mode-new mode assignment
+        val, idx = min((val, idx) for (idx, val) in enumerate(acc_center))
+        new_mode[0] = idx
+
+        val, idx = max((val, idx) for (idx, val) in enumerate(acc_center))
+        new_mode[2] = idx
+
+        val, idx = min((val, idx) for (idx, val) in enumerate(omega_center))
+        new_mode[3] = idx
+
+        val, idx = max((val, idx) for (idx, val) in enumerate(omega_center))
+        new_mode[4] = idx
+
+        # Assign the unify mode to the correct_pred
+        for i in range(self.clustering_num):
+            if i not in new_mode:
+                new_mode[1] = i
+                break
+        for i in range(self.clustering_num):
+            corrected_pred[pred == new_mode[i]] = i
+
+        return np.asarray(corrected_pred, 'i')
 
     def plot_clustering(self, original_data, clustering_data, prediction):
 
@@ -171,11 +200,20 @@ class ClusteringV3(object):
             ax.scatter(original_data[:, 0][prediction == i], original_data[:, 2][prediction == i], label='Cluster %d' % i)
         ax.set_xlabel('acceleration')
         ax.set_ylabel('angular_speed')
-        title = self.use_velocity + ", " + self.scenario_name + ", " + self.clustering_feature_type + ", " + str(self.time_span) + " " + "time-span"
+        title = self.use_velocity + ", " + self.scenario_name + ", " + self.clustering_feature_type + ", " + str(self.time_span) + " " + "time-span " + "poly" + str(ProcessPredictionV3().degree)
         ax.set_title(title)
         ax.legend()
         if self.to_plot:
             plt.show()
+
+        figure_name = "kmeans.png"
+        file_path = "/Users/anjianli/Desktop/robotics/project/optimized_dp/result/poly_{:d}/{:d}_timesteps/".format(
+            ProcessPredictionV3().degree, ProcessPredictionV3().mode_time_span)
+        figure_path_name = file_path + figure_name
+
+        if not os.path.exists(file_path):
+            os.mkdir(file_path)
+        plt.savefig(figure_path_name)
 
         # pickle.dump(kmeans_action, open("/home/anjianl/Desktop/project/optimized_dp/model/kmeans_action_intersection"
         #                                 ".pkl", "wb"))

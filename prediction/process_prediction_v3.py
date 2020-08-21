@@ -45,7 +45,7 @@ class ProcessPredictionV3(object):
         self.omega_bound = [- math.pi / 6, math.pi / 6]
 
         # Fit polynomial
-        self.degree = 3
+        self.degree = 5
 
         # Use velocity profile or not
         self.use_velocity = True
