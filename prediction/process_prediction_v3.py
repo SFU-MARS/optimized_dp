@@ -34,11 +34,11 @@ class ProcessPredictionV3(object):
 
         # Time step
         self.time_step = 0.1
-        self.time_filter = 10
 
         # Within a time span, we only specify single mode for the trajectory
-        # self.mode_time_span = 20
-        self.mode_time_span = 10
+        # self.mode_time_span = 5
+        # self.mode_time_span = 10
+        self.mode_time_span = 15
 
         # Action bound, used for filtering
         self.acc_bound = [-5, 3]
@@ -306,20 +306,70 @@ class ProcessPredictionV3(object):
             filtered_omega_mean_tmp = []
             filtered_omega_variance_tmp = []
 
-        print("total number is", num_all, "effective number is", num_effective, "the ratio is {:.2f}".format(num_effective / num_all))
+        # print("total number is", num_all, "effective number is", num_effective, "the ratio is {:.2f}".format(num_effective / num_all))
 
         return filtered_acc_mean_list, filtered_acc_variance_list, filtered_omega_mean_list, filtered_omega_variance_list
 
     def to_interpolate(self, acc, omega):
 
         len = np.shape(acc)[0]
-
+        num_outlier = 0
+        # If the first or last action is outlier, then use the latter or former 2 nonoutlier to Interpolate
+        # If the outlier is sandwiched by 2 nonoutliers, then use mean to interpolate
         for i in range(len):
+            # Notify the outliers
+            if (not self.acc_in_bound(acc[i])) or (not self.omega_in_bound(omega[i])):
+                num_outlier += 1
+                # print("acc in bound:", self.acc_in_bound(acc[i]), "omega in bound:",self.omega_in_bound(omega[i]))
+
+            # # Interpolate the head
+            # if i == 0 and (not self.acc_in_bound(acc[i])) and (self.acc_in_bound(acc[i + 1])) and (self.acc_in_bound(acc[i + 1])):
+            #     acc[i] = 2 * acc[i + 1] - acc[i + 2]
+            # if i == 0 and (not self.omega_in_bound(omega[i])) and (self.omega_in_bound(omega[i + 1])) and (self.omega_in_bound(omega[i + 1])):
+            #     omega[i] = 2 * omega[i + 1] - omega[i + 2]
+            # # Interpolate the tail
+            # if i == (len - 1) and (not self.acc_in_bound(acc[i])) and (self.acc_in_bound(acc[i - 1])) and (self.acc_in_bound(acc[i - 2])):
+            #     acc[i] = 2 * acc[i - 1] - acc[i - 2]
+            # if i == (len - 1) and (not self.omega_in_bound(omega[i])) and (self.omega_in_bound(omega[i - 1])) and (self.omega_in_bound(omega[i - 2])):
+            #     omega[i] = 2 * omega[i - 1] - omega[i - 2]
+            # # Interpolate the sandwiched
+            # if i != 0 and i != (len - 1):
+            #     if (not self.acc_in_bound(acc[i])) and (self.acc_in_bound(acc[i - 1])) and (self.acc_in_bound(acc[i + 1])):
+            #         acc[i] = (acc[i - 1] + acc[i + 1]) / 2
+            #     if (not self.omega_in_bound(omega[i])) and (self.omega_in_bound(omega[i - 1])) and (self.omega_in_bound(omega[i + 1])):
+            #         omega[i] = (omega[i - 1] + omega[i + 1]) / 2
+
+            # Interpolate the sandwiched
             if i != 0 and i != (len - 1):
                 if (not self.acc_in_bound(acc[i])) and (self.acc_in_bound(acc[i - 1])) and (self.acc_in_bound(acc[i + 1])):
                     acc[i] = (acc[i - 1] + acc[i + 1]) / 2
                 if (not self.omega_in_bound(omega[i])) and (self.omega_in_bound(omega[i - 1])) and (self.omega_in_bound(omega[i + 1])):
                     omega[i] = (omega[i - 1] + omega[i + 1]) / 2
+            # If the outlier is not sandwiched, then use the former or latter
+            if (i - 2) >= 0:
+                # Interpolate acc from former
+                if (not self.acc_in_bound(acc[i])) and (self.acc_in_bound(acc[i - 1])) and (self.acc_in_bound(acc[i - 2])):
+                    acc[i] = 2 * acc[i - 1] - acc[i - 2]
+                # Interpolate omega from former
+                if (not self.omega_in_bound(omega[i])) and (self.omega_in_bound(omega[i - 1])) and (self.omega_in_bound(omega[i - 2])):
+                    omega[i] = 2 * omega[i - 1] - omega[i - 2]
+            if (i + 2) <= len - 1:
+                if (not self.acc_in_bound(acc[i])) and (self.acc_in_bound(acc[i + 1])) and (self.acc_in_bound(acc[i + 1])):
+                    acc[i] = 2 * acc[i + 1] - acc[i + 2]
+                if (not self.omega_in_bound(omega[i])) and (self.omega_in_bound(omega[i + 1])) and (self.omega_in_bound(omega[i + 1])):
+                    omega[i] = 2 * omega[i + 1] - omega[i + 2]
+
+
+        # print("Before filter, in this episode, whole length is ", len, "outlier num is", num_outlier)
+
+        # After filtering
+        num_outlier = 0
+        for i in range(len):
+            # Notify the outliers
+            if (not self.acc_in_bound(acc[i])) or (not self.omega_in_bound(omega[i])):
+                num_outlier += 1
+                # print("acc in bound:", self.acc_in_bound(acc[i]), "omega in bound:",self.omega_in_bound(omega[i]))
+        # print("After filter, in this episode, whole length is ", len, "outlier num is", num_outlier)
 
         return acc, omega
 
@@ -358,6 +408,8 @@ class ProcessPredictionV3(object):
                     filename_action_feature_list.append(
                         [file_name, acc_mean[index], acc_variance[index], omega_mean[index], omega_variance[index]])
 
+        print("mode_time_span", self.mode_time_span)
+        print("poly degree", self.degree)
         # # Only use intersection scenario
         # if self.scenario_to_use == "intersection":
         #     for file_name in self.file_name_intersection:

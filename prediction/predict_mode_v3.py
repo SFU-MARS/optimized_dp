@@ -1,4 +1,6 @@
 import numpy as np
+import os
+from os import path
 import random
 import matplotlib.pyplot as plt
 
@@ -11,6 +13,12 @@ from prediction.process_prediction_v3 import ProcessPredictionV3
 class PredictModeV3(object):
 
     def __init__(self):
+
+        # self.to_save_pred_mode = True
+        self.to_plot_pred_mode = True
+#
+        self.to_save_pred_mode = False
+        # self.to_plot_pred_mode = False
 
         # Which scenario to predict
         self.scenario_predict = "intersection"
@@ -38,6 +46,8 @@ class PredictModeV3(object):
         # [Mode name, acc_min, acc_max, omega_min, omega_max]
         self.action_bound_mode = ClusteringV3().get_clustering()
 
+        print(self.action_bound_mode)
+
         for file in self.file_name_intersection:
             # Get raw action data from traj file
             raw_acc_list, raw_omega_list = self.get_predict_traj(scenario=self.scenario_predict, traj_file_pred=file)
@@ -51,7 +61,17 @@ class PredictModeV3(object):
 
                 mode_num_seq, mode_num_str = self.get_mode(filter_acc, filter_omega)
 
-                self.plot_mode(mode_num_seq, mode_num_str)
+                if self.to_plot_pred_mode:
+                    self.plot_mode(mode_num_seq, mode_num_str, filter_acc, filter_omega)
+
+                figure_name = "intersection_" + file + "_plot " + str(i) + ".png"
+                file_path = "/Users/anjianli/Desktop/robotics/project/optimized_dp/result/poly_3/15_timesteps/predict_mode/"
+                figure_path_name = file_path + figure_name
+                # print(figure_path_name)
+                if self.to_save_pred_mode:
+                    if not os.path.exists(file_path):
+                        os.mkdir(file_path)
+                    plt.savefig(figure_path_name)
 
     def get_predict_traj(self, scenario, traj_file_pred=None):
 
@@ -61,13 +81,13 @@ class PredictModeV3(object):
                 random.seed(13)
                 index = random.randint(0, len(self.file_name_intersection) - 1)
                 traj_file_name = self.file_dir_intersection + '/' + self.file_name_intersection[index]
-                print("the traj file to predict is", traj_file_name)
+                # print("the traj file to predict is", traj_file_name)
 
             traj_file = ProcessPredictionV3().read_prediction(file_name=traj_file_name)
         else:
             if scenario == "intersection":
                 traj_file_name = self.file_dir_intersection + '/' + traj_file_pred
-                print("the traj file to predict is", traj_file_name)
+                # print("the traj file to predict is", traj_file_name)
 
             traj_file = ProcessPredictionV3().read_prediction(file_name=traj_file_name)
 
@@ -96,7 +116,7 @@ class PredictModeV3(object):
                 continue
             # print("raw omega", raw_omega_list[i])
             acc_interpolate, omega_interpolate = ProcessPredictionV3().to_interpolate(raw_acc_list[i], raw_omega_list[i])
-            print("acc size", np.shape(acc_interpolate)[0])
+            # print("acc size", np.shape(acc_interpolate)[0])
             # print("filter omega", omega_interpolate)
             filter_acc_list.append(acc_interpolate)
             filter_omega_list.append(omega_interpolate)
@@ -135,21 +155,35 @@ class PredictModeV3(object):
 
         return -1, "mode -1"
 
-    def plot_mode(self, mode_num_seq, mode_num_str):
+    def plot_mode(self, mode_num_seq, mode_num_str, acc, omega):
 
-        fig, ax = plt.subplots()
+        fig = plt.figure()
+        ax1 = fig.add_subplot(311)
 
         time_index = np.linspace(0, np.shape(mode_num_seq)[0], num=np.shape(mode_num_seq)[0])
         # print(mode_num_seq)
         # print(time_index)
 
-        ax.plot(time_index, mode_num_seq, 'o-')
-        ax.grid()
+        ax1.plot(time_index, mode_num_seq, 'o-')
+        ax1.grid()
+        ax1.set_ylabel('mode')
+        ax1.set_xlabel('timestep')
+        ax1.set_title('0: accelerate, 1: stable, 2: decelerate, 3: left turn, 4: right turn, -1: other')
 
         locs, labels = plt.xticks()
-        plt.xticks(np.arange(0, np.shape(mode_num_seq)[0], step=10))
-        plt.show()
+        plt.xticks(np.arange(0, np.shape(mode_num_seq)[0], step=ProcessPredictionV3().mode_time_span))
+        plt.yticks(np.arange(-1, 5, step=1))
+        ax2 = fig.add_subplot(312, sharex=ax1)
+        ax2.plot(time_index, acc, 'o-')
+        ax2.set_ylabel('acceleration')
+        ax2.set_xlabel('physical bound [-5, 3]')
 
+        ax3 = fig.add_subplot(313, sharex=ax1)
+        ax3.plot(time_index, omega, 'o-', label="angular speed")
+        ax3.set_ylabel('angular speed')
+        ax3.set_xlabel('bound: acc:[-5, 3], ang_v: [-pi/6, pi/6], 15 timestep')
+
+        plt.show()
 
 if __name__ == "__main__":
     PredictModeV3().predict_mode()

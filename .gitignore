@@ -3,3 +3,4 @@
 *.png
 *.npy
 /data
+/result
