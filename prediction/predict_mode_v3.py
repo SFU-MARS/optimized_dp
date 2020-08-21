@@ -1,5 +1,9 @@
 import numpy as np
 import random
+import matplotlib.pyplot as plt
+
+import sys
+sys.path.append("/Users/anjianli/Desktop/robotics/project/optimized_dp")
 
 from prediction.clustering_v3 import ClusteringV3
 from prediction.process_prediction_v3 import ProcessPredictionV3
@@ -12,8 +16,12 @@ class PredictModeV3(object):
         self.scenario_predict = "intersection"
 
         # Data directory
-        self.file_dir_intersection = '/home/anjianl/Desktop/project/optimized_dp/data/intersection-data'
-        self.file_dir_roundabout = '/home/anjianl/Desktop/project/optimized_dp/data/roundabout-data'
+        # Remote desktop
+        # self.file_dir_intersection = '/home/anjianl/Desktop/project/optimized_dp/data/intersection-data'
+        # self.file_dir_roundabout = '/home/anjianl/Desktop/project/optimized_dp/data/roundabout-data'
+        # My laptop
+        self.file_dir_intersection = '/Users/anjianli/Desktop/robotics/project/optimized_dp/data/intersection-data'
+        self.file_dir_roundabout = '/Users/anjianli/Desktop/robotics/project/optimized_dp/data/roundabout-data'
 
         # File name
         self.file_name_intersection = ['car_16_vid_09.csv', 'car_20_vid_09.csv', 'car_29_vid_09.csv',
@@ -30,26 +38,38 @@ class PredictModeV3(object):
         # [Mode name, acc_min, acc_max, omega_min, omega_max]
         self.action_bound_mode = ClusteringV3().get_clustering()
 
-        raw_acc_list, raw_omega_list = self.get_predict_traj(scenario=self.scenario_predict)
+        for file in self.file_name_intersection:
+            # Get raw action data from traj file
+            raw_acc_list, raw_omega_list = self.get_predict_traj(scenario=self.scenario_predict, traj_file_pred=file)
 
-        raw_acc, raw_omega = raw_acc_list[0], raw_omega_list[0]
+            # How to deal with outliers
+            filter_acc_list, filter_omega_list = self.filter_action(raw_acc_list, raw_omega_list)
 
-        print(self.action_bound_mode)
+            # Get mode and plot
+            for i in range(len(filter_acc_list)):
+                filter_acc, filter_omega = filter_acc_list[i], filter_omega_list[i]
 
-        for i in range(np.shape(raw_acc)[0]):
-            if i + ProcessPredictionV3().mode_time_span < np.shape(raw_acc)[0]:
-                curr_mode = self.decide_mode(raw_acc[i:i + ProcessPredictionV3().mode_time_span], raw_omega[i:i + ProcessPredictionV3().mode_time_span])
-                print(curr_mode)
+                mode_num_seq, mode_num_str = self.get_mode(filter_acc, filter_omega)
 
-        return 0
+                self.plot_mode(mode_num_seq, mode_num_str)
 
-    def get_predict_traj(self, scenario):
+    def get_predict_traj(self, scenario, traj_file_pred=None):
 
-        if scenario == "intersection":
-            index = random.randint(0, len(self.file_name_intersection) - 1)
-            traj_file_name = self.file_dir_intersection + '/' + self.file_name_intersection[index]
+        if traj_file_pred is None:
+            if scenario == "intersection":
+                # If not specified, then randomly pick a file
+                random.seed(13)
+                index = random.randint(0, len(self.file_name_intersection) - 1)
+                traj_file_name = self.file_dir_intersection + '/' + self.file_name_intersection[index]
+                print("the traj file to predict is", traj_file_name)
 
-        traj_file = ProcessPredictionV3().read_prediction(file_name=traj_file_name)
+            traj_file = ProcessPredictionV3().read_prediction(file_name=traj_file_name)
+        else:
+            if scenario == "intersection":
+                traj_file_name = self.file_dir_intersection + '/' + traj_file_pred
+                print("the traj file to predict is", traj_file_name)
+
+            traj_file = ProcessPredictionV3().read_prediction(file_name=traj_file_name)
 
         raw_traj = ProcessPredictionV3().extract_traj(traj_file)
 
@@ -65,6 +85,41 @@ class PredictModeV3(object):
 
         return raw_acc_list, raw_omega_list
 
+    def filter_action(self, raw_acc_list, raw_omega_list):
+
+        filter_acc_list = []
+        filter_omega_list = []
+
+        for i in range(len(raw_acc_list)):
+            if np.shape(raw_acc_list[i])[0] < ProcessPredictionV3().mode_time_span:
+                print("not qualified", np.shape(raw_acc_list[i])[0])
+                continue
+            # print("raw omega", raw_omega_list[i])
+            acc_interpolate, omega_interpolate = ProcessPredictionV3().to_interpolate(raw_acc_list[i], raw_omega_list[i])
+            print("acc size", np.shape(acc_interpolate)[0])
+            # print("filter omega", omega_interpolate)
+            filter_acc_list.append(acc_interpolate)
+            filter_omega_list.append(omega_interpolate)
+
+        return filter_acc_list, filter_omega_list
+
+    def get_mode(self, raw_acc, raw_omega):
+
+        mode_num_seq = []
+        mode_num_str = []
+        for i in range(np.shape(raw_acc)[0]):
+            if i + ProcessPredictionV3().mode_time_span <= np.shape(raw_acc)[0]:
+                curr_mode_num, curr_mode_str = self.decide_mode(raw_acc[i:i + ProcessPredictionV3().mode_time_span],
+                                                                raw_omega[i:i + ProcessPredictionV3().mode_time_span])
+                # print(curr_mode_str)
+                mode_num_seq.append(curr_mode_num)
+                mode_num_str.append(curr_mode_str)
+            else:
+                mode_num_seq.append(curr_mode_num)
+                mode_num_str.append(curr_mode_str)
+
+        return np.asarray(mode_num_seq), mode_num_str
+
     def decide_mode(self, acc, omega):
 
         if (np.shape(acc)[0] != ProcessPredictionV3().mode_time_span) or (np.shape(omega)[0] != ProcessPredictionV3().mode_time_span):
@@ -76,9 +131,25 @@ class PredictModeV3(object):
 
         for i in range(len(self.action_bound_mode)):
             if (self.action_bound_mode[i][1] <= acc_mean <= self.action_bound_mode[i][2]) and (self.action_bound_mode[i][3] <= omega_mean <= self.action_bound_mode[i][4]):
-                return self.action_bound_mode[i][0]
+                return i, self.action_bound_mode[i][0]
 
-        return "mode -1"
+        return -1, "mode -1"
+
+    def plot_mode(self, mode_num_seq, mode_num_str):
+
+        fig, ax = plt.subplots()
+
+        time_index = np.linspace(0, np.shape(mode_num_seq)[0], num=np.shape(mode_num_seq)[0])
+        # print(mode_num_seq)
+        # print(time_index)
+
+        ax.plot(time_index, mode_num_seq, 'o-')
+        ax.grid()
+
+        locs, labels = plt.xticks()
+        plt.xticks(np.arange(0, np.shape(mode_num_seq)[0], step=10))
+        plt.show()
+
 
 if __name__ == "__main__":
     PredictModeV3().predict_mode()

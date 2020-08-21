@@ -23,7 +23,7 @@ class ClusteringV3(object):
 
     def __init__(self):
 
-        self.to_plot = True
+        self.to_plot = False
 
         self.clustering_num = 5
 
@@ -107,7 +107,7 @@ class ClusteringV3(object):
                 num_action_feature += 1
 
         action_feature_list = np.asarray(action_feature_list)
-        # print("total number of action feature is ", num_action_feature)
+        print("total number of action feature is ", num_action_feature)
 
         return action_feature_list
 
@@ -174,8 +174,8 @@ class ClusteringV3(object):
         title = self.use_velocity + ", " + self.scenario_name + ", " + self.clustering_feature_type + ", " + str(self.time_span) + " " + "time-span"
         ax.set_title(title)
         ax.legend()
-        if self.to_plot:
-            plt.show()
+        # if self.to_plot:
+        #     plt.show()
 
         # pickle.dump(kmeans_action, open("/home/anjianl/Desktop/project/optimized_dp/model/kmeans_action_intersection"
         #                                 ".pkl", "wb"))

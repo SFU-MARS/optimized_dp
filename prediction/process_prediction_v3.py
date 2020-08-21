@@ -17,11 +17,11 @@ class ProcessPredictionV3(object):
 
         # Data directory
         # Remote desktop
-        self.file_dir_intersection = '/home/anjianl/Desktop/project/optimized_dp/data/intersection-data'
-        self.file_dir_roundabout = '/home/anjianl/Desktop/project/optimized_dp/data/roundabout-data'
+        # self.file_dir_intersection = '/home/anjianl/Desktop/project/optimized_dp/data/intersection-data'
+        # self.file_dir_roundabout = '/home/anjianl/Desktop/project/optimized_dp/data/roundabout-data'
         # My laptop
-        # self.file_dir_intersection = '/Users/anjianli/Desktop/robotics/project/optimized_dp/data/intersection-data'
-        # self.file_dir_roundabout = '/Users/anjianli/Desktop/robotics/project/optimized_dp/data/roundabout-data'
+        self.file_dir_intersection = '/Users/anjianli/Desktop/robotics/project/optimized_dp/data/intersection-data'
+        self.file_dir_roundabout = '/Users/anjianli/Desktop/robotics/project/optimized_dp/data/roundabout-data'
 
         # File name
         self.file_name_intersection = ['car_16_vid_09.csv', 'car_20_vid_09.csv', 'car_29_vid_09.csv',
@@ -45,7 +45,7 @@ class ProcessPredictionV3(object):
         self.omega_bound = [- math.pi / 6, math.pi / 6]
 
         # Fit polynomial
-        self.degree = 5
+        self.degree = 3
 
         # Use velocity profile or not
         self.use_velocity = True
@@ -306,7 +306,7 @@ class ProcessPredictionV3(object):
             filtered_omega_mean_tmp = []
             filtered_omega_variance_tmp = []
 
-        # print("total number is", num_all, "effective number is", num_effective, "the ratio is {:.2f}".format(num_effective / num_all))
+        print("total number is", num_all, "effective number is", num_effective, "the ratio is {:.2f}".format(num_effective / num_all))
 
         return filtered_acc_mean_list, filtered_acc_variance_list, filtered_omega_mean_list, filtered_omega_variance_list
 
