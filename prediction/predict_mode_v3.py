@@ -14,30 +14,37 @@ class PredictModeV3(object):
 
     def __init__(self):
 
-        self.to_save_pred_mode = True
+        # self.to_save_pred_mode = True
         self.to_plot_pred_mode = True
-#
-#         self.to_save_pred_mode = False
-#         self.to_plot_pred_mode = False
+
+        self.to_save_pred_mode = False
+        # self.to_plot_pred_mode = False
 
         # Which scenario to predict
         self.scenario_predict = "intersection"
+        # self.scenario_predict = "roundabout"
 
         # Data directory
         # Remote desktop
-        # self.file_dir_intersection = '/home/anjianl/Desktop/project/optimized_dp/data/intersection-data'
-        # self.file_dir_roundabout = '/home/anjianl/Desktop/project/optimized_dp/data/roundabout-data'
+        # if self.scenario_predict == "intersection":
+        #     self.file_dir_predict = '/home/anjianl/Desktop/project/optimized_dp/data/intersection-data'
+        # elif self.scenario_predict == "roundabout":
+        #     self.file_dir_predict = '/home/anjianl/Desktop/project/optimized_dp/data/roundabout-data'
         # My laptop
-        self.file_dir_intersection = '/Users/anjianli/Desktop/robotics/project/optimized_dp/data/intersection-data'
-        self.file_dir_roundabout = '/Users/anjianli/Desktop/robotics/project/optimized_dp/data/roundabout-data'
+        if self.scenario_predict == "intersection":
+            self.file_dir_predict = '/Users/anjianli/Desktop/robotics/project/optimized_dp/data/intersection-data'
+        elif self.scenario_predict == "roundabout":
+            self.file_dir_predict = '/Users/anjianli/Desktop/robotics/project/optimized_dp/data/roundabout-data'
 
         # File name
-        self.file_name_intersection = ['car_16_vid_09.csv', 'car_20_vid_09.csv', 'car_29_vid_09.csv',
-                                       'car_36_vid_11.csv', 'car_50_vid_03.csv', 'car_112_vid_11.csv',
-                                       'car_122_vid_11.csv',
-                                       'car_38_vid_02.csv', 'car_52_vid_07.csv', 'car_73_vid_02.csv',
-                                       'car_118_vid_11.csv']
-        self.file_name_roundabout = ['car_27.csv', 'car_122.csv',
+        if self.scenario_predict == "intersection":
+            self.file_name_predict = ['car_16_vid_09.csv', 'car_20_vid_09.csv', 'car_29_vid_09.csv',
+                                           'car_36_vid_11.csv', 'car_50_vid_03.csv', 'car_112_vid_11.csv',
+                                           'car_122_vid_11.csv',
+                                           'car_38_vid_02.csv', 'car_52_vid_07.csv', 'car_73_vid_02.csv',
+                                           'car_118_vid_11.csv']
+        elif self.scenario_predict == "roundabout":
+            self.file_name_predict = ['car_27.csv', 'car_122.csv',
                                      'car_51.csv', 'car_52.csv', 'car_131.csv', 'car_155.csv']
 
     def predict_mode(self):
@@ -48,7 +55,7 @@ class PredictModeV3(object):
 
         print(self.action_bound_mode)
 
-        for file in self.file_name_intersection:
+        for file in self.file_name_predict:
             # Get raw action data from traj file
             raw_acc_list, raw_omega_list = self.get_predict_traj(scenario=self.scenario_predict, traj_file_pred=file)
 
@@ -64,12 +71,16 @@ class PredictModeV3(object):
                 if self.to_plot_pred_mode:
                     self.plot_mode(mode_num_seq, mode_num_str, filter_acc, filter_omega)
 
-                figure_name = "intersection_" + file + "_plot " + str(i) + ".png"
-                file_path = "/Users/anjianli/Desktop/robotics/project/optimized_dp/result/poly_{:d}/{:d}_timesteps/predict_mode/".format(ProcessPredictionV3().degree, ProcessPredictionV3().mode_time_span)
-                # file_path = "/Users/anjianli/Desktop/robotics/project/optimized_dp/result/poly_3/5_timesteps/predict_mode/"
-                figure_path_name = file_path + figure_name
-                # print(figure_path_name)
                 if self.to_save_pred_mode:
+                    if self.scenario_predict == "intersection":
+                        figure_name = "intersection_" + file + "_plot " + str(i) + ".png"
+                    elif self.scenario_predict == "roundabout":
+                        figure_name = "roundabout_" + file + "_plot " + str(i) + ".png"
+                    file_path = "/Users/anjianli/Desktop/robotics/project/optimized_dp/result/poly_{:d}/{:d}_timesteps/predict_mode/".format(
+                        ProcessPredictionV3().degree, ProcessPredictionV3().mode_time_span)
+                    # file_path = "/Users/anjianli/Desktop/robotics/project/optimized_dp/result/poly_3/5_timesteps/predict_mode/"
+                    figure_path_name = file_path + figure_name
+                    # print(figure_path_name)
                     if not os.path.exists(file_path):
                         os.mkdir(file_path)
                     plt.savefig(figure_path_name)
@@ -77,18 +88,16 @@ class PredictModeV3(object):
     def get_predict_traj(self, scenario, traj_file_pred=None):
 
         if traj_file_pred is None:
-            if scenario == "intersection":
-                # If not specified, then randomly pick a file
-                random.seed(13)
-                index = random.randint(0, len(self.file_name_intersection) - 1)
-                traj_file_name = self.file_dir_intersection + '/' + self.file_name_intersection[index]
-                # print("the traj file to predict is", traj_file_name)
+            # If not specified, then randomly pick a file
+            random.seed(13)
+            index = random.randint(0, len(self.file_name_predict) - 1)
+            traj_file_name = self.file_dir_predict + '/' + self.file_name_predict[index]
+            # print("the traj file to predict is", traj_file_name)
 
             traj_file = ProcessPredictionV3().read_prediction(file_name=traj_file_name)
         else:
-            if scenario == "intersection":
-                traj_file_name = self.file_dir_intersection + '/' + traj_file_pred
-                # print("the traj file to predict is", traj_file_name)
+            traj_file_name = self.file_dir_predict + '/' + traj_file_pred
+            # print("the traj file to predict is", traj_file_name)
 
             traj_file = ProcessPredictionV3().read_prediction(file_name=traj_file_name)
 
@@ -116,7 +125,7 @@ class PredictModeV3(object):
                 print("not qualified", np.shape(raw_acc_list[i])[0])
                 continue
             # print("raw omega", raw_omega_list[i])
-            acc_interpolate, omega_interpolate = ProcessPredictionV3().to_interpolate(raw_acc_list[i], raw_omega_list[i])
+            acc_interpolate, omega_interpolate = ProcessPredictionV3().to_interpolate(raw_acc_list[i], raw_omega_list[i], mode="prediction")
             # print("acc size", np.shape(acc_interpolate)[0])
             # print("filter omega", omega_interpolate)
             filter_acc_list.append(acc_interpolate)
@@ -189,7 +198,8 @@ class PredictModeV3(object):
         label_name = "bound: acc:[-5, 3], ang_v: [-pi/6, pi/6]" + str(ProcessPredictionV3().mode_time_span) + "time span"
         ax3.set_xlabel(label_name)
 
-        # plt.show()
+        if not self.to_save_pred_mode:
+            plt.show()
 
 if __name__ == "__main__":
     PredictModeV3().predict_mode()

@@ -37,22 +37,22 @@ class ProcessPredictionV3(object):
 
         # Within a time span, we only specify single mode for the trajectory
         # self.mode_time_span = 5
-        # self.mode_time_span = 10
-        self.mode_time_span = 15
+        self.mode_time_span = 10
+        # self.mode_time_span = 15
 
         # Action bound, used for filtering
         self.acc_bound = [-5, 3]
         self.omega_bound = [- math.pi / 6, math.pi / 6]
 
         # Fit polynomial
-        self.degree = 5
+        self.degree = 4
 
         # Use velocity profile or not
         self.use_velocity = True
         # self.use_velocity = False
 
         # For outliers, we choose whether to interpolate and replace the outliers
-        # The interpolation is: if the outliers is sandwiched by 2 normal value, then replace it with the mean of the former and latter
+        # # The interpolation is: if the outliers is sandwiched by 2 normal value, then replace it with the mean of the former and latter
         self.to_interpolate_outlier = True
         # self.to_interpolate_outlier = False
 
@@ -275,7 +275,7 @@ class ProcessPredictionV3(object):
 
             # Interpolate and replace the outlier for acc and omega
             if self.to_interpolate_outlier:
-                acc_interpolate, omega_interpolate = self.to_interpolate(raw_acc_list[i], raw_omega_list[i])
+                acc_interpolate, omega_interpolate = self.to_interpolate(raw_acc_list[i], raw_omega_list[i], mode="data_processing")
                 raw_acc_list[i] = acc_interpolate
                 raw_omega_list[i] = omega_interpolate
 
@@ -310,7 +310,7 @@ class ProcessPredictionV3(object):
 
         return filtered_acc_mean_list, filtered_acc_variance_list, filtered_omega_mean_list, filtered_omega_variance_list
 
-    def to_interpolate(self, acc, omega):
+    def to_interpolate(self, acc, omega, mode):
 
         len = np.shape(acc)[0]
         num_outlier = 0
@@ -359,6 +359,18 @@ class ProcessPredictionV3(object):
                 if (not self.omega_in_bound(omega[i])) and (self.omega_in_bound(omega[i + 1])) and (self.omega_in_bound(omega[i + 1])):
                     omega[i] = 2 * omega[i + 1] - omega[i + 2]
 
+        for i in range(len):
+            # If the current action is still an outlier, then replace it with upper/lower bound
+            if not self.acc_in_bound(acc[i]):
+                if acc[i] < self.acc_bound[0]:
+                    acc[i] = self.acc_bound[0]
+                else:
+                    acc[i] = self.acc_bound[1]
+            if not self.omega_in_bound(omega[i]):
+                if omega[i] < self.omega_bound[0]:
+                    omega[i] = self.omega_bound[0]
+                else:
+                    omega[i] = self.omega_bound[1]
 
         # print("Before filter, in this episode, whole length is ", len, "outlier num is", num_outlier)
 
@@ -393,6 +405,8 @@ class ProcessPredictionV3(object):
         filename_action_feature_list = []
         filename_list = []
 
+        num_feature_intersection = 0
+        num_feature_roundabout = 0
         # Use both intersection and roundabout
         for scenario in self.scenario_to_use:
             if scenario == "intersection":
@@ -404,12 +418,25 @@ class ProcessPredictionV3(object):
             for file_name in filename_list:
                 full_file_name = file_dir + '/' + file_name
                 acc_mean, acc_variance, omega_mean, omega_variance = self.get_action_data(file_name=full_file_name)
+
+                # Count number
+                if scenario == "intersection":
+                    for j in range(len(acc_mean)):
+                        num_feature_intersection += np.shape(acc_mean[j])[0]
+                elif scenario == "roundabout":
+                    for j in range(len(acc_mean)):
+                        num_feature_roundabout += np.shape(acc_mean[j])[0]
+
                 for index in range(len(acc_mean)):
                     filename_action_feature_list.append(
                         [file_name, acc_mean[index], acc_variance[index], omega_mean[index], omega_variance[index]])
 
         print("mode_time_span", self.mode_time_span)
         print("poly degree", self.degree)
+
+        print("intersection data", num_feature_intersection)
+        print("roundabout data", num_feature_roundabout)
+
         # # Only use intersection scenario
         # if self.scenario_to_use == "intersection":
         #     for file_name in self.file_name_intersection:

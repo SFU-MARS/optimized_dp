@@ -24,7 +24,11 @@ class ClusteringV3(object):
 
     def __init__(self):
 
-        self.to_plot = False
+        self.to_plot = True
+        # self.to_save = True
+
+        # self.to_plot = False
+        self.to_save = False
 
         self.clustering_num = 5
 
@@ -35,6 +39,9 @@ class ClusteringV3(object):
         # self.clustering_feature_type = "mean_and_variance"
 
         self.personalize_initialization = False
+        # self.personalize_initialization = True
+
+        self.to_corretify_pred = False
 
         # Default driving mode
         # Decelerate
@@ -153,9 +160,7 @@ class ClusteringV3(object):
                                        [self.default_m2_acc, self.default_m2_omega],
                                        [self.default_m3_acc, self.default_m3_omega],
                                        [self.default_m4_acc, self.default_m4_omega],
-                                       [self.default_m5_acc, self.default_m5_omega],
-                                       [self.default_m6_acc, self.default_m6_omega],
-                                       [self.default_m7_acc, self.default_m7_omega]
+                                       [self.default_m5_acc, self.default_m5_omega]
                                        ])
         if self.personalize_initialization:
             kmeans_action = KMeans(n_clusters=self.clustering_num, init=default_centroid, n_init=10, max_iter=300).fit(clustering_feature)
@@ -163,35 +168,39 @@ class ClusteringV3(object):
             kmeans_action = KMeans(n_clusters=self.clustering_num, random_state=0).fit(clustering_feature)
         pred = kmeans_action.predict(clustering_feature)
 
-        # Unify the mode: 0: decelerate, 1: stable, 2: accelerate, 3: left turn, 4: right turn
-        corrected_pred = np.ones((np.shape(pred)[0]))
+        if self.to_corretify_pred:
+            # Unify the mode: 0: decelerate, 1: stable, 2: accelerate, 3: left turn, 4: right turn
+            corrected_pred = np.ones((np.shape(pred)[0]))
 
-        acc_center = kmeans_action.cluster_centers_[:, 0]
-        omega_center = kmeans_action.cluster_centers_[:, 1]
-        new_mode = np.ones((self.clustering_num)) * 100
+            acc_center = kmeans_action.cluster_centers_[:, 0]
+            omega_center = kmeans_action.cluster_centers_[:, 1]
+            new_mode = np.ones((self.clustering_num)) * 100
 
-        # Find old mode-new mode assignment
-        val, idx = min((val, idx) for (idx, val) in enumerate(acc_center))
-        new_mode[0] = idx
+            # Find old mode-new mode assignment
+            val, idx = min((val, idx) for (idx, val) in enumerate(acc_center))
+            new_mode[0] = idx
 
-        val, idx = max((val, idx) for (idx, val) in enumerate(acc_center))
-        new_mode[2] = idx
+            val, idx = max((val, idx) for (idx, val) in enumerate(acc_center))
+            new_mode[2] = idx
 
-        val, idx = min((val, idx) for (idx, val) in enumerate(omega_center))
-        new_mode[3] = idx
+            val, idx = min((val, idx) for (idx, val) in enumerate(omega_center))
+            new_mode[3] = idx
 
-        val, idx = max((val, idx) for (idx, val) in enumerate(omega_center))
-        new_mode[4] = idx
+            val, idx = max((val, idx) for (idx, val) in enumerate(omega_center))
+            new_mode[4] = idx
 
-        # Assign the unify mode to the correct_pred
-        for i in range(self.clustering_num):
-            if i not in new_mode:
-                new_mode[1] = i
-                break
-        for i in range(self.clustering_num):
-            corrected_pred[pred == new_mode[i]] = i
+            # Assign the unify mode to the correct_pred
+            for i in range(self.clustering_num):
+                if i not in new_mode:
+                    new_mode[1] = i
+                    break
+            for i in range(self.clustering_num):
+                corrected_pred[pred == new_mode[i]] = i
 
-        return np.asarray(corrected_pred, 'i')
+            return np.asarray(corrected_pred, 'i')
+
+        else:
+            return pred
 
     def plot_clustering(self, original_data, clustering_data, prediction):
 
@@ -206,14 +215,20 @@ class ClusteringV3(object):
         if self.to_plot:
             plt.show()
 
-        figure_name = "kmeans.png"
+        # figure_name = "kmeans.png"
+        # figure_name = "kmeans-initialization.png"
+        # figure_name = "kmeans-initialization-7.png"
+        # figure_name = "kmeans-no-interpolation.png"
+        figure_name = "kmeans-5_default.png"
+
         file_path = "/Users/anjianli/Desktop/robotics/project/optimized_dp/result/poly_{:d}/{:d}_timesteps/".format(
             ProcessPredictionV3().degree, ProcessPredictionV3().mode_time_span)
         figure_path_name = file_path + figure_name
 
-        if not os.path.exists(file_path):
-            os.mkdir(file_path)
-        plt.savefig(figure_path_name)
+        if self.to_save:
+            if not os.path.exists(file_path):
+                os.mkdir(file_path)
+            plt.savefig(figure_path_name)
 
         # pickle.dump(kmeans_action, open("/home/anjianl/Desktop/project/optimized_dp/model/kmeans_action_intersection"
         #                                 ".pkl", "wb"))
