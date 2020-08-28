@@ -30,7 +30,9 @@ class ProcessPredictionV3(object):
                                        'car_38_vid_02.csv', 'car_52_vid_07.csv', 'car_73_vid_02.csv',
                                        'car_118_vid_11.csv']
         self.file_name_roundabout = ['car_27.csv', 'car_122.csv',
-                                     'car_51.csv', 'car_52.csv', 'car_131.csv', 'car_155.csv']
+                                     'car_51.csv', 'car_52.csv', 'car_131.csv', 'car_155.csv',
+                                     'car_15.csv', 'car_28.csv', 'car_34.csv', 'car_41.csv', 'car_50.csv',
+                                     'car_61.csv', 'car_75.csv', 'car_80.csv']
 
         # Time step
         self.time_step = 0.1
@@ -45,7 +47,8 @@ class ProcessPredictionV3(object):
         self.omega_bound = [- math.pi / 6, math.pi / 6]
 
         # Fit polynomial
-        self.degree = 4
+        # self.degree = 4
+        self.degree = 5
 
         # Use velocity profile or not
         self.use_velocity = True
@@ -268,16 +271,20 @@ class ProcessPredictionV3(object):
         num_all = 0
         num_effective = 0
         for i in range(episode_num):
-            episode_len = np.shape(raw_acc_list[i])[0]
-            # If the episode length is less than time span, filter it out
-            if episode_len < self.mode_time_span:
-                continue
+            # The logic is: first interpolate the outliers, then filter out the short horizons
+            # Because for prediction, you may note filter out short horizons
 
             # Interpolate and replace the outlier for acc and omega
             if self.to_interpolate_outlier:
                 acc_interpolate, omega_interpolate = self.to_interpolate(raw_acc_list[i], raw_omega_list[i], mode="data_processing")
                 raw_acc_list[i] = acc_interpolate
                 raw_omega_list[i] = omega_interpolate
+
+            episode_len = np.shape(raw_acc_list[i])[0]
+            # If the episode length is less than time span, filter it out
+            if episode_len < self.mode_time_span:
+                print("less then the mode time span!")
+                continue
 
             for j in range(episode_len):
                 if j + self.mode_time_span <= episode_len:
@@ -380,6 +387,8 @@ class ProcessPredictionV3(object):
             # Notify the outliers
             if (not self.acc_in_bound(acc[i])) or (not self.omega_in_bound(omega[i])):
                 num_outlier += 1
+                if mode == "prediction":
+                    print("where is the outlier?")
                 # print("acc in bound:", self.acc_in_bound(acc[i]), "omega in bound:",self.omega_in_bound(omega[i]))
         # print("After filter, in this episode, whole length is ", len, "outlier num is", num_outlier)
 
@@ -429,7 +438,7 @@ class ProcessPredictionV3(object):
 
                 for index in range(len(acc_mean)):
                     filename_action_feature_list.append(
-                        [file_name, acc_mean[index], acc_variance[index], omega_mean[index], omega_variance[index]])
+                        [scenario, acc_mean[index], acc_variance[index], omega_mean[index], omega_variance[index]])
 
         print("mode_time_span", self.mode_time_span)
         print("poly degree", self.degree)

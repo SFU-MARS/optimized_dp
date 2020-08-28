@@ -4,6 +4,8 @@ from os import path
 import random
 import matplotlib.pyplot as plt
 
+import math
+
 import sys
 sys.path.append("/Users/anjianli/Desktop/robotics/project/optimized_dp")
 
@@ -15,26 +17,26 @@ class PredictModeV3(object):
     def __init__(self):
 
         # self.to_save_pred_mode = True
-        self.to_plot_pred_mode = True
+        # self.to_plot_pred_mode = True
 
         self.to_save_pred_mode = False
-        # self.to_plot_pred_mode = False
+        self.to_plot_pred_mode = False
 
         # Which scenario to predict
-        self.scenario_predict = "intersection"
-        # self.scenario_predict = "roundabout"
+        # self.scenario_predict = "intersection"
+        self.scenario_predict = "roundabout"
 
         # Data directory
         # Remote desktop
-        # if self.scenario_predict == "intersection":
-        #     self.file_dir_predict = '/home/anjianl/Desktop/project/optimized_dp/data/intersection-data'
-        # elif self.scenario_predict == "roundabout":
-        #     self.file_dir_predict = '/home/anjianl/Desktop/project/optimized_dp/data/roundabout-data'
-        # My laptop
         if self.scenario_predict == "intersection":
-            self.file_dir_predict = '/Users/anjianli/Desktop/robotics/project/optimized_dp/data/intersection-data'
+            self.file_dir_predict = '/home/anjianl/Desktop/project/optimized_dp/data/intersection-data'
         elif self.scenario_predict == "roundabout":
-            self.file_dir_predict = '/Users/anjianli/Desktop/robotics/project/optimized_dp/data/roundabout-data'
+            self.file_dir_predict = '/home/anjianl/Desktop/project/optimized_dp/data/roundabout-data'
+        # My laptop
+        # if self.scenario_predict == "intersection":
+        #     self.file_dir_predict = '/Users/anjianli/Desktop/robotics/project/optimized_dp/data/intersection-data'
+        # elif self.scenario_predict == "roundabout":
+        #     self.file_dir_predict = '/Users/anjianli/Desktop/robotics/project/optimized_dp/data/roundabout-data'
 
         # File name
         if self.scenario_predict == "intersection":
@@ -45,7 +47,9 @@ class PredictModeV3(object):
                                            'car_118_vid_11.csv']
         elif self.scenario_predict == "roundabout":
             self.file_name_predict = ['car_27.csv', 'car_122.csv',
-                                     'car_51.csv', 'car_52.csv', 'car_131.csv', 'car_155.csv']
+                                      'car_51.csv', 'car_52.csv', 'car_131.csv', 'car_155.csv',
+                                      'car_15.csv', 'car_28.csv', 'car_34.csv', 'car_41.csv', 'car_50.csv',
+                                      'car_61.csv', 'car_75.csv', 'car_80.csv']
 
     def predict_mode(self):
 
@@ -53,7 +57,7 @@ class PredictModeV3(object):
         # [Mode name, acc_min, acc_max, omega_min, omega_max]
         self.action_bound_mode = ClusteringV3().get_clustering()
 
-        print(self.action_bound_mode)
+        # print(self.action_bound_mode)
 
         for file in self.file_name_predict:
             # Get raw action data from traj file
@@ -131,6 +135,7 @@ class PredictModeV3(object):
             filter_acc_list.append(acc_interpolate)
             filter_omega_list.append(omega_interpolate)
 
+
         return filter_acc_list, filter_omega_list
 
     def get_mode(self, raw_acc, raw_omega):
@@ -183,20 +188,22 @@ class PredictModeV3(object):
         # ax1.set_title('0: stable, 1: decelerate, 2: accelerate, 3: right turn, 4: left turn, -1: other')
         # ax1.set_title('0: right turn, 1: stable, 2: decelerate, 3: left turn, 4: accelerate, -1: other')
 
-
         locs, labels = plt.xticks()
         plt.xticks(np.arange(0, np.shape(mode_num_seq)[0], step=ProcessPredictionV3().mode_time_span))
         plt.yticks(np.arange(-1, 5, step=1))
+
         ax2 = fig.add_subplot(312, sharex=ax1)
         ax2.plot(time_index, acc, 'o-')
         ax2.set_ylabel('acceleration')
         ax2.set_xlabel('physical bound [-5, 3]')
+        # plt.yticks(np.arange(-5, 3, step=1))
 
         ax3 = fig.add_subplot(313, sharex=ax1)
         ax3.plot(time_index, omega, 'o-', label="angular speed")
         ax3.set_ylabel('angular speed')
         label_name = "bound: acc:[-5, 3], ang_v: [-pi/6, pi/6]" + str(ProcessPredictionV3().mode_time_span) + "time span"
         ax3.set_xlabel(label_name)
+        # plt.yticks(np.arange(-math.pi/6, math.pi/6, step=math.pi/15))
 
         if not self.to_save_pred_mode:
             plt.show()

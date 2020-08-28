@@ -16,7 +16,7 @@ class PlotReldyn5D(object):
 
     def plot(self):
         g = grid(np.array([-10.0, -10.0, -math.pi, 0, 0]), np.array([10.0, 10.0, math.pi, 17, 17]), 5,
-                 np.array([41, 41, 31, 35, 35]), [2])
+                 np.array([41, 41, 37, 35, 35]), [2])
 
         # Local
         # V_1 = np.load("/Users/anjianli/Desktop/robotics/project/optimized_dp/data/brs/0729-wh_-0.1_0.1-ah_-5_-2-t5/reldyn5d_brs_wh_-0.1_0.1-ah_-5_-2_t_5.00.npy")
@@ -25,7 +25,7 @@ class PlotReldyn5D(object):
         # V_4 = np.load("/Users/anjianli/Desktop/robotics/project/optimized_dp/data/brs/0725-full_range-t5/reldyn5d_brs_t_5.00.npy")
 
         # Remote
-        V_1 = np.load("/home/anjianl/Desktop/project/optimized_dp/data/brs/0730-wh_-0.1_0.1-ah_-5_-2-t5/reldyn5d_brs_wh_-0.1_0.1-ah_-5_-2_t_2.00.npy")
+        V_1 = np.load("/home/anjianl/Desktop/project/optimized_dp/data/brs/0827-mode0/reldyn5d_brs_mode0_t_0.50.npy")
         V_2 = np.load("/home/anjianl/Desktop/project/optimized_dp/data/brs/0730-wh_full-ah_-2_1-t5/reldyn5d_brs_wh_full-ah_-2_1_t_2.00.npy")
         V_3 = np.load("/home/anjianl/Desktop/project/optimized_dp/data/brs/0730-wh_-0.2_0.2-ah_1_3-t5/reldyn5d_brs_wh_-0.2_0.2-ah_1_3_t_2.00.npy")
         V_4 = np.load("/home/anjianl/Desktop/project/optimized_dp/data/brs/0730-full_range-t5/reldyn5d_brs_full_range_t_2.00.npy")
@@ -39,7 +39,7 @@ class PlotReldyn5D(object):
         # val_3 = np.squeeze(V_3[:, :, 19, 34, 0])
         # val_4 = np.squeeze(V_4[:, :, 19, 34, 0])
 
-        val_1 = np.squeeze(V_1[:, :, 23, 24, 10])
+        val_1 = np.squeeze(V_1[:, :, 28, 24, 10])
         val_2 = np.squeeze(V_2[:, :, 23, 24, 10])
         val_3 = np.squeeze(V_3[:, :, 23, 24, 10])
         val_4 = np.squeeze(V_4[:, :, 23, 24, 10])

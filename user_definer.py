@@ -9,6 +9,8 @@ from dynamics.DubinsCar import *
 from dynamics.RelDyn5D import *
 import scipy.io as sio
 
+from prediction.clustering_v3 import ClusteringV3
+
 import math
 
 """ USER INTERFACES
@@ -71,11 +73,15 @@ my_shape = Initial_value_f
 """
 
 # Relative dynamics 5D
-g = grid(np.array([-10.0, -10.0, -math.pi, 0, 0]), np.array([10.0, 10.0, math.pi, 17, 17]), 5, np.array([41, 41, 31, 35, 35]), [2])
+g = grid(np.array([-10.0, -10.0, -math.pi, 0, 0]), np.array([10.0, 10.0, math.pi, 17, 17]), 5, np.array([41, 41, 37, 35, 35]), [2])
 
 # Define my object
+action_bound_mode = ClusteringV3().get_clustering()
+# Mode 0
+acc_min, acc_max = action_bound_mode[0][1], action_bound_mode[0][2]
+omega_min, omega_max = action_bound_mode[0][3], action_bound_mode[0][4]
 my_car = RelDyn_5D(x=[0, 0, 0, 0, 0], uMin=np.array([-0.345, -5]), uMax=np.array([0.345, 3]),
-                   dMin=np.array([-math.pi / 6, -5]), dMax=np.array([math.pi / 6, 3]), dims=5, uMode="max", dMode="min")
+                   dMin=np.array([acc_min, omega_min]), dMax=np.array([acc_max, omega_max]), dims=5, uMode="max", dMode="min")
 # TODO: Driving mode 1: d1: w_h, d2: a_h
 # d1: w_h in [-0.1, 0.1], d2: a_h in [-5, -2]
 # my_car = RelDyn_5D(x=[0, 0, 0, 0, 0], uMin=np.array([-0.345, -5]), uMax=np.array([0.345, 3]),

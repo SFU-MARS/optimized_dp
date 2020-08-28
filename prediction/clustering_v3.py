@@ -34,14 +34,16 @@ class ClusteringV3(object):
 
         # Clustering feature selection
         # self.clustering_feature_type = "5_default_deviation"
-        # self.clustering_feature_type = "5_default_distance"
-        self.clustering_feature_type = "only_mean"
+        self.clustering_feature_type = "5_default_distance"
+        # self.clustering_feature_type = "only_mean"
         # self.clustering_feature_type = "mean_and_variance"
 
         self.personalize_initialization = False
         # self.personalize_initialization = True
 
+        # self.to_corretify_pred = True
         self.to_corretify_pred = False
+
 
         # Default driving mode
         # Decelerate
@@ -62,9 +64,9 @@ class ClusteringV3(object):
         # Curve path left
         self.default_m6_acc = 0.7
         self.default_m6_omega = 0.1
-        # Curve path right
-        self.default_m7_acc = 0.7
-        self.default_m7_omega = - 0.1
+        # # Curve path right
+        # self.default_m7_acc = 0.7
+        # self.default_m7_omega = - 0.1
 
         self.time_span = ProcessPredictionV3().mode_time_span
 
@@ -110,47 +112,83 @@ class ClusteringV3(object):
         num_action_feature = 0
         for action_feature in filename_action_feature_list:
             for i in range(np.shape(action_feature[1])[0]):
-                # The action feature vector is [acc_mean, acc_variance, omega_mean, omega_variance]
-                action_feature_list.append([action_feature[1][i], action_feature[2][i], action_feature[3][i], action_feature[4][i]])
+                # The action feature vector is [acc_mean, acc_variance, omega_mean, omega_variance, scenario]
+                action_feature_list.append([action_feature[1][i], action_feature[2][i], action_feature[3][i], action_feature[4][i], action_feature[0]])
+                # print([action_feature[1][i], action_feature[2][i], action_feature[3][i], action_feature[4][i], action_feature[0]])
                 num_action_feature += 1
 
-        action_feature_list = np.asarray(action_feature_list)
+        # action_feature_list = np.asarray(action_feature_list)
         print("total number of action feature is ", num_action_feature)
 
         return action_feature_list
 
     def get_clustering_feature(self, action_feature):
 
+        raw_action_feature = [[num[0], num[1], num[2], num[3]] for num in action_feature]
+
+        print(raw_action_feature)
+
         # action_feature = [acc_mean, acc_variance, omega_mean, omega_variance]
         if self.clustering_feature_type == "5_default_deviation":
-            clustering_feature = np.transpose(np.asarray([
-                action_feature[:, 0] - self.default_m1_acc, action_feature[:, 0] - self.default_m2_acc,
-                action_feature[:, 0] - self.default_m3_acc, action_feature[:, 0] - self.default_m4_acc,
-                action_feature[:, 0] - self.default_m5_acc,
-                action_feature[:, 2] - self.default_m1_omega, action_feature[:, 2] - self.default_m2_omega,
-                action_feature[:, 2] - self.default_m3_omega, action_feature[:, 2] - self.default_m4_omega,
-                action_feature[:, 2] - self.default_m5_omega
+            clustering_feature = np.transpose(np.asarray([action_feature[:, 0], action_feature[:, 2]]))
+            normalized_clustering_feature = MinMaxScaler().fit_transform(clustering_feature)
+
+            acc_min = np.min(clustering_feature[:, 0])
+            acc_max = np.max(clustering_feature[:, 0])
+            omega_min = np.min(clustering_feature[:, 1])
+            omega_max = np.max(clustering_feature[:, 1])
+
+            certroid_1 = [(self.default_m1_acc - acc_min) / (acc_max - acc_min), (self.default_m1_omega - omega_min) / (omega_max - omega_min)]
+            certroid_2 = [(self.default_m2_acc - acc_min) / (acc_max - acc_min), (self.default_m2_omega - omega_min) / (omega_max - omega_min)]
+            certroid_3 = [(self.default_m3_acc - acc_min) / (acc_max - acc_min), (self.default_m3_omega - omega_min) / (omega_max - omega_min)]
+            certroid_4 = [(self.default_m4_acc - acc_min) / (acc_max - acc_min), (self.default_m4_omega - omega_min) / (omega_max - omega_min)]
+            certroid_5 = [(self.default_m5_acc - acc_min) / (acc_max - acc_min), (self.default_m5_omega - omega_min) / (omega_max - omega_min)]
+
+            normalized_clustering_feature = np.transpose(np.asarray([
+                normalized_clustering_feature[:, 0] - certroid_1[0], normalized_clustering_feature[:, 0] - certroid_2[0],
+                normalized_clustering_feature[:, 0] - certroid_3[0], normalized_clustering_feature[:, 0] - certroid_4[0],
+                normalized_clustering_feature[:, 0] - certroid_5[0],
+                normalized_clustering_feature[:, 1] - certroid_1[1], normalized_clustering_feature[:, 1] - certroid_2[1],
+                normalized_clustering_feature[:, 1] - certroid_3[1], normalized_clustering_feature[:, 1] - certroid_4[1],
+                normalized_clustering_feature[:, 1] - certroid_5[1]
             ]))
         elif self.clustering_feature_type == "5_default_distance":
-            clustering_feature = np.transpose(np.asarray([
-                np.sqrt((action_feature[:, 0] - self.default_m1_acc) ** 2 + (
-                            action_feature[:, 2] - self.default_m1_omega) ** 2),
-                np.sqrt((action_feature[:, 0] - self.default_m2_acc) ** 2 + (
-                            action_feature[:, 2] - self.default_m2_omega) ** 2),
-                np.sqrt((action_feature[:, 0] - self.default_m3_acc) ** 2 + (
-                            action_feature[:, 2] - self.default_m3_omega) ** 2),
-                np.sqrt((action_feature[:, 0] - self.default_m4_acc) ** 2 + (
-                            action_feature[:, 2] - self.default_m4_omega) ** 2),
-                np.sqrt((action_feature[:, 0] - self.default_m5_acc) ** 2 + (
-                            action_feature[:, 2] - self.default_m5_omega) ** 2),
+
+            clustering_feature = np.transpose(np.asarray([action_feature[:, 0], action_feature[:, 2]]))
+            normalized_clustering_feature = MinMaxScaler().fit_transform(clustering_feature)
+
+            acc_min = np.min(clustering_feature[:, 0])
+            acc_max = np.max(clustering_feature[:, 0])
+            omega_min = np.min(clustering_feature[:, 1])
+            omega_max = np.max(clustering_feature[:, 1])
+
+            certroid_1 = [(self.default_m1_acc - acc_min) / (acc_max - acc_min), (self.default_m1_omega - omega_min) / (omega_max - omega_min)]
+            certroid_2 = [(self.default_m2_acc - acc_min) / (acc_max - acc_min), (self.default_m2_omega - omega_min) / (omega_max - omega_min)]
+            certroid_3 = [(self.default_m3_acc - acc_min) / (acc_max - acc_min), (self.default_m3_omega - omega_min) / (omega_max - omega_min)]
+            certroid_4 = [(self.default_m4_acc - acc_min) / (acc_max - acc_min), (self.default_m4_omega - omega_min) / (omega_max - omega_min)]
+            certroid_5 = [(self.default_m5_acc - acc_min) / (acc_max - acc_min), (self.default_m5_omega - omega_min) / (omega_max - omega_min)]
+
+            normalized_clustering_feature = np.transpose(np.asarray([
+                np.sqrt((normalized_clustering_feature[:, 0] - certroid_1[0]) ** 2 + (
+                            normalized_clustering_feature[:, 1] - certroid_1[1]) ** 2),
+                np.sqrt((normalized_clustering_feature[:, 0] - certroid_2[0]) ** 2 + (
+                            normalized_clustering_feature[:, 1] - certroid_2[1]) ** 2),
+                np.sqrt((normalized_clustering_feature[:, 0] - certroid_3[0]) ** 2 + (
+                            normalized_clustering_feature[:, 1] - certroid_3[1]) ** 2),
+                np.sqrt((normalized_clustering_feature[:, 0] - certroid_4[0]) ** 2 + (
+                            normalized_clustering_feature[:, 1] - certroid_4[1]) ** 2),
+                np.sqrt((normalized_clustering_feature[:, 0] - certroid_5[0]) ** 2 + (
+                            normalized_clustering_feature[:, 1] - certroid_5[1]) ** 2),
             ]))
         elif self.clustering_feature_type == "only_mean":
             clustering_feature = np.transpose(np.asarray([action_feature[:, 0], action_feature[:, 2]]))
+            normalized_clustering_feature = MinMaxScaler().fit_transform(clustering_feature)
         elif self.clustering_feature_type == "mean_and_variance":
             clustering_feature = np.transpose(np.asarray([action_feature[:, 0], action_feature[:, 2],
                                                           action_feature[:, 1], action_feature[:, 3]]))
+            normalized_clustering_feature = MinMaxScaler().fit_transform(clustering_feature)
 
-        normalized_clustering_feature = MinMaxScaler().fit_transform(clustering_feature)
+        # normalized_clustering_feature = MinMaxScaler().fit_transform(clustering_feature)
 
         return normalized_clustering_feature
 
@@ -203,6 +241,9 @@ class ClusteringV3(object):
             return pred
 
     def plot_clustering(self, original_data, clustering_data, prediction):
+
+        print(clustering_data)
+        print(original_data)
 
         fig, ax = plt.subplots()
         for i in range(self.clustering_num):
