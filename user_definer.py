@@ -10,6 +10,7 @@ from dynamics.RelDyn5D import *
 import scipy.io as sio
 
 from prediction.clustering_v3 import ClusteringV3
+from prediction.process_prediction_v3 import ProcessPredictionV3
 
 import math
 
@@ -77,23 +78,36 @@ g = grid(np.array([-10.0, -10.0, -math.pi, 0, 0]), np.array([10.0, 10.0, math.pi
 
 # Define my object
 action_bound_mode = ClusteringV3().get_clustering()
-# Mode 0
-acc_min, acc_max = action_bound_mode[0][1], action_bound_mode[0][2]
-omega_min, omega_max = action_bound_mode[0][3], action_bound_mode[0][4]
+omega_bound, acc_bound = ProcessPredictionV3().omega_bound, ProcessPredictionV3().acc_bound
+
+# # TODO: Mode -1
+# acc_min, acc_max = acc_bound[0], acc_bound[1]
+# omega_min, omega_max = omega_bound[0], omega_bound[1]
+# print("omega", omega_min, omega_max, "acc", acc_min, acc_max)
+# my_car = RelDyn_5D(x=[0, 0, 0, 0, 0], uMin=np.array([-0.345, -5]), uMax=np.array([0.345, 3]),
+#                    dMin=np.array([omega_min, acc_min]), dMax=np.array([omega_max, acc_max]), dims=5, uMode="max", dMode="min")
+
+# # TODO: Mode 0
+# acc_min, acc_max = action_bound_mode[0][1], action_bound_mode[0][2]
+# omega_min, omega_max = action_bound_mode[0][3], action_bound_mode[0][4]
+# print("omega", omega_min, omega_max, "acc", acc_min, acc_max)
+# my_car = RelDyn_5D(x=[0, 0, 0, 0, 0], uMin=np.array([-0.345, -5]), uMax=np.array([0.345, 3]),
+#                    dMin=np.array([omega_min, acc_min]), dMax=np.array([omega_max, acc_max]), dims=5, uMode="max", dMode="min")
+
+# # TODO: Mode 2
+# acc_min, acc_max = action_bound_mode[2][1], action_bound_mode[2][2]
+# omega_min, omega_max = action_bound_mode[2][3], action_bound_mode[2][4]
+# print("omega", omega_min, omega_max, "acc", acc_min, acc_max)
+# my_car = RelDyn_5D(x=[0, 0, 0, 0, 0], uMin=np.array([-0.345, -5]), uMax=np.array([0.345, 3]),
+#                    dMin=np.array([omega_min, acc_min]), dMax=np.array([omega_max, acc_max]), dims=5, uMode="max", dMode="min")
+
+# TODO: Mode 1
+acc_min, acc_max = action_bound_mode[1][1], action_bound_mode[1][2]
+omega_min, omega_max = action_bound_mode[1][3], action_bound_mode[1][4]
+print("omega", omega_min, omega_max, "acc", acc_min, acc_max)
 my_car = RelDyn_5D(x=[0, 0, 0, 0, 0], uMin=np.array([-0.345, -5]), uMax=np.array([0.345, 3]),
-                   dMin=np.array([acc_min, omega_min]), dMax=np.array([acc_max, omega_max]), dims=5, uMode="max", dMode="min")
-# TODO: Driving mode 1: d1: w_h, d2: a_h
-# d1: w_h in [-0.1, 0.1], d2: a_h in [-5, -2]
-# my_car = RelDyn_5D(x=[0, 0, 0, 0, 0], uMin=np.array([-0.345, -5]), uMax=np.array([0.345, 3]),
-#                    dMin=np.array([-0.1, -5]), dMax=np.array([0.1, -2]), dims=5, uMode="max", dMode="min")
-# TODO: Driving mode 2: d1: w_h, d2: a_h
-# d1: w_h in [-pi/6, pi/6], d2: a_h in [-2, 1]
-# my_car = RelDyn_5D(x=[0, 0, 0, 0, 0], uMin=np.array([-0.345, -5]), uMax=np.array([0.345, 3]),
-#                    dMin=np.array([-math.pi / 6, -2]), dMax=np.array([math.pi / 6, 1]), dims=5, uMode="max", dMode="min")
-# TODO: Driving mode 3: d1: w_h, d2: a_h
-# d1: w_h in [-0.2, 0.2], d2: a_h in [1, 3]
-# my_car = RelDyn_5D(x=[0, 0, 0, 0, 0], uMin=np.array([-0.345, -5]), uMax=np.array([0.345, 3]),
-#                    dMin=np.array([-0.2, 1]), dMax=np.array([0.2, 3]), dims=5, uMode="max", dMode="min")
+                   dMin=np.array([omega_min, acc_min]), dMax=np.array([omega_max, acc_max]), dims=5, uMode="max", dMode="min")
+
 print("Computing relative dynamics 5D")
 
 # Use the grid to initialize initial value function

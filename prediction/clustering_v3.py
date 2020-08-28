@@ -30,11 +30,11 @@ class ClusteringV3(object):
         # self.to_plot = False
         self.to_save = False
 
-        self.clustering_num = 5
+        self.clustering_num = 6
 
         # Clustering feature selection
         # self.clustering_feature_type = "5_default_deviation"
-        self.clustering_feature_type = "5_default_distance"
+        self.clustering_feature_type = "6_default_distance"
         # self.clustering_feature_type = "only_mean"
         # self.clustering_feature_type = "mean_and_variance"
 
@@ -53,17 +53,17 @@ class ClusteringV3(object):
         self.default_m2_acc = 0
         self.default_m2_omega = 0
         # Turn Left
-        self.default_m3_acc = 0.5
-        self.default_m3_omega = 0.25
+        self.default_m3_acc = 0
+        self.default_m3_omega = 0.2
         # Turn right
-        self.default_m4_acc = 0.5
+        self.default_m4_acc = 0
         self.default_m4_omega = - 0.25
         # Accelerate
-        self.default_m5_acc = 1.3
+        self.default_m5_acc = 1.5
         self.default_m5_omega = 0
         # Curve path left
-        self.default_m6_acc = 0.7
-        self.default_m6_omega = 0.1
+        self.default_m6_acc = 0
+        self.default_m6_omega = 0.4
         # # Curve path right
         # self.default_m7_acc = 0.7
         # self.default_m7_omega = - 0.1
@@ -85,20 +85,23 @@ class ClusteringV3(object):
 
     def get_clustering(self):
 
-        # The action feature vector is [acc_mean, acc_variance, omega_mean, omega_variance]
+        # The action feature vector is [acc_mean, acc_variance, omega_mean, omega_variance, scenario]
         action_feature = self.get_action_feature()
 
+        # If without scenario, the raw_action_feature is [acc_mean, acc_variance, omega_mean, omega_variance]
+        raw_action_feature = np.asarray([[num[0], num[1], num[2], num[3]] for num in action_feature])
+
         # Form clustering feature from action feature
-        clustering_feature = self.get_clustering_feature(action_feature)
+        clustering_feature = self.get_clustering_feature(raw_action_feature)
 
         # Kmeans on clustering feature
         prediction = self.kmeans_clustering(clustering_feature)
 
         # Visualization
-        self.plot_clustering(action_feature, clustering_feature, prediction)
+        self.plot_clustering(action_feature, raw_action_feature, clustering_feature, prediction)
 
         # Find the action bound for each mode
-        mode_action_bound = self.get_action_bound_for_mode(prediction, action_feature)
+        mode_action_bound = self.get_action_bound_for_mode(prediction, raw_action_feature)
 
         return mode_action_bound
 
@@ -122,15 +125,11 @@ class ClusteringV3(object):
 
         return action_feature_list
 
-    def get_clustering_feature(self, action_feature):
-
-        raw_action_feature = [[num[0], num[1], num[2], num[3]] for num in action_feature]
-
-        print(raw_action_feature)
+    def get_clustering_feature(self, raw_action_feature):
 
         # action_feature = [acc_mean, acc_variance, omega_mean, omega_variance]
         if self.clustering_feature_type == "5_default_deviation":
-            clustering_feature = np.transpose(np.asarray([action_feature[:, 0], action_feature[:, 2]]))
+            clustering_feature = np.transpose(np.asarray([raw_action_feature[:, 0], raw_action_feature[:, 2]]))
             normalized_clustering_feature = MinMaxScaler().fit_transform(clustering_feature)
 
             acc_min = np.min(clustering_feature[:, 0])
@@ -152,9 +151,9 @@ class ClusteringV3(object):
                 normalized_clustering_feature[:, 1] - certroid_3[1], normalized_clustering_feature[:, 1] - certroid_4[1],
                 normalized_clustering_feature[:, 1] - certroid_5[1]
             ]))
-        elif self.clustering_feature_type == "5_default_distance":
+        elif self.clustering_feature_type == "6_default_distance":
 
-            clustering_feature = np.transpose(np.asarray([action_feature[:, 0], action_feature[:, 2]]))
+            clustering_feature = np.transpose(np.asarray([raw_action_feature[:, 0], raw_action_feature[:, 2]]))
             normalized_clustering_feature = MinMaxScaler().fit_transform(clustering_feature)
 
             acc_min = np.min(clustering_feature[:, 0])
@@ -167,6 +166,7 @@ class ClusteringV3(object):
             certroid_3 = [(self.default_m3_acc - acc_min) / (acc_max - acc_min), (self.default_m3_omega - omega_min) / (omega_max - omega_min)]
             certroid_4 = [(self.default_m4_acc - acc_min) / (acc_max - acc_min), (self.default_m4_omega - omega_min) / (omega_max - omega_min)]
             certroid_5 = [(self.default_m5_acc - acc_min) / (acc_max - acc_min), (self.default_m5_omega - omega_min) / (omega_max - omega_min)]
+            certroid_6 = [(self.default_m6_acc - acc_min) / (acc_max - acc_min), (self.default_m6_omega - omega_min) / (omega_max - omega_min)]
 
             normalized_clustering_feature = np.transpose(np.asarray([
                 np.sqrt((normalized_clustering_feature[:, 0] - certroid_1[0]) ** 2 + (
@@ -179,13 +179,15 @@ class ClusteringV3(object):
                             normalized_clustering_feature[:, 1] - certroid_4[1]) ** 2),
                 np.sqrt((normalized_clustering_feature[:, 0] - certroid_5[0]) ** 2 + (
                             normalized_clustering_feature[:, 1] - certroid_5[1]) ** 2),
+                np.sqrt((normalized_clustering_feature[:, 0] - certroid_6[0]) ** 2 + (
+                        normalized_clustering_feature[:, 1] - certroid_6[1]) ** 2)
             ]))
         elif self.clustering_feature_type == "only_mean":
-            clustering_feature = np.transpose(np.asarray([action_feature[:, 0], action_feature[:, 2]]))
+            clustering_feature = np.transpose(np.asarray([raw_action_feature[:, 0], raw_action_feature[:, 2]]))
             normalized_clustering_feature = MinMaxScaler().fit_transform(clustering_feature)
         elif self.clustering_feature_type == "mean_and_variance":
-            clustering_feature = np.transpose(np.asarray([action_feature[:, 0], action_feature[:, 2],
-                                                          action_feature[:, 1], action_feature[:, 3]]))
+            clustering_feature = np.transpose(np.asarray([raw_action_feature[:, 0], raw_action_feature[:, 2],
+                                                          raw_action_feature[:, 1], raw_action_feature[:, 3]]))
             normalized_clustering_feature = MinMaxScaler().fit_transform(clustering_feature)
 
         # normalized_clustering_feature = MinMaxScaler().fit_transform(clustering_feature)
@@ -240,14 +242,27 @@ class ClusteringV3(object):
         else:
             return pred
 
-    def plot_clustering(self, original_data, clustering_data, prediction):
+    def plot_clustering(self, original_data, raw_data, clustering_data, prediction):
 
-        print(clustering_data)
-        print(original_data)
+        # First form a list to represent scenario
+        scenario = [num[4] for num in original_data]
+        # print(len(scenario))
+        # print(len(prediction))
 
+        # print(original_data)
         fig, ax = plt.subplots()
+
+        color = ["b", "g", "r", "c", "m", "y"]
         for i in range(self.clustering_num):
-            ax.scatter(original_data[:, 0][prediction == i], original_data[:, 2][prediction == i], label='Cluster %d' % i)
+            # print(prediction == i)
+            intersection_index = [sce == "intersection" for sce in scenario]
+            roundabout_index = [sce == "roundabout" for sce in scenario]
+            intersection_prediction_index = np.logical_and(prediction == [i], intersection_index)
+            roundabout_prediction_index = np.logical_and(prediction == [i], roundabout_index)
+            ax.scatter(raw_data[:, 0][intersection_prediction_index], raw_data[:, 2][intersection_prediction_index], label='M%d, i' % i, marker="o", color=color[i])
+            ax.scatter(raw_data[:, 0][roundabout_prediction_index], raw_data[:, 2][roundabout_prediction_index], label='M%d, r' % i, marker="+", color=color[i])
+
+
         ax.set_xlabel('acceleration')
         ax.set_ylabel('angular_speed')
         title = self.use_velocity + ", " + self.scenario_name + ", " + self.clustering_feature_type + ", " + str(self.time_span) + " " + "time-span " + "poly" + str(ProcessPredictionV3().degree)
@@ -274,7 +289,7 @@ class ClusteringV3(object):
         # pickle.dump(kmeans_action, open("/home/anjianl/Desktop/project/optimized_dp/model/kmeans_action_intersection"
         #                                 ".pkl", "wb"))
 
-    def get_action_bound_for_mode(self, prediction, action_feature):
+    def get_action_bound_for_mode(self, prediction, raw_action_feature):
 
         mode_num = np.max(prediction) + 1
         action_num = np.shape(prediction)[0]
@@ -282,10 +297,10 @@ class ClusteringV3(object):
         mode_action_bound = []
 
         for mode in range(mode_num):
-            acc_min = np.min(action_feature[prediction == mode, 0])
-            acc_max = np.max(action_feature[prediction == mode, 0])
-            omega_min = np.min(action_feature[prediction == mode, 2])
-            omega_max = np.max(action_feature[prediction == mode, 2])
+            acc_min = np.min(raw_action_feature[prediction == mode, 0])
+            acc_max = np.max(raw_action_feature[prediction == mode, 0])
+            omega_min = np.min(raw_action_feature[prediction == mode, 2])
+            omega_max = np.max(raw_action_feature[prediction == mode, 2])
 
             # print("Mode {:d}: acc is in [{:.2f}, {:.2f}], omega is in [{:.2f}, {:.2f}]".format(mode, acc_min, acc_max, omega_min, omega_max))
             mode = "Mode " + str(mode)

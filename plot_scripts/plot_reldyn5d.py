@@ -25,24 +25,47 @@ class PlotReldyn5D(object):
         # V_4 = np.load("/Users/anjianli/Desktop/robotics/project/optimized_dp/data/brs/0725-full_range-t5/reldyn5d_brs_t_5.00.npy")
 
         # Remote
-        V_1 = np.load("/home/anjianl/Desktop/project/optimized_dp/data/brs/0827-mode0/reldyn5d_brs_mode0_t_0.50.npy")
-        V_2 = np.load("/home/anjianl/Desktop/project/optimized_dp/data/brs/0730-wh_full-ah_-2_1-t5/reldyn5d_brs_wh_full-ah_-2_1_t_2.00.npy")
-        V_3 = np.load("/home/anjianl/Desktop/project/optimized_dp/data/brs/0730-wh_-0.2_0.2-ah_1_3-t5/reldyn5d_brs_wh_-0.2_0.2-ah_1_3_t_2.00.npy")
-        V_4 = np.load("/home/anjianl/Desktop/project/optimized_dp/data/brs/0730-full_range-t5/reldyn5d_brs_full_range_t_2.00.npy")
+        # V_1 = np.load("/home/anjianl/Desktop/project/optimized_dp/data/brs/0729-wh_-0.1_0.1-ah_-5_-2-t5/reldyn5d_brs_wh_-0.1_0.1-ah_-5_-2_t_5.00.npy")
+        # V_2 = np.load("/home/anjianl/Desktop/project/optimized_dp/data/brs/0730-wh_full-ah_-2_1-t5/reldyn5d_brs_wh_full-ah_-2_1_t_2.00.npy")
+        # V_3 = np.load("/home/anjianl/Desktop/project/optimized_dp/data/brs/0730-wh_-0.2_0.2-ah_1_3-t5/reldyn5d_brs_wh_-0.2_0.2-ah_1_3_t_2.00.npy")
+        # V_4 = np.load("/home/anjianl/Desktop/project/optimized_dp/data/brs/0730-full_range-t5/reldyn5d_brs_full_range_t_2.00.npy")
+
+        # TODO 0828
+        V_1 = np.load("/home/anjianl/Desktop/project/optimized_dp/data/brs/0828/mode0/reldyn5d_brs_mode0_t_2.00.npy")
+        V_2 = np.load("/home/anjianl/Desktop/project/optimized_dp/data/brs/0828/mode-1/reldyn5d_brs_mode0_t_2.00.npy")
+        V_3 = np.load("/home/anjianl/Desktop/project/optimized_dp/data/brs/0828/mode1/reldyn5d_brs_mode0_t_2.00.npy")
+        V_4 = np.load("/home/anjianl/Desktop/project/optimized_dp/data/brs/0828/mode2/reldyn5d_brs_mode0_t_2.00.npy")
+        # V_5 = np.load("/home/anjianl/Desktop/project/optimized_dp/data/brs/0730-wh_full-ah_-2_1-t5/reldyn5d_brs_wh_full-ah_-2_1_t_2.00.npy")
+        # V_6 = np.load("/home/anjianl/Desktop/project/optimized_dp/data/brs/0730-wh_-0.2_0.2-ah_1_3-t5/reldyn5d_brs_wh_-0.2_0.2-ah_1_3_t_2.00.npy")
+        # V_7 = np.load("/home/anjianl/Desktop/project/optimized_dp/data/brs/0730-full_range-t5/reldyn5d_brs_full_range_t_2.00.npy")
+
 
         x_grid, y_grid = self.get_xy_grid(g, [0, 1])
 
         # Slice the value function
-        # Psi_relative, v_human, v_robot
-        # val_1 = np.squeeze(V_1[:, :, 19, 34, 0])
-        # val_2 = np.squeeze(V_2[:, :, 19, 34, 0])
-        # val_3 = np.squeeze(V_3[:, :, 19, 34, 0])
-        # val_4 = np.squeeze(V_4[:, :, 19, 34, 0])
+        # # psi_rel = 0, v_human = 17m/s, v_robot = 17m/s
+        # val_1 = np.squeeze(V_1[:, :, 18, 34, 34])
+        # val_2 = np.squeeze(V_2[:, :, 18, 34, 34])
+        # val_3 = np.squeeze(V_3[:, :, 18, 34, 34])
+        # val_4 = np.squeeze(V_4[:, :, 18, 34, 34])
 
-        val_1 = np.squeeze(V_1[:, :, 28, 24, 10])
-        val_2 = np.squeeze(V_2[:, :, 23, 24, 10])
-        val_3 = np.squeeze(V_3[:, :, 23, 24, 10])
-        val_4 = np.squeeze(V_4[:, :, 23, 24, 10])
+        # # psi_rel = pi / 2, v_human = 17m/s, v_robot = 0m/s
+        # val_1 = np.squeeze(V_1[:, :, 27, 34, 0])
+        # val_2 = np.squeeze(V_2[:, :, 27, 34, 0])
+        # val_3 = np.squeeze(V_3[:, :, 27, 34, 0])
+        # val_4 = np.squeeze(V_4[:, :, 27, 34, 0])
+
+        # # psi_rel = pi / 4, v_human = 6m/s, v_robot = 6m/s
+        # val_1 = np.squeeze(V_1[:, :, 22, 12, 12])
+        # val_2 = np.squeeze(V_2[:, :, 22, 12, 12])
+        # val_3 = np.squeeze(V_3[:, :, 22, 12, 12])
+        # val_4 = np.squeeze(V_4[:, :, 22, 12, 12])
+
+        # psi_rel = pi / 4, v_human = 6m/s, v_robot = 0m/s
+        val_1 = np.squeeze(V_1[:, :, 22, 12, 0])
+        val_2 = np.squeeze(V_2[:, :, 22, 12, 0])
+        val_3 = np.squeeze(V_3[:, :, 22, 12, 0])
+        val_4 = np.squeeze(V_4[:, :, 22, 12, 0])
 
         fig, ax = plt.subplots()
 
@@ -56,13 +79,13 @@ class PlotReldyn5D(object):
         ax.clabel(CS_4, inline=1, fontsize=5)
 
         lines = [CS_1.collections[0], CS_2.collections[0], CS_3.collections[0], CS_4.collections[0]]
-        labels = ['Mode1: wh_-0.1_0.1-ah_-5_-2', 'Mode2: wh_full-ah_-2_1', 'Mode3: wh_-0.2_0.2-ah_1_3', 'Mode0: full_range']
+        labels = ['Mode 0: curve path', 'Mode -1: others', 'Mode1: stable', "Mode2: right turn"]
 
         ax.legend(lines, labels)
 
         ax.set_xlabel("x_relative")
         ax.set_ylabel("y_relative")
-        ax.set_title('Avoid set: psi_rel = pi/2, v_human = 12m/s, v_robot = 5m/s')
+        ax.set_title('Avoid set: psi_rel = pi / 4, v_human = 6m/s, v_robot = 0m/s')
 
         plt.show()
 

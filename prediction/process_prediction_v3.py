@@ -17,11 +17,11 @@ class ProcessPredictionV3(object):
 
         # Data directory
         # Remote desktop
-        # self.file_dir_intersection = '/home/anjianl/Desktop/project/optimized_dp/data/intersection-data'
-        # self.file_dir_roundabout = '/home/anjianl/Desktop/project/optimized_dp/data/roundabout-data'
+        self.file_dir_intersection = '/home/anjianl/Desktop/project/optimized_dp/data/intersection-data'
+        self.file_dir_roundabout = '/home/anjianl/Desktop/project/optimized_dp/data/roundabout-data'
         # My laptop
-        self.file_dir_intersection = '/Users/anjianli/Desktop/robotics/project/optimized_dp/data/intersection-data'
-        self.file_dir_roundabout = '/Users/anjianli/Desktop/robotics/project/optimized_dp/data/roundabout-data'
+        # self.file_dir_intersection = '/Users/anjianli/Desktop/robotics/project/optimized_dp/data/intersection-data'
+        # self.file_dir_roundabout = '/Users/anjianli/Desktop/robotics/project/optimized_dp/data/roundabout-data'
 
         # File name
         self.file_name_intersection = ['car_16_vid_09.csv', 'car_20_vid_09.csv', 'car_29_vid_09.csv',
@@ -439,6 +439,7 @@ class ProcessPredictionV3(object):
                 for index in range(len(acc_mean)):
                     filename_action_feature_list.append(
                         [scenario, acc_mean[index], acc_variance[index], omega_mean[index], omega_variance[index]])
+                    # print(scenario)
 
         print("mode_time_span", self.mode_time_span)
         print("poly degree", self.degree)

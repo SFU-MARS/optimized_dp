@@ -107,7 +107,7 @@ def main():
              print("Computational time to integrate (s): {:.5f}".format(time.time() - start))
              # Saving data into disk
              if tNow == 0.5 or tNow == 1 or tNow == 1.5 or tNow == 2:
-                file_dir = '/home/anjianl/Desktop/project/optimized_dp/data/brs/0827-mode0/'
+                file_dir = '/home/anjianl/Desktop/project/optimized_dp/data/brs/0828/mode1/'
                 if not os.path.exists(file_dir):
                     os.mkdir(file_dir)
                 file_path = file_dir + 'reldyn5d_brs_mode0_t_%.2f.npy'
