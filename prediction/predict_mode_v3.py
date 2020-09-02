@@ -17,10 +17,10 @@ class PredictModeV3(object):
     def __init__(self):
 
         # self.to_save_pred_mode = True
-        # self.to_plot_pred_mode = True
+        self.to_plot_pred_mode = True
 
         self.to_save_pred_mode = False
-        self.to_plot_pred_mode = False
+        # self.to_plot_pred_mode = False
 
         # Which scenario to predict
         # self.scenario_predict = "intersection"
@@ -28,15 +28,15 @@ class PredictModeV3(object):
 
         # Data directory
         # Remote desktop
-        if self.scenario_predict == "intersection":
-            self.file_dir_predict = '/home/anjianl/Desktop/project/optimized_dp/data/intersection-data'
-        elif self.scenario_predict == "roundabout":
-            self.file_dir_predict = '/home/anjianl/Desktop/project/optimized_dp/data/roundabout-data'
-        # My laptop
         # if self.scenario_predict == "intersection":
-        #     self.file_dir_predict = '/Users/anjianli/Desktop/robotics/project/optimized_dp/data/intersection-data'
+        #     self.file_dir_predict = '/home/anjianl/Desktop/project/optimized_dp/data/intersection-data'
         # elif self.scenario_predict == "roundabout":
-        #     self.file_dir_predict = '/Users/anjianli/Desktop/robotics/project/optimized_dp/data/roundabout-data'
+        #     self.file_dir_predict = '/home/anjianl/Desktop/project/optimized_dp/data/roundabout-data'
+        # My laptop
+        if self.scenario_predict == "intersection":
+            self.file_dir_predict = '/Users/anjianli/Desktop/robotics/project/optimized_dp/data/intersection-data'
+        elif self.scenario_predict == "roundabout":
+            self.file_dir_predict = '/Users/anjianli/Desktop/robotics/project/optimized_dp/data/roundabout-data'
 
         # File name
         if self.scenario_predict == "intersection":
@@ -183,14 +183,14 @@ class PredictModeV3(object):
         ax1.grid()
         ax1.set_ylabel('mode')
         ax1.set_xlabel('timestep')
-        ax1.set_title('0: decelerate, 1: stable, 2: accelerate, 3: left turn, 4: right turn, -1: other')
+        ax1.set_title('0: decelerate, 1: stable, 2: accelerate, 3: left turn, 4: right turn, 5: curve path, -1: other')
         # ax1.set_title('0: decelerate, 1: accelerate, 2: stable, 3: left turn, 4: right turn, -1: other')
         # ax1.set_title('0: stable, 1: decelerate, 2: accelerate, 3: right turn, 4: left turn, -1: other')
         # ax1.set_title('0: right turn, 1: stable, 2: decelerate, 3: left turn, 4: accelerate, -1: other')
 
         locs, labels = plt.xticks()
         plt.xticks(np.arange(0, np.shape(mode_num_seq)[0], step=ProcessPredictionV3().mode_time_span))
-        plt.yticks(np.arange(-1, 5, step=1))
+        plt.yticks(np.arange(-1, ClusteringV3().clustering_num, step=1))
 
         ax2 = fig.add_subplot(312, sharex=ax1)
         ax2.plot(time_index, acc, 'o-')

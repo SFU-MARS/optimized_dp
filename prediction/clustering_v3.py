@@ -41,8 +41,8 @@ class ClusteringV3(object):
         self.personalize_initialization = False
         # self.personalize_initialization = True
 
-        # self.to_corretify_pred = True
-        self.to_corretify_pred = False
+        self.to_corretify_pred = True
+        # self.to_corretify_pred = False
 
 
         # Default driving mode
@@ -209,31 +209,23 @@ class ClusteringV3(object):
         pred = kmeans_action.predict(clustering_feature)
 
         if self.to_corretify_pred:
-            # Unify the mode: 0: decelerate, 1: stable, 2: accelerate, 3: left turn, 4: right turn
+            # Unify the mode: 0: decelerate, 1: stable, 2: accelerate, 3: left turn, 4: right turn, 5: curve path
+            # TODO: everytime when the clustering changes, we should hand-modify the cluster num
             corrected_pred = np.ones((np.shape(pred)[0]))
 
             acc_center = kmeans_action.cluster_centers_[:, 0]
             omega_center = kmeans_action.cluster_centers_[:, 1]
             new_mode = np.ones((self.clustering_num)) * 100
 
-            # Find old mode-new mode assignment
-            val, idx = min((val, idx) for (idx, val) in enumerate(acc_center))
-            new_mode[0] = idx
+            # Hand-design the new mode, the mapping is based on the clustering plot
+            # mode: 0: decelerate, 1: stable, 2: accelerate, 3: left turn, 4: right turn, 5: curve path
+            new_mode[0] = 4
+            new_mode[1] = 1
+            new_mode[2] = 5
+            new_mode[3] = 3
+            new_mode[4] = 2
+            new_mode[5] = 0
 
-            val, idx = max((val, idx) for (idx, val) in enumerate(acc_center))
-            new_mode[2] = idx
-
-            val, idx = min((val, idx) for (idx, val) in enumerate(omega_center))
-            new_mode[3] = idx
-
-            val, idx = max((val, idx) for (idx, val) in enumerate(omega_center))
-            new_mode[4] = idx
-
-            # Assign the unify mode to the correct_pred
-            for i in range(self.clustering_num):
-                if i not in new_mode:
-                    new_mode[1] = i
-                    break
             for i in range(self.clustering_num):
                 corrected_pred[pred == new_mode[i]] = i
 
