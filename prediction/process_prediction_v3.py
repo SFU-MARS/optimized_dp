@@ -32,7 +32,10 @@ class ProcessPredictionV3(object):
         self.file_name_roundabout = ['car_27.csv', 'car_122.csv',
                                      'car_51.csv', 'car_52.csv', 'car_131.csv', 'car_155.csv',
                                      'car_15.csv', 'car_28.csv', 'car_34.csv', 'car_41.csv', 'car_50.csv',
-                                     'car_61.csv', 'car_75.csv', 'car_80.csv']
+                                     'car_61.csv', 'car_75.csv', 'car_80.csv',
+                                     'car_2.csv', 'car_3.csv', 'car_4.csv', 'car_6.csv', 'car_9.csv', 'car_10.csv',
+                                     'car_11.csv', 'car_13.csv', 'car_17.csv', 'car_21.csv', 'car_24.csv', 'car_29.csv',
+                                     'car_30.csv', 'car_35.csv', 'car_36.csv', 'car_44.csv']
 
         # Time step
         self.time_step = 0.1

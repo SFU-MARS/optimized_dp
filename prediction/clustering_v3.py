@@ -219,12 +219,12 @@ class ClusteringV3(object):
 
             # Hand-design the new mode, the mapping is based on the clustering plot
             # mode: 0: decelerate, 1: stable, 2: accelerate, 3: left turn, 4: right turn, 5: curve path
-            new_mode[0] = 4
-            new_mode[1] = 1
-            new_mode[2] = 5
+            new_mode[0] = 1
+            new_mode[1] = 2
+            new_mode[2] = 0
             new_mode[3] = 3
-            new_mode[4] = 2
-            new_mode[5] = 0
+            new_mode[4] = 5
+            new_mode[5] = 4
 
             for i in range(self.clustering_num):
                 corrected_pred[pred == new_mode[i]] = i

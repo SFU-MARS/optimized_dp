@@ -57,7 +57,7 @@ class PredictModeV3(object):
         # [Mode name, acc_min, acc_max, omega_min, omega_max]
         self.action_bound_mode = ClusteringV3().get_clustering()
 
-        # print(self.action_bound_mode)
+        print(self.action_bound_mode)
 
         for file in self.file_name_predict:
             # Get raw action data from traj file
