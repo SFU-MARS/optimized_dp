@@ -28,15 +28,17 @@ class PredictModeV3(object):
 
         # Data directory
         # Remote desktop
-        # if self.scenario_predict == "intersection":
-        #     self.file_dir_predict = '/home/anjianl/Desktop/project/optimized_dp/data/intersection-data'
-        # elif self.scenario_predict == "roundabout":
-        #     self.file_dir_predict = '/home/anjianl/Desktop/project/optimized_dp/data/roundabout-data'
+        if '/Users/anjianli/anaconda3/envs/hcl-env/lib/python3.8' not in sys.path:
+            if self.scenario_predict == "intersection":
+                self.file_dir_predict = '/home/anjianl/Desktop/project/optimized_dp/data/intersection-data'
+            elif self.scenario_predict == "roundabout":
+                self.file_dir_predict = '/home/anjianl/Desktop/project/optimized_dp/data/roundabout-data'
+        else:
         # My laptop
-        if self.scenario_predict == "intersection":
-            self.file_dir_predict = '/Users/anjianli/Desktop/robotics/project/optimized_dp/data/intersection-data'
-        elif self.scenario_predict == "roundabout":
-            self.file_dir_predict = '/Users/anjianli/Desktop/robotics/project/optimized_dp/data/roundabout-data'
+            if self.scenario_predict == "intersection":
+                self.file_dir_predict = '/Users/anjianli/Desktop/robotics/project/optimized_dp/data/intersection-data'
+            elif self.scenario_predict == "roundabout":
+                self.file_dir_predict = '/Users/anjianli/Desktop/robotics/project/optimized_dp/data/roundabout-data'
 
         # File name
         if self.scenario_predict == "intersection":
@@ -70,10 +72,11 @@ class PredictModeV3(object):
             for i in range(len(filter_acc_list)):
                 filter_acc, filter_omega = filter_acc_list[i], filter_omega_list[i]
 
-                mode_num_seq, mode_num_str = self.get_mode(filter_acc, filter_omega)
+                mode_num_list, mode_probability_list = self.get_mode(filter_acc, filter_omega)
 
                 if self.to_plot_pred_mode:
-                    self.plot_mode(mode_num_seq, mode_num_str, filter_acc, filter_omega)
+                    print("new prediction starts")
+                    self.plot_mode(mode_num_list, mode_probability_list, filter_acc, filter_omega)
 
                 if self.to_save_pred_mode:
                     if self.scenario_predict == "intersection":
@@ -140,22 +143,29 @@ class PredictModeV3(object):
 
     def get_mode(self, raw_acc, raw_omega):
 
-        mode_num_seq = []
-        mode_num_str = []
+        mode_num_list = []
+        mode_probability_list = []
         for i in range(np.shape(raw_acc)[0]):
             if i + ProcessPredictionV3().mode_time_span <= np.shape(raw_acc)[0]:
-                curr_mode_num, curr_mode_str = self.decide_mode(raw_acc[i:i + ProcessPredictionV3().mode_time_span],
+                curr_mode_num, curr_mode_probability = self.decide_mode(raw_acc[i:i + ProcessPredictionV3().mode_time_span],
                                                                 raw_omega[i:i + ProcessPredictionV3().mode_time_span])
                 # print(curr_mode_str)
-                mode_num_seq.append(curr_mode_num)
-                mode_num_str.append(curr_mode_str)
+                mode_num_list.append(curr_mode_num)
+                mode_probability_list.append(curr_mode_probability)
             else:
-                mode_num_seq.append(curr_mode_num)
-                mode_num_str.append(curr_mode_str)
+                mode_num_list.append(curr_mode_num)
+                mode_probability_list.append(curr_mode_probability)
 
-        return np.asarray(mode_num_seq), mode_num_str
+        return np.asarray(mode_num_list), mode_probability_list
 
     def decide_mode(self, acc, omega):
+        """
+        Major update after predict_mode_v3:
+
+        Because the action bound has some overlap, we will assign probability to the driving mode if the data is in the overlap
+
+        Here, we will compute the shortest distance to the boundary
+        """
 
         if (np.shape(acc)[0] != ProcessPredictionV3().mode_time_span) or (np.shape(omega)[0] != ProcessPredictionV3().mode_time_span):
             print("prediction dimension is wrong")
@@ -164,22 +174,49 @@ class PredictModeV3(object):
         acc_mean = np.mean(acc)
         omega_mean = np.mean(omega)
 
-        for i in range(len(self.action_bound_mode)):
+        # mode_probability = np.zeros((ClusteringV3().clustering_num))
+        mode_probability = [0] * ClusteringV3().clustering_num
+        for i in range(ClusteringV3().clustering_num):
             if (self.action_bound_mode[i][1] <= acc_mean <= self.action_bound_mode[i][2]) and (self.action_bound_mode[i][3] <= omega_mean <= self.action_bound_mode[i][4]):
-                return i, self.action_bound_mode[i][0]
+                # Assign the shortest distance to the boundary to
+                shortest_dist = np.min([np.abs(acc_mean - self.action_bound_mode[i][1]),
+                                        np.abs(acc_mean - self.action_bound_mode[i][2]),
+                                        np.abs(omega_mean - self.action_bound_mode[i][3]),
+                                        np.abs(omega_mean - self.action_bound_mode[i][4])])
+                if shortest_dist == 0:
+                    mode_probability[i] = 1
+                    for j in range(i+1, ClusteringV3().clustering_num):
+                        mode_probability[j] = 0
+                    return i, mode_probability
+                else:
+                    mode_probability[i] = 1 / shortest_dist
+            else:
+                mode_probability[i] = 0
 
-        return -1, "mode -1"
+        if max(mode_probability) == 0:
+            return -1, mode_probability
 
-    def plot_mode(self, mode_num_seq, mode_num_str, acc, omega):
+        num_sum = sum(mode_probability)
+        for i in range(len(mode_probability)):
+            mode_probability[i] = mode_probability[i] / num_sum
+
+        print(mode_probability)
+        print(np.max(mode_probability))
+
+        # Currently, choose mode as the maximum probability
+        mode = mode_probability.index(max(mode_probability))
+        return mode, mode_probability
+
+    def plot_mode(self, mode_num_list, mode_probability_list, acc, omega):
 
         fig = plt.figure()
         ax1 = fig.add_subplot(311)
 
-        time_index = np.linspace(0, np.shape(mode_num_seq)[0], num=np.shape(mode_num_seq)[0])
+        time_index = np.linspace(0, np.shape(mode_num_list)[0], num=np.shape(mode_num_list)[0])
         # print(mode_num_seq)
         # print(time_index)
 
-        ax1.plot(time_index, mode_num_seq, 'o-')
+        ax1.plot(time_index, mode_num_list, 'o-')
         ax1.grid()
         ax1.set_ylabel('mode')
         ax1.set_xlabel('timestep')
@@ -189,7 +226,7 @@ class PredictModeV3(object):
         # ax1.set_title('0: right turn, 1: stable, 2: decelerate, 3: left turn, 4: accelerate, -1: other')
 
         locs, labels = plt.xticks()
-        plt.xticks(np.arange(0, np.shape(mode_num_seq)[0], step=ProcessPredictionV3().mode_time_span))
+        plt.xticks(np.arange(0, np.shape(mode_num_list)[0], step=ProcessPredictionV3().mode_time_span))
         plt.yticks(np.arange(-1, ClusteringV3().clustering_num, step=1))
 
         ax2 = fig.add_subplot(312, sharex=ax1)

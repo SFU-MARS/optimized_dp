@@ -27,7 +27,7 @@ class RelDyn_5D:
     Disturbance: dOpt = (dOpt[0], dOpt[1]) = (w_h, a_h)
 
     """
-    def __init__(self, x=[0, 0, 0, 0, 0], uMin=np.array([-0.345, -5]), uMax=np.array([0.345, 3]), dMin=np.array([-math.pi / 6, -5]),
+    def __init__(self, x=[0, 0, 0, 0, 0], uMin=np.array([-0.325, -5]), uMax=np.array([0.325, 3]), dMin=np.array([-math.pi / 6, -5]),
                  dMax=np.array([math.pi / 6, 3]), dims=5, uMode="max", dMode="min"):
         self.x = x
         self.uMode = uMode
@@ -65,6 +65,9 @@ class RelDyn_5D:
         x4_dot = hcl.scalar(0, "x4_dot")
         x5_dot = hcl.scalar(0, "x5_dot")
 
+        # state = (state[0]: , state[1], state[2], state[3], state[4]) = (x_rel, y_rel, psi_rel, v_h, v_r)
+        # uOpt = (uOpt[0], uOpt[1]) = (beta_r, a_r)
+        # dOpt = (dOpt[0], dOpt[1]) = (w_h, a_h)
         x1_dot[0] = (state[4] / self.l_r) * hcl.sin(uOpt[0]) * state[1] + state[3] * hcl.cos(state[2]) - state[4] * hcl.cos(uOpt[0])
         x2_dot[0] = (- state[4] / self.l_r) * hcl.sin(uOpt[0]) * state[0] + state[3] * hcl.sin(state[2]) - state[4] * hcl.sin(uOpt[0])
         x3_dot[0] = dOpt[0] - (state[4] / self.l_r) * hcl.sin(uOpt[0])
@@ -91,6 +94,7 @@ class RelDyn_5D:
         c2 = hcl.scalar(0, "c2")
 
         # According to doc, c1, c2 are defined as follow
+        # state = (state[0]: , state[1], state[2], state[3], state[4]) = (x_rel, y_rel, psi_rel, v_h, v_r)
         c1[0] = spat_deriv[0] * (state[4] / self.l_r) * state[1] - spat_deriv[1] * (state[4] / self.l_r) * state[0] -\
                 spat_deriv[1] * state[4] - spat_deriv[2] * (state[4] / self.l_r)
         c2[0] = - spat_deriv[0] * state[4]
@@ -103,6 +107,7 @@ class RelDyn_5D:
         tmp2[0] = - my_atan(c2[0] / c1[0]) - math.pi / 2
 
         # Store umin and umax
+        # uOpt = (uOpt[0], uOpt[1]) = (beta_r, a_r)
         umin1 = hcl.scalar(0, "umin1")
         umin2 = hcl.scalar(0, "umin2")
         umax1 = hcl.scalar(0, "umax1")
@@ -120,8 +125,9 @@ class RelDyn_5D:
         with hcl.if_(self.uMode == "max"):
 
             # For uOpt1: beta_r
+            # TODO: Some logic error fixed here
             with hcl.if_(c1[0] > 0):
-                with hcl.if_(umin1[0] <= tmp1[0]):
+                with hcl.if_(tmp1[0] >= umin1[0]):
                     with hcl.if_(tmp1[0] <= umax1[0]):
                         uOpt1[0] = tmp1[0]
                 with hcl.if_(tmp1[0] > umax1[0]):
@@ -129,7 +135,7 @@ class RelDyn_5D:
                 with hcl.if_(tmp1[0] < umin1[0]):
                     uOpt1[0] = umin1[0]
             with hcl.if_(c1[0] < 0):
-                with hcl.if_(umin1[0] <= tmp2[0]):
+                with hcl.if_(tmp2[0] >= umin1[0]):
                     with hcl.if_(tmp2[0] <= umax1[0]):
                         uOpt1[0] = tmp2[0]
                 with hcl.if_(tmp2[0] > umax1[0]):
@@ -138,7 +144,7 @@ class RelDyn_5D:
                     uOpt1[0] = umin1[0]
             with hcl.if_(c1[0] == 0):
                 with hcl.if_(c2[0] >= 0):
-                    with hcl.if_(umin1[0] <= 0):
+                    with hcl.if_(0 >= umin1[0]):
                         with hcl.if_(0 <= umax1[0]):
                             uOpt1[0] = 0
                     with hcl.if_(0 < umin1[0]):
@@ -174,6 +180,8 @@ class RelDyn_5D:
         in3 = hcl.scalar(0, "in3")
         in4 = hcl.scalar(0, "in4")
         in5 = hcl.scalar(0, "in5")
+
+        # dOpt = (dOpt[0], dOpt[1]) = (w_h, a_h)
 
         with hcl.if_(self.uMode == "max"):
 

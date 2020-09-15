@@ -74,39 +74,16 @@ my_shape = Initial_value_f
 """
 
 # Relative dynamics 5D
-g = grid(np.array([-10.0, -10.0, -math.pi, 0, 0]), np.array([10.0, 10.0, math.pi, 17, 17]), 5, np.array([41, 41, 37, 35, 35]), [2])
+g = grid(np.array([-10.0, -10.0, -math.pi, 0, 0]), np.array([10.0, 10.0, math.pi, 17, 17]), 5, np.array([41, 41, 36, 35, 35]), [2])
 
 # Define my object
-action_bound_mode = ClusteringV3().get_clustering()
-omega_bound, acc_bound = ProcessPredictionV3().omega_bound, ProcessPredictionV3().acc_bound
+# action_bound_mode = ClusteringV3().get_clustering()
+# omega_bound, acc_bound = ProcessPredictionV3().omega_bound, ProcessPredictionV3().acc_bound
 
-# # TODO: Mode -1
-# acc_min, acc_max = acc_bound[0], acc_bound[1]
-# omega_min, omega_max = omega_bound[0], omega_bound[1]
-# print("omega", omega_min, omega_max, "acc", acc_min, acc_max)
-# my_car = RelDyn_5D(x=[0, 0, 0, 0, 0], uMin=np.array([-0.345, -5]), uMax=np.array([0.345, 3]),
-#                    dMin=np.array([omega_min, acc_min]), dMax=np.array([omega_max, acc_max]), dims=5, uMode="max", dMode="min")
+# mode: 0: decelerate, 1: stable, 2: accelerate, 3: left turn, 4: right turn, 5: in roundabout
+my_car = RelDyn_5D(x=[0, 0, 0, 0, 0], uMin=np.array([-0.325, -5]), uMax=np.array([0.325, 3]),
+                   dMin=np.array([-math.pi / 6, -5]), dMax=np.array([math.pi / 6, 5]), dims=5, uMode="max", dMode="min")
 
-# # TODO: Mode 0
-# acc_min, acc_max = action_bound_mode[0][1], action_bound_mode[0][2]
-# omega_min, omega_max = action_bound_mode[0][3], action_bound_mode[0][4]
-# print("omega", omega_min, omega_max, "acc", acc_min, acc_max)
-# my_car = RelDyn_5D(x=[0, 0, 0, 0, 0], uMin=np.array([-0.345, -5]), uMax=np.array([0.345, 3]),
-#                    dMin=np.array([omega_min, acc_min]), dMax=np.array([omega_max, acc_max]), dims=5, uMode="max", dMode="min")
-
-# # TODO: Mode 2
-# acc_min, acc_max = action_bound_mode[2][1], action_bound_mode[2][2]
-# omega_min, omega_max = action_bound_mode[2][3], action_bound_mode[2][4]
-# print("omega", omega_min, omega_max, "acc", acc_min, acc_max)
-# my_car = RelDyn_5D(x=[0, 0, 0, 0, 0], uMin=np.array([-0.345, -5]), uMax=np.array([0.345, 3]),
-#                    dMin=np.array([omega_min, acc_min]), dMax=np.array([omega_max, acc_max]), dims=5, uMode="max", dMode="min")
-
-# TODO: Mode 1
-acc_min, acc_max = action_bound_mode[1][1], action_bound_mode[1][2]
-omega_min, omega_max = action_bound_mode[1][3], action_bound_mode[1][4]
-print("omega", omega_min, omega_max, "acc", acc_min, acc_max)
-my_car = RelDyn_5D(x=[0, 0, 0, 0, 0], uMin=np.array([-0.345, -5]), uMax=np.array([0.345, 3]),
-                   dMin=np.array([omega_min, acc_min]), dMax=np.array([omega_max, acc_max]), dims=5, uMode="max", dMode="min")
 
 print("Computing relative dynamics 5D")
 
@@ -114,7 +91,7 @@ print("Computing relative dynamics 5D")
 Initial_value_f = CylinderShape(g, [3, 4, 5], np.zeros(5), 2)
 
 # Look-back length and time step
-lookback_length = 2.1
+lookback_length = 3.1
 t_step = 0.05
 
 small_number = 1e-5

@@ -198,6 +198,8 @@ def graph_5D():
     V_init = hcl.placeholder(tuple(g.pts_each_dim), name="V_init", dtype=hcl.Float())
     l0 = hcl.placeholder(tuple(g.pts_each_dim), name="l0", dtype=hcl.Float())
     t = hcl.placeholder((2,), name="t", dtype=hcl.Float())
+    uOpt1 = hcl.placeholder(tuple(g.pts_each_dim), name="uOpt1", dtype=hcl.Float())
+    uOpt2 = hcl.placeholder(tuple(g.pts_each_dim), name="uOpt2", dtype=hcl.Float())
 
     # Positions vector
     x1 = hcl.placeholder((g.pts_each_dim[0],), name="x1", dtype=hcl.Float())
@@ -206,7 +208,7 @@ def graph_5D():
     x4 = hcl.placeholder((g.pts_each_dim[3],), name="x4", dtype=hcl.Float())
     x5 = hcl.placeholder((g.pts_each_dim[4],), name="x5", dtype=hcl.Float())
 
-    def graph_create(V_new, V_init, x1, x2, x3, x4, x5, t, l0):
+    def graph_create(V_new, V_init, x1, x2, x3, x4, x5, t, l0, uOpt1, uOpt2):
         # Specify intermediate tensors
         deriv_diff1 = hcl.compute(V_init.shape, lambda *x: 0, "deriv_diff1")
         deriv_diff2 = hcl.compute(V_init.shape, lambda *x: 0, "deriv_diff2")
@@ -322,6 +324,11 @@ def graph_5D():
                                     # Find optimal control
                                     uOpt = my_object.opt_ctrl(t, (x1[i], x2[j], x3[k], x4[l], x5[m]), (
                                     dV_dx1[0], dV_dx2[0], dV_dx3[0], dV_dx4[0], dV_dx5[0]))
+
+                                    # Save optimal control matrix
+                                    uOpt1[i, j, k, l, m] = uOpt[0]
+                                    uOpt2[i, j, k, l, m] = uOpt[1]
+
                                     # Find optimal disturbance
                                     dOpt = my_object.optDstb(
                                         (x1[i], x2[j], x3[k], x4[l], x5[m]),
@@ -572,7 +579,7 @@ def graph_5D():
         return result
 
 
-    s = hcl.create_schedule([V_f, V_init, x1, x2, x3, x4, x5, t, l0], graph_create)
+    s = hcl.create_schedule([V_f, V_init, x1, x2, x3, x4, x5, t, l0, uOpt1, uOpt2], graph_create)
     ##################### CODE OPTIMIZATION HERE ###########################
     print("Optimizing\n")
 

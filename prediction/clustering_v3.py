@@ -41,6 +41,7 @@ class ClusteringV3(object):
         self.personalize_initialization = False
         # self.personalize_initialization = True
 
+        # TODO：Hand-tune the mode, DIFFERENT when runing on mac / remote desktop
         self.to_corretify_pred = True
         # self.to_corretify_pred = False
 
@@ -217,14 +218,26 @@ class ClusteringV3(object):
             omega_center = kmeans_action.cluster_centers_[:, 1]
             new_mode = np.ones((self.clustering_num)) * 100
 
-            # Hand-design the new mode, the mapping is based on the clustering plot
+            # Hand-design the new mode, the mapping is based on the clustering plot on REMOTE DESKTOP
             # mode: 0: decelerate, 1: stable, 2: accelerate, 3: left turn, 4: right turn, 5: curve path
-            new_mode[0] = 1
-            new_mode[1] = 2
-            new_mode[2] = 0
-            new_mode[3] = 3
-            new_mode[4] = 5
-            new_mode[5] = 4
+            # TODO: in remote desktop
+            if '/Users/anjianli/anaconda3/envs/hcl-env/lib/python3.8' not in sys.path:
+                print("correct mode on remote desktop")
+                new_mode[0] = 0
+                new_mode[1] = 2
+                new_mode[2] = 1
+                new_mode[3] = 5
+                new_mode[4] = 4
+                new_mode[5] = 3
+            else:
+                # TODO: in my laptop
+                print("correct mode on laptop")
+                new_mode[0] = 1
+                new_mode[1] = 2
+                new_mode[2] = 0
+                new_mode[3] = 3
+                new_mode[4] = 5
+                new_mode[5] = 4
 
             for i in range(self.clustering_num):
                 corrected_pred[pred == new_mode[i]] = i
@@ -251,7 +264,7 @@ class ClusteringV3(object):
             roundabout_index = [sce == "roundabout" for sce in scenario]
             intersection_prediction_index = np.logical_and(prediction == [i], intersection_index)
             roundabout_prediction_index = np.logical_and(prediction == [i], roundabout_index)
-            ax.scatter(raw_data[:, 0][intersection_prediction_index], raw_data[:, 2][intersection_prediction_index], label='M%d, i' % i, marker="o", color=color[i])
+            ax.scatter(raw_data[:, 0][intersection_prediction_index], raw_data[:, 2][intersection_prediction_index], label='M%d, i' % i, marker="o", color=color[i], alpha=0.2)
             ax.scatter(raw_data[:, 0][roundabout_prediction_index], raw_data[:, 2][roundabout_prediction_index], label='M%d, r' % i, marker="+", color=color[i])
 
 
