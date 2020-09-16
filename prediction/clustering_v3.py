@@ -24,10 +24,10 @@ class ClusteringV3(object):
 
     def __init__(self):
 
-        self.to_plot = True
+        # self.to_plot = True
         # self.to_save = True
 
-        # self.to_plot = False
+        self.to_plot = False
         self.to_save = False
 
         self.clustering_num = 6

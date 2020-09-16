@@ -12,19 +12,24 @@ sys.path.append("/Users/anjianli/Desktop/robotics/project/optimized_dp")
 from prediction.clustering_v3 import ClusteringV3
 from prediction.process_prediction_v3 import ProcessPredictionV3
 
+import pandas as pd
+
 class PredictModeV3(object):
 
     def __init__(self):
 
-        # self.to_save_pred_mode = True
+        self.to_save_pred_mode = True
         self.to_plot_pred_mode = True
 
-        self.to_save_pred_mode = False
+        # self.to_save_pred_mode = False
         # self.to_plot_pred_mode = False
 
+        # self.plot_probability = True
+        self.plot_probability = False
+
         # Which scenario to predict
-        # self.scenario_predict = "intersection"
-        self.scenario_predict = "roundabout"
+        self.scenario_predict = "intersection"
+        # self.scenario_predict = "roundabout"
 
         # Data directory
         # Remote desktop
@@ -42,6 +47,7 @@ class PredictModeV3(object):
 
         # File name
         if self.scenario_predict == "intersection":
+            # self.file_name_predict = ['car_16_vid_09.csv']
             self.file_name_predict = ['car_16_vid_09.csv', 'car_20_vid_09.csv', 'car_29_vid_09.csv',
                                            'car_36_vid_11.csv', 'car_50_vid_03.csv', 'car_112_vid_11.csv',
                                            'car_122_vid_11.csv',
@@ -79,13 +85,21 @@ class PredictModeV3(object):
                     self.plot_mode(mode_num_list, mode_probability_list, filter_acc, filter_omega)
 
                 if self.to_save_pred_mode:
-                    if self.scenario_predict == "intersection":
-                        figure_name = "intersection_" + file + "_plot " + str(i) + ".png"
-                    elif self.scenario_predict == "roundabout":
-                        figure_name = "roundabout_" + file + "_plot " + str(i) + ".png"
-                    file_path = "/Users/anjianli/Desktop/robotics/project/optimized_dp/result/poly_{:d}/{:d}_timesteps/predict_mode/".format(
-                        ProcessPredictionV3().degree, ProcessPredictionV3().mode_time_span)
-                    # file_path = "/Users/anjianli/Desktop/robotics/project/optimized_dp/result/poly_3/5_timesteps/predict_mode/"
+                    if self.plot_probability:
+                        if self.scenario_predict == "intersection":
+                            figure_name = "intersection_" + file + "_plot{:d}".format(i) + "_probability.png"
+                        elif self.scenario_predict == "roundabout":
+                            figure_name = "roundabout_" + file + "_plot{:d}".format(i) + "_probability.png"
+                    else:
+                        if self.scenario_predict == "intersection":
+                            figure_name = "intersection_" + file + "_plot{:d}".format(i) + ".png"
+                        elif self.scenario_predict == "roundabout":
+                            figure_name = "roundabout_" + file + "_plot{:d}".format(i) + ".png"
+                    # Previous file_path
+                    # file_path = "/Users/anjianli/Desktop/robotics/project/optimized_dp/result/poly_{:d}/{:d}_timesteps/predict_mode/".format(
+                    #     ProcessPredictionV3().degree, ProcessPredictionV3().mode_time_span)
+                    # 0915 file path
+                    file_path = "/Users/anjianli/Desktop/robotics/project/prediction-reachability/prediction/0915/"
                     figure_path_name = file_path + figure_name
                     # print(figure_path_name)
                     if not os.path.exists(file_path):
@@ -216,6 +230,7 @@ class PredictModeV3(object):
         # print(mode_num_seq)
         # print(time_index)
 
+        # Plot mode prediction
         ax1.plot(time_index, mode_num_list, 'o-')
         ax1.grid()
         ax1.set_ylabel('mode')
@@ -229,12 +244,14 @@ class PredictModeV3(object):
         plt.xticks(np.arange(0, np.shape(mode_num_list)[0], step=ProcessPredictionV3().mode_time_span))
         plt.yticks(np.arange(-1, ClusteringV3().clustering_num, step=1))
 
+        # Plot acceleration raw data
         ax2 = fig.add_subplot(312, sharex=ax1)
         ax2.plot(time_index, acc, 'o-')
         ax2.set_ylabel('acceleration')
         ax2.set_xlabel('physical bound [-5, 3]')
         # plt.yticks(np.arange(-5, 3, step=1))
 
+        # Plot angular speed raw data
         ax3 = fig.add_subplot(313, sharex=ax1)
         ax3.plot(time_index, omega, 'o-', label="angular speed")
         ax3.set_ylabel('angular speed')
@@ -242,8 +259,22 @@ class PredictModeV3(object):
         ax3.set_xlabel(label_name)
         # plt.yticks(np.arange(-math.pi/6, math.pi/6, step=math.pi/15))
 
+        # Plot mode prediction proability
+        if self.plot_probability:
+            mode_probability_numpy = np.asarray(mode_probability_list)
+            df = pd.DataFrame(dict(
+                mode0=mode_probability_numpy[:, 0],
+                mode1=mode_probability_numpy[:, 1],
+                mode2=mode_probability_numpy[:, 2],
+                mode3=mode_probability_numpy[:, 3],
+                mode4=mode_probability_numpy[:, 4],
+                mode5=mode_probability_numpy[:, 5]
+            ))
+            df.plot.bar(stacked=True)
+
         if not self.to_save_pred_mode:
             plt.show()
+
 
 if __name__ == "__main__":
     PredictModeV3().predict_mode()
