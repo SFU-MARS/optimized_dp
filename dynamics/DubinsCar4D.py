@@ -28,7 +28,7 @@ class DubinsCar4D:
                                    * "min" : have optimal control reach goal
                                    * "max" : have optimal control avoid goal
                                    Defaults to "min".
-            dMode (str, optional): Accepts wiehter "min" or "max" and should be opposite of uMode. 
+            dMode (str, optional): Accepts whether "min" or "max" and should be opposite of uMode. 
                                    Defaults to "max".
         """
         self.x = x
@@ -88,8 +88,8 @@ class DubinsCar4D:
         # Just create and pass back, even though they're not used
         d3 = hcl.scalar(0, "d3")
         d4 = hcl.scalar(0, "d4")
-        #with hcl.if_(self.dMode == "max"):
-        if self.dMode == "max":
+
+        with hcl.if_(self.dMode == "max"):
             with hcl.if_(spat_deriv[0] > 0):
                 d1[0] = self.dMax[0]
             with hcl.elif_(spat_deriv[0] < 0):
