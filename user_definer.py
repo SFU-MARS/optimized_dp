@@ -99,11 +99,10 @@ my_shape = Initial_value_f"""
 
 #g = grid(np.array([-20.0, -20.0, -math.pi, -10, -10]), np.array([20, 20, math.pi, 10, 10]), 5, np.array([40, 40, 20, 20, 20]), [2])
 #g = grid(np.array([-15.0, -15.0, 0, 0, 0]), np.array([15, 15, 2*math.pi, 5.5, 5.5]), 5, np.array([61, 61, 31, 31, 31]), [2])
-g = grid(np.array([-15.0, -15.0, 0, 0, 0]), np.array([15, 15, 2*math.pi, 5.5, 5.5]), 5, np.array([51, 51, 15, 21, 21]), [2])
+g = grid(np.array([-15.0, -15.0, 0, 0, 0]), np.array([15, 15, 2*math.pi, 5.5, 5.5]), 5, np.array([51, 51, 21, 21, 21]), [2])
 
 # Define my object
-#my_object = DubinsCar5DAvoid(x=[0,0,0,0,0], u_theta_max = math.pi/10, u_v_max=3, d_theta_max=math.pi/10, d_v_max=3, uMode="max", dMode="min")
-my_object = DubinsCar5DAvoid(x=[0,0,0,0,0], u_theta_max = math.pi/3, u_v_max=3, d_theta_max=math.pi/3, d_v_max=3, uMode="max", dMode="min")
+my_object = DubinsCar5DAvoid(x=[0,0,0,0,0], u_theta_max = math.pi/2, u_v_max=3, d_theta_max=math.pi/2, d_v_max=3, uMode="max", dMode="min")
 
 # Use the grid to initialize initial value function
 
