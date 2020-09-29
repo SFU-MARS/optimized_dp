@@ -42,6 +42,10 @@ my_shape = Initial_value_f """
 
 g = Grid(np.array([-5.0, -5.0, -1.0, -math.pi]), np.array([5.0, 5.0, 1.0, math.pi]), 4, np.array([40, 40, 50, 50]), [3])
 
+i =  g.vs[1][(0,20,0,0)]
+print(np.shape(i))
+print(i)
+
 # Define my object
 my_car = DubinsCar4D()
 
