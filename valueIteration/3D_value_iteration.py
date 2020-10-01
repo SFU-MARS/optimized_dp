@@ -53,7 +53,7 @@ def value_iteration_3D():
                             oldV = hcl.scalar(0, "oldV")
                             newV = hcl.scalar(0, "newV")
                             # Calculate the new optimal value
-                            s = (g.vs[0][(i,0,0)], g.vs[1][(0,j,0)], g.vs[2][(0,0,k)]) 
+                            s = (g.vs[0][i,0,0], g.vs[1][0,j,0], g.vs[2][0,0,k])
                             oldV = Vopt[i, j, k]
                             newV = updateV(s)
                             Vopt[i, j, k] = newV[0]
@@ -61,7 +61,9 @@ def value_iteration_3D():
                             # Evaluate convergence
                             with hcl.if_(hcl.or_((newV - oldV) > epsilon, (oldV - newV) > epsilon)):
                                 reSweep = 1
-    return Vopt
+        return Vopt
+    s = hcl.create_schedule([Vinit, actions, rwd, trans, gamma, convergence_number], solve_Vopt)
+    return (hcl.build(s))
 
-
-s = hcl.create_schedule([Vinit, actions, rwd, trans, gamma, convergence_number], solve_Vopt)
+# Test function
+value_iteration_3D()
