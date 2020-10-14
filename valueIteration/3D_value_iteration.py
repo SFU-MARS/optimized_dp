@@ -81,148 +81,111 @@ def evaluateConvergence(newV, oldV, epsilon, reSweep):
 # Minh: Also arrays values used and passed into solve_Vopt function needs to be placeholder type
 def value_iteration_3D():
     def solve_Vopt(Vopt, actions, intermeds, trans, gamma, epsilon, count):
-
-        # Perform value iteration by sweeping in direction 1
-        with hcl.Stage("Sweep_1"):
             reSweep = hcl.scalar(1, "reSweep")
             oldV    = hcl.scalar(0, "oldV")
             newV    = hcl.scalar(0, "newV")
             with hcl.while_(hcl.and_(reSweep[0] == 1, count[0] < 500)):
                 reSweep[0] = 0
-                with hcl.for_(0, Vopt.shape[0], name="i") as i:
-                    with hcl.for_(0, Vopt.shape[1], name="j") as j:
-                        with hcl.for_(0, Vopt.shape[2], name="k") as k:
-                            oldV[0] = Vopt[i,j,k]
-                            updateVopt(i, j, k, actions, Vopt, intermeds, trans, gamma)
-                            newV[0] = Vopt[i,j,k]
-                            evaluateConvergence(newV, oldV, epsilon, reSweep)
-                count[0] += 1
 
-        # Perform value iteration by sweeping in direction 2
-        with hcl.Stage("Sweep_2"):
-            reSweep = hcl.scalar(1, "reSweep")
-            oldV    = hcl.scalar(0, "oldV")
-            newV    = hcl.scalar(0, "newV")
-            with hcl.while_(hcl.and_(reSweep[0] == 1, count[0] < 500)):
-                reSweep[0] = 0
-                with hcl.for_(1, Vopt.shape[0] + 1, name="i") as i:
-                    with hcl.for_(1, Vopt.shape[1] + 1, name="j") as j:
-                        with hcl.for_(1, Vopt.shape[2] + 1, name="k") as k:
-                            i2 = Vopt.shape[0] - i
-                            j2 = Vopt.shape[1] - j
-                            k2 = Vopt.shape[2] - k
-                            oldV[0] = Vopt[i2,j2,k2]
-                            updateVopt(i2, j2, k2, actions, Vopt, intermeds, trans, gamma)
-                            newV[0] = Vopt[i2,j2,k2]
-                            evaluateConvergence(newV, oldV, epsilon, reSweep)
-                count[0] += 0
+                # Perform value iteration by sweeping in direction 1
+                with hcl.Stage("Sweep_1"):
+                    with hcl.for_(0, Vopt.shape[0], name="i") as i:
+                        with hcl.for_(0, Vopt.shape[1], name="j") as j:
+                            with hcl.for_(0, Vopt.shape[2], name="k") as k:
+                                oldV[0] = Vopt[i,j,k]
+                                updateVopt(i, j, k, actions, Vopt, intermeds, trans, gamma)
+                                newV[0] = Vopt[i,j,k]
+                                evaluateConvergence(newV, oldV, epsilon, reSweep)
+                    count[0] += 1
 
-        # Perform value iteration by sweeping in direction 3
-        with hcl.Stage("Sweep_3"):
-            reSweep = hcl.scalar(1, "reSweep")
-            oldV    = hcl.scalar(0, "oldV")
-            newV    = hcl.scalar(0, "newV")
-            with hcl.while_(hcl.and_(reSweep[0] == 1, count[0] < 500)):
-                reSweep[0] = 0
-                with hcl.for_(1, Vopt.shape[0] + 1, name="i") as i:
-                    with hcl.for_(0, Vopt.shape[1], name="j") as j:
-                        with hcl.for_(0, Vopt.shape[2], name="k") as k:
-                            i2 = Vopt.shape[0] - i
-                            oldV[0] = Vopt[i2,j,k]
-                            updateVopt(i2, j, k, actions, Vopt, intermeds, trans, gamma)
-                            newV[0] = Vopt[i2,j,k]
-                            evaluateConvergence(newV, oldV, epsilon, reSweep)
-                count[0] += 0
+                # Perform value iteration by sweeping in direction 2
+                with hcl.Stage("Sweep_2"):
+                    with hcl.for_(1, Vopt.shape[0] + 1, name="i") as i:
+                        with hcl.for_(1, Vopt.shape[1] + 1, name="j") as j:
+                            with hcl.for_(1, Vopt.shape[2] + 1, name="k") as k:
+                                i2 = Vopt.shape[0] - i
+                                j2 = Vopt.shape[1] - j
+                                k2 = Vopt.shape[2] - k
+                                oldV[0] = Vopt[i2,j2,k2]
+                                updateVopt(i2, j2, k2, actions, Vopt, intermeds, trans, gamma)
+                                newV[0] = Vopt[i2,j2,k2]
+                                evaluateConvergence(newV, oldV, epsilon, reSweep)
+                    count[0] += 1
 
+                # Perform value iteration by sweeping in direction 3
+                with hcl.Stage("Sweep_3"):
+                    with hcl.for_(1, Vopt.shape[0] + 1, name="i") as i:
+                        with hcl.for_(0, Vopt.shape[1], name="j") as j:
+                            with hcl.for_(0, Vopt.shape[2], name="k") as k:
+                                i2 = Vopt.shape[0] - i
+                                oldV[0] = Vopt[i2,j,k]
+                                updateVopt(i2, j, k, actions, Vopt, intermeds, trans, gamma)
+                                newV[0] = Vopt[i2,j,k]
+                                evaluateConvergence(newV, oldV, epsilon, reSweep)
+                    count[0] += 1
 
-        # Perform value iteration by sweeping in direction 4
-        with hcl.Stage("Sweep_4"):
-            reSweep = hcl.scalar(1, "reSweep")
-            oldV    = hcl.scalar(0, "oldV")
-            newV    = hcl.scalar(0, "newV")
-            with hcl.while_(hcl.and_(reSweep[0] == 1, count[0] < 500)):
-                reSweep[0] = 0
-                with hcl.for_(0, Vopt.shape[0], name="i") as i:
-                    with hcl.for_(1, Vopt.shape[1] + 1, name="j") as j:
-                        with hcl.for_(0, Vopt.shape[2], name="k") as k:
-                            j2 = Vopt.shape[1] - j
-                            oldV[0] = Vopt[i,j2,k]
-                            updateVopt(i, j2, k, actions, Vopt, intermeds, trans, gamma)
-                            newV[0] = Vopt[i,j2,k]
-                            evaluateConvergence(newV, oldV, epsilon, reSweep)
-                count[0] += 0    
+                # Perform value iteration by sweeping in direction 4
+                with hcl.Stage("Sweep_4"):
+                    with hcl.for_(0, Vopt.shape[0], name="i") as i:
+                        with hcl.for_(1, Vopt.shape[1] + 1, name="j") as j:
+                            with hcl.for_(0, Vopt.shape[2], name="k") as k:
+                                j2 = Vopt.shape[1] - j
+                                oldV[0] = Vopt[i,j2,k]
+                                updateVopt(i, j2, k, actions, Vopt, intermeds, trans, gamma)
+                                newV[0] = Vopt[i,j2,k]
+                                evaluateConvergence(newV, oldV, epsilon, reSweep)
+                    count[0] += 1
 
-        # Perform value iteration by sweeping in direction 5
-        # TODO: Check indeces
-        with hcl.Stage("Sweep_5"):
-            reSweep = hcl.scalar(1, "reSweep")
-            oldV    = hcl.scalar(0, "oldV")
-            newV    = hcl.scalar(0, "newV")
-            with hcl.while_(hcl.and_(reSweep[0] == 1, count[0] < 500)):
-                reSweep[0] = 0
-                with hcl.for_(0, Vopt.shape[0], name="i") as i:
-                    with hcl.for_(0, Vopt.shape[1], name="j") as j:
-                        with hcl.for_(1, Vopt.shape[2] + 1, name="k") as k:
-                            k2 = Vopt.shape[2] - k
-                            oldV[0] = Vopt[i,j,k2]
-                            updateVopt(i, j, k2, actions, Vopt, intermeds, trans, gamma)
-                            newV[0] = Vopt[i,j,k2]
-                            evaluateConvergence(newV, oldV, epsilon, reSweep)
-                count[0] += 0   
+                # Perform value iteration by sweeping in direction 5
+                with hcl.Stage("Sweep_5"):
+                    with hcl.for_(0, Vopt.shape[0], name="i") as i:
+                        with hcl.for_(0, Vopt.shape[1], name="j") as j:
+                            with hcl.for_(1, Vopt.shape[2] + 1, name="k") as k:
+                                k2 = Vopt.shape[2] - k
+                                oldV[0] = Vopt[i,j,k2]
+                                updateVopt(i, j, k2, actions, Vopt, intermeds, trans, gamma)
+                                newV[0] = Vopt[i,j,k2]
+                                evaluateConvergence(newV, oldV, epsilon, reSweep)
+                    count[0] += 1
 
-        # Perform value iteration by sweeping in direction 6
-        with hcl.Stage("Sweep_6"):
-            reSweep = hcl.scalar(1, "reSweep")
-            oldV    = hcl.scalar(0, "oldV")
-            newV    = hcl.scalar(0, "newV")
-            with hcl.while_(hcl.and_(reSweep[0] == 1, count[0] < 500)):
-                reSweep[0] = 0
-                with hcl.for_(1, Vopt.shape[0] + 1, name="i") as i:
-                    with hcl.for_(1, Vopt.shape[1] + 1, name="j") as j:
-                        with hcl.for_(0, Vopt.shape[2], name="k") as k:
-                            i2 = Vopt.shape[0] - i
-                            j2 = Vopt.shape[1] - j
-                            oldV[0] = Vopt[i2,j2,k]
-                            updateVopt(i2, j2, k, actions, Vopt, intermeds, trans, gamma)
-                            newV[0] = Vopt[i2,j2,k]
-                            evaluateConvergence(newV, oldV, epsilon, reSweep)
-                count[0] += 0
-                
-        # Perform value iteration by sweeping in direction 7
-        with hcl.Stage("Sweep_7"):
-            reSweep = hcl.scalar(1, "reSweep")
-            oldV    = hcl.scalar(0, "oldV")
-            newV    = hcl.scalar(0, "newV")
-            with hcl.while_(hcl.and_(reSweep[0] == 1, count[0] < 500)):
-                reSweep[0] = 0
-                with hcl.for_(1, Vopt.shape[0] + 1, name="i") as i:
-                    with hcl.for_(0, Vopt.shape[1], name="j") as j:
-                        with hcl.for_(1, Vopt.shape[2] + 1, name="k") as k:
-                            i2 = Vopt.shape[0] - i
-                            k2 = Vopt.shape[2] - k
-                            oldV[0] = Vopt[i2,j,k2]
-                            updateVopt(i2, j, k2, actions, Vopt, intermeds, trans, gamma)
-                            newV[0] = Vopt[i2,j,k2]
-                            evaluateConvergence(newV, oldV, epsilon, reSweep)
-                count[0] += 0
+                # Perform value iteration by sweeping in direction 6
+                with hcl.Stage("Sweep_6"):
+                    with hcl.for_(1, Vopt.shape[0] + 1, name="i") as i:
+                        with hcl.for_(1, Vopt.shape[1] + 1, name="j") as j:
+                            with hcl.for_(0, Vopt.shape[2], name="k") as k:
+                                i2 = Vopt.shape[0] - i
+                                j2 = Vopt.shape[1] - j
+                                oldV[0] = Vopt[i2,j2,k]
+                                updateVopt(i2, j2, k, actions, Vopt, intermeds, trans, gamma)
+                                newV[0] = Vopt[i2,j2,k]
+                                evaluateConvergence(newV, oldV, epsilon, reSweep)
+                    count[0] += 1
 
-        # Perform value iteration by sweeping in direction 8
-        with hcl.Stage("Sweep_8"):
-            reSweep = hcl.scalar(1, "reSweep")
-            oldV    = hcl.scalar(0, "oldV")
-            newV    = hcl.scalar(0, "newV")
-            with hcl.while_(hcl.and_(reSweep[0] == 1, count[0] < 500)):
-                reSweep[0] = 0
-                with hcl.for_(0, Vopt.shape[0], name="i") as i:
-                    with hcl.for_(1, Vopt.shape[1] + 1, name="j") as j:
-                        with hcl.for_(1, Vopt.shape[2] + 1, name="k") as k:
-                            j2 = Vopt.shape[1] - j
-                            k2 = Vopt.shape[2] - k
-                            oldV[0] = Vopt[i,j2,k2]
-                            updateVopt(i, j2, k2, actions, Vopt, intermeds, trans, gamma)
-                            newV[0] = Vopt[i,j2,k2]
-                            evaluateConvergence(newV, oldV, epsilon, reSweep)
-                count[0] += 0
+                # Perform value iteration by sweeping in direction 7
+                with hcl.Stage("Sweep_7"):
+                    with hcl.for_(1, Vopt.shape[0] + 1, name="i") as i:
+                        with hcl.for_(0, Vopt.shape[1], name="j") as j:
+                            with hcl.for_(1, Vopt.shape[2] + 1, name="k") as k:
+                                i2 = Vopt.shape[0] - i
+                                k2 = Vopt.shape[2] - k
+                                oldV[0] = Vopt[i2,j,k2]
+                                updateVopt(i2, j, k2, actions, Vopt, intermeds, trans, gamma)
+                                newV[0] = Vopt[i2,j,k2]
+                                evaluateConvergence(newV, oldV, epsilon, reSweep)
+                    count[0] += 1
+
+                # Perform value iteration by sweeping in direction 8
+                with hcl.Stage("Sweep_8"):
+                    with hcl.for_(0, Vopt.shape[0], name="i") as i:
+                        with hcl.for_(1, Vopt.shape[1] + 1, name="j") as j:
+                            with hcl.for_(1, Vopt.shape[2] + 1, name="k") as k:
+                                j2 = Vopt.shape[1] - j
+                                k2 = Vopt.shape[2] - k
+                                oldV[0] = Vopt[i,j2,k2]
+                                updateVopt(i, j2, k2, actions, Vopt, intermeds, trans, gamma)
+                                newV[0] = Vopt[i,j2,k2]
+                                evaluateConvergence(newV, oldV, epsilon, reSweep)
+                    count[0] += 1
 
 
 
