@@ -283,7 +283,10 @@ def value_iteration_3D():
 
     print(V)
     print()
-    print("# Irerations: ", int(c[0]))
+    print("Finished in ", int(c[0]), " iterations")
 
 # Test function
+t_s = time.time()
 value_iteration_3D()
+t_e = time.time()
+print("Took        ", t_e-t_s, " seconds")
