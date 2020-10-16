@@ -119,7 +119,7 @@ def main():
 
     # V1 is the final value array, fill in anything to use it
     # e.g. np.save("final_values", V_1.asnumpy())
-
+    np.save("V_at_06sec.npy", V_1.asnumpy())
 
 
     ##################### PLOTTING #####################

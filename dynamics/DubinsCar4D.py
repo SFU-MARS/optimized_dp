@@ -1,6 +1,6 @@
 import heterocl as hcl
 import computeGraphs
-
+import math
 """ 4D DUBINS CAR DYNAMICS IMPLEMENTATION 
  x_dot = v * cos(theta)
  y_dot = v * sin(theta)
@@ -8,8 +8,8 @@ import computeGraphs
  theta_dot = w
  """
 class DubinsCar4D:
-    def __init__(self, x=[0,0,0,0], uMin = [-1,-1], uMax = [1,1], dMin = [-0.25,-0.25], 
-                 dMax=[0.25,0.25], uMode="min", dMode="max"):
+    def __init__(self, x=[0,0,0,0], uMin = [-1,-math.pi/4], uMax = [1,math.pi/4], dMin = [-0.0,-0.0],
+                 dMax=[0.0, 0.0], uMode="max", dMode="min"):
         """Creates a Dublin Car with the following states: 
            X position, Y position, acceleration, heading
 
@@ -111,7 +111,31 @@ class DubinsCar4D:
 
         return (d1[0], d2[0], d3[0], d4[0])
 
+    # def dynamics(self, t, state, uOpt, dOpt):
+    #     x_dot = hcl.scalar(0, "x_dot")
+    #     y_dot = hcl.scalar(0, "y_dot")
+    #     v_dot = hcl.scalar(0, "v_dot")
+    #     theta_dot = hcl.scalar(0, "theta_dot")
+    #
+    #     x_dot[0] = state[2] * hcl.cos(state[3]) + dOpt[0]
+    #     y_dot[0] = state[2] * hcl.sin(state[3]) + dOpt[1]
+    #     v_dot[0] = uOpt[0]
+    #     theta_dot[0] = uOpt[1]
+    #
+    #     return (x_dot[0], y_dot[0], v_dot[0] ,theta_dot[0])
+
+    """ 4D DUBINS CAR DYNAMICS IMPLEMENTATION 
+     x_dot = v * cos(theta)
+     y_dot = v * sin(theta)
+     v_dot = a
+     theta_dot = v * tan(delta) / L
+    delta := steering angle
+    L := wheelbase of car
+    6.2
+    https://arxiv.org/pdf/1711.03449.pdf """
+
     def dynamics(self, t, state, uOpt, dOpt):
+        L = hcl.scalar(0.26, "L")
         x_dot = hcl.scalar(0, "x_dot")
         y_dot = hcl.scalar(0, "y_dot")
         v_dot = hcl.scalar(0, "v_dot")
@@ -120,6 +144,6 @@ class DubinsCar4D:
         x_dot[0] = state[2] * hcl.cos(state[3]) + dOpt[0]
         y_dot[0] = state[2] * hcl.sin(state[3]) + dOpt[1]
         v_dot[0] = uOpt[0]
-        theta_dot[0] = uOpt[1]
+        theta_dot[0] = state[2] * (hcl.sin(uOpt[1]) /hcl.cos(uOpt[1]) ) / L
 
-        return (x_dot[0], y_dot[0], v_dot[0] ,theta_dot[0])
+        return (x_dot[0], y_dot[0], v_dot[0], theta_dot[0])

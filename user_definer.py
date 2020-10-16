@@ -40,7 +40,7 @@ compMethod = "minVWithVInit"
 my_object  = my_car
 my_shape = Initial_value_f """
 
-g = Grid(np.array([-5.0, -5.0, -1.0, -math.pi]), np.array([5.0, 5.0, 1.0, math.pi]), 4, np.array([40, 40, 50, 50]), [3])
+g = Grid(np.array([-2.5, -2.5, 0.0, -math.pi]), np.array([2.5, 2.5, 2.0, math.pi]), 4, np.array([60, 60, 20, 36]), [3])
 
 # Define my object
 my_car = DubinsCar4D()
@@ -49,7 +49,7 @@ my_car = DubinsCar4D()
 Initial_value_f = CylinderShape(g, [3,4], np.zeros(4), 1)
 
 # Look-back lenght and time step
-lookback_length = 2.0
+lookback_length = 0.3
 t_step = 0.05
 
 small_number = 1e-5
@@ -57,7 +57,7 @@ tau = np.arange(start = 0, stop = lookback_length + small_number, step = t_step)
 print("Welcome to optimized_dp \n")
 
 # Use the following variable to specify the characteristics of computation
-compMethod = "none"
+compMethod = "minVWithV0"
 my_object  = my_car
 my_shape = Initial_value_f
 
