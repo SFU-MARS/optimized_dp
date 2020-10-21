@@ -52,7 +52,7 @@ def update_Vopt(state, actions, Vopt, gamma):
 
 ############################################ INITIALIZE ############################################
 
-Vopt    = np.zeros([10, 10, 10])
+Vopt    = np.zeros([30, 30, 30])
 actions = ( (1,0,0), (0,1,0), (0,0,1) )
 gamma   = 0.9
 epsilon = 0.0000005

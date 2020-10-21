@@ -199,7 +199,7 @@ def value_iteration_3D():
     # NOTE: trans is a tensor with size = maximum number of transitions
     # NOTE: intermeds must have size  [# possible actions]
     # NOTE: transition must have size [# possible outcomes, #state dimensions + 1]
-    Vopt      = hcl.placeholder(tuple([10, 10, 10]), name="Vopt", dtype=hcl.Float())
+    Vopt      = hcl.placeholder(tuple([30, 30, 30]), name="Vopt", dtype=hcl.Float())
     gamma     = hcl.placeholder((1,), "gamma")
     count     = hcl.placeholder((0,), "count")
     epsilon   = hcl.placeholder((0,), "epsilon")
@@ -216,7 +216,7 @@ def value_iteration_3D():
     ########################################## INITIALIZE ##########################################
 
     # Convert the python array to hcl type array
-    V_opt     = hcl.asarray(np.zeros([10, 10, 10]))
+    V_opt     = hcl.asarray(np.zeros([30, 30, 30]))
     intermeds = hcl.asarray(np.ones([3]))
     trans     = hcl.asarray(np.zeros([2, 4]))
     rwd       = np.zeros([5])
@@ -276,7 +276,9 @@ def value_iteration_3D():
     ########################################### EXECUTE ############################################
 
     # Now use the executable
+    t_s = time.time()
     f(V_opt, actions, intermeds, trans, gamma, epsilon, count)
+    t_e = time.time()
 
     V = V_opt.asnumpy()
     c = count.asnumpy()
@@ -284,9 +286,8 @@ def value_iteration_3D():
     print(V)
     print()
     print("Finished in ", int(c[0]), " iterations")
+    print("Took        ", t_e-t_s, " seconds")
+
 
 # Test function
-t_s = time.time()
 value_iteration_3D()
-t_e = time.time()
-print("Took        ", t_e-t_s, " seconds")
