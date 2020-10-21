@@ -81,13 +81,15 @@ def main():
     # Variables used for timing
     execution_time = 0
     lookback_time = 0
-
+    iter = 0
     tNow = tau[0]
     for i in range (1, len(tau)):
         #tNow = tau[i-1]
         t_minh= hcl.asarray(np.array((tNow, tau[i])))
         while tNow <= tau[i] - 1e-4:
+             tmp_arr = V_0.asnumpy()
              # Start timing
+             iter += 1
              start = time.time()
 
              print("Started running\n")
@@ -111,6 +113,19 @@ def main():
              print(t_minh)
              print("Computational time to integrate (s): {:.5f}".format(time.time() - start))
              # Saving data into disk
+             new_V = V_1.asnumpy()
+
+             err = np.max(np.abs(tmp_arr - new_V))
+             average_err = np.average(np.abs(tmp_arr - new_V))
+             print("Max error: {}".format(err))
+             print("average_err: {}".format(average_err))
+             # Check convergence
+             if err < 1e-3:
+                print("Converged in {} iterations".format(iter))
+                plot_isosurface(g, V_1.asnumpy(), [0, 1, 3], 19)
+                exit()
+
+
 
 
     # Time info printing
@@ -119,13 +134,13 @@ def main():
 
     # V1 is the final value array, fill in anything to use it
     # e.g. np.save("final_values", V_1.asnumpy())
-    np.save("V_at_06sec.npy", V_1.asnumpy())
+    np.save("V_at_05sec.npy", V_1.asnumpy())
 
 
     ##################### PLOTTING #####################
     if args.plot:
         # plot Value table when speed is maximum
-        plot_isosurface(g, V_1.asnumpy(), [0, 1, 3], g.pts_each_dim[2] - 1)
+        plot_isosurface(g, V_1.asnumpy(), [0, 1, 3], 19)
 
 if __name__ == '__main__':
   main()

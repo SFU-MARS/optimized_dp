@@ -8,7 +8,7 @@ import math
  theta_dot = w
  """
 class DubinsCar4D:
-    def __init__(self, x=[0,0,0,0], uMin = [-1,-math.pi/4], uMax = [1,math.pi/4], dMin = [-0.0,-0.0],
+    def __init__(self, x=[0,0,0,0], uMin = [0,-math.pi/12], uMax = [3,math.pi/12], dMin = [-0.0,-0.0],
                  dMax=[0.0, 0.0], uMode="max", dMode="min"):
         """Creates a Dublin Car with the following states: 
            X position, Y position, acceleration, heading
