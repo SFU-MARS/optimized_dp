@@ -89,6 +89,124 @@ def value_iteration_3D():
                                     evaluateConvergence(newQ, oldQ, epsilon, reSweep)
                     count[0] += 1
 
+                # Perform value iteration by sweeping in direction 2
+                with hcl.Stage("Sweep_2"):
+                    # For all states
+                    with hcl.for_(1, Qopt.shape[0] + 1, name="i") as i:
+                        with hcl.for_(1, Qopt.shape[1] + 1, name="j") as j:
+                            with hcl.for_(1, Qopt.shape[2] + 1, name="k") as k:
+                                i2 = Qopt.shape[0] - i
+                                j2 = Qopt.shape[1] - j
+                                k2 = Qopt.shape[2] - k
+
+                                # For all actions
+                                with hcl.for_(0, Qopt.shape[3], name="a") as a:
+                                    oldQ[0] = Qopt[i2,j2,k2,a]
+                                    updateQopt(i2, j2, k2, a, Qopt, actions, gamma)
+                                    newQ[0] = Qopt[i2,j2,k2,a]
+                                    evaluateConvergence(newQ, oldQ, epsilon, reSweep)
+                    count[0] += 1
+
+                # Perform value iteration by sweeping in direction 3
+                with hcl.Stage("Sweep_3"):
+                    # For all states
+                    with hcl.for_(1, Qopt.shape[0] + 1, name="i") as i:
+                        with hcl.for_(0, Qopt.shape[1], name="j") as j:
+                            with hcl.for_(0, Qopt.shape[2], name="k") as k:
+                                i2 = Qopt.shape[0] - i
+
+                                # For all actions
+                                with hcl.for_(0, Qopt.shape[3], name="a") as a:
+                                    oldQ[0] = Qopt[i2,j,k,a]
+                                    updateQopt(i2, j, k, a, Qopt, actions, gamma)
+                                    newQ[0] = Qopt[i2,j,k,a]
+                                    evaluateConvergence(newQ, oldQ, epsilon, reSweep)
+                    count[0] += 1
+
+                # Perform value iteration by sweeping in direction 4
+                with hcl.Stage("Sweep_4"):
+                    # For all states
+                    with hcl.for_(0, Qopt.shape[0], name="i") as i:
+                        with hcl.for_(1, Qopt.shape[1] + 1, name="j") as j:
+                            with hcl.for_(0, Qopt.shape[2], name="k") as k:
+                                j2 = Qopt.shape[0] - j
+
+                                # For all actions
+                                with hcl.for_(0, Qopt.shape[3], name="a") as a:
+                                    oldQ[0] = Qopt[i,j2,k,a]
+                                    updateQopt(i, j2, k, a, Qopt, actions, gamma)
+                                    newQ[0] = Qopt[i,j2,k,a]
+                                    evaluateConvergence(newQ, oldQ, epsilon, reSweep)
+                    count[0] += 1
+
+                # Perform value iteration by sweeping in direction 5
+                with hcl.Stage("Sweep_5"):
+                    # For all states
+                    with hcl.for_(0, Qopt.shape[0], name="i") as i:
+                        with hcl.for_(0, Qopt.shape[1], name="j") as j:
+                            with hcl.for_(1, Qopt.shape[2] + 1, name="k") as k:
+                                k2 = Qopt.shape[0] - k
+
+                                # For all actions
+                                with hcl.for_(0, Qopt.shape[3], name="a") as a:
+                                    oldQ[0] = Qopt[i,j,k2,a]
+                                    updateQopt(i, j, k2, a, Qopt, actions, gamma)
+                                    newQ[0] = Qopt[i,j,k2,a]
+                                    evaluateConvergence(newQ, oldQ, epsilon, reSweep)
+                    count[0] += 1
+
+                # Perform value iteration by sweeping in direction 6
+                with hcl.Stage("Sweep_6"):
+                    # For all states
+                    with hcl.for_(1, Qopt.shape[0] + 1, name="i") as i:
+                        with hcl.for_(1, Qopt.shape[1] + 1, name="j") as j:
+                            with hcl.for_(0, Qopt.shape[2], name="k") as k:
+                                i2 = Qopt.shape[0] - i
+                                j2 = Qopt.shape[0] - j
+
+                                # For all actions
+                                with hcl.for_(0, Qopt.shape[3], name="a") as a:
+                                    oldQ[0] = Qopt[i2,j2,k,a]
+                                    updateQopt(i2, j2, k, a, Qopt, actions, gamma)
+                                    newQ[0] = Qopt[i2,j2,k,a]
+                                    evaluateConvergence(newQ, oldQ, epsilon, reSweep)
+                    count[0] += 1
+
+                # Perform value iteration by sweeping in direction 7
+                with hcl.Stage("Sweep_7"):
+                    # For all states
+                    with hcl.for_(1, Qopt.shape[0] + 1, name="i") as i:
+                        with hcl.for_(0, Qopt.shape[1], name="j") as j:
+                            with hcl.for_(1, Qopt.shape[2] + 1, name="k") as k:
+                                i2 = Qopt.shape[0] - i
+                                k2 = Qopt.shape[0] - k
+
+                                # For all actions
+                                with hcl.for_(0, Qopt.shape[3], name="a") as a:
+                                    oldQ[0] = Qopt[i2,j,k2,a]
+                                    updateQopt(i2, j, k2, a, Qopt, actions, gamma)
+                                    newQ[0] = Qopt[i2,j,k2,a]
+                                    evaluateConvergence(newQ, oldQ, epsilon, reSweep)
+                    count[0] += 1
+
+                # Perform value iteration by sweeping in direction 8
+                with hcl.Stage("Sweep_8"):
+                    # For all states
+                    with hcl.for_(0, Qopt.shape[0], name="i") as i:
+                        with hcl.for_(1, Qopt.shape[1] + 1, name="j") as j:
+                            with hcl.for_(1, Qopt.shape[2] + 1, name="k") as k:
+                                j2 = Qopt.shape[0] - j
+                                k2 = Qopt.shape[0] - k
+
+                                # For all actions
+                                with hcl.for_(0, Qopt.shape[3], name="a") as a:
+                                    oldQ[0] = Qopt[i,j2,k2,a]
+                                    updateQopt(i, j2, k2, a, Qopt, actions, gamma)
+                                    newQ[0] = Qopt[i,j2,k2,a]
+                                    evaluateConvergence(newQ, oldQ, epsilon, reSweep)
+                    count[0] += 1
+
+
 
 
     ###################################### SETUP PLACEHOLDERS ######################################
@@ -140,6 +258,26 @@ def value_iteration_3D():
 
 
     ######################################### PARALLELIZE ##########################################
+
+
+    s_1 = solve_Qopt.Sweep_1
+    s_2 = solve_Qopt.Sweep_2
+    s_3 = solve_Qopt.Sweep_3
+    s_4 = solve_Qopt.Sweep_4
+    s_5 = solve_Qopt.Sweep_5
+    s_6 = solve_Qopt.Sweep_6
+    s_7 = solve_Qopt.Sweep_7
+    s_8 = solve_Qopt.Sweep_8
+
+    s[s_1].parallel(s_1.i)
+    s[s_2].parallel(s_2.i)
+    s[s_3].parallel(s_3.i)
+    s[s_4].parallel(s_4.i)
+    s[s_5].parallel(s_5.i)
+    s[s_6].parallel(s_6.i)
+    s[s_7].parallel(s_7.i)
+    s[s_8].parallel(s_8.i)
+
 
     # Use this graph and build an executable
     f = hcl.build(s, target="llvm")
