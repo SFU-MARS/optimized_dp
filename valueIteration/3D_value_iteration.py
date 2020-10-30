@@ -6,6 +6,20 @@ import time
 
 
 
+
+####################################### USER-DEFINED VALUES ########################################
+
+
+_bounds     = np.array([[-5.0, 5.0],[-3.0, 3.0],[10, 15]])
+_ptsEachDim = np.array([40, 40, 50])
+_actions    = np.array([[0.5,0,0], [0,1,0], [0,0,1.1]])
+_gamma      = np.array([0.9])
+_epsilon    = np.array([.0000005])
+_maxIters   = np.array([500])
+_trans      = np.zeros([2, 4]) # size: [maximum number of transition states available x 4]
+
+
+
 ###################################### USER-DEFINED FUNCTIONS ######################################
 
 
@@ -20,6 +34,7 @@ def transition(sVals, action, trans):
     trans[1, 1] = sVals[0]
     trans[1, 2] = sVals[1]
     trans[1, 3] = sVals[2]
+
 
 # Return the reward for taking action from state
 def reward(sVals, action):
@@ -89,6 +104,7 @@ def indexToState(iVals, sVals, bounds, ptsEachDim):
     sVals[2] = (iVals[2] / ptsEachDim[2]) * (bounds[2,1] - bounds[2,0]) + bounds[2,0]
 
 
+# set iVals equal to (i,j,k) and sVals equal to the corresponding state values at (i,j,k)
 def updateStateVals(i, j, k, iVals, sVals, bounds, ptsEachDim):
     iVals[0] = i
     iVals[1] = j
@@ -103,11 +119,11 @@ def updateStateVals(i, j, k, iVals, sVals, bounds, ptsEachDim):
 # Minh: All functions defined within solve_Vopt needs to be re-written as heteroCL (hcl.while, etc)
 # Minh: Also arrays values used and passed into solve_Vopt function needs to be placeholder type
 def value_iteration_3D():
-    def solve_Vopt(Vopt, actions, intermeds, trans, gamma, epsilon, iVals, sVals, bounds, ptsEachDim, count):
+    def solve_Vopt(Vopt, actions, intermeds, trans, gamma, epsilon, iVals, sVals, bounds, ptsEachDim, count, maxIters):
             reSweep = hcl.scalar(1, "reSweep")
             oldV    = hcl.scalar(0, "oldV")
             newV    = hcl.scalar(0, "newV")
-            with hcl.while_(hcl.and_(reSweep[0] == 1, count[0] < 500)):
+            with hcl.while_(hcl.and_(reSweep[0] == 1, count[0] < maxIters[0])):
                 reSweep[0] = 0
 
                 # Perform value iteration by sweeping in direction 1
@@ -213,71 +229,46 @@ def value_iteration_3D():
 
 
     ###################################### SETUP PLACEHOLDERS ######################################
+    
+    # Initialize the HCL environment
     hcl.init()
     hcl.config.init_dtype = hcl.Float()
-
-    # NOTE: Input to create_schedule should be hcl.placeholder type
-    # These placeholder let the compiler knows size of input beforehand ---> faster execution
 
     # NOTE: trans is a tensor with size = maximum number of transitions
     # NOTE: intermeds must have size  [# possible actions]
     # NOTE: transition must have size [# possible outcomes, #state dimensions + 1]
-    Vopt      = hcl.placeholder(tuple([30, 30, 30]), name="Vopt", dtype=hcl.Float())
-    gamma     = hcl.placeholder((1,), "gamma")
-    count     = hcl.placeholder((0,), "count")
-    epsilon   = hcl.placeholder((0,), "epsilon")
-    actions   = hcl.placeholder(tuple([3, 3]), name="actions", dtype=hcl.Float())
-    intermeds = hcl.placeholder(tuple([3]), name="intermeds", dtype=hcl.Float())
-    trans     = hcl.placeholder(tuple([2,4]), name="successors", dtype=hcl.Float())
-    rwd       = hcl.placeholder(tuple([5]), name="rwd", dtype=hcl.Float())
-
-    # Required for using true state values
+    Vopt       = hcl.placeholder(tuple(_ptsEachDim), name="Vopt", dtype=hcl.Float())
+    gamma      = hcl.placeholder((0,), "gamma")
+    count      = hcl.placeholder((0,), "count")
+    maxIters   = hcl.placeholder((0,), "maxIters")
+    epsilon    = hcl.placeholder((0,), "epsilon")
+    actions    = hcl.placeholder(tuple(_actions.shape), name="actions", dtype=hcl.Float())
+    intermeds  = hcl.placeholder(tuple([3]), name="intermeds", dtype=hcl.Float())
+    trans      = hcl.placeholder(tuple([2,4]), name="successors", dtype=hcl.Float())
     bounds     = hcl.placeholder(tuple([3, 2]), name="bounds", dtype=hcl.Float())
     ptsEachDim = hcl.placeholder(tuple([3]), name="ptsEachDim", dtype=hcl.Float())
     sVals      = hcl.placeholder(tuple([3]), name="sVals", dtype=hcl.Float())
     iVals      = hcl.placeholder(tuple([3]), name="iVals", dtype=hcl.Float())
 
-
     # Create a static schedule -- graph
-    s = hcl.create_schedule([Vopt, actions, intermeds, trans, gamma, epsilon, iVals, sVals, bounds, ptsEachDim, count], solve_Vopt)
+    s = hcl.create_schedule([Vopt, actions, intermeds, trans, gamma, epsilon, iVals, sVals, bounds, ptsEachDim, count, maxIters], solve_Vopt)
     
-
 
     ########################################## INITIALIZE ##########################################
 
     # Convert the python array to hcl type array
-    V_opt     = hcl.asarray(np.zeros([30, 30, 30]))
+    V_opt     = hcl.asarray(np.zeros(_ptsEachDim))
     intermeds = hcl.asarray(np.ones([3]))
-    trans     = hcl.asarray(np.zeros([2, 4]))
-    rwd       = np.zeros([5])
-
-    # set the actions
-    actions = np.ones([3, 3])
-    actions[0] = ([1,0,0])
-    actions[1] = ([0,1,0])
-    actions[2] = ([0,0,1])
-
-    # set the rwd functions
-    rwd[3]    = 2
-    rwd[1]    = 3
-    rwd       = hcl.asarray(rwd)
-
-    # set the gamma value
-    gamma     = np.zeros(1)
-    gamma[0]  = .9
-    
-    # set the epsilon value
-    epsilon    = np.zeros(1)
-    epsilon[0] = .0000005
-
-    gamma     = hcl.asarray(gamma)
-    epsilon   = hcl.asarray(epsilon)
+    trans     = hcl.asarray(_trans)
+    gamma     = hcl.asarray(_gamma)
+    epsilon   = hcl.asarray(_epsilon)
     count     = hcl.asarray(np.zeros(1))
-    actions   = hcl.asarray(actions)
+    maxIters  = hcl.asarray(_maxIters)
+    actions   = hcl.asarray(_actions)
 
     # Required for using true state values
-    bounds     = hcl.asarray( np.array([[-5.0, 5.0],[-3.0, 3.0],[10, 15]]) )
-    ptsEachDim = hcl.asarray( np.array([40, 40, 50]) )
+    bounds     = hcl.asarray( _bounds )
+    ptsEachDim = hcl.asarray( _ptsEachDim )
     sVals      = hcl.asarray( np.zeros([3]) )
     iVals      = hcl.asarray( np.zeros([3]) )
 
@@ -305,14 +296,12 @@ def value_iteration_3D():
     # Use this graph and build an executable
     f = hcl.build(s, target="llvm")
 
-    print(hcl.lower(s))
-
 
     ########################################### EXECUTE ############################################
 
     # Now use the executable
     t_s = time.time()
-    f(V_opt, actions, intermeds, trans, gamma, epsilon, iVals, sVals, bounds, ptsEachDim, count)
+    f(V_opt, actions, intermeds, trans, gamma, epsilon, iVals, sVals, bounds, ptsEachDim, count, maxIters)
     t_e = time.time()
 
     V = V_opt.asnumpy()
