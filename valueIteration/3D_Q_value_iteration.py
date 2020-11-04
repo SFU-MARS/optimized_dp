@@ -98,10 +98,11 @@ def evaluateConvergence(newQ, oldQ, epsilon, reSweep):
 
 
 # convert state values into indeces using nearest neighbour
+# NOTE: have to modify this to work with modular values
 def stateToIndex(sVals, iVals, bounds, ptsEachDim):
-    iVals[0] = (sVals[0] - bounds[0,0]) / (bounds[0,1] - bounds[0,0]) * (ptsEachDim[0] - 1)
-    iVals[1] = (sVals[1] - bounds[1,0]) / (bounds[1,1] - bounds[1,0]) * (ptsEachDim[1] - 1)
-    iVals[2] = (sVals[2] - bounds[2,0]) / (bounds[2,1] - bounds[2,0]) * (ptsEachDim[2] - 1)
+    iVals[0] = (sVals[0] - bounds[0,0]) / ( (bounds[0,1] - bounds[0,0]) / (ptsEachDim[0]) )
+    iVals[1] = (sVals[1] - bounds[1,0]) / ( (bounds[1,1] - bounds[1,0]) / (ptsEachDim[1]) )
+    iVals[2] = (sVals[2] - bounds[2,0]) / ( (bounds[2,1] - bounds[2,0]) / (ptsEachDim[2]) )
     # NOTE: add 0.5 to simulate rounding
     iVals[0] = hcl.cast(hcl.Int(), iVals[0] + 0.5)
     iVals[1] = hcl.cast(hcl.Int(), iVals[1] + 0.5)
