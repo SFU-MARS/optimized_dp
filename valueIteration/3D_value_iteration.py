@@ -17,7 +17,7 @@ _gamma      = np.array([0.9])
 _epsilon    = np.array([.0000005])
 _maxIters   = np.array([500])
 _trans      = np.zeros([2, 4]) # size: [maximum number of transition states available x 4]
-_useNN      = np.array([1])
+_useNN      = np.array([0])
 
 
 ###################################### USER-DEFINED FUNCTIONS ######################################
@@ -63,11 +63,11 @@ def updateVopt(i, j, k, iVals, sVals, actions, Vopt, intermeds, trans, interpols
             sVals[0] = trans[si,1]
             sVals[1] = trans[si,2]
             sVals[2] = trans[si,3]
-            # convert the state values of the successor state (si,sj,sk) into indeces (ia, ij, ik)
-            stateToIndex(sVals, iVals, bounds, ptsEachDim)
 
             #NOTE: nearest neighbour
             with hcl.if_(useNN[0] == 1):
+                # convert the state values of the successor state (si,sj,sk) into indeces (ia,ij,ik)
+                stateToIndex(sVals, iVals, bounds, ptsEachDim)
                 # if (ia, ij, ik) is within the state space, add its discounted value to action a
                 with hcl.if_(hcl.and_(iVals[0] < Vopt.shape[0], iVals[1] < Vopt.shape[1], iVals[2] < Vopt.shape[2])):
                     with hcl.if_(hcl.and_(iVals[0] >= 0, iVals[1] >= 0, iVals[2] >= 0)):

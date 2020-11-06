@@ -9,7 +9,7 @@ import time
 
 
 _bounds     = np.array([[-5.0, 5.0],[-3.0, 3.0],[10, 15]])
-_goals      = np.array([[[-1.0, 1.0], [-1.0,1.0], [10,15]]]) # size: [number of goals x 3 x 2]
+_goal       = np.array([[-3.0, 3.0], [-1.5,1.5], [10,15]])
 _ptsEachDim = np.array([40, 40, 50])
 _actions    = np.array([[1,0,0], [0,1,0], [0,0,1]])
 _gamma      = np.array([0.9])
@@ -36,24 +36,22 @@ def transition(sVals, action, trans):
 
 
 # Return the reward for taking action from state
-def reward(sVals, action, trans, bounds, goals):
+def reward(sVals, action, trans, bounds, goal):
     rwd = hcl.scalar(0, "rwd")
-    # for each possible successor
     with hcl.for_(0, trans.shape[0], name="si") as si:
         p        = trans[si,0]
         sVals[0] = trans[si,1]
         sVals[1] = trans[si,2]
         sVals[2] = trans[si,3]
-        # Check if state is valid
-        with hcl.if_(isStateValid(sVals, bounds)):
-            # add reward for actions that take us to the goal
-            with hcl.if_(isGoalState(sVals, goals) == 1):
-                rwd[0] += (p * 100)
-            # add default reward
-            with hcl.else_():
-                rwd[0] += p
+        # successor state is within goal region
+        with hcl.if_(hcl.and_(sVals[0] >= goal[0,0], sVals[0] <= goal[0,1])):
+            with hcl.if_(hcl.and_(sVals[1] >= goal[1,0], sVals[0] <= goal[1,1])):
+                with hcl.if_(hcl.and_(sVals[2] >= goal[2,0], sVals[0] <= goal[2,1])):
+                    rwd[0] += (p * 100)
+        # successor state is not within goal region
+        with hcl.else_():
+            rwd[0] += p
     return rwd[0]
-
 
 
 
@@ -61,14 +59,14 @@ def reward(sVals, action, trans, bounds, goals):
 
 
 # Update the value function at position (i,j,k)
-def updateQopt(i, j, k, a, iVals, sVals, Qopt, actions, trans, gamma, bounds, goals, ptsEachDim):
+def updateQopt(i, j, k, a, iVals, sVals, Qopt, actions, trans, gamma, bounds, goal, ptsEachDim):
     # set iVals equal to (i,j,k) and sVals equal to the corresponding state values at (i,j,k)
     updateStateVals(i, j, k, iVals, sVals, bounds, ptsEachDim)
     # call the transition function to obtain the outcome(s) of action a from state (si,sj,sk)
     transition(sVals, actions[a], trans)
     # initialize Qopt[i,j,k,a] with the immediate reward
     r             = hcl.scalar(0, "r")
-    r[0]          = reward(sVals, actions[a], trans, bounds, goals)
+    r[0]          = reward(sVals, actions[a], trans, bounds, goal)
     Qopt[i,j,k,a] = r[0]
     # maximize over successor Q-values
     with hcl.for_(0, trans.shape[0], name="si") as si:
@@ -124,41 +122,12 @@ def updateStateVals(i, j, k, iVals, sVals, bounds, ptsEachDim):
     indexToState(iVals, sVals, bounds, ptsEachDim)
 
 
-# check if state is in goal region
-def isGoalState(sVals, goals):
-    with hcl.for_(0, goals.shape[0], name="g") as g:
-        # Check if state is valid
-        with hcl.if_(hcl.and_(sVals[0] >= goals[g,0,0], sVals[0] <= goals[g,0,1])):
-            with hcl.if_(hcl.and_(sVals[1] >= goals[g,1,0], sVals[0] <= goals[g,1,1])):
-                with hcl.if_(hcl.and_(sVals[2] >= goals[g,2,0], sVals[0] <= goals[g,2,1])):
-                    return 1
-    return 0
-
-
-# check if the sVals are within bounds
-def isStateValid(sVals, bounds):
-    with hcl.if_(hcl.and_(sVals[0] >= bounds[0,0], sVals[0] <= bounds[0,1])):
-        with hcl.if_(hcl.and_(sVals[1] >= bounds[1,0], sVals[0] <= bounds[1,1])):
-            with hcl.if_(hcl.and_(sVals[2] >= bounds[2,0], sVals[0] <= bounds[2,1])):
-                return 1
-    return 0
-
-
-# check if an index is valid
-def isIndexValid(iVals, Qopt):
-    with hcl.if_(hcl.and_(iVals[0] >= 0, iVals[0] < Qopt.shape[0])):
-        with hcl.if_(hcl.and_(iVals[1] >= 0, iVals[1] < Qopt.shape[1])):
-            with hcl.if_(hcl.and_(iVals[2] >= 0, iVals[2] < Qopt.shape[2])):
-                return 1
-    return 0
-
-
 
 ######################################### VALUE ITERATION ##########################################
 
 
 def value_iteration_3D():
-    def solve_Qopt(Qopt, actions, trans, gamma, epsilon, iVals, sVals, bounds, goals, ptsEachDim, count, maxIters):
+    def solve_Qopt(Qopt, actions, trans, gamma, epsilon, iVals, sVals, bounds, goal, ptsEachDim, count, maxIters):
             reSweep = hcl.scalar(1, "reSweep")
             oldQ    = hcl.scalar(0, "oldV")
             newQ    = hcl.scalar(0, "newV")
@@ -174,7 +143,7 @@ def value_iteration_3D():
                                 # For all actions
                                 with hcl.for_(0, Qopt.shape[3], name="a") as a:
                                     oldQ[0] = Qopt[i,j,k,a]
-                                    updateQopt(i, j, k, a, iVals, sVals, Qopt, actions, trans, gamma, bounds, goals, ptsEachDim)
+                                    updateQopt(i, j, k, a, iVals, sVals, Qopt, actions, trans, gamma, bounds, goal, ptsEachDim)
                                     newQ[0] = Qopt[i,j,k,a]
                                     evaluateConvergence(newQ, oldQ, epsilon, reSweep)
                     count[0] += 1
@@ -192,7 +161,7 @@ def value_iteration_3D():
                                 # For all actions
                                 with hcl.for_(0, Qopt.shape[3], name="a") as a:
                                     oldQ[0] = Qopt[i2,j2,k2,a]
-                                    updateQopt(i2, j2, k2, a, iVals, sVals, Qopt, actions, trans, gamma, bounds, goals, ptsEachDim)
+                                    updateQopt(i2, j2, k2, a, iVals, sVals, Qopt, actions, trans, gamma, bounds, goal, ptsEachDim)
                                     newQ[0] = Qopt[i2,j2,k2,a]
                                     evaluateConvergence(newQ, oldQ, epsilon, reSweep)
                     count[0] += 1
@@ -208,7 +177,7 @@ def value_iteration_3D():
                                 # For all actions
                                 with hcl.for_(0, Qopt.shape[3], name="a") as a:
                                     oldQ[0] = Qopt[i2,j,k,a]
-                                    updateQopt(i2, j, k, a, iVals, sVals, Qopt, actions, trans, gamma, bounds, goals, ptsEachDim)
+                                    updateQopt(i2, j, k, a, iVals, sVals, Qopt, actions, trans, gamma, bounds, goal, ptsEachDim)
                                     newQ[0] = Qopt[i2,j,k,a]
                                     evaluateConvergence(newQ, oldQ, epsilon, reSweep)
                     count[0] += 1
@@ -224,7 +193,7 @@ def value_iteration_3D():
                                 # For all actions
                                 with hcl.for_(0, Qopt.shape[3], name="a") as a:
                                     oldQ[0] = Qopt[i,j2,k,a]
-                                    updateQopt(i, j2, k, a, iVals, sVals, Qopt, actions, trans, gamma, bounds, goals, ptsEachDim)
+                                    updateQopt(i, j2, k, a, iVals, sVals, Qopt, actions, trans, gamma, bounds, goal, ptsEachDim)
                                     newQ[0] = Qopt[i,j2,k,a]
                                     evaluateConvergence(newQ, oldQ, epsilon, reSweep)
                     count[0] += 1
@@ -240,7 +209,7 @@ def value_iteration_3D():
                                 # For all actions
                                 with hcl.for_(0, Qopt.shape[3], name="a") as a:
                                     oldQ[0] = Qopt[i,j,k2,a]
-                                    updateQopt(i, j, k2, a, iVals, sVals, Qopt, actions, trans, gamma, bounds, goals, ptsEachDim)
+                                    updateQopt(i, j, k2, a, iVals, sVals, Qopt, actions, trans, gamma, bounds, goal, ptsEachDim)
                                     newQ[0] = Qopt[i,j,k2,a]
                                     evaluateConvergence(newQ, oldQ, epsilon, reSweep)
                     count[0] += 1
@@ -257,7 +226,7 @@ def value_iteration_3D():
                                 # For all actions
                                 with hcl.for_(0, Qopt.shape[3], name="a") as a:
                                     oldQ[0] = Qopt[i2,j2,k,a]
-                                    updateQopt(i2, j2, k, a, iVals, sVals, Qopt, actions, trans, gamma, bounds, goals, ptsEachDim)
+                                    updateQopt(i2, j2, k, a, iVals, sVals, Qopt, actions, trans, gamma, bounds, goal, ptsEachDim)
                                     newQ[0] = Qopt[i2,j2,k,a]
                                     evaluateConvergence(newQ, oldQ, epsilon, reSweep)
                     count[0] += 1
@@ -274,7 +243,7 @@ def value_iteration_3D():
                                 # For all actions
                                 with hcl.for_(0, Qopt.shape[3], name="a") as a:
                                     oldQ[0] = Qopt[i2,j,k2,a]
-                                    updateQopt(i2, j, k2, a, iVals, sVals, Qopt, actions, trans, gamma, bounds, goals, ptsEachDim)
+                                    updateQopt(i2, j, k2, a, iVals, sVals, Qopt, actions, trans, gamma, bounds, goal, ptsEachDim)
                                     newQ[0] = Qopt[i2,j,k2,a]
                                     evaluateConvergence(newQ, oldQ, epsilon, reSweep)
                     count[0] += 1
@@ -291,7 +260,7 @@ def value_iteration_3D():
                                 # For all actions
                                 with hcl.for_(0, Qopt.shape[3], name="a") as a:
                                     oldQ[0] = Qopt[i,j2,k2,a]
-                                    updateQopt(i, j2, k2, a, iVals, sVals, Qopt, actions, trans, gamma, bounds, goals, ptsEachDim)
+                                    updateQopt(i, j2, k2, a, iVals, sVals, Qopt, actions, trans, gamma, bounds, goal, ptsEachDim)
                                     newQ[0] = Qopt[i,j2,k2,a]
                                     evaluateConvergence(newQ, oldQ, epsilon, reSweep)
                     count[0] += 1
@@ -312,14 +281,14 @@ def value_iteration_3D():
     actions    = hcl.placeholder(tuple(_actions.shape), name="actions", dtype=hcl.Float())
     trans      = hcl.placeholder(tuple(_trans.shape), name="successors", dtype=hcl.Float())
     bounds     = hcl.placeholder(tuple([3, 2]), name="bounds", dtype=hcl.Float())
-    goals      = hcl.placeholder(tuple(_goals.shape), name="goals", dtype=hcl.Float())
+    goal       = hcl.placeholder(tuple(_goal.shape), name="goal", dtype=hcl.Float())
     ptsEachDim = hcl.placeholder(tuple([3]), name="ptsEachDim", dtype=hcl.Float())
     sVals      = hcl.placeholder(tuple([3]), name="sVals", dtype=hcl.Float())
     iVals      = hcl.placeholder(tuple([3]), name="iVals", dtype=hcl.Float())
     maxIters   = hcl.placeholder((0,), "maxIters")
 
     # Create a static schedule -- graph
-    s = hcl.create_schedule([Qopt, actions, trans, gamma, epsilon, iVals, sVals, bounds, goals, ptsEachDim, count, maxIters], solve_Qopt)
+    s = hcl.create_schedule([Qopt, actions, trans, gamma, epsilon, iVals, sVals, bounds, goal, ptsEachDim, count, maxIters], solve_Qopt)
     
 
     ########################################## INITIALIZE ##########################################
@@ -332,7 +301,7 @@ def value_iteration_3D():
     count      = hcl.asarray(np.zeros(1))
     actions    = hcl.asarray(_actions)
     bounds     = hcl.asarray(_bounds)
-    goals      = hcl.asarray(_goals)
+    goal       = hcl.asarray(_goal)
     ptsEachDim = hcl.asarray(_ptsEachDim)
     sVals      = hcl.asarray(np.zeros([3]))
     iVals      = hcl.asarray(np.zeros([3])) 
@@ -366,7 +335,7 @@ def value_iteration_3D():
     ########################################### EXECUTE ############################################
 
     t_s = time.time()
-    f(Q_opt, actions, trans, gamma, epsilon, iVals, sVals, bounds, goals, ptsEachDim, count, maxIters)
+    f(Q_opt, actions, trans, gamma, epsilon, iVals, sVals, bounds, goal, ptsEachDim, count, maxIters)
     t_e = time.time()
 
     Q = Q_opt.asnumpy()
