@@ -345,7 +345,7 @@ def value_iteration_3D():
     maxIters   = hcl.placeholder((0,), "maxIters")
     epsilon    = hcl.placeholder((0,), "epsilon")
     actions    = hcl.placeholder(tuple(_actions.shape), name="actions", dtype=hcl.Float())
-    intermeds  = hcl.placeholder(tuple([3]), name="intermeds", dtype=hcl.Float())
+    intermeds  = hcl.placeholder(tuple([_actions.shape[0]]), name="intermeds", dtype=hcl.Float())
     trans      = hcl.placeholder(tuple([2,4]), name="successors", dtype=hcl.Float())
     bounds     = hcl.placeholder(tuple([3, 2]), name="bounds", dtype=hcl.Float())
     ptsEachDim = hcl.placeholder(tuple([3]), name="ptsEachDim", dtype=hcl.Float())
@@ -364,7 +364,7 @@ def value_iteration_3D():
 
     # Convert the python array to hcl type array
     V_opt     = hcl.asarray(np.zeros(_ptsEachDim))
-    intermeds = hcl.asarray(np.ones([3]))
+    intermeds = hcl.asarray(np.ones(_actions.shape[0]))
     trans     = hcl.asarray(_trans)
     gamma     = hcl.asarray(_gamma)
     epsilon   = hcl.asarray(_epsilon)
