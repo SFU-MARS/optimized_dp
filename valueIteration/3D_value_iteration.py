@@ -2,6 +2,7 @@ import heterocl as hcl
 #from Grid.GridProcessing import Grid
 import numpy as np
 import time
+import os
 #from user_definer import *
 
 
@@ -10,14 +11,25 @@ import time
 ####################################### USER-DEFINED VALUES ########################################
 
 
-_bounds     = np.array([[-5.0, 5.0],[-3.0, 3.0],[10, 15]])
-_ptsEachDim = np.array([40, 40, 50])
-_actions    = np.array([[0.5,0,0], [0,1,0], [0,0,1.1]])
-_gamma      = np.array([0.9])
-_epsilon    = np.array([.0000005])
+_bounds     = np.array([[-5.0, 5.0],[-5.0, 5.0],[-3.1415, 3.1415]])
+_ptsEachDim = np.array([25, 25, 9])
+_goal       = np.array([[2.5, 2.5], [1.5708, 2.3561]]) 
+
+# set _actions based on ranges and number of steps
+# format: range(lower bound, upper bound, number of steps)
+vValues  = np.linspace(-2, 2, 9)
+wValues  = np.linspace(-1, 1, 9)
+_actions = []
+for i in vValues:
+    for j in wValues:
+        _actions.append((i,j))
+_actions = np.array(_actions)
+
+_gamma      = np.array([0.93])
+_epsilon    = np.array([.3])
 _maxIters   = np.array([500])
-_trans      = np.zeros([2, 4]) # size: [maximum number of transition states available x 4]
-_useNN      = np.array([0])
+_trans      = np.zeros([1, 4]) # size: [maximum number of transition states available x 4]
+_useNN      = np.array([1])
 
 
 ###################################### USER-DEFINED FUNCTIONS ######################################
@@ -26,21 +38,55 @@ _useNN      = np.array([0])
 # Given state and action, return successor states and their probabilities
 # sVals: the coordinates of state
 def transition(sVals, action, trans):
-    trans[0, 0] = 0.9
-    trans[1, 0] = 0.1
-    trans[0, 1] = sVals[0] + action[0]
-    trans[0, 2] = sVals[1] + action[1]
-    trans[0, 3] = sVals[2] + action[2]
-    trans[1, 1] = sVals[0]
-    trans[1, 2] = sVals[1]
-    trans[1, 3] = sVals[2]
+    trans[0, 0] = 1.0
+    trans[0, 1] = sVals[0] + (0.6 * action[0] * hcl.tvm.intrin.cos(sVals[2]))
+    trans[0, 2] = sVals[1] + (0.6 * action[0] * hcl.tvm.intrin.sin(sVals[2]))
+    trans[0, 3] = sVals[2] + (0.6 * action[1])
+
+    with hcl.if_(trans[0, 3] > 3.1415):
+        trans[0, 3] = sVals[2] - 6.2832
+    with hcl.elif_(trans[0, 3] < -3.1415):
+        trans[0, 3] = sVals[2] + 6.2832
 
 
 # Return the reward for taking action from state
-def reward(sVals, action):
+def reward(sVals, action, trans, bounds, goal):
     rwd = hcl.scalar(0, "rwd")
-    with hcl.if_(hcl.and_(sVals[0] == 8, sVals[1] == 8, sVals[2] == 8)): rwd[0] = 100
-    with hcl.else_():                                                    rwd[0] = 1
+    p   = hcl.scalar(0, "p")
+    dx  = hcl.scalar(0, "dx")
+    dy  = hcl.scalar(0, "dy")
+    mag = hcl.scalar(0, "mag")
+
+    # Check if collision
+    with hcl.if_(hcl.or_(sVals[0] < bounds[0,0] + 0.2, sVals[0] > bounds[0,1] - 0.2)):
+        rwd[0] = -400
+
+    with hcl.elif_(hcl.or_(sVals[1] < bounds[1,0] + 0.2, sVals[1] > bounds[1,1] - 0.2)):
+        rwd[0] = -400
+
+    # Check if moving into goal state
+    with hcl.else_():
+        p[0]     = trans[0,0]
+        sVals[0] = trans[0,1]
+        sVals[1] = trans[0,2]
+        sVals[2] = trans[0,3]
+
+        dx[0] = sVals[0] - goal[0,0]
+        dy[0] = sVals[1] - goal[0,1]
+        with hcl.if_(dx[0] < 0):
+            dx[0] = goal[0,0] - sVals[0]
+        with hcl.if_(dy[0] < 0):
+            dy[0] = goal[0,1] - sVals[1]
+
+        mag[0] = hcl.tvm.intrin.sqrt((dx[0] * dx[0]) + (dy[0] * dy[0]))
+
+        with hcl.if_(hcl.and_(mag[0] <= 1, sVals[2] < goal[1,1], sVals[2] > goal[1,0])):
+            rwd[0] = 1000
+
+        # Else: standard move ######################################################################
+        with hcl.else_():
+            rwd[0] = 0
+
     return rwd[0]
 
 
@@ -49,14 +95,16 @@ def reward(sVals, action):
 
 
 # Update the value function at position (i,j,k)
-def updateVopt(i, j, k, iVals, sVals, actions, Vopt, intermeds, trans, interpols, gamma, bounds, ptsEachDim, useNN):
+def updateVopt(i, j, k, iVals, sVals, actions, Vopt, intermeds, trans, interpols, gamma, bounds, goal, ptsEachDim, useNN):
+
     with hcl.for_(0, actions.shape[0], name="a") as a:
         # set iVals equal to (i,j,k) and sVals equal to the corresponding state values at (i,j,k)
         updateStateVals(i, j, k, iVals, sVals, bounds, ptsEachDim)
         # call the transition function to obtain the outcome(s) of action a from state (si,sj,sk)
         transition(sVals, actions[a], trans)
         # initialize the value of the action using the immediate reward of taking that action
-        intermeds[a] = reward(sVals, actions[a])
+        intermeds[a] = reward(sVals, actions[a], trans, bounds, goal)
+
         # add the value of each possible successor state
         with hcl.for_(0, trans.shape[0], name="si") as si:
             p        = trans[si,0]
@@ -87,10 +135,11 @@ def updateVopt(i, j, k, iVals, sVals, actions, Vopt, intermeds, trans, interpols
                         with hcl.if_(hcl.and_(iVals[0] >= 0, iVals[1] >= 0, iVals[2] >= 0)):
                             intermeds[a] += (gamma[0] * iplWeight * (p * Vopt[iVals[0], iVals[1], iVals[2]]))
 
-    # maximize over each possible action in intermeds to obtain the optimal value
-    with hcl.for_(0, intermeds.shape[0], name="r") as r:
-        with hcl.if_(Vopt[i,j,k] < intermeds[r]):
-            Vopt[i,j,k] = intermeds[r]
+        # maximize over each possible action in intermeds to obtain the optimal value
+        Vopt[i,j,k] = -100000000
+        with hcl.for_(0, intermeds.shape[0], name="r") as r:
+            with hcl.if_(Vopt[i,j,k] < intermeds[r]):
+                Vopt[i,j,k] = intermeds[r]
 
 
 # Returns 0 if convergence has been reached
@@ -221,7 +270,7 @@ def absdiff(x, y):
 # Minh: All functions defined within solve_Vopt needs to be re-written as heteroCL (hcl.while, etc)
 # Minh: Also arrays values used and passed into solve_Vopt function needs to be placeholder type
 def value_iteration_3D():
-    def solve_Vopt(Vopt, actions, intermeds, trans, interpols, gamma, epsilon, iVals, sVals, bounds, ptsEachDim, count, maxIters, useNN):
+    def solve_Vopt(Vopt, actions, intermeds, trans, interpols, gamma, epsilon, iVals, sVals, bounds, goal, ptsEachDim, count, maxIters, useNN):
             reSweep = hcl.scalar(1, "reSweep")
             oldV    = hcl.scalar(0, "oldV")
             newV    = hcl.scalar(0, "newV")
@@ -234,99 +283,99 @@ def value_iteration_3D():
                         with hcl.for_(0, Vopt.shape[1], name="j") as j:
                             with hcl.for_(0, Vopt.shape[2], name="k") as k:
                                 oldV[0] = Vopt[i,j,k]
-                                updateVopt(i, j, k, iVals, sVals, actions, Vopt, intermeds, trans, interpols, gamma, bounds, ptsEachDim, useNN)
+                                updateVopt(i, j, k, iVals, sVals, actions, Vopt, intermeds, trans, interpols, gamma, bounds, goal, ptsEachDim, useNN)
                                 newV[0] = Vopt[i,j,k]
                                 evaluateConvergence(newV, oldV, epsilon, reSweep)
                     count[0] += 1
 
-                # Perform value iteration by sweeping in direction 2
-                with hcl.Stage("Sweep_2"):
-                    with hcl.for_(1, Vopt.shape[0] + 1, name="i") as i:
-                        with hcl.for_(1, Vopt.shape[1] + 1, name="j") as j:
-                            with hcl.for_(1, Vopt.shape[2] + 1, name="k") as k:
-                                i2 = Vopt.shape[0] - i
-                                j2 = Vopt.shape[1] - j
-                                k2 = Vopt.shape[2] - k
-                                oldV[0] = Vopt[i2,j2,k2]
-                                updateVopt(i2, j2, k2, iVals, sVals, actions, Vopt, intermeds, trans, interpols, gamma, bounds, ptsEachDim, useNN)
-                                newV[0] = Vopt[i2,j2,k2]
-                                evaluateConvergence(newV, oldV, epsilon, reSweep)
-                    count[0] += 1
+                # # Perform value iteration by sweeping in direction 2
+                # with hcl.Stage("Sweep_2"):
+                #     with hcl.for_(1, Vopt.shape[0] + 1, name="i") as i:
+                #         with hcl.for_(1, Vopt.shape[1] + 1, name="j") as j:
+                #             with hcl.for_(1, Vopt.shape[2] + 1, name="k") as k:
+                #                 i2 = Vopt.shape[0] - i
+                #                 j2 = Vopt.shape[1] - j
+                #                 k2 = Vopt.shape[2] - k
+                #                 oldV[0] = Vopt[i2,j2,k2]
+                #                 updateVopt(i2, j2, k2, iVals, sVals, actions, Vopt, intermeds, trans, interpols, gamma, bounds, goal, ptsEachDim, useNN)
+                #                 newV[0] = Vopt[i2,j2,k2]
+                #                 evaluateConvergence(newV, oldV, epsilon, reSweep)
+                #     count[0] += 1
 
-                # Perform value iteration by sweeping in direction 3
-                with hcl.Stage("Sweep_3"):
-                    with hcl.for_(1, Vopt.shape[0] + 1, name="i") as i:
-                        with hcl.for_(0, Vopt.shape[1], name="j") as j:
-                            with hcl.for_(0, Vopt.shape[2], name="k") as k:
-                                i2 = Vopt.shape[0] - i
-                                oldV[0] = Vopt[i2,j,k]
-                                updateVopt(i2, j, k, iVals, sVals, actions, Vopt, intermeds, trans, interpols, gamma, bounds, ptsEachDim, useNN)
-                                newV[0] = Vopt[i2,j,k]
-                                evaluateConvergence(newV, oldV, epsilon, reSweep)
-                    count[0] += 1
+                # # Perform value iteration by sweeping in direction 3
+                # with hcl.Stage("Sweep_3"):
+                #     with hcl.for_(1, Vopt.shape[0] + 1, name="i") as i:
+                #         with hcl.for_(0, Vopt.shape[1], name="j") as j:
+                #             with hcl.for_(0, Vopt.shape[2], name="k") as k:
+                #                 i2 = Vopt.shape[0] - i
+                #                 oldV[0] = Vopt[i2,j,k]
+                #                 updateVopt(i2, j, k, iVals, sVals, actions, Vopt, intermeds, trans, interpols, gamma, bounds, goal, ptsEachDim, useNN)
+                #                 newV[0] = Vopt[i2,j,k]
+                #                 evaluateConvergence(newV, oldV, epsilon, reSweep)
+                #     count[0] += 1
 
-                # Perform value iteration by sweeping in direction 4
-                with hcl.Stage("Sweep_4"):
-                    with hcl.for_(0, Vopt.shape[0], name="i") as i:
-                        with hcl.for_(1, Vopt.shape[1] + 1, name="j") as j:
-                            with hcl.for_(0, Vopt.shape[2], name="k") as k:
-                                j2 = Vopt.shape[1] - j
-                                oldV[0] = Vopt[i,j2,k]
-                                updateVopt(i, j2, k, iVals, sVals, actions, Vopt, intermeds, trans, interpols, gamma, bounds, ptsEachDim, useNN)
-                                newV[0] = Vopt[i,j2,k]
-                                evaluateConvergence(newV, oldV, epsilon, reSweep)
-                    count[0] += 1
+                # # Perform value iteration by sweeping in direction 4
+                # with hcl.Stage("Sweep_4"):
+                #     with hcl.for_(0, Vopt.shape[0], name="i") as i:
+                #         with hcl.for_(1, Vopt.shape[1] + 1, name="j") as j:
+                #             with hcl.for_(0, Vopt.shape[2], name="k") as k:
+                #                 j2 = Vopt.shape[1] - j
+                #                 oldV[0] = Vopt[i,j2,k]
+                #                 updateVopt(i, j2, k, iVals, sVals, actions, Vopt, intermeds, trans, interpols, gamma, bounds, goal, ptsEachDim, useNN)
+                #                 newV[0] = Vopt[i,j2,k]
+                #                 evaluateConvergence(newV, oldV, epsilon, reSweep)
+                #     count[0] += 1
 
-                # Perform value iteration by sweeping in direction 5
-                with hcl.Stage("Sweep_5"):
-                    with hcl.for_(0, Vopt.shape[0], name="i") as i:
-                        with hcl.for_(0, Vopt.shape[1], name="j") as j:
-                            with hcl.for_(1, Vopt.shape[2] + 1, name="k") as k:
-                                k2 = Vopt.shape[2] - k
-                                oldV[0] = Vopt[i,j,k2]
-                                updateVopt(i, j, k2, iVals, sVals, actions, Vopt, intermeds, trans, interpols, gamma, bounds, ptsEachDim, useNN)
-                                newV[0] = Vopt[i,j,k2]
-                                evaluateConvergence(newV, oldV, epsilon, reSweep)
-                    count[0] += 1
+                # # Perform value iteration by sweeping in direction 5
+                # with hcl.Stage("Sweep_5"):
+                #     with hcl.for_(0, Vopt.shape[0], name="i") as i:
+                #         with hcl.for_(0, Vopt.shape[1], name="j") as j:
+                #             with hcl.for_(1, Vopt.shape[2] + 1, name="k") as k:
+                #                 k2 = Vopt.shape[2] - k
+                #                 oldV[0] = Vopt[i,j,k2]
+                #                 updateVopt(i, j, k2, iVals, sVals, actions, Vopt, intermeds, trans, interpols, gamma, bounds, goal, ptsEachDim, useNN)
+                #                 newV[0] = Vopt[i,j,k2]
+                #                 evaluateConvergence(newV, oldV, epsilon, reSweep)
+                #     count[0] += 1
 
-                # Perform value iteration by sweeping in direction 6
-                with hcl.Stage("Sweep_6"):
-                    with hcl.for_(1, Vopt.shape[0] + 1, name="i") as i:
-                        with hcl.for_(1, Vopt.shape[1] + 1, name="j") as j:
-                            with hcl.for_(0, Vopt.shape[2], name="k") as k:
-                                i2 = Vopt.shape[0] - i
-                                j2 = Vopt.shape[1] - j
-                                oldV[0] = Vopt[i2,j2,k]
-                                updateVopt(i2, j2, k, iVals, sVals, actions, Vopt, intermeds, trans, interpols, gamma, bounds, ptsEachDim, useNN)
-                                newV[0] = Vopt[i2,j2,k]
-                                evaluateConvergence(newV, oldV, epsilon, reSweep)
-                    count[0] += 1
+                # # Perform value iteration by sweeping in direction 6
+                # with hcl.Stage("Sweep_6"):
+                #     with hcl.for_(1, Vopt.shape[0] + 1, name="i") as i:
+                #         with hcl.for_(1, Vopt.shape[1] + 1, name="j") as j:
+                #             with hcl.for_(0, Vopt.shape[2], name="k") as k:
+                #                 i2 = Vopt.shape[0] - i
+                #                 j2 = Vopt.shape[1] - j
+                #                 oldV[0] = Vopt[i2,j2,k]
+                #                 updateVopt(i2, j2, k, iVals, sVals, actions, Vopt, intermeds, trans, interpols, gamma, bounds, goal, ptsEachDim, useNN)
+                #                 newV[0] = Vopt[i2,j2,k]
+                #                 evaluateConvergence(newV, oldV, epsilon, reSweep)
+                #     count[0] += 1
 
-                # Perform value iteration by sweeping in direction 7
-                with hcl.Stage("Sweep_7"):
-                    with hcl.for_(1, Vopt.shape[0] + 1, name="i") as i:
-                        with hcl.for_(0, Vopt.shape[1], name="j") as j:
-                            with hcl.for_(1, Vopt.shape[2] + 1, name="k") as k:
-                                i2 = Vopt.shape[0] - i
-                                k2 = Vopt.shape[2] - k
-                                oldV[0] = Vopt[i2,j,k2]
-                                updateVopt(i2, j, k2, iVals, sVals, actions, Vopt, intermeds, trans, interpols, gamma, bounds, ptsEachDim, useNN)
-                                newV[0] = Vopt[i2,j,k2]
-                                evaluateConvergence(newV, oldV, epsilon, reSweep)
-                    count[0] += 1
+                # # Perform value iteration by sweeping in direction 7
+                # with hcl.Stage("Sweep_7"):
+                #     with hcl.for_(1, Vopt.shape[0] + 1, name="i") as i:
+                #         with hcl.for_(0, Vopt.shape[1], name="j") as j:
+                #             with hcl.for_(1, Vopt.shape[2] + 1, name="k") as k:
+                #                 i2 = Vopt.shape[0] - i
+                #                 k2 = Vopt.shape[2] - k
+                #                 oldV[0] = Vopt[i2,j,k2]
+                #                 updateVopt(i2, j, k2, iVals, sVals, actions, Vopt, intermeds, trans, interpols, gamma, bounds, goal, ptsEachDim, useNN)
+                #                 newV[0] = Vopt[i2,j,k2]
+                #                 evaluateConvergence(newV, oldV, epsilon, reSweep)
+                #     count[0] += 1
 
-                # Perform value iteration by sweeping in direction 8
-                with hcl.Stage("Sweep_8"):
-                    with hcl.for_(0, Vopt.shape[0], name="i") as i:
-                        with hcl.for_(1, Vopt.shape[1] + 1, name="j") as j:
-                            with hcl.for_(1, Vopt.shape[2] + 1, name="k") as k:
-                                j2 = Vopt.shape[1] - j
-                                k2 = Vopt.shape[2] - k
-                                oldV[0] = Vopt[i,j2,k2]
-                                updateVopt(i, j2, k2, iVals, sVals, actions, Vopt, intermeds, trans, interpols, gamma, bounds, ptsEachDim, useNN)
-                                newV[0] = Vopt[i,j2,k2]
-                                evaluateConvergence(newV, oldV, epsilon, reSweep)
-                    count[0] += 1
+                # # Perform value iteration by sweeping in direction 8
+                # with hcl.Stage("Sweep_8"):
+                #     with hcl.for_(0, Vopt.shape[0], name="i") as i:
+                #         with hcl.for_(1, Vopt.shape[1] + 1, name="j") as j:
+                #             with hcl.for_(1, Vopt.shape[2] + 1, name="k") as k:
+                #                 j2 = Vopt.shape[1] - j
+                #                 k2 = Vopt.shape[2] - k
+                #                 oldV[0] = Vopt[i,j2,k2]
+                #                 updateVopt(i, j2, k2, iVals, sVals, actions, Vopt, intermeds, trans, interpols, gamma, bounds, goal, ptsEachDim, useNN)
+                #                 newV[0] = Vopt[i,j2,k2]
+                #                 evaluateConvergence(newV, oldV, epsilon, reSweep)
+                #     count[0] += 1
 
 
 
@@ -346,8 +395,9 @@ def value_iteration_3D():
     epsilon    = hcl.placeholder((0,), "epsilon")
     actions    = hcl.placeholder(tuple(_actions.shape), name="actions", dtype=hcl.Float())
     intermeds  = hcl.placeholder(tuple([_actions.shape[0]]), name="intermeds", dtype=hcl.Float())
-    trans      = hcl.placeholder(tuple([2,4]), name="successors", dtype=hcl.Float())
-    bounds     = hcl.placeholder(tuple([3, 2]), name="bounds", dtype=hcl.Float())
+    trans      = hcl.placeholder(tuple(_trans.shape), name="successors", dtype=hcl.Float())
+    bounds     = hcl.placeholder(tuple(_bounds.shape), name="bounds", dtype=hcl.Float())
+    goal       = hcl.placeholder(tuple(_goal.shape), name="goal", dtype=hcl.Float())
     ptsEachDim = hcl.placeholder(tuple([3]), name="ptsEachDim", dtype=hcl.Float())
     sVals      = hcl.placeholder(tuple([3]), name="sVals", dtype=hcl.Float())
     iVals      = hcl.placeholder(tuple([3]), name="iVals", dtype=hcl.Float())
@@ -357,7 +407,7 @@ def value_iteration_3D():
     useNN      = hcl.placeholder((0,), "useNN")
 
     # Create a static schedule -- graph
-    s = hcl.create_schedule([Vopt, actions, intermeds, trans, interpols, gamma, epsilon, iVals, sVals, bounds, ptsEachDim, count, maxIters, useNN], solve_Vopt)
+    s = hcl.create_schedule([Vopt, actions, intermeds, trans, interpols, gamma, epsilon, iVals, sVals, bounds, goal, ptsEachDim, count, maxIters, useNN], solve_Vopt)
     
 
     ########################################## INITIALIZE ##########################################
@@ -371,9 +421,8 @@ def value_iteration_3D():
     count     = hcl.asarray(np.zeros(1))
     maxIters  = hcl.asarray(_maxIters)
     actions   = hcl.asarray(_actions)
-
-    # Required for using true state values
     bounds     = hcl.asarray( _bounds )
+    goal       = hcl.asarray(_goal)
     ptsEachDim = hcl.asarray( _ptsEachDim )
     sVals      = hcl.asarray( np.zeros([3]) )
     iVals      = hcl.asarray( np.zeros([3]) )
@@ -412,11 +461,28 @@ def value_iteration_3D():
 
     # Now use the executable
     t_s = time.time()
-    f(V_opt, actions, intermeds, trans, interpols, gamma, epsilon, iVals, sVals, bounds, ptsEachDim, count, maxIters, useNN)
+    f(V_opt, actions, intermeds, trans, interpols, gamma, epsilon, iVals, sVals, bounds, goal, ptsEachDim, count, maxIters, useNN)
     t_e = time.time()
 
     V = V_opt.asnumpy()
     c = count.asnumpy()
+
+    dir_path = "./hcl_value_matrix_test/"
+    try: os.mkdir(dir_path)
+    except: print(dir_path + " exists!")
+    file_name = "hcl_value_iteration_" + str(c) + "_iterations"
+    f = open(dir_path + file_name, "w")
+    
+
+    for i in range(V.shape[0]):
+        for j in range(V.shape[1]):
+            for k in range(V.shape[2]):
+                    si = (i / _ptsEachDim[0]) * (_bounds[0,1] - _bounds[0,0]) + _bounds[0,0]
+                    sj = (j / _ptsEachDim[1]) * (_bounds[1,1] - _bounds[1,0]) + _bounds[1,0]
+                    sk = (k / _ptsEachDim[2]) * (_bounds[2,1] - _bounds[2,0]) + _bounds[2,0]
+                    state = ("{:.2f}".format(si), "{:.2f}".format(sj), "{:.2f}".format(sk))
+                    s = str(state) + "   " + str("{:.0f}".format(V[(i,j,k)])) + '\n'
+                    f.write(s)
 
     print(V)
     print()

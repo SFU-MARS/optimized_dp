@@ -8,15 +8,25 @@ import time
 ####################################### USER-DEFINED VALUES ########################################
 
 
-_bounds     = np.array([[-5.0, 5.0],[-3.0, 3.0],[10, 15]])
-_goal       = np.array([[-3.0, 3.0], [-1.5,1.5], [10,15]])
-_ptsEachDim = np.array([40, 40, 50])
-_actions    = np.array([[1,0,0], [0,1,0], [0,0,1]])
-_gamma      = np.array([0.9])
-_epsilon    = np.array([.0000005])
-_maxIters   = np.array([500])
-_trans      = np.zeros([2, 4]) # size: [maximum number of transition states available x 4]
-_useNN      = np.array([0])
+_bounds     = np.array([[-5.0, 5.0],[-5.0, 5.0],[-3.1415, 3.1415]])
+_ptsEachDim = np.array([25, 25, 9])
+_goal       = np.array([[2.5, 2.5], [1.5708, 2.3561]]) 
+
+# set _actions based on ranges and number of steps
+# format: range(lower bound, upper bound, number of steps)
+vValues  = np.linspace(-2, 2, 9)
+wValues  = np.linspace(-1, 1, 9)
+_actions = []
+for i in vValues:
+    for j in wValues:
+        _actions.append((i,j))
+_actions = np.array(_actions)
+
+_gamma    = np.array([0.93])
+_epsilon  = np.array([.3])
+_maxIters = np.array([5])
+_trans    = np.zeros([1, 4]) # size: [maximum number of transition states available x 4]
+_useNN    = np.array([1])
 
 
 
@@ -26,33 +36,60 @@ _useNN      = np.array([0])
 # Given state and action, return successor states and their probabilities
 # sVals: the coordinates of state
 def transition(sVals, action, trans):
-    trans[0, 0] = 0.9
-    trans[1, 0] = 0.1
-    trans[0, 1] = sVals[0] + action[0]
-    trans[0, 2] = sVals[1] + action[1]
-    trans[0, 3] = sVals[2] + action[2]
-    trans[1, 1] = sVals[0]
-    trans[1, 2] = sVals[1]
-    trans[1, 3] = sVals[2]
+    trans[0, 0] = 1.0
+    trans[0, 1] = sVals[0] + (0.6 * action[0] * hcl.tvm.intrin.cos(sVals[2]))
+    trans[0, 2] = sVals[1] + (0.6 * action[0] * hcl.tvm.intrin.sin(sVals[2]))
+    trans[0, 3] = sVals[2] + (0.6 * action[1])
 
+    with hcl.if_(trans[0, 3] > 3.1415):
+        trans[0, 3] = sVals[2] - 6.2832
+
+    with hcl.elif_(trans[0, 3] < -3.1415):
+        trans[0, 3] = sVals[2] + 6.2832
 
 # Return the reward for taking action from state
 def reward(sVals, action, trans, bounds, goal):
     rwd = hcl.scalar(0, "rwd")
-    with hcl.for_(0, trans.shape[0], name="si") as si:
-        p        = trans[si,0]
-        sVals[0] = trans[si,1]
-        sVals[1] = trans[si,2]
-        sVals[2] = trans[si,3]
-        # successor state is within goal region
-        with hcl.if_(hcl.and_(sVals[0] >= goal[0,0], sVals[0] <= goal[0,1])):
-            with hcl.if_(hcl.and_(sVals[1] >= goal[1,0], sVals[0] <= goal[1,1])):
-                with hcl.if_(hcl.and_(sVals[2] >= goal[2,0], sVals[0] <= goal[2,1])):
-                    rwd[0] += (p * 100)
-        # successor state is not within goal region
+    p   = hcl.scalar(0, "p")
+
+    p[0]     = trans[0,0]
+    sVals[0] = trans[0,1]
+    sVals[1] = trans[0,2]
+    sVals[2] = trans[0,3]
+
+
+    # Check if out of bounds #######################################################################
+    # TODO: Check if this is the correct approach
+
+    with hcl.if_(hcl.or_(sVals[0] < bounds[0,0], sVals[0] > bounds[0,1], sVals[1] < bounds[1,0], sVals[1] > bounds[1,1])):
+            rwd[0] = -400
+
+    # Check if collision ###########################################################################
+    # TODO
+
+    # Check if goal state ##########################################################################
+    
+    with hcl.else_():
+        dx  = hcl.scalar(0, "dx")
+        dy  = hcl.scalar(0, "dy")
+        mag = hcl.scalar(0, "mag")
+
+        dx[0] = sVals[0] - goal[0,0]
+        dy[0] = sVals[1] - goal[0,1]
+        with hcl.if_(dx[0] < 0):
+            dx[0] = goal[0,0] - sVals[0]
+        with hcl.if_(dy[0] < 0):
+            dy[0] = goal[0,1] - sVals[1]
+
+        mag[0] = hcl.tvm.intrin.sqrt((dx[0] * dx[0]) + (dy[0] * dy[0]))
+
+        with hcl.if_(hcl.and_(mag[0] <= 1, sVals[2] < goal[1,1], sVals[2] > goal[1,0])):
+            rwd[0] = 1000
+
+        # Else: standard move ######################################################################
         with hcl.else_():
-            rwd[0] += p
-    return rwd[0]
+            rwd[0] = 0
+        return rwd[0]
 
 
 
@@ -70,17 +107,18 @@ def updateQopt(i, j, k, a, iVals, sVals, Qopt, actions, intermeds, trans, interp
     
     # initialize Qopt[i,j,k,a] with the immediate reward
     r             = hcl.scalar(0, "r")
+    p             = hcl.scalar(0, "p")
     r[0]          = reward(sVals, actions[a], trans, bounds, goal)
     Qopt[i,j,k,a] = r[0]
 
     # maximize over successor Q-values
     with hcl.for_(0, trans.shape[0], name="si") as si:
-        p        = trans[si,0]
+        p[0]     = trans[si,0]
         sVals[0] = trans[si,1]
         sVals[1] = trans[si,2]
         sVals[2] = trans[si,3]
 
-        #NOTE: interpolation
+        #NOTE: nearest neighbour
         with hcl.if_(useNN[0] == 1):
             # obtain the nearest neighbour successor state
             stateToIndex(sVals, iVals, bounds, ptsEachDim)
@@ -88,33 +126,35 @@ def updateQopt(i, j, k, a, iVals, sVals, Qopt, actions, intermeds, trans, interp
             with hcl.if_(hcl.and_(iVals[0] < Qopt.shape[0], iVals[1] < Qopt.shape[1], iVals[2] < Qopt.shape[2])):
                 with hcl.if_(hcl.and_(iVals[0] >= 0, iVals[1] >= 0, iVals[2] >= 0)):
                     with hcl.for_(0, actions.shape[0], name="a_") as a_:
-                        with hcl.if_(r[0] + (gamma[0] * (p * Qopt[iVals[0],iVals[1],iVals[2],a_])) > Qopt[i,j,k,a]):
-                            Qopt[i,j,k,a] = r[0] + (gamma[0] * (p * Qopt[iVals[0],iVals[1],iVals[2],a_]))
+                        with hcl.if_( (r[0] + (gamma[0] * (p[0] * Qopt[iVals[0],iVals[1],iVals[2],a_]))) > Qopt[i,j,k,a]):
+                            # Takes into account the reward for taking an action
+                            Qopt[i,j,k,a] = r[0] + (gamma[0] * (p[0] * Qopt[iVals[0],iVals[1],iVals[2],a_]))
+
                     r[0] += Qopt[i,j,k,a]
 
-        #NOTE: nearest neighbour
-        with hcl.if_(useNN[0] == 0):
-            # obtain linear interpolation weightings
-            stateToIndexInterpolants(sVals, bounds, ptsEachDim, interpols)
-            # maximize over successor state Q-values
-            with hcl.for_(0, interpols.shape[0], name="ipl") as ipl:
-                iplWeight = interpols[ipl, 0]
-                iVals[0]  = interpols[ipl, 1]
-                iVals[1]  = interpols[ipl, 2]
-                iVals[2]  = interpols[ipl, 3]
+        # #NOTE: interpolation
+        # with hcl.if_(useNN[0] == 0):
+        #     # obtain linear interpolation weightings
+        #     stateToIndexInterpolants(sVals, bounds, ptsEachDim, interpols)
+        #     # maximize over successor state Q-values
+        #     with hcl.for_(0, interpols.shape[0], name="ipl") as ipl:
+        #         iplWeight = interpols[ipl, 0]
+        #         iVals[0]  = interpols[ipl, 1]
+        #         iVals[1]  = interpols[ipl, 2]
+        #         iVals[2]  = interpols[ipl, 3]
 
-                # if (ia, ij, ik) is within the state space, add its discounted value to action a
-                with hcl.if_(hcl.and_(iVals[0] < Qopt.shape[0], iVals[1] < Qopt.shape[1], iVals[2] < Qopt.shape[2])):
-                    with hcl.if_(hcl.and_(iVals[0] >= 0, iVals[1] >= 0, iVals[2] >= 0)):
-                        with hcl.for_(0, actions.shape[0], name="a_") as a_:
-                            intermeds[a_] = (gamma[0] * iplWeight * (p * Qopt[iVals[0],iVals[1],iVals[2],a_]))
+        #         # if (ia, ij, ik) is within the state space, add its discounted value to action a
+        #         with hcl.if_(hcl.and_(iVals[0] < Qopt.shape[0], iVals[1] < Qopt.shape[1], iVals[2] < Qopt.shape[2])):
+        #             with hcl.if_(hcl.and_(iVals[0] >= 0, iVals[1] >= 0, iVals[2] >= 0)):
+        #                 with hcl.for_(0, actions.shape[0], name="a_") as a_:
+        #                     intermeds[a_] = (gamma[0] * iplWeight * (p * Qopt[iVals[0],iVals[1],iVals[2],a_]))
             
-                # maximize over each possible action in intermeds to obtain the optimal value
-                with hcl.for_(0, intermeds.shape[0], name="r_") as r_:
-                    with hcl.if_(Qopt[i,j,k,a] < r[0] + intermeds[r_]):
-                        Qopt[i,j,k,a] = r[0] + intermeds[r_]
-                    intermeds[r_] = 0
-                r[0] = Qopt[i,j,k,a]
+        #         # maximize over each possible action in intermeds to obtain the optimal value
+        #         with hcl.for_(0, intermeds.shape[0], name="r_") as r_:
+        #             with hcl.if_(Qopt[i,j,k,a] < r[0] + intermeds[r_]):
+        #                 Qopt[i,j,k,a] = r[0] + intermeds[r_]
+        #             intermeds[r_] = 0
+        #         r[0] = Qopt[i,j,k,a]
 
 
 # Returns 0 if convergence has been reached
@@ -264,122 +304,122 @@ def value_iteration_3D():
                                     evaluateConvergence(newQ, oldQ, epsilon, reSweep)
                     count[0] += 1
 
-                # Perform value iteration by sweeping in direction 2
-                with hcl.Stage("Sweep_2"):
-                    # For all states
-                    with hcl.for_(1, Qopt.shape[0] + 1, name="i") as i:
-                        with hcl.for_(1, Qopt.shape[1] + 1, name="j") as j:
-                            with hcl.for_(1, Qopt.shape[2] + 1, name="k") as k:
-                                i2 = Qopt.shape[0] - i
-                                j2 = Qopt.shape[1] - j
-                                k2 = Qopt.shape[2] - k
+                # # Perform value iteration by sweeping in direction 2
+                # with hcl.Stage("Sweep_2"):
+                #     # For all states
+                #     with hcl.for_(1, Qopt.shape[0] + 1, name="i") as i:
+                #         with hcl.for_(1, Qopt.shape[1] + 1, name="j") as j:
+                #             with hcl.for_(1, Qopt.shape[2] + 1, name="k") as k:
+                #                 i2 = Qopt.shape[0] - i
+                #                 j2 = Qopt.shape[1] - j
+                #                 k2 = Qopt.shape[2] - k
 
-                                # For all actions
-                                with hcl.for_(0, Qopt.shape[3], name="a") as a:
-                                    oldQ[0] = Qopt[i2,j2,k2,a]
-                                    updateQopt(i2, j2, k2, a, iVals, sVals, Qopt, actions, intermeds, trans, interpols, gamma, bounds, goal, ptsEachDim, useNN)
-                                    newQ[0] = Qopt[i2,j2,k2,a]
-                                    evaluateConvergence(newQ, oldQ, epsilon, reSweep)
-                    count[0] += 1
+                #                 # For all actions
+                #                 with hcl.for_(0, Qopt.shape[3], name="a") as a:
+                #                     oldQ[0] = Qopt[i2,j2,k2,a]
+                #                     updateQopt(i2, j2, k2, a, iVals, sVals, Qopt, actions, intermeds, trans, interpols, gamma, bounds, goal, ptsEachDim, useNN)
+                #                     newQ[0] = Qopt[i2,j2,k2,a]
+                #                     evaluateConvergence(newQ, oldQ, epsilon, reSweep)
+                #     count[0] += 1
 
-                # Perform value iteration by sweeping in direction 3
-                with hcl.Stage("Sweep_3"):
-                    # For all states
-                    with hcl.for_(1, Qopt.shape[0] + 1, name="i") as i:
-                        with hcl.for_(0, Qopt.shape[1], name="j") as j:
-                            with hcl.for_(0, Qopt.shape[2], name="k") as k:
-                                i2 = Qopt.shape[0] - i
+                # # Perform value iteration by sweeping in direction 3
+                # with hcl.Stage("Sweep_3"):
+                #     # For all states
+                #     with hcl.for_(1, Qopt.shape[0] + 1, name="i") as i:
+                #         with hcl.for_(0, Qopt.shape[1], name="j") as j:
+                #             with hcl.for_(0, Qopt.shape[2], name="k") as k:
+                #                 i2 = Qopt.shape[0] - i
 
-                                # For all actions
-                                with hcl.for_(0, Qopt.shape[3], name="a") as a:
-                                    oldQ[0] = Qopt[i2,j,k,a]
-                                    updateQopt(i2, j, k, a, iVals, sVals, Qopt, actions, intermeds, trans, interpols, gamma, bounds, goal, ptsEachDim, useNN)
-                                    newQ[0] = Qopt[i2,j,k,a]
-                                    evaluateConvergence(newQ, oldQ, epsilon, reSweep)
-                    count[0] += 1
+                #                 # For all actions
+                #                 with hcl.for_(0, Qopt.shape[3], name="a") as a:
+                #                     oldQ[0] = Qopt[i2,j,k,a]
+                #                     updateQopt(i2, j, k, a, iVals, sVals, Qopt, actions, intermeds, trans, interpols, gamma, bounds, goal, ptsEachDim, useNN)
+                #                     newQ[0] = Qopt[i2,j,k,a]
+                #                     evaluateConvergence(newQ, oldQ, epsilon, reSweep)
+                #     count[0] += 1
 
-                # Perform value iteration by sweeping in direction 4
-                with hcl.Stage("Sweep_4"):
-                    # For all states
-                    with hcl.for_(0, Qopt.shape[0], name="i") as i:
-                        with hcl.for_(1, Qopt.shape[1] + 1, name="j") as j:
-                            with hcl.for_(0, Qopt.shape[2], name="k") as k:
-                                j2 = Qopt.shape[0] - j
+                # # Perform value iteration by sweeping in direction 4
+                # with hcl.Stage("Sweep_4"):
+                #     # For all states
+                #     with hcl.for_(0, Qopt.shape[0], name="i") as i:
+                #         with hcl.for_(1, Qopt.shape[1] + 1, name="j") as j:
+                #             with hcl.for_(0, Qopt.shape[2], name="k") as k:
+                #                 j2 = Qopt.shape[0] - j
 
-                                # For all actions
-                                with hcl.for_(0, Qopt.shape[3], name="a") as a:
-                                    oldQ[0] = Qopt[i,j2,k,a]
-                                    updateQopt(i, j2, k, a, iVals, sVals, Qopt, actions, intermeds, trans, interpols, gamma, bounds, goal, ptsEachDim, useNN)
-                                    newQ[0] = Qopt[i,j2,k,a]
-                                    evaluateConvergence(newQ, oldQ, epsilon, reSweep)
-                    count[0] += 1
+                #                 # For all actions
+                #                 with hcl.for_(0, Qopt.shape[3], name="a") as a:
+                #                     oldQ[0] = Qopt[i,j2,k,a]
+                #                     updateQopt(i, j2, k, a, iVals, sVals, Qopt, actions, intermeds, trans, interpols, gamma, bounds, goal, ptsEachDim, useNN)
+                #                     newQ[0] = Qopt[i,j2,k,a]
+                #                     evaluateConvergence(newQ, oldQ, epsilon, reSweep)
+                #     count[0] += 1
 
-                # Perform value iteration by sweeping in direction 5
-                with hcl.Stage("Sweep_5"):
-                    # For all states
-                    with hcl.for_(0, Qopt.shape[0], name="i") as i:
-                        with hcl.for_(0, Qopt.shape[1], name="j") as j:
-                            with hcl.for_(1, Qopt.shape[2] + 1, name="k") as k:
-                                k2 = Qopt.shape[0] - k
+                # # Perform value iteration by sweeping in direction 5
+                # with hcl.Stage("Sweep_5"):
+                #     # For all states
+                #     with hcl.for_(0, Qopt.shape[0], name="i") as i:
+                #         with hcl.for_(0, Qopt.shape[1], name="j") as j:
+                #             with hcl.for_(1, Qopt.shape[2] + 1, name="k") as k:
+                #                 k2 = Qopt.shape[0] - k
 
-                                # For all actions
-                                with hcl.for_(0, Qopt.shape[3], name="a") as a:
-                                    oldQ[0] = Qopt[i,j,k2,a]
-                                    updateQopt(i, j, k2, a, iVals, sVals, Qopt, actions, intermeds, trans, interpols, gamma, bounds, goal, ptsEachDim, useNN)
-                                    newQ[0] = Qopt[i,j,k2,a]
-                                    evaluateConvergence(newQ, oldQ, epsilon, reSweep)
-                    count[0] += 1
+                #                 # For all actions
+                #                 with hcl.for_(0, Qopt.shape[3], name="a") as a:
+                #                     oldQ[0] = Qopt[i,j,k2,a]
+                #                     updateQopt(i, j, k2, a, iVals, sVals, Qopt, actions, intermeds, trans, interpols, gamma, bounds, goal, ptsEachDim, useNN)
+                #                     newQ[0] = Qopt[i,j,k2,a]
+                #                     evaluateConvergence(newQ, oldQ, epsilon, reSweep)
+                #     count[0] += 1
 
-                # Perform value iteration by sweeping in direction 6
-                with hcl.Stage("Sweep_6"):
-                    # For all states
-                    with hcl.for_(1, Qopt.shape[0] + 1, name="i") as i:
-                        with hcl.for_(1, Qopt.shape[1] + 1, name="j") as j:
-                            with hcl.for_(0, Qopt.shape[2], name="k") as k:
-                                i2 = Qopt.shape[0] - i
-                                j2 = Qopt.shape[0] - j
+                # # Perform value iteration by sweeping in direction 6
+                # with hcl.Stage("Sweep_6"):
+                #     # For all states
+                #     with hcl.for_(1, Qopt.shape[0] + 1, name="i") as i:
+                #         with hcl.for_(1, Qopt.shape[1] + 1, name="j") as j:
+                #             with hcl.for_(0, Qopt.shape[2], name="k") as k:
+                #                 i2 = Qopt.shape[0] - i
+                #                 j2 = Qopt.shape[0] - j
 
-                                # For all actions
-                                with hcl.for_(0, Qopt.shape[3], name="a") as a:
-                                    oldQ[0] = Qopt[i2,j2,k,a]
-                                    updateQopt(i2, j2, k, a, iVals, sVals, Qopt, actions, intermeds, trans, interpols, gamma, bounds, goal, ptsEachDim, useNN)
-                                    newQ[0] = Qopt[i2,j2,k,a]
-                                    evaluateConvergence(newQ, oldQ, epsilon, reSweep)
-                    count[0] += 1
+                #                 # For all actions
+                #                 with hcl.for_(0, Qopt.shape[3], name="a") as a:
+                #                     oldQ[0] = Qopt[i2,j2,k,a]
+                #                     updateQopt(i2, j2, k, a, iVals, sVals, Qopt, actions, intermeds, trans, interpols, gamma, bounds, goal, ptsEachDim, useNN)
+                #                     newQ[0] = Qopt[i2,j2,k,a]
+                #                     evaluateConvergence(newQ, oldQ, epsilon, reSweep)
+                #     count[0] += 1
 
-                # Perform value iteration by sweeping in direction 7
-                with hcl.Stage("Sweep_7"):
-                    # For all states
-                    with hcl.for_(1, Qopt.shape[0] + 1, name="i") as i:
-                        with hcl.for_(0, Qopt.shape[1], name="j") as j:
-                            with hcl.for_(1, Qopt.shape[2] + 1, name="k") as k:
-                                i2 = Qopt.shape[0] - i
-                                k2 = Qopt.shape[0] - k
+                # # Perform value iteration by sweeping in direction 7
+                # with hcl.Stage("Sweep_7"):
+                #     # For all states
+                #     with hcl.for_(1, Qopt.shape[0] + 1, name="i") as i:
+                #         with hcl.for_(0, Qopt.shape[1], name="j") as j:
+                #             with hcl.for_(1, Qopt.shape[2] + 1, name="k") as k:
+                #                 i2 = Qopt.shape[0] - i
+                #                 k2 = Qopt.shape[0] - k
 
-                                # For all actions
-                                with hcl.for_(0, Qopt.shape[3], name="a") as a:
-                                    oldQ[0] = Qopt[i2,j,k2,a]
-                                    updateQopt(i2, j, k2, a, iVals, sVals, Qopt, actions, intermeds, trans, interpols, gamma, bounds, goal, ptsEachDim, useNN)
-                                    newQ[0] = Qopt[i2,j,k2,a]
-                                    evaluateConvergence(newQ, oldQ, epsilon, reSweep)
-                    count[0] += 1
+                #                 # For all actions
+                #                 with hcl.for_(0, Qopt.shape[3], name="a") as a:
+                #                     oldQ[0] = Qopt[i2,j,k2,a]
+                #                     updateQopt(i2, j, k2, a, iVals, sVals, Qopt, actions, intermeds, trans, interpols, gamma, bounds, goal, ptsEachDim, useNN)
+                #                     newQ[0] = Qopt[i2,j,k2,a]
+                #                     evaluateConvergence(newQ, oldQ, epsilon, reSweep)
+                #     count[0] += 1
 
-                # Perform value iteration by sweeping in direction 8
-                with hcl.Stage("Sweep_8"):
-                    # For all states
-                    with hcl.for_(0, Qopt.shape[0], name="i") as i:
-                        with hcl.for_(1, Qopt.shape[1] + 1, name="j") as j:
-                            with hcl.for_(1, Qopt.shape[2] + 1, name="k") as k:
-                                j2 = Qopt.shape[0] - j
-                                k2 = Qopt.shape[0] - k
+                # # Perform value iteration by sweeping in direction 8
+                # with hcl.Stage("Sweep_8"):
+                #     # For all states
+                #     with hcl.for_(0, Qopt.shape[0], name="i") as i:
+                #         with hcl.for_(1, Qopt.shape[1] + 1, name="j") as j:
+                #             with hcl.for_(1, Qopt.shape[2] + 1, name="k") as k:
+                #                 j2 = Qopt.shape[0] - j
+                #                 k2 = Qopt.shape[0] - k
 
-                                # For all actions
-                                with hcl.for_(0, Qopt.shape[3], name="a") as a:
-                                    oldQ[0] = Qopt[i,j2,k2,a]
-                                    updateQopt(i, j2, k2, a, iVals, sVals, Qopt, actions, intermeds, trans, interpols, gamma, bounds, goal, ptsEachDim, useNN)
-                                    newQ[0] = Qopt[i,j2,k2,a]
-                                    evaluateConvergence(newQ, oldQ, epsilon, reSweep)
-                    count[0] += 1
+                #                 # For all actions
+                #                 with hcl.for_(0, Qopt.shape[3], name="a") as a:
+                #                     oldQ[0] = Qopt[i,j2,k2,a]
+                #                     updateQopt(i, j2, k2, a, iVals, sVals, Qopt, actions, intermeds, trans, interpols, gamma, bounds, goal, ptsEachDim, useNN)
+                #                     newQ[0] = Qopt[i,j2,k2,a]
+                #                     evaluateConvergence(newQ, oldQ, epsilon, reSweep)
+                #     count[0] += 1
 
 
     ###################################### SETUP PLACEHOLDERS ######################################
@@ -390,14 +430,14 @@ def value_iteration_3D():
     # NOTE: trans is a tensor with size = maximum number of transitions
     # NOTE: intermeds must have size  [# possible actions]
     # NOTE: transition must have size [# possible outcomes, #state dimensions + 1]
-    Qopt       = hcl.placeholder(tuple([10, 10, 10, 3]), name="Qopt", dtype=hcl.Float())
+    Qopt       = hcl.placeholder(tuple([25, 25, 9, 81]), name="Qopt", dtype=hcl.Float())
     gamma      = hcl.placeholder((0,), "gamma")
     count      = hcl.placeholder((0,), "count")
     epsilon    = hcl.placeholder((0,), "epsilon")
     actions    = hcl.placeholder(tuple(_actions.shape), name="actions", dtype=hcl.Float())
     intermeds  = hcl.placeholder(tuple([_actions.shape[0]]), name="intermeds", dtype=hcl.Float())
     trans      = hcl.placeholder(tuple(_trans.shape), name="successors", dtype=hcl.Float())
-    bounds     = hcl.placeholder(tuple([3, 2]), name="bounds", dtype=hcl.Float())
+    bounds     = hcl.placeholder(tuple(_bounds.shape), name="bounds", dtype=hcl.Float())
     goal       = hcl.placeholder(tuple(_goal.shape), name="goal", dtype=hcl.Float())
     ptsEachDim = hcl.placeholder(tuple([3]), name="ptsEachDim", dtype=hcl.Float())
     sVals      = hcl.placeholder(tuple([3]), name="sVals", dtype=hcl.Float())
@@ -415,8 +455,8 @@ def value_iteration_3D():
     ########################################## INITIALIZE ##########################################
 
     # Convert the python array to hcl type array
-    Q_opt      = hcl.asarray(np.zeros([10, 10, 10, 3]))
-    intermeds = hcl.asarray(np.ones(_actions.shape[0]))
+    Q_opt      = hcl.asarray(np.zeros([25, 25, 9, 81]))
+    intermeds  = hcl.asarray(np.ones(_actions.shape[0]))
     trans      = hcl.asarray(_trans)
     gamma      = hcl.asarray(_gamma)
     epsilon    = hcl.asarray(_epsilon)
@@ -432,7 +472,6 @@ def value_iteration_3D():
     # required for linear interpolation
     interpols  = hcl.asarray( np.zeros([8, 4]) )
     useNN      = hcl.asarray(_useNN)
-
 
     ######################################### PARALLELIZE ##########################################
 
