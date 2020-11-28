@@ -41,11 +41,13 @@ def main():
     l0  = hcl.asarray(my_shape)
     probe = hcl.asarray(np.zeros(tuple(g.pts_each_dim)))
 
-    constrainedDefined = True #Juan
+    # constrainedDefined = True #Juan
+    constrainedDefined = False
     #V1_old = np.memmap('V_1.npy',dtype='float32',mode='w+',shape=tuple(g.pts_each_dim)) #Juan
 
     if constrainedDefined == False:
         G = hcl.asarray(np.zeros(tuple(g.pts_each_dim)))
+        TTR = hcl.asarray(100 * (my_shape > 0) * np.ones(tuple(g.pts_each_dim)))
         # Juan: it should be -inf?
     else:
         G = hcl.asarray(constraint_values)
@@ -97,8 +99,8 @@ def main():
         #tNow = tau[i-1]
         t_minh= hcl.asarray(np.array((tNow, tau[i])))
         V1_old = V_1.asnumpy() #juan: it was added to check the convergence
-        while tNow <= tau[i] - 1e-4:
-             # Start timing
+        while tNow <= tau[i] - 1e-4: #and np.max(np.abs(V_1.asnumpy()-V1_old).any())>=1e-4:
+            # Start timing
              start = time.time()
 
              print("Started running\n")
@@ -107,7 +109,7 @@ def main():
              if g.dims == 3:
                  solve_pde(V_1, V_0, list_x1, list_x2, list_x3, t_minh, l0, probe)
              elif g.dims == 4:
-                solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, t_minh, l0)
+                solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, t_minh, l0,TTR)
              elif g.dims == 5:
                 solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, list_x5 ,t_minh, l0, G, TTR)
              elif g.dims == 6:
@@ -121,8 +123,8 @@ def main():
              # Some information printing
              print(t_minh)
              print("Computational time to integrate (s): {:.5f}".format(time.time() - start))
-        print("Max diff. from previous time step: {}".format(np.max(np.abs(V_1.asnumpy()-V1_old))))
-        print("Avg diff. from previous time step: {}".format(np.mean(np.abs(V_1.asnumpy()-V1_old))))
+             print("Max diff. from previous time step: {}".format(np.max(np.abs(V_1.asnumpy()-V1_old))))
+             print("Avg diff. from previous time step: {}".format(np.mean(np.abs(V_1.asnumpy()-V1_old))))
 
 
     # Time info printing
@@ -138,11 +140,13 @@ def main():
     #print(V_1.asnumpy())
 
     #sio.savemat('dataV.mat', {'dataV':V_1.asnumpy()})
-    sio.savemat('optimized_dubins_dubins_safe_V_circle_Radius_2_Speed_5_SafetyTime_5_2_max_turn_rate_pi_3.mat',
-            {'dataTTR':TTR.asnumpy()})
+    # sio.savemat('optimized_dubins_dubins_safe_V_circle_Radius_2_Speed_5_SafetyTime_5_2_max_turn_rate_pi_3.mat',
+    #         {'dataTTR':TTR.asnumpy()})
+    np.save('TTR_grid_4d_20_limit.npy', TTR.asnumpy())
     ##################### PLOTTING #####################
     #if args.plot:
     #    plot_isosurface(g, V_1.asnumpy(), [0, 1, 2])
+
 
 if __name__ == '__main__':
   main()
