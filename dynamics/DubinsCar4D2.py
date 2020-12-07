@@ -1,16 +1,35 @@
 import heterocl as hcl
 import computeGraphs
 import math
-""" 4D DUBINS CAR DYNAMICS IMPLEMENTATION 
- x_dot = v * cos(theta)
- y_dot = v * sin(theta)
- v_dot = a
- theta_dot = w
- """
-class DubinsCar4D:
-    def __init__(self, x=[0,0,0,0], uMin = [-3,-math.pi/12], uMax = [3,math.pi/12], dMin = [-0.0,-0.0],
-                 dMax=[0.0, 0.0], uMode="max", dMode="min"):
-        """Creates a Dublin Car with the following states: 
+
+"""
+4D DUBINS CAR DYNAMICS IMPLEMENTATION
+used to model dynamics of Jetracer
+
+x_dot = v * cos(theta)
+y_dot = v * sin(theta)
+v_dot = a
+theta_dot = v * tan(delta) / L
+
+delta := steering angle
+L := wheelbase of car
+
+(6.2) https://arxiv.org/pdf/1711.03449.pdf
+"""
+
+
+class DubinsCar4D2:
+    def __init__(
+        self,
+        x=[0, 0, 0, 0],
+        uMin=[-1.5, -math.pi / 18],
+        uMax=[1.5, math.pi / 18],
+        dMin=[0.0, 0.0],
+        dMax=[0.0, 0.0],
+        uMode="max",
+        dMode="min",
+    ):
+        """Creates a Dublin Car with the following states:
            X position, Y position, acceleration, heading
 
            The first element of user control and disturbance is acceleration
@@ -20,7 +39,7 @@ class DubinsCar4D:
         Args:
             x (list, optional): Initial state . Defaults to [0,0,0,0].
             uMin (list, optional): Lowerbound of user control. Defaults to [-1,-1].
-            uMax (list, optional): Upperbound of user control. 
+            uMax (list, optional): Upperbound of user control.
                                    Defaults to [1,1].
             dMin (list, optional): Lowerbound of disturbance to user control, . Defaults to [-0.25,-0.25].
             dMax (list, optional): Upperbound of disturbance to user control. Defaults to [0.25,0.25].
@@ -28,7 +47,7 @@ class DubinsCar4D:
                                    * "min" : have optimal control reach goal
                                    * "max" : have optimal control avoid goal
                                    Defaults to "min".
-            dMode (str, optional): Accepts wiehter "min" or "max" and should be opposite of uMode. 
+            dMode (str, optional): Accepts whether "min" or "max" and should be opposite of uMode.
                                    Defaults to "max".
         """
         self.x = x
@@ -36,12 +55,12 @@ class DubinsCar4D:
         self.uMin = uMin
         self.dMax = dMax
         self.dMin = dMin
-        assert(uMode in ["min", "max"])
+        assert uMode in ["min", "max"]
         self.uMode = uMode
         if uMode == "min":
-            assert(dMode == "max")
+            assert dMode == "max"
         else:
-            assert(dMode == "min")
+            assert dMode == "min"
         self.dMode = dMode
 
     def opt_ctrl(self, t, state, spat_deriv):
@@ -54,15 +73,15 @@ class DubinsCar4D:
         # System dynamics
         # x_dot     = v * cos(theta) + d_1
         # y_dot     = v * sin(theta) + d_2
-        # v_dot     = a
-        # theta_dot = w
+        # v_dot = a
+        # theta_dot = v * tan(delta) / L
 
         # Graph takes in 4 possible inputs, by default, for now
         opt_a = hcl.scalar(self.uMax[0], "opt_a")
         opt_w = hcl.scalar(self.uMax[1], "opt_w")
         # Just create and pass back, even though they're not used
-        in3   = hcl.scalar(0, "in3")
-        in4   = hcl.scalar(0, "in4")
+        in3 = hcl.scalar(0, "in3")
+        in4 = hcl.scalar(0, "in4")
 
         if self.uMode == "min":
             with hcl.if_(spat_deriv[2] > 0):
@@ -75,7 +94,7 @@ class DubinsCar4D:
             with hcl.if_(spat_deriv[3] < 0):
                 opt_w[0] = self.uMin[1]
         # return 3, 4 even if you don't use them
-        return (opt_a[0] ,opt_w[0], in3[0], in4[0])
+        return (opt_a[0], opt_w[0], in3[0], in4[0])
 
     def optDstb(self, spat_deriv):
         """
@@ -88,54 +107,31 @@ class DubinsCar4D:
         # Just create and pass back, even though they're not used
         d3 = hcl.scalar(0, "d3")
         d4 = hcl.scalar(0, "d4")
-        #with hcl.if_(self.dMode == "max"):
-        if self.dMode == "max":
-            with hcl.if_(spat_deriv[0] > 0):
-                d1[0] = self.dMax[0]
-            with hcl.elif_(spat_deriv[0] < 0):
-                d1[0] = self.dMin[0]
-            with hcl.if_(spat_deriv[1] > 0):
-                d2[0] = self.dMax[1]
-            with hcl.elif_(spat_deriv[1] < 0):
-                d2[0] = self.dMin[1]
-        else:
-            with hcl.if_(spat_deriv[0] > 0):
-                d1[0] = self.dMin[0]
-            with hcl.elif_(spat_deriv[0] < 0):
-                d1[0] = self.dMax[0]
-            with hcl.if_(spat_deriv[1] > 0):
-                d2[0] = self.dMin[1]
-            with hcl.elif_(spat_deriv[1] < 0):
-                d2[0] = self.dMax[1]
 
+        with hcl.if_(self.dMode == "max"):
+            with hcl.if_(spat_deriv[0] > 0):
+                d1[0] = self.dMax[0]
+            with hcl.elif_(spat_deriv[0] < 0):
+                d1[0] = self.dMin[0]
+            with hcl.if_(spat_deriv[1] > 0):
+                d2[0] = self.dMax[1]
+            with hcl.elif_(spat_deriv[1] < 0):
+                d2[0] = self.dMin[1]
+        with hcl.else_():
+            with hcl.if_(spat_deriv[0] > 0):
+                d1[0] = self.dMin[0]
+            with hcl.elif_(spat_deriv[0] < 0):
+                d1[0] = self.dMax[0]
+            with hcl.if_(spat_deriv[1] > 0):
+                d2[0] = self.dMin[1]
+            with hcl.elif_(spat_deriv[1] < 0):
+                d2[0] = self.dMax[1]
 
         return (d1[0], d2[0], d3[0], d4[0])
 
-    # def dynamics(self, t, state, uOpt, dOpt):
-    #     x_dot = hcl.scalar(0, "x_dot")
-    #     y_dot = hcl.scalar(0, "y_dot")
-    #     v_dot = hcl.scalar(0, "v_dot")
-    #     theta_dot = hcl.scalar(0, "theta_dot")
-    #
-    #     x_dot[0] = state[2] * hcl.cos(state[3]) + dOpt[0]
-    #     y_dot[0] = state[2] * hcl.sin(state[3]) + dOpt[1]
-    #     v_dot[0] = uOpt[0]
-    #     theta_dot[0] = uOpt[1]
-    #
-    #     return (x_dot[0], y_dot[0], v_dot[0] ,theta_dot[0])
-
-    """ 4D DUBINS CAR DYNAMICS IMPLEMENTATION 
-     x_dot = v * cos(theta)
-     y_dot = v * sin(theta)
-     v_dot = a
-     theta_dot = v * tan(delta) / L
-    delta := steering angle
-    L := wheelbase of car
-    6.2
-    https://arxiv.org/pdf/1711.03449.pdf """
-
     def dynamics(self, t, state, uOpt, dOpt):
-        L = hcl.scalar(0.26, "L")
+        # wheelbase of Tamiya TT02
+        L = hcl.scalar(0.3, "L")
         x_dot = hcl.scalar(0, "x_dot")
         y_dot = hcl.scalar(0, "y_dot")
         v_dot = hcl.scalar(0, "v_dot")
@@ -144,6 +140,6 @@ class DubinsCar4D:
         x_dot[0] = state[2] * hcl.cos(state[3]) + dOpt[0]
         y_dot[0] = state[2] * hcl.sin(state[3]) + dOpt[1]
         v_dot[0] = uOpt[0]
-        theta_dot[0] = state[2] * (hcl.sin(uOpt[1]) /hcl.cos(uOpt[1]) ) / L[0]
+        theta_dot[0] = state[2] * (hcl.sin(uOpt[1]) / hcl.cos(uOpt[1])) / L
 
         return (x_dot[0], y_dot[0], v_dot[0], theta_dot[0])

@@ -158,14 +158,14 @@ def graph_4D():
     V_init = hcl.placeholder(tuple(g.pts_each_dim), name="V_init", dtype=hcl.Float())
     l0 = hcl.placeholder(tuple(g.pts_each_dim), name="l0", dtype=hcl.Float())
     t = hcl.placeholder((2,), name="t", dtype=hcl.Float())
-    #probe = hcl.placeholder(tuple(g.pts_each_dim), name="probe", dtype=hcl.Float())
+    probe = hcl.placeholder(tuple(g.pts_each_dim), name="probe", dtype=hcl.Float())
 
     # Positions vector
     x1 = hcl.placeholder((g.pts_each_dim[0],), name="x1", dtype=hcl.Float())
     x2 = hcl.placeholder((g.pts_each_dim[1],), name="x2", dtype=hcl.Float())
     x3 = hcl.placeholder((g.pts_each_dim[2],), name="x3", dtype=hcl.Float())
     x4 = hcl.placeholder((g.pts_each_dim[3],), name="x4", dtype=hcl.Float())
-    def graph_create(V_new, V_init, x1, x2, x3, x4, t, l0):
+    def graph_create(V_new, V_init, x1, x2, x3, x4, t, l0, probe):
         # Specify intermediate tensors
         deriv_diff1 = hcl.compute(V_init.shape, lambda *x:0, "deriv_diff1")
         deriv_diff2 = hcl.compute(V_init.shape, lambda *x:0, "deriv_diff2")
@@ -261,6 +261,7 @@ def graph_4D():
                             dV_dx3[0] = (dV_dx3_L + dV_dx3_R) / 2
                             dV_dx4[0] = (dV_dx4_L + dV_dx4_R) / 2
 
+                            #probe[i,j,k,l] = dV_dx2[0]
                             # Find optimal control
                             uOpt = my_object.opt_ctrl(t, (x1[i], x2[j], x3[k], x4[l]),
                                                       (dV_dx1[0], dV_dx2[0], dV_dx3[0], dV_dx4[0]))
@@ -274,9 +275,9 @@ def graph_4D():
                             # Calculate Hamiltonian terms:
                             V_new[i, j, k, l] = -(
                                         dx1_dt * dV_dx1[0] + dx2_dt * dV_dx2[0] + dx3_dt * dV_dx3[0] + dx4_dt * dV_dx4[0])
-
                             # Debugging
                             # V_new[i, j, k, l] = dV_dx2[0]
+                            probe[i, j, k, l] = V_init[i, j, k, l]
 
                             # Get derivMin
                             with hcl.if_(dV_dx1_L[0] < min_deriv1[0]):
@@ -447,8 +448,12 @@ def graph_4D():
                                         deriv_diff1[i, j, k, l] * alpha1[0] + deriv_diff2[i, j, k, l] * alpha2[0] + deriv_diff3[
                                     i, j, k, l] * alpha3[0] + deriv_diff4[i, j, k, l] * alpha4[0])
                             #probe[i, j, k, l] = alpha1[0]
+                            #V_init[i, j, k, l] + 0.00749716 * V_new[i,j,k,l]
+
                             # Finally
                             V_new[i, j, k, l] = -(V_new[i, j, k, l] - diss[0])
+                            #probe[i, j, k, l] = V_new[i, j, k, l]*0.00749716
+                            #probe[i, j, k, l] = V_init[i, j, k, l] + V_new[i, j, k, l] *0.00749716
                             # Get maximum alphas in each dimension
 
                             # Calculate alphas
@@ -465,7 +470,6 @@ def graph_4D():
         delta_t = hcl.compute((1,), lambda x: step_bound(), name="delta_t")
         # Integrate
         result = hcl.update(V_new, lambda i, j, k, l: V_init[i, j, k, l] + V_new[i, j, k, l] * delta_t[0])
-
         # Different computation method check
         if compMethod == 'maxVWithV0':
             result = hcl.update(V_new, lambda i, j, k, l: maxVWithV0(i, j, k, l))
@@ -479,7 +483,7 @@ def graph_4D():
         # Copy V_new to V_init
         hcl.update(V_init, lambda i, j, k, l: V_new[i, j, k, l])
         return result
-    s = hcl.create_schedule([V_f, V_init, x1, x2, x3, x4, t, l0], graph_create)
+    s = hcl.create_schedule([V_f, V_init, x1, x2, x3, x4, t, l0, probe], graph_create)
     ##################### CODE OPTIMIZATION HERE ###########################
     print("Optimizing\n")
 

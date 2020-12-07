@@ -13,6 +13,7 @@ class Grid:
             self.max[dim] = self.min[dim] + (self.max[dim] - self.min[dim]) * (1 - 1/self.pts_each_dim[dim])
         self.dx = (self.max - self.min) / (self.pts_each_dim - 1.0)
 
+        print(self.dx)
         """
         Below is re-shaping the self.vs so that we can make use of broadcasting
         self.vs[i] is reshape into (1,1, ... , pts_each_dim[i], ..., 1) such that pts_each_dim[i] is used in ith position

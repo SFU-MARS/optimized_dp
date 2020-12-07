@@ -30,7 +30,7 @@ def main():
     args = parser.parse_args()
 
     hcl.init()
-    hcl.config.init_dtype = hcl.Float()
+    hcl.config.init_dtype = hcl.Float(32)
 
     ################# INITIALIZE DATA TO BE INPUT INTO EXECUTABLE ##########################
 
@@ -39,7 +39,7 @@ def main():
     V_0 = hcl.asarray(my_shape)
     V_1 = hcl.asarray(np.zeros(tuple(g.pts_each_dim)))
     l0  = hcl.asarray(my_shape)
-    #probe = hcl.asarray(np.zeros(tuple(g.pts_each_dim)))
+    probe = hcl.asarray(np.zeros(tuple(g.pts_each_dim)))
     #obstacle = hcl.asarray(cstraint_values)
 
     list_x1 = np.reshape(g.vs[0], g.pts_each_dim[0])
@@ -98,7 +98,7 @@ def main():
              if g.dims == 3:
                 solve_pde(V_1, V_0, list_x1, list_x2, list_x3, t_minh, l0)
              if g.dims == 4:
-                solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, t_minh, l0)
+                solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, t_minh, l0, probe)
              if g.dims == 5:
                 solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, list_x5 ,t_minh, l0)
              if g.dims == 6:
@@ -120,10 +120,10 @@ def main():
              print("Max error: {}".format(err))
              print("average_err: {}".format(average_err))
              # Check convergence
-             if err < 1e-3:
-                print("Converged in {} iterations".format(iter))
-                plot_isosurface(g, V_1.asnumpy(), [0, 1, 3], 19)
-                exit()
+             #if err < 1e-3:
+             #   print("Converged in {} iterations".format(iter))
+             #   plot_isosurface(g, V_1.asnumpy(), [0, 1, 3], 19)
+             #   exit()
 
 
 
@@ -132,15 +132,36 @@ def main():
     print("Total kernel time (s): {:.5f}".format(execution_time))
     print("Finished solving\n")
 
+    # Debug mode
+    probe = probe.asnumpy()
+    #print(probe[0, 0, 0, 0])
+    #print(probe[1, 14, 0, 0])
+
+    #print(probe[1, 14, 1, 12])
+    #print(probe[0, 13, 1, 12])
+    #print(probe[0, 15, 1, 12])
+
+
+    #test = V_1.asnumpy()
+    #print(test[0, 14, 1, 12])
+
     # V1 is the final value array, fill in anything to use it
     # e.g. np.save("final_values", V_1.asnumpy())
-    np.save("V_at_05sec.npy", V_1.asnumpy())
+    np.save("expected_result.npy", V_1.asnumpy())
+    print(np.min(np.abs(V_1.asnumpy())))
+    print(np.max(np.abs(V_1.asnumpy())))
 
+    my_V = np.load("scenario_3_apart.npy")
+    print("Max error {}".format(np.max(np.abs(my_V - V_1.asnumpy()))))
+    print("Min error {}".format(np.min(np.abs(my_V - V_1.asnumpy()))))
+    print("Average error {}".format(np.sum(np.abs(my_V - V_1.asnumpy()))/(60*60*36*20)))
 
     ##################### PLOTTING #####################
     if args.plot:
         # plot Value table when speed is maximum
-        plot_isosurface(g, V_1.asnumpy(), [0, 1, 3], 19)
+        plot_isosurface(g, V_1.asnumpy(), [0, 1, 3], 10)
+        #plot_isosurface(g, my_V, [0, 1, 3], 10)
+
 
 if __name__ == '__main__':
   main()
