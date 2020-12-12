@@ -3,6 +3,7 @@
 *.png
 .ipynb_checkpoints
 .vscode
+/VItest
 /value_matrix_car_3D_2
 /hcl_value_matrix_test
 /valueIteration/3D_value_iteration_francis.py

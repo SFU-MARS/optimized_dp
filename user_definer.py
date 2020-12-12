@@ -1,68 +1,49 @@
 import numpy as np
-from Grid.GridProcessing import Grid
-from Shapes.ShapesFunctions import *
-
-# Specify the  file that includes dynamic systems
-from dynamics.Humannoid6D_sys1 import *
-from dynamics.DubinsCar4D import *
-import scipy.io as sio
-
 import math
-
-""" USER INTERFACES
-- Define grid
-
-- Generate initial values for grid using shape functions
-
-- Time length for computations
-
-- Run
-"""
-
-# Grid field in this order: min_range, max_range, number of dims, grid dimensions, list of periodic dim: starting at 0
-"""g = grid(np.array([-0.5, -1.0, 0.5, -2.0, -math.pi/2, -8.0]), np.array([0.5, 1.0, 1.5, 2.0, math.pi/2, 8.0]), 6, np.array([27, 26, 27, 26, 27, 26]))
-
-# Define my object
-my_car = Humanoid_6D()
-
-# Use the grid to initialize initial value function
-Initial_value_f = Rectangle6D(g)
-
-# Look-back length and time step
-lookback_length = 2.0
-t_step = 0.05
-
-tau = np.arange(start = 0, stop = lookback_length + t_step, step = t_step)
-print("Welcome to optimized_dp \n")
-
-# Use the following variable to specify the characteristics of computation
-compMethod = "minVWithVInit"
-my_object  = my_car
-my_shape = Initial_value_f """
-
-g = Grid(np.array([-5.0, -5.0, -1.0, -math.pi]), np.array([5.0, 5.0, 1.0, math.pi]), 4, np.array([40, 40, 50, 50]), [3])
-
-i =  g.vs[1][(0,20,0,0)]
-print(np.shape(i))
-print(i)
-
-# Define my object
-my_car = DubinsCar4D()
-
-# Use the grid to initialize initial value function
-Initial_value_f = CylinderShape(g, [3,4], np.zeros(4), 1)
-
-# Look-back lenght and time step
-lookback_length = 2.0
-t_step = 0.05
-
-small_number = 1e-5
-tau = np.arange(start = 0, stop = lookback_length + small_number, step = t_step)
-print("Welcome to optimized_dp \n")
-
-# Use the following variable to specify the characteristics of computation
-compMethod = "none"
-my_object  = my_car
-my_shape = Initial_value_f
+import os
 
 
+_bounds     = np.array([[-5.0, 5.0],[-5.0, 5.0],[-3.141592653589793, 3.141592653589793]])
+_ptsEachDim = np.array([25, 25, 9])
+_goal       = np.array([[3.5, 3.5], [1.5707, 2.3562]]) 
+
+# set _actions based on ranges and number of steps
+# format: range(lower bound, upper bound, number of steps)
+vValues  = np.linspace(-2, 2, 9)
+wValues  = np.linspace(-1, 1, 9)
+_actions = []
+for i in vValues:
+    for j in wValues:
+        _actions.append((i,j))
+_actions = np.array(_actions)
+
+_gamma      = np.array([0.93])
+_epsilon    = np.array([.3])
+_maxIters   = np.array([500])
+_trans      = np.zeros([1, 4]) # size: [maximum number of transition states available x 4]
+_useNN      = np.array([1])
+
+def writeResults(V, dir_path, file_name, just_values=False):
+    # Create directory for results if one does not exist
+    print("\nRecording results")
+    try:    
+        os.mkdir(dir_path)
+        print("Created directory: ", dir_path)
+    except: 
+        print("Writing to: '", dir_path, "'")
+    # Open file and write results
+    f = open(dir_path + file_name, "w")
+    for k in range(V.shape[2]):
+        for i in range(V.shape[0]):
+            for j in range(V.shape[1]):
+                s = ""
+                if not just_values:
+                    si = (( i / (_ptsEachDim[0] - 1) ) * (_bounds[0,1] - _bounds[0,0])) + _bounds[0,0]
+                    sj = (( j / (_ptsEachDim[1] - 1) ) * (_bounds[1,1] - _bounds[1,0])) + _bounds[1,0]
+                    sk = (( k / (_ptsEachDim[2] - 1) ) * (_bounds[2,1] - _bounds[2,0])) + _bounds[2,0]
+                    state = ("{:.4f}".format(si), "{:.4f}".format(sj), "{:.4f}".format(sk))
+                    s = str(state) + "   " + str("{:.4f}".format(V[(i,j,k)])) + '\n'
+                else:
+                    s = str("{:.4f}".format(V[(i,j,k)])) + ',\n'
+                f.write(s)
+    print("Finished recording results")
