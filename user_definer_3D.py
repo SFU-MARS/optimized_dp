@@ -21,7 +21,8 @@ _gamma      = np.array([0.93])
 _epsilon    = np.array([.3])
 _maxIters   = np.array([500])
 _trans      = np.zeros([1, 4]) # size: [maximum number of transition states available x 4]
-_useNN      = np.array([1])
+_useNN      = np.array([0])
+_fillVal    = np.array([-400])
 
 def writeResults(V, dir_path, file_name, just_values=False):
     # Create directory for results if one does not exist
