@@ -6,69 +6,6 @@ import user_definer_3D as UD
 
 
 
-###################################### USER-DEFINED FUNCTIONS ######################################
-# TODO: declare the trans vector inside the transition function
-
-
-# Given state and action, return successor states and their probabilities
-# sVals:  the coordinates of state
-# bounds: the lower and upper limits of the state space in each dimension
-# trans:  holds each successor state and the probability of reaching that state
-def transition(sVals, action, bounds, trans, goal):
-    dx  = hcl.scalar(0, "dx")
-    dy  = hcl.scalar(0, "dy")
-    mag = hcl.scalar(0, "mag")
-
-    # Check if moving from a goal state
-    dx[0]  = sVals[0] - goal[0,0]
-    dy[0]  = sVals[1] - goal[0,1]
-    mag[0] = hcl.sqrt((dx[0] * dx[0]) + (dy[0] * dy[0]))
-    with hcl.if_(hcl.and_(mag[0] <= 1.0, sVals[2] <= goal[1,1], sVals[2] >= goal[1,0])):
-        trans[0, 0] = 0
-    # Check if moving from an obstacle 
-    with hcl.elif_(hcl.or_(sVals[0] < bounds[0,0] + 0.2, sVals[0] > bounds[0,1] - 0.2)):
-        trans[0, 0] = 0
-    with hcl.elif_(hcl.or_(sVals[1] < bounds[1,0] + 0.2, sVals[1] > bounds[1,1] - 0.2)):
-        trans[0, 0] = 0
-    # Standard move
-    with hcl.else_():
-        trans[0, 0] = 1.0
-        trans[0, 1] = sVals[0] + (0.6 * action[0] * hcl.cos(sVals[2]))
-        trans[0, 2] = sVals[1] + (0.6 * action[0] * hcl.sin(sVals[2]))
-        trans[0, 3] = sVals[2] + (0.6 * action[1])
-        # Adjust for periodic dimension
-        with hcl.while_(trans[0, 3] > 3.141592653589793):
-            trans[0, 3] -= 6.283185307179586
-        with hcl.while_(trans[0, 3] < -3.141592653589793):
-            trans[0, 3] += 6.283185307179586
-
-
-# Return the reward for taking action from state
-def reward(sVals, action, bounds, goal, trans):
-    dx  = hcl.scalar(0, "dx")
-    dy  = hcl.scalar(0, "dy")
-    mag = hcl.scalar(0, "mag")
-    rwd = hcl.scalar(0, "rwd")
-
-    # Check if moving from a collision state, if so, assign a penalty
-    with hcl.if_(hcl.or_(sVals[0] < bounds[0,0] + 0.2, sVals[0] > bounds[0,1] - 0.2)):
-        rwd[0] = -400
-    with hcl.elif_(hcl.or_(sVals[1] < bounds[1,0] + 0.2, sVals[1] > bounds[1,1] - 0.2)):
-        rwd[0] = -400
-    with hcl.else_():
-        # Check if moving from a goal state
-        dx[0]  = sVals[0] - goal[0,0]
-        dy[0]  = sVals[1] - goal[0,1]
-        mag[0] = hcl.sqrt((dx[0] * dx[0]) + (dy[0] * dy[0]))
-        with hcl.if_(hcl.and_(mag[0] <= 1.0, sVals[2] <= goal[1,1], sVals[2] >= goal[1,0])):
-            rwd[0] = 1000
-        # Standard move
-        with hcl.else_():
-            rwd[0] = 0
-    return rwd[0]
-
-
-
 ######################################### HELPER FUNCTIONS #########################################
 
 
@@ -86,9 +23,9 @@ def updateVopt(i, j, k, iVals, sVals, actions, Vopt, intermeds, trans, interpV, 
         # set iVals equal to (i,j,k) and sVals equal to the corresponding state values (si,sj,sk)
         updateStateVals(i, j, k, iVals, sVals, bounds, ptsEachDim)
         # call the transition function to obtain the outcome(s) of action a from state (si,sj,sk)
-        transition(sVals, actions[a], bounds, trans, goal)
+        UD.transition(sVals, actions[a], bounds, trans, goal)
         # initialize the value of the action using the immediate reward of taking that action
-        intermeds[a] = reward(sVals, actions[a], bounds, goal, trans)
+        intermeds[a] = UD.reward(sVals, actions[a], bounds, goal, trans)
         Vopt[i,j,k]  = intermeds[a] 
         # add the value of each possible successor state to the estimated value of taking action a
         with hcl.for_(0, trans.shape[0], name="si") as si:
@@ -442,8 +379,11 @@ def value_iteration_3D():
     print("Took        ", t_e-t_s, " seconds")
 
     # Write results to file
-    dir_path  = "./hcl_value_matrix_test/"
-    file_name = "hcl_value_iteration_" + str(int(c[0])) + "_iterations_by" + ("_Interpolation" if UD._useNN[0] == 0 else "_NN")
+    if(UD.dir_path): dir_path = UD.dir_path
+    else:            dir_path = "./hcl_value_matrix_test/"
+
+    if(UD.file_name): file_name = UD.file_name
+    else:             file_name = "hcl_value_iteration_" + str(int(c[0])) + "_iterations_by" + ("_Interpolation" if UD._useNN[0] == 0 else "_NN")
     UD.writeResults(V, dir_path, file_name, just_values=True)
 
 
