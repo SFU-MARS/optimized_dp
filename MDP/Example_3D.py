@@ -3,7 +3,10 @@ import math
 import heterocl as hcl
 import os
 
+
+
 class MDP_3D_example:
+
     _bounds     = np.array([[-5.0, 5.0],[-5.0, 5.0],[-3.141592653589793, 3.141592653589793]])
     _ptsEachDim = np.array([25, 25, 9])
     _goal       = np.array([[3.5, 3.5], [1.5707, 2.3562]]) 

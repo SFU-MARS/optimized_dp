@@ -1,11 +1,11 @@
 import numpy as np
 import math
 import os
-import MDP.Example_6D as MDP
+import MDP.Example_4D as MDP
 import valueIteration as VI
 
 
-myProblem   = MDP.MDP_6D_example()
+myProblem   = MDP.MDP_4D_example()
 
 _bounds     = myProblem._bounds
 _ptsEachDim = myProblem._ptsEachDim
@@ -35,21 +35,16 @@ def writeResults(V, dir_path, file_name, just_values=False):
         for j in range(V.shape[1]):
             for k in range(V.shape[2]):
                 for l in range(V.shape[3]):
-                    for m in range(V.shape[4]):
-                        for n in range(V.shape[5]):
                             s = ""
                             if not just_values:
                                 si = (( i / (_ptsEachDim[0] - 1) ) * (_bounds[0,1] - _bounds[0,0])) + _bounds[0,0]
                                 sj = (( j / (_ptsEachDim[1] - 1) ) * (_bounds[1,1] - _bounds[1,0])) + _bounds[1,0]
                                 sk = (( k / (_ptsEachDim[2] - 1) ) * (_bounds[2,1] - _bounds[2,0])) + _bounds[2,0]
                                 sl = (( l / (_ptsEachDim[3] - 1) ) * (_bounds[3,1] - _bounds[3,0])) + _bounds[3,0]
-                                sm = (( m / (_ptsEachDim[4] - 1) ) * (_bounds[4,1] - _bounds[4,0])) + _bounds[4,0]
-                                sn = (( n / (_ptsEachDim[5] - 1) ) * (_bounds[5,1] - _bounds[5,0])) + _bounds[5,0]
                                 
-                                state = ("{:.4f}".format(si), "{:.4f}".format(sj), "{:.4f}".format(sk), 
-                                         "{:.4f}".format(sl), "{:.4f}".format(sm), "{:.4f}".format(sn))
-                                s = str(state) + "   " + str("{:.4f}".format(V[(i,j,k,l,m,n)])) + '\n'
+                                state = ("{:.4f}".format(si), "{:.4f}".format(sj), "{:.4f}".format(sk), "{:.4f}".format(sl))
+                                s = str(state) + "   " + str("{:.4f}".format(V[(i,j,k,l)])) + '\n'
                             else:
-                                s = str("{:.4f}".format(V[(i,j,k,l,m,n)])) + ',\n'
+                                s = str("{:.4f}".format(V[(i,j,k,l)])) + ',\n'
                             f.write(s)
     print("Finished recording results")
