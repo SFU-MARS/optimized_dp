@@ -100,7 +100,8 @@ my_shape = Initial_value_f"""
 #g = grid(np.array([-20.0, -20.0, -math.pi, -10, -10]), np.array([20, 20, math.pi, 10, 10]), 5, np.array([40, 40, 20, 20, 20]), [2])
 #g = grid(np.array([-15.0, -15.0, 0, 0, 0]), np.array([15, 15, 2*math.pi, 5.5, 5.5]), 5, np.array([61, 61, 31, 31, 31]), [2])
 # g = grid(np.array([-15.0, -15.0, 0, 0, 0]), np.array([15, 15, 2*math.pi, 5.5, 5.5]), 5, np.array([51, 51, 21, 21, 21]), [2])
-g = grid(np.array([0, 0, -1,-math.pi]), np.array([30, 26.05, 3  ,math.pi ]), 4, np.array([600, 521, 31,9]), [2])
+# g = grid(np.array([0, 0, -1,-math.pi]), np.array([30, 26.05, 3  ,math.pi ]), 4, np.array([600, 521, 31,9]), [2])
+g = grid(np.array([-5.0, -5.0, 0, -math.pi]), np.array([5.0, 5.0, 1.0, math.pi]), 4, np.array([40, 40, 10, 10]), [3])
 # Define my object
 #my_object = DubinsCar5DAvoid(x=[0,0,0,0,0], u_theta_max = math.pi/2, u_v_max=3, d_theta_max=math.pi/2, d_v_max=3, uMode="max", dMode="min")
 my_object = DubinsCar4Davoid()#max v=3 is hardcode
@@ -115,7 +116,8 @@ my_object = DubinsCar4Davoid()#max v=3 is hardcode
 # Initial_value_f = np.minimum(CylinderShape(g, [3,4,5], np.zeros(5), 2), HalfPlane(g, 0.5, 3))
 # Initial_value_f = np.minimum(Initial_value_f, -HalfPlane(g, 5.0, 3))
 # y = np.expand_dims(x, axis=0)
-Initial_value_f=np.load("/local-scratch/tara/project/WayPtNav-reachability/obstacle_grid_4d.npy")
+# Initial_value_f=np.load("/local-scratch/tara/project/WayPtNav-reachability/obstacle_grid_4d.npy")
+Initial_value_f = CylinderShape(g, [3,4], np.zeros(4), 1)
 # y = np.expand_dims(x, axis=0)
 # J: for vehicle number 2 (pursuer)
 # define a set x5 > vmin it is G (constraint_values)
@@ -123,7 +125,7 @@ Initial_value_f=np.load("/local-scratch/tara/project/WayPtNav-reachability/obsta
 # constraint_values = np.minimum(-HalfPlane(g, 0.5, 4), HalfPlane(g, 5.0, 4))
 
 # Look-back lenght and time step
-lookback_length = 20
+lookback_length = 2
 t_step = 0.01
 
 tau = np.arange(start = 0, stop = lookback_length + t_step, step = t_step)
