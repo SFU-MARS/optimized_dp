@@ -154,7 +154,7 @@ class DubinsCar4Davoid:
             d1[0] = cos_theta[0]*-self.dMax[0]
             d2[0] = sin_theta[0]*-self.dMax[0]
             d3[0]=0
-            return (d1[0], d2[0], d3[0], d4[0])
+        return (d1[0], d2[0], d3[0], d4[0])
 
     def dynamics(self, t, state, uOpt, dOpt):
         x_dot = hcl.scalar(0, "x_dot")

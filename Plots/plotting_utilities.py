@@ -13,7 +13,7 @@ def plot_isosurface(grid, V, dims_plot, s):
                                       grid.min[dim3]:grid.max[dim3]: complex_z]
 
         # graph value table while keeping speed constant
-        #V = V[:, :, s, :]
+        V = V[:, :, s, :]
 
         print("Plotting beautiful plots. Please wait\n")
         fig = go.Figure(data=go.Isosurface(
@@ -23,8 +23,8 @@ def plot_isosurface(grid, V, dims_plot, s):
             value=V.flatten(),
             colorscale='jet',
             isomin=0,
-            surface_count=1,
-            isomax=0,
+            #surface_count=1,
+            isomax=0.5,
             caps=dict(x_show=True, y_show=True)
         ))
         fig.show()

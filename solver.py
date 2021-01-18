@@ -148,7 +148,7 @@ def main():
     #    plot_isosurface(g, V_1.asnumpy(), [0, 1, 2])
     if args.plot:
         # plot Value table when speed is maximum
-        plot_isosurface(g, V_1.asnumpy(), [0, 1, 3], g.pts_each_dim[2] - 1)
+        plot_isosurface(g, TTR.asnumpy(), [0, 1, 3], g.pts_each_dim[2] - 1)
 
 
 if __name__ == '__main__':
