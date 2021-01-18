@@ -1,0 +1,12 @@
+This is just an example file. This also applies when changing files!
+
+We'll use the following commands to add this file (and another other changes we've made to our GIT
+
+git add .
+
+
+git commit -m "made some changes"
+
+git push -u origin master
+
+
