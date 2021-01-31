@@ -1,7 +1,17 @@
 import plotly.graph_objects as go
 import numpy as np
 
-def plot_isosurface(grid, V, dims_plot, s):
+def plot_isosurface(grid, V, plot_option):
+    dims_plot = plot_option.dims_plot
+    idx = [slice(None)] * grid.dims
+    slice_idx = 0
+
+    dims_list = list(range(0, grid.dims))
+    for i in dims_list:
+        if i not in dims_plot:
+            idx[i] = plot_option.slices[slice_idx]
+            slice_idx += 1
+
     if len(dims_plot) != 3:
         raise Exception('dims_plot length should be equal to 3\n')
     else:
@@ -13,14 +23,16 @@ def plot_isosurface(grid, V, dims_plot, s):
                                       grid.min[dim3]:grid.max[dim3]: complex_z]
 
         # graph value table while keeping speed constant
-        V = V[:, :, s, :]
+        # if V.ndim == 4:
+        #     V = V[:, :, s, :]
+        my_V = V[tuple(idx)]
 
         print("Plotting beautiful plots. Please wait\n")
         fig = go.Figure(data=go.Isosurface(
             x=mg_X.flatten(),
             y=mg_Y.flatten(),
             z=mg_Z.flatten(),
-            value=V.flatten(),
+            value=my_V.flatten(),
             colorscale='jet',
             isomin=0,
             surface_count=1,

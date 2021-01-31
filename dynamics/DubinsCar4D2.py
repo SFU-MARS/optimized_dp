@@ -1,5 +1,4 @@
 import heterocl as hcl
-import computeGraphs
 import math
 
 """
@@ -17,7 +16,6 @@ L := wheelbase of car
 (6.2) https://arxiv.org/pdf/1711.03449.pdf
 """
 
-
 class DubinsCar4D2:
     def __init__(
         self,
@@ -29,6 +27,7 @@ class DubinsCar4D2:
         uMode="max",
         dMode="min",
     ):
+
         """Creates a Dublin Car with the following states:
            X position, Y position, acceleration, heading
 
@@ -83,6 +82,7 @@ class DubinsCar4D2:
         in3 = hcl.scalar(0, "in3")
         in4 = hcl.scalar(0, "in4")
 
+
         if self.uMode == "min":
             with hcl.if_(spat_deriv[2] > 0):
                 opt_a[0] = self.uMin[0]
@@ -95,6 +95,7 @@ class DubinsCar4D2:
                 opt_w[0] = self.uMin[1]
         # return 3, 4 even if you don't use them
         return (opt_a[0], opt_w[0], in3[0], in4[0])
+
 
     def optDstb(self, spat_deriv):
         """
@@ -126,12 +127,12 @@ class DubinsCar4D2:
                 d2[0] = self.dMin[1]
             with hcl.elif_(spat_deriv[1] < 0):
                 d2[0] = self.dMax[1]
-
         return (d1[0], d2[0], d3[0], d4[0])
 
     def dynamics(self, t, state, uOpt, dOpt):
         # wheelbase of Tamiya TT02
         L = hcl.scalar(0.3, "L")
+
         x_dot = hcl.scalar(0, "x_dot")
         y_dot = hcl.scalar(0, "y_dot")
         v_dot = hcl.scalar(0, "v_dot")
@@ -140,6 +141,6 @@ class DubinsCar4D2:
         x_dot[0] = state[2] * hcl.cos(state[3]) + dOpt[0]
         y_dot[0] = state[2] * hcl.sin(state[3]) + dOpt[1]
         v_dot[0] = uOpt[0]
-        theta_dot[0] = state[2] * (hcl.sin(uOpt[1]) / hcl.cos(uOpt[1])) / L
+        theta_dot[0] = state[2] * (hcl.sin(uOpt[1]) / hcl.cos(uOpt[1])) / L[0]
 
         return (x_dot[0], y_dot[0], v_dot[0], theta_dot[0])

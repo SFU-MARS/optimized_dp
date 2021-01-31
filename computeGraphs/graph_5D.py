@@ -1,8 +1,5 @@
 import heterocl as hcl
-import numpy as np
-import time
 from computeGraphs.CustomGraphFunctions import *
-from user_definer import *
 
 ##############################  5D DERIVATIVE FUNCTIONS #############################
 def spa_derivX5_5d(i, j, k, l, m, V, g):  # Left -> right == Outer Most -> Inner Most
@@ -193,7 +190,7 @@ def spa_derivX1_5d(i, j, k, l, m, V, g):  # Left -> right == Outer Most -> Inner
 ########################## 5D graph definition ########################
 
 # Note that t has 2 elements t1, t2
-def graph_5D():
+def graph_5D(my_object, g, compMethod):
     V_f = hcl.placeholder(tuple(g.pts_each_dim), name="V_f", dtype=hcl.Float())
     V_init = hcl.placeholder(tuple(g.pts_each_dim), name="V_init", dtype=hcl.Float())
     l0 = hcl.placeholder(tuple(g.pts_each_dim), name="l0", dtype=hcl.Float())

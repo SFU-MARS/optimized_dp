@@ -1,8 +1,6 @@
 import heterocl as hcl
-import numpy as np
 import time
 from computeGraphs.CustomGraphFunctions import *
-from user_definer import *
 
 ##############################  6D DERIVATIVE FUNCTIONS #############################
 def spa_derivX6_6d(i, j, k, l, m, n, V, g):  # Left -> right == Outer Most -> Inner Most
@@ -134,7 +132,7 @@ def spa_derivX1_6d(i, j, k, l, m, n, V, g):  # Left -> right == Outer Most -> In
 ########################## 6D graph definition ########################
 
 # Note that t has 2 elements t1, t2
-def graph_6D():
+def graph_6D(my_object, g, compMethod):
     V_f = hcl.placeholder(tuple(g.pts_each_dim), name="V_f", dtype=hcl.Float())
     V_init = hcl.placeholder(tuple(g.pts_each_dim), name="V_init", dtype=hcl.Float())
     l0 = hcl.placeholder(tuple(g.pts_each_dim), name="l0", dtype=hcl.Float())

@@ -2,7 +2,6 @@ import heterocl as hcl
 import numpy as np
 import time
 from computeGraphs.CustomGraphFunctions import *
-from user_definer import *
 
 ################## 4D SPATIAL DERIVATIVE FUNCTION #################
 
@@ -153,7 +152,7 @@ def spa_derivX1_4d(i, j, k, l, V, g): # Left -> right == Outer Most -> Inner Mos
         return left_deriv[0], right_deriv[0]
 
 ########################## 4D Graph definition #################################
-def graph_4D():
+def graph_4D(my_object, g, compMethod):
     V_f = hcl.placeholder(tuple(g.pts_each_dim), name="V_f", dtype=hcl.Float())
     V_init = hcl.placeholder(tuple(g.pts_each_dim), name="V_init", dtype=hcl.Float())
     l0 = hcl.placeholder(tuple(g.pts_each_dim), name="l0", dtype=hcl.Float())

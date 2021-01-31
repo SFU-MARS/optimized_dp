@@ -2,10 +2,11 @@ import heterocl as hcl
 import numpy as np
 import time
 from computeGraphs.CustomGraphFunctions import *
-from user_definer import *
+
+#from user_definer import *
 
 ################## 3D SPATIAL DERIVATIVE FUNCTION #################
-def spa_derivX(i, j, k, V):
+def spa_derivX(i, j, k, V, g):
     left_deriv = hcl.scalar(0, "left_deriv")
     right_deriv = hcl.scalar(0, "right_deriv")
     with hcl.if_(i == 0):
@@ -26,7 +27,7 @@ def spa_derivX(i, j, k, V):
     return left_deriv[0], right_deriv[0]
 
 
-def spa_derivY(i, j, k, V):
+def spa_derivY(i, j, k, V, g):
     left_deriv = hcl.scalar(0, "left_deriv")
     right_deriv = hcl.scalar(0, "right_deriv")
     with hcl.if_(j == 0):
@@ -47,7 +48,7 @@ def spa_derivY(i, j, k, V):
     return left_deriv[0], right_deriv[0]
 
 
-def spa_derivT(i, j, k, V):
+def spa_derivT(i, j, k, V, g):
     left_deriv = hcl.scalar(0, "left_deriv")
     right_deriv = hcl.scalar(0, "right_deriv")
     with hcl.if_(k == 0):
@@ -66,12 +67,16 @@ def spa_derivT(i, j, k, V):
         right_deriv[0] = (V[i, j, k + 1] - V[i, j, k]) / g.dx[2]
     return left_deriv[0], right_deriv[0]
 
-def graph_3D():
+#def graph_3D(dynamics_obj, grid):
+def graph_3D(my_object, g, compMethod):
     V_f = hcl.placeholder(tuple(g.pts_each_dim), name="V_f", dtype=hcl.Float())
     V_init = hcl.placeholder(tuple(g.pts_each_dim), name="V_init", dtype=hcl.Float())
     l0 = hcl.placeholder(tuple(g.pts_each_dim), name="l0", dtype=hcl.Float())
     t = hcl.placeholder((2,), name="t", dtype=hcl.Float())
     probe = hcl.placeholder(tuple(g.pts_each_dim), name="probe", dtype=hcl.Float())
+
+    #my_object = dynamics_obj
+    #g = grid
 
     # Positions vector
     x1 = hcl.placeholder((g.pts_each_dim[0],), name="x1", dtype=hcl.Float())
@@ -147,9 +152,9 @@ def graph_3D():
                         # dtheta_dt = hcl.scalar(0, "dtheta_dt")
 
                         # No tensor slice operation
-                        dV_dx_L[0], dV_dx_R[0] = spa_derivX(i, j, k, V_init)
-                        dV_dy_L[0], dV_dy_R[0] = spa_derivY(i, j, k, V_init)
-                        dV_dT_L[0], dV_dT_R[0] = spa_derivT(i, j, k, V_init)
+                        dV_dx_L[0], dV_dx_R[0] = spa_derivX(i, j, k, V_init, g)
+                        dV_dy_L[0], dV_dy_R[0] = spa_derivY(i, j, k, V_init, g)
+                        dV_dT_L[0], dV_dT_R[0] = spa_derivT(i, j, k, V_init, g)
 
                         # Saves spatial derivative diff into tables
                         deriv_diff1[i, j, k] = dV_dx_R[0] - dV_dx_L[0]

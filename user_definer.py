@@ -1,9 +1,16 @@
 import numpy as np
+# Utility functions to initialize the problem
 from Grid.GridProcessing import Grid
 from Shapes.ShapesFunctions import *
-
 # Specify the  file that includes dynamic systems
+from dynamics.DubinsCar4D import *
+from dynamics.DubinsCapture import *
 from dynamics.DubinsCar4D2 import *
+# Plot options
+from plot_options import *
+# Solver core
+from solver import HJSolver
+
 import math
 
 """ USER INTERFACES
@@ -13,50 +20,26 @@ import math
 
 - Time length for computations
 
-- Run
+- Initialize plotting option
+
+- Call HJSolver function
 """
 
-g = Grid(
-    np.array([-3.0, -1.0, 0.0, -math.pi]),
-    np.array([3.0, 4.0, 4.0, math.pi]),
-    4,
-    np.array([60, 60, 20, 36]),
-    [3],
-)
 
-# Define my object
-my_car = DubinsCar4D2()
+# Scenario 1
+g = Grid(np.array([-4.0, -4.0, -math.pi]), np.array([4.0, 4.0, math.pi]), 3, np.array([40, 40, 40]), [2])
 
-# Use the grid to initialize initial value function
-# Initial_value_f = CylinderShape(g, [3, 4], np.array([0.0, 1.0, 0.0, 0.0]), 0.70)
-# filename = "center"
-# np.save("center_init_v.npy", Initial_value_f.astype(np.float32))
-
-'''
-Initial_value_f = np.minimum.reduce([CylinderShape(g, [3, 4], np.array([0.0, -0.3 + 1.0, 0.0, 0.0]), 0.70),
-                             CylinderShape(g, [3, 4], np.array([0.00, -0.15 + 1.0, 0.0, 0.0]), 0.70),
-                             CylinderShape(g, [3, 4], np.array([0.0, 1.0, 0.0, 0.0]), 0.70),
-                             CylinderShape(g, [3, 4], np.array([0.00, 1.15, 0.0, 0.0]), 0.70),
-                             CylinderShape(g, [3, 4], np.array([0.0, 1.3, 0.0, 0.0]), 0.70)])
-filename = "line_01"
-np.save("line01_init_v.npy", Initial_value_f.astype(np.float32))
-'''
-
-Initial_value_f = np.minimum.reduce([CylinderShape(g, [3, 4], np.array([0.0, 0.0, 0.0, 0.0]), 0.70),
-                             CylinderShape(g, [3, 4], np.array([1.5, 1.9, 0.0, 0.0]), 0.70),
-                             CylinderShape(g, [3, 4], np.array([0.0, 1.0, 0.0, 0.0]), 0.70),
-                             CylinderShape(g, [3, 4], np.array([-1.9, 1.4, 0.0, 0.0]), 0.70)])
-filename = "apart"
-np.save("apart_init_v.npy", Initial_value_f.astype(np.float32))
+Initial_value_f = CylinderShape(g, [3], np.zeros(3), 1)
 
 # Look-back lenght and time step
-lookback_length = 67*0.00749716
-t_step = 0.00749716
+lookback_length = 2.0
+t_step = 0.05
 
 small_number = 1e-5
 tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)
-print("Welcome to optimized_dp \n")
-print(tau)
+my_car = DubinsCapture()
+
+po2 = PlotOptions("3d_plot", [0,1,2], [])
 
 """
 Assign one of the following strings to `compMethod` to specify the characteristics of computation
@@ -65,7 +48,25 @@ Assign one of the following strings to `compMethod` to specify the characteristi
 "maxVWithVInit" -> compute max V over time
 "minVWithVInit" compute min V over time
 """
-compMethod = "minVWithV0"
-#compMethod = "minVWithVInit"
-my_object = my_car
-my_shape = Initial_value_f
+
+# HJSolver(dynamics object, grid, initial value function, time length, system objectives, plotting options)
+HJSolver(my_car, g, Initial_value_f, tau, "minVWithV0", po2)
+
+# Second Scenario
+g = Grid(np.array([-3.0, -1.0, 0.0, -math.pi]), np.array([3.0, 4.0, 4.0, math.pi]), 4, np.array([60, 60, 20, 36]), [3])
+
+# Define my object
+my_car = DubinsCar4D2()
+
+# Use the grid to initialize initial value function
+Initial_value_f = CylinderShape(g, [3,4], np.zeros(4), 1)
+
+# Look-back lenght and time step
+lookback_length = 1.0
+t_step = 0.05
+
+small_number = 1e-5
+tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)
+
+po = PlotOptions("3d_plot", [0,1,3], [19])
+HJSolver(my_car, g, Initial_value_f, tau, "minVWithV0", po)
