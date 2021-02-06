@@ -28,7 +28,7 @@ import computeGraphs
 
 class DubinsCar4Davoid:
     def __init__(self, x=[0,0,0,0], uMin = [-0.4,-1.1], uMax = [0.4,1.1], dMin = [-0.05,-0.15], \
-                 dMax=[0.05,0.15], uMode="max", dMode="min",v_max=[3], t_step=[0.01]):
+                 dMax=[0.05,0.15], uMode="max", dMode="min",v_max=[1], t_step=[0.01]):
         self.x = x
         self.uMax = uMax
         self.uMin = uMin
@@ -84,8 +84,10 @@ class DubinsCar4Davoid:
                 with hcl.if_(opt_a[0] < self.uMin[0]):
                     opt_a[0] = self.uMin[0]
 
-            with hcl.if_(spat_deriv[3] > 0):
-                opt_w[0] = self.uMax[1]
+            with hcl.if_(spat_deriv[3] < 0):
+                opt_w[0] = self.uMin[1]
+	    #with hcl.if_(spat_deriv[3] > 0):
+	       # opt_w[0] = self.umax[1]
         # return 3, 4 even if you don't use them
         return (opt_a[0] ,opt_w[0], in3[0], in4[0])
 
