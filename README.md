@@ -8,8 +8,12 @@ Notes: For 6 dimensions, recommended grid size is 20-30 each dimension on system
 The repo has been updated to allow multiple instances of problem to be defined. HJSolver are called and parameters are passed into this function for problem to be solved. 
 
 # Dependencies
-* HeteroCL (http://heterocl.csl.cornell.edu/doc/installation.html) - A Python-based domain-specific language (DSL). The HeteroCL DSL provides a clean abstraction that decouples algorithm specification from three important types of hardware customization in compute, data types, and memory architectures. Follow the link to install HeteroCL.
-*  Plotly. This library for visualization. ``` $pip install plotly==4.5.0 ```
+These instructions have been tested and work on Ubuntu 18.04. Please install the following:
+* Anaconda (https://docs.anaconda.com/anaconda/install/linux/)
+* HeteroCL (http://heterocl.csl.cornell.edu/doc/installation.html) ``` conda create --name hcl-env ```
+    ``` conda activate hcl-env ```. Install pre-built heterocl ``` conda install -c cornell-zhang heterocl -c conda-forge```. 
+  Note: You might also need to install module "future" if encounter an error, with this command ``` pip3 install future ```.  
+*  Plotly. This library for visualization. ``` $pip3 install plotly==4.5.0 ```
 
 # Current code structure explanation
 * user_definer.py: specify grid numbers, dynamic systems intialization, initial value function ,computation method.
