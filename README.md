@@ -1,11 +1,13 @@
 # Optimizing Dynamic Programming-Based Algorithms
 This is an on-going project in an attempt to make solving grid-based dynamic programming problems, such as Hamilton-Jacobi partial differential equations (HJ PDE) and table-based value iteration, easier and faster.
 
+# Update 31/Jan/2021
+The repo has been updated to allow multiple instances of problem to be defined. HJSolver are called and parameters are passed into this function for problem to be solved. 
+
 # Update 16/Sept/2020
 The repo currently works for 3, 4, 5, 6 dimension systems on CPU. 6 dimension graph currently does support disturbance with maximum of 4 control inputs.
 Notes: For 6 dimensions, recommended grid size is 20-30 each dimension on system with 32Gbs of DRAM.
-# Update 31/Jan/2021
-The repo has been updated to allow multiple instances of problem to be defined. HJSolver are called and parameters are passed into this function for problem to be solved. 
+
 
 # Dependencies
 These instructions have been tested and work on Ubuntu 18.04. Please install the following:
