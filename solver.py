@@ -142,14 +142,14 @@ def main():
     #sio.savemat('dataV.mat', {'dataV':V_1.asnumpy()})
     # sio.savemat('optimized_dubins_dubins_safe_V_circle_Radius_2_Speed_5_SafetyTime_5_2_max_turn_rate_pi_3.mat',
     #         {'dataTTR':TTR.asnumpy()})
-    np.save('TTR_grid_biggergrid_2lookback_wDisturbance_wObstalces.npy', TTR.asnumpy())
+    np.save('TTR_grid_biggergrid_0lookback_wDisturbance_wObstalces.npy', TTR.asnumpy())
     ##################### PLOTTING #####################
     #if args.plot:
     #    plot_isosurface(g, V_1.asnumpy(), [0, 1, 2])
     if args.plot:
         # plot Value table when speed is maximum
-       # plot_isosurface(g, V_1.asnumpy(), [0, 1, 3], g.pts_each_dim[2] - 1)
-        plot_isosurface(g, TTR.asnumpy(), [0, 1, 3], g.pts_each_dim[2] - 1)
+        plot_isosurface(g, V_1.asnumpy(), [0, 1, 3], g.pts_each_dim[2] - 1)
+        # plot_isosurface(g, TTR.asnumpy(), [0, 1, 3], g.pts_each_dim[2] - 1)
 
 if __name__ == '__main__':
   main()

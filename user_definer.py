@@ -126,7 +126,7 @@ Initial_value_f = np.minimum(CylinderShape(g, [3,4], np.zeros(4), 1), HalfPlane(
 # constraint_values = np.minimum(-HalfPlane(g, 0.5, 4), HalfPlane(g, 5.0, 4))
 
 # Look-back lenght and time step
-lookback_length = 2
+lookback_length = 0
 t_step = 0.01
 
 tau = np.arange(start = 0, stop = lookback_length + t_step, step = t_step)
