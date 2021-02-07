@@ -105,7 +105,7 @@ g = grid(np.array([-5, -5, -0.5, -math.pi]), np.array([10.0, 10.0,1.5 , math.pi]
 # Define my object
 #my_object = DubinsCar5DAvoid(x=[0,0,0,0,0], u_theta_max = math.pi/2, u_v_max=3, d_theta_max=math.pi/2, d_v_max=3, uMode="max", dMode="min")
 my_object = DubinsCar4D( x=[0,0,0,0], uMin = [-0.4,-1.1], uMax = [0.4,1.1], dMin = [-0.05,-0.15], \
-                 dMax=[0.05,0.15], uMode="max", dMode="min") # max v is hardcode
+                 dMax=[0.05, 0.15], uMode="max", dMode="min") # max v is hardcode
 
 # Use the grid to initialize initial value function
 
@@ -118,7 +118,7 @@ my_object = DubinsCar4D( x=[0,0,0,0], uMin = [-0.4,-1.1], uMax = [0.4,1.1], dMin
 # Initial_value_f = np.minimum(Initial_value_f, -HalfPlane(g, 5.0, 3))
 # y = np.expand_dims(x, axis=0)
 #Initial_value_f=np.load("/local-scratch/tara/project/WayPtNav-reachability/obstacle_grid_4d.npy")
-Initial_value_f = np.minimum(CylinderShape(g, [3,4], np.zeros(4), 1), HalfPlane(g, 1, 3), -HalfPlane(g, 0, 3) 
+Initial_value_f = np.minimum(CylinderShape(g, [3,4], np.zeros(4), 1), HalfPlane(g, 1, 2), -HalfPlane(g, 0, 2) )
 # y = np.expand_dims(x, axis=0)
 # J: for vehicle number 2 (pursuer)
 # define a set x5 > vmin it is G (constraint_values)
