@@ -5,12 +5,19 @@ This is an on-going project in an attempt to make solving grid-based dynamic pro
 Please install the following:
 * Install Anaconda (https://docs.anaconda.com/anaconda/install/linux/)
 * Install heteroCL (http://heterocl.csl.cornell.edu/doc/installation.html):
+
     Create new conda environment: ``` conda create --name hcl-env ```
+    
     Activate new conda environment: ``` conda activate hcl-env ```
+    
     Install pre-built heterocl: ``` conda install -c cornell-zhang heterocl -c conda-forge```
+    
 * Potential Python modules to install if you run into errors:
+
     future: ``` pip3 install future ```.  
+    
     plotly: ``` $pip3 install plotly==4.5.0 ```
+    
 * Run the example code from optimized_dp root directory: ``` python3 user_definer.py ```
 
 # Update 31/Jan/2021
