@@ -14,9 +14,7 @@ Please install the following:
     
 * Potential Python modules to install if you run into errors:
 
-    future: ``` pip3 install future ```.  
-    
-    plotly: ``` $pip3 install plotly==4.5.0 ```
+    ``` pip3 install future plotly==4.5.0 ```
     
 * Run the example code from optimized_dp root directory: ``` python3 user_definer.py ```
 
