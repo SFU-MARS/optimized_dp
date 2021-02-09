@@ -1,6 +1,18 @@
 # Optimizing Dynamic Programming-Based Algorithms
 This is an on-going project in an attempt to make solving grid-based dynamic programming problems, such as Hamilton-Jacobi partial differential equations (HJ PDE) and table-based value iteration, easier and faster.
 
+# Quickstart (Ubuntu 18)
+Please install the following:
+* Install Anaconda (https://docs.anaconda.com/anaconda/install/linux/)
+* Install heteroCL (http://heterocl.csl.cornell.edu/doc/installation.html):
+    Create new conda environment: ``` conda create --name hcl-env ```
+    Activate new conda environment: ``` conda activate hcl-env ```
+    Install pre-built heterocl: ``` conda install -c cornell-zhang heterocl -c conda-forge```
+* Potential Python modules to install if you run into errors:
+    future: ``` pip3 install future ```.  
+    plotly: ``` $pip3 install plotly==4.5.0 ```
+* Run the example code from optimized_dp root directory: ``` python3 user_definer.py ```
+
 # Update 31/Jan/2021
 The repo has been updated to allow multiple instances of problem to be defined. HJSolver are called and parameters are passed into this function for problem to be solved. 
 
@@ -30,5 +42,4 @@ These instructions have been tested and work on Ubuntu 18.04. Please install the
 created earlier in user_definer.py
 * For large dimensional system (greater than 3), you may want to save the final value function for processing. In the file solver.py, at line 116, fill in anycodes to save it.
 * If you want to save value functions to disk by time step, fill in any code to save it at around line 108 inside the while loop.
-# Running
-``` python3 user_definer.py ```
+
