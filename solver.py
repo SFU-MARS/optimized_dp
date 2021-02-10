@@ -113,4 +113,5 @@ def HJSolver(dynamics_obj, grid, init_value, tau, compMethod, plot_option):
         # plot Value table when speed is maximum
         plot_isosurface(grid, V_1.asnumpy(), plot_option)
         #plot_isosurface(g, my_V, [0, 1, 3], 10)
+    return V_1.asnumpy()
 
