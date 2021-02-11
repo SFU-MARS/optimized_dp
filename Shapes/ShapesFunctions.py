@@ -1,36 +1,5 @@
 import numpy as np
 
-# This function creates a cyclinderical shape
-def CyclinderShape3D(grid, ignore_dim, center, radius):
-    data = np.zeros(grid.pts_each_dim)
-    for i in range(0, 3):
-        if i != ignore_dim-1:
-            # This works because of broadcasting
-            data = data + np.power(grid.vs[i] - center[i],  2)
-    data = np.sqrt(data) - radius
-    return data
-
-
-def Cylinder6D(grid, ignore_dims):
-    data = np.zeros(grid.pts_each_dim)
-    for i in range(0, 6):
-        if i + 1 not in ignore_dims:
-            # This works because of broadcasting
-            data = data + np.power(grid.vs[i], 2)
-    data = np.sqrt(data)
-    return data
-
-
-def Cylinder4D(grid, ignore_dims):
-    data = np.zeros(grid.pts_each_dim)
-    for i in range(0, 4):
-        if i + 1 not in ignore_dims:
-            # This works because of broadcasting
-            data = data + np.power(grid.vs[i], 2)
-    data = np.sqrt(data)
-    return data
-
-
 def CylinderShape(grid, ignore_dims, center, radius):
     """Creates an axis align cylinder implicit surface function
 
@@ -121,7 +90,7 @@ def Lower_Half_Space(grid, dim, value):
     return data
 
 
-def Upper_Half_Plane(grid, dim, value):
+def Upper_Half_Space(grid, dim, value):
     """Creates an axis aligned lower half space 
 
     Args:
