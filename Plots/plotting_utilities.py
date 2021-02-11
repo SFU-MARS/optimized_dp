@@ -27,6 +27,8 @@ def plot_isosurface(grid, V, plot_option):
         #     V = V[:, :, s, :]
         my_V = V[tuple(idx)]
 
+        if (V > 0.0).all() or (V < 0.0).all():
+            print("Implicit surface will not be shown since all values have the same sign ")
         print("Plotting beautiful plots. Please wait\n")
         fig = go.Figure(data=go.Isosurface(
             x=mg_X.flatten(),
