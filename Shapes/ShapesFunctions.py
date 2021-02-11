@@ -1,42 +1,11 @@
 import numpy as np
 
-# This function creates a cyclinderical shape
-def CyclinderShape3D(grid, ignore_dim, center, radius):
-    data = np.zeros(grid.pts_each_dim)
-    for i in range(0, 3):
-        if i != ignore_dim-1:
-            # This works because of broadcasting
-            data = data + np.power(grid.vs[i] - center[i],  2)
-    data = np.sqrt(data) - radius
-    return data
-
-
-def Cylinder6D(grid, ignore_dims):
-    data = np.zeros(grid.pts_each_dim)
-    for i in range(0, 6):
-        if i + 1 not in ignore_dims:
-            # This works because of broadcasting
-            data = data + np.power(grid.vs[i], 2)
-    data = np.sqrt(data)
-    return data
-
-
-def Cylinder4D(grid, ignore_dims):
-    data = np.zeros(grid.pts_each_dim)
-    for i in range(0, 4):
-        if i + 1 not in ignore_dims:
-            # This works because of broadcasting
-            data = data + np.power(grid.vs[i], 2)
-    data = np.sqrt(data)
-    return data
-
-
 def CylinderShape(grid, ignore_dims, center, radius):
     """Creates an axis align cylinder implicit surface function
 
     Args:
         grid (Grid): Grid object
-        ignore_dims (List) : List  specifing axis where cylindar is aligned (1-indexed)
+        ignore_dims (List) : List  specifing axis where cylindar is aligned (0-indexed)
         center (List) :  List specifing the center of cylinder 
         radius (float): Radius of cylinder
 
@@ -45,7 +14,6 @@ def CylinderShape(grid, ignore_dims, center, radius):
     """
     data = np.zeros(grid.pts_each_dim)
     for i in range(grid.dims):
-        if i + 1 not in ignore_dims:
             # This works because of broadcasting
             data = data + np.power(grid.vs[i] - center[i], 2)
     data = np.sqrt(data) - radius
@@ -91,7 +59,7 @@ def Rectangle6D(grid):
 def ShapeRectangle(grid, target_min, target_max):
     data = np.maximum(grid.vs[0] - target_max[0], -grid.vs[0] + target_min[0])
 
-    for i in range(1, grid.dims):
+    for i in range(grid.dims):
         data = np.maximum(data,  grid.vs[i] - target_max[i])
         data = np.maximum(data, -grid.vs[1] + target_min[i])
 
@@ -107,7 +75,7 @@ def Lower_Half_Space(grid, dim, value):
 
     Args:
         grid (Grid): Grid object
-        dim (int): Dimention of the half space (1-indexed)
+        dim (int): Dimention of the half space (0-indexed)
         value (float): Used in the implicit surface function for V < value
 
     Returns:
@@ -115,18 +83,18 @@ def Lower_Half_Space(grid, dim, value):
                     of size grid.pts_each_dim
     """
     data = np.zeros(grid.pts_each_dim)
-    for i in range(1, grid.dims + 1):
+    for i in range(grid.dims):
         if i == dim:
             data += grid.vs[i] - value
     return data
 
 
-def Upper_Half_Plane(grid, dim, value):
-    """Creates an axis aligned lower half space 
+def Upper_Half_Space(grid, dim, value):
+    """Creates an axis aligned upper half space 
 
     Args:
         grid (Grid): Grid object
-        dim (int): Dimention of the half space (1-indexed)
+        dim (int): Dimention of the half space (0-indexed)
         value (float): Used in the implicit surface function for V > value
 
     Returns:
@@ -134,7 +102,31 @@ def Upper_Half_Plane(grid, dim, value):
                     of size grid.pts_each_dim
     """
     data = np.zeros(grid.pts_each_dim)
-    for i in range(1, grid.dims + 1):
+    for i in range(grid.dims):
         if i == dim:
             data += -grid.vs[i] + value
     return data
+
+def Union(shape1, shape2):
+    """ Calculates the union of two shapes
+
+    Args:
+        shape1 (np.ndarray): implicit surface representation of a shape
+        shape2 (np.ndarray): implicit surface representation of a shape
+
+    Returns:
+        np.ndarray: the element-wise minimum of two shapes
+    """
+    return np.minimum(shape1, shape2)
+
+def Intersection(shape1, shape2):
+    """ Calculates the intersection of two shapes
+
+    Args:
+        shape1 (np.ndarray): implicit surface representation of a shape
+        shape2 (np.ndarray): implicit surface representation of a shape
+
+    Returns:
+        np.ndarray: the element-wise minimum of two shapes
+    """
+    return np.maximum(shape1, shape2)
