@@ -32,7 +32,7 @@ class Grid:
         """
         self.vs = []
         self.grid_points = []
-        for i in range(0, dims):
+        for i in range(dims):
             tmp = np.linspace(self.min[i], self.max[i],
                               num=self.pts_each_dim[i])
             broadcast_map = np.ones(self.dims, dtype=int)
