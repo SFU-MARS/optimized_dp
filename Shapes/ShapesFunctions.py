@@ -14,7 +14,7 @@ def CylinderShape(grid, ignore_dims, center, radius):
     """
     data = np.zeros(grid.pts_each_dim)
     for i in range(grid.dims):
-        if i + 1 not in ignore_dims:
+        if i not in ignore_dims:
             # This works because of broadcasting
             data = data + np.power(grid.vs[i] - center[i], 2)
     data = np.sqrt(data) - radius
@@ -84,7 +84,7 @@ def Lower_Half_Space(grid, dim, value):
                     of size grid.pts_each_dim
     """
     data = np.zeros(grid.pts_each_dim)
-    for i in range(1, grid.dims + 1):
+    for i in range(grid.dims):
         if i == dim:
             data += grid.vs[i] - value
     return data
@@ -103,7 +103,7 @@ def Upper_Half_Space(grid, dim, value):
                     of size grid.pts_each_dim
     """
     data = np.zeros(grid.pts_each_dim)
-    for i in range(1, grid.dims + 1):
+    for i in range(grid.dims):
         if i == dim:
             data += -grid.vs[i] + value
     return data
