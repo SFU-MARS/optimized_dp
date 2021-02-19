@@ -128,7 +128,7 @@ Initial_value_f=np.load("/local-scratch/tara/project/WayPtNav-reachability/obsta
 # constraint_values = np.minimum(-HalfPlane(g, 0.5, 4), HalfPlane(g, 5.0, 4))
 
 # Look-back lenght and time step
-lookback_length = 2
+lookback_length = 4
 t_step = 0.01
 
 tau = np.arange(start = 0, stop = lookback_length + t_step, step = t_step)
