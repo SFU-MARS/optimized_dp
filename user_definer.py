@@ -100,7 +100,7 @@ my_shape = Initial_value_f"""
 #g = grid(np.array([-20.0, -20.0, -math.pi, -10, -10]), np.array([20, 20, math.pi, 10, 10]), 5, np.array([40, 40, 20, 20, 20]), [2])
 #g = grid(np.array([-15.0, -15.0, 0, 0, 0]), np.array([15, 15, 2*math.pi, 5.5, 5.5]), 5, np.array([61, 61, 31, 31, 31]), [2])
 # g = grid(np.array([-15.0, -15.0, 0, 0, 0]), np.array([15, 15, 2*math.pi, 5.5, 5.5]), 5, np.array([51, 51, 21, 21, 21]), [2])
-g = grid(np.array([0, 0, -1-0.5,-math.pi]), np.array([30, 26.05, 3+0.5  ,math.pi ]), 4, np.array([600, 521, 31,9]), [2])
+g = grid(np.array([0, 0, -1-0.5,-math.pi]), np.array([30, 26.05, 3+0.5  ,math.pi ]), 4, np.array([600, 521, 31,9]), [3])
 # g = grid(np.array([-5, -5, -0.5, -math.pi]), np.array([10.0, 10.0,1.5 , math.pi]), 4, np.array([80, 80, 40, 40]), [3])
 # Define my object
 #my_object = DubinsCar5DAvoid(x=[0,0,0,0,0], u_theta_max = math.pi/2, u_v_max=3, d_theta_max=math.pi/2, d_v_max=3, uMode="max", dMode="min")
