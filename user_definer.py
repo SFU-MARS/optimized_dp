@@ -15,13 +15,9 @@ import math
 
 """ USER INTERFACES
 - Define grid
-
 - Generate initial values for grid using shape functions
-
 - Time length for computations
-
 - Initialize plotting option
-
 - Call HJSolver function
 """
 
@@ -29,7 +25,7 @@ import math
 # Scenario 1
 g = Grid(np.array([-4.0, -4.0, -math.pi]), np.array([4.0, 4.0, math.pi]), 3, np.array([40, 40, 40]), [2])
 
-Initial_value_f = CylinderShape(g, [3], np.zeros(3), 1)
+Initial_value_f = CylinderShape(g, [], np.zeros(3), 1)
 
 # Look-back lenght and time step
 lookback_length = 2.0
@@ -59,7 +55,7 @@ g = Grid(np.array([-3.0, -1.0, 0.0, -math.pi]), np.array([3.0, 4.0, 4.0, math.pi
 my_car = DubinsCar4D2()
 
 # Use the grid to initialize initial value function
-Initial_value_f = CylinderShape(g, [3,4], np.zeros(4), 1)
+Initial_value_f = CylinderShape(g, [2,3], np.zeros(4), 1)
 
 # Look-back lenght and time step
 lookback_length = 1.0
