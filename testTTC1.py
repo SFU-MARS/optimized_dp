@@ -111,7 +111,7 @@ fig.colorbar(pos02, ax=ax[2,2])
 ax[2,2].set_title('theta=-45')
 ax[2,2].title.set_position([.1,1.2])
 
-plt.suptitle('v=Vhigh=2.7, dxy=0.05 , dtheta=0.15 , uw=0.4, ua=1.1', x=0.1, y=.95, horizontalalignment='left', verticalalignment='bottom', fontsize = 15)
+plt.suptitle('v=Vlow=0.6, dxy=0.05 , dtheta=0.15 , uw=0.4, ua=1.1', x=0.1, y=.95, horizontalalignment='left', verticalalignment='bottom', fontsize = 15)
 
 
 plt.show()
