@@ -44,7 +44,7 @@ from PIL import Image
 # TTC1=TTC[x1:x2, y1:y2,0]
 # fromarray(TTC1.show()
 
-ax.add_patch(rect)
+# ax.add_patch(rect)
 # image =PIL.Image.fromarray(TTC1, "RGB")
 # plt.imshow(image)
 # plt.show()
