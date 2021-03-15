@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 # grid_z0 = griddata(points, values, (grid_x, grid_y, grid_v, grid_theta), method='nearest')
 data=np.load("/home/ttoufigh/optimized_dp/TTR_grid_biggergrid_3lookback_wDisturbance_wObstalceMap_speedlimit3reverse_5.npy")
 # data=np.load("/home/ttoufigh/optimized_dp/TTR_grid_biggergrid_3lookback_wDisturbance_wObstalceMap_speedlimit3_5.npy")
-vind=26#27=speed3, 10=speed 0
+vind=12#27=speed3, 10=speed 0
 v_range=np.arange(-1.5,3.5, 1/6)
 # print(v_range[vind,])
 TTC=data[:,:,vind,:]
