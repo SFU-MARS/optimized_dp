@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 # grid_z0 = griddata(points, values, (grid_x, grid_y, grid_v, grid_theta), method='nearest')
 data=np.load("/home/ttoufigh/optimized_dp/TTR_grid_biggergrid_3lookback_wDisturbance_wObstalceMap_speedlimit3reverse_5.npy")
 # data=np.load("/home/ttoufigh/optimized_dp/TTR_grid_biggergrid_3lookback_wDisturbance_wObstalceMap_speedlimit3_5.npy")
-vind=20#27=speed3, 10=speed 0
+vind=22#27=speed3, 10=speed 0
 v_range=np.arange(-1.5,3.5, 1/6)
 # print(v_range[vind,])
 TTC=data[:,:,vind,:]
@@ -111,7 +111,7 @@ fig.colorbar(pos02, ax=ax[2,2])
 ax[2,2].set_title('theta=-45')
 ax[2,2].title.set_position([.1,1.2])
 
-plt.suptitle('v=Vlow=0.6, dxy=0.05 , dtheta=0.15 , uw=0.4, ua=1.1', x=0.1, y=.95, horizontalalignment='left', verticalalignment='bottom', fontsize = 15)
+plt.suptitle('v=Vmid=1.5, dxy=0.05 , dtheta=0.15 , uw=0.4, ua=1.1', x=0.1, y=.95, horizontalalignment='left', verticalalignment='bottom', fontsize = 15)
 
 
 plt.show()
