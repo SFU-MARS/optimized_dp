@@ -23,7 +23,7 @@ TTC=data[:,:,vind,:]
 # print(TTCm)
 # import matplotlib
 # n_cols = ['-180', '-135', '-90', '-45', '0', '45', '90', '135', '180']
-# fig, ax = plt.subplots(3, 3)
+fig, ax = plt.subplots(3, 3)
 # grid size [600, 521, 31,9]
 x1=445
 x2=460
