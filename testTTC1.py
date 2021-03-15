@@ -70,7 +70,7 @@ ax[0,0].title.set_position([.1,1.2])
 # p0, = plt.plot([1, 2, 3], label='-135')
 # plt.legend(handles=[p0], bbox_to_anchor=(1.05, 1), loc='upper left')
 fig.colorbar(pos0, ax=ax[0,0])
-plt.show()
+# plt.show()
 
 pos01=ax[0,1].matshow(TTC[:,:,0],label='theta=180')
 fig.colorbar(pos01, ax=ax[0,1])
