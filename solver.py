@@ -73,6 +73,7 @@ def HJSolver(dynamics_obj, grid, init_value, tau, compMethod, plot_option):
     execution_time = 0
     iter = 0
     tNow = tau[0]
+    print("Started running\n")
     for i in range (1, len(tau)):
         #tNow = tau[i-1]
         t_minh= hcl.asarray(np.array((tNow, tau[i])))
@@ -81,8 +82,6 @@ def HJSolver(dynamics_obj, grid, init_value, tau, compMethod, plot_option):
              # Start timing
              iter += 1
              start = time.time()
-
-             print("Started running\n")
 
              # Run the execution and pass input into graph
              if grid.dims == 3:
@@ -108,9 +107,15 @@ def HJSolver(dynamics_obj, grid, init_value, tau, compMethod, plot_option):
     print("Total kernel time (s): {:.5f}".format(execution_time))
     print("Finished solving\n")
 
+    # Save into file
+    np.save("new_center_final.npy", V_1.asnumpy())
+
+    print(np.sum(V_1.asnumpy() < 0))
+
     ##################### PLOTTING #####################
     if args.plot:
         # plot Value table when speed is maximum
         plot_isosurface(grid, V_1.asnumpy(), plot_option)
         #plot_isosurface(g, my_V, [0, 1, 3], 10)
+    return V_1.asnumpy()
 
