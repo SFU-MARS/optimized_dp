@@ -14,6 +14,7 @@ def CylinderShape(grid, ignore_dims, center, radius):
     """
     data = np.zeros(grid.pts_each_dim)
     for i in range(grid.dims):
+        if i not in ignore_dims:
             # This works because of broadcasting
             data = data + np.power(grid.vs[i] - center[i], 2)
     data = np.sqrt(data) - radius
