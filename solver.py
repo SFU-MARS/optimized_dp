@@ -268,4 +268,3 @@ def TTRSolver(dynamics_obj, grid, init_value, epsilon, plot_option):
     plot_isosurface(grid, V_0.asnumpy(), plot_option)
     return V_0.asnumpy()
 
-
