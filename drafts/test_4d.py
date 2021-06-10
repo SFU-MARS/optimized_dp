@@ -203,7 +203,7 @@ def main():
     ################### PARSING ARGUMENTS FROM USERS #####################
 
     parser = ArgumentParser()
-    parser.add_argument("-p", "--plot", default=False, type=bool)
+    parser.add_argument("-p", "--plot", action="store_true")
     args = parser.parse_args()
 
     hcl.init()
