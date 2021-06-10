@@ -16,7 +16,7 @@ Please install the following:
 
     ``` pip3 install future plotly==4.5.0 ```
     
-* Run the example code from optimized_dp root directory: ``` python3 user_definer.py ```
+* Run the example code from optimized_dp root directory: ``` python3 user_definer.py --plot```
 
 # Update 31/Jan/2021
 The repo has been updated to allow multiple instances of problem to be defined. HJSolver are called and parameters are passed into this function for problem to be solved. 
