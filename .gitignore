@@ -3,6 +3,7 @@
 *.png
 .ipynb_checkpoints
 .vscode
+.idea
 /VItest
 /value_matrix_car_3D_2
 /hcl_value_matrix_test
