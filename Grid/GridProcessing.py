@@ -1,24 +1,25 @@
+import math
 import numpy as np
 
 
 class Grid:
-    def __init__(self, min, max, dims, pts_each_dim, pDim=[]):
+    def __init__(self, min_bounds: np.ndarray, max_bounds: np.ndarray, dims: int, pts_each_dim: np.ndarray, pDim=[]):
         """ 
 
         Args:
-            min (list): The lower bounds of each dimension in the grid
-            max (list): The upper bounds of each dimension in the grid
+            min_bounds (np.ndarray): The lower bounds of each dimension in the grid
+            max_bounds (np.ndarray): The upper bounds of each dimension in the grid
             dims (int): The dimension of grid
-            pts_each_dim (list): The number of points for each dimension in the grid
-            pDim (list, optional): A list of periodic dimentions (0-indexed). Defaults to [].
+            pts_each_dim (np.ndarray): The number of points for each dimension in the grid
+            pDim (list, optional): A list of periodic dimensions (0-indexed). Defaults to [].
         """
-        self.max = max
-        self.min = min
+        self.max = max_bounds
+        self.min = min_bounds
         self.dims = len(pts_each_dim)
         self.pts_each_dim = pts_each_dim
         self.pDim = pDim
 
-        # Exclude the upper bounds for periodic dimensions is not included 
+        # Exclude the upper bounds for periodic dimensions
         # e.g. [-pi, pi)
         for dim in pDim:
             self.max[dim] = self.min[dim] + \
@@ -26,10 +27,8 @@ class Grid:
                 (1 - 1/self.pts_each_dim[dim])
         self.dx = (self.max - self.min) / (self.pts_each_dim - 1.0)
 
-        """
-        Below is re-shaping the self.vs so that we can make use of broadcasting
-        self.vs[i] is reshape into (1,1, ... , pts_each_dim[i], ..., 1) such that pts_each_dim[i] is used in ith position
-        """
+        # Below is re-shaping the self.vs so that we can make use of broadcasting
+        # self.vs[i] is reshape into (1,1, ... , pts_each_dim[i], ..., 1) such that pts_each_dim[i] is used in ith position
         self.vs = []
         self.grid_points = []
         for i in range(dims):
