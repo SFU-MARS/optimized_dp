@@ -1,12 +1,13 @@
 import numpy as np
 
+
 def CylinderShape(grid, ignore_dims, center, radius):
     """Creates an axis align cylinder implicit surface function
 
     Args:
         grid (Grid): Grid object
-        ignore_dims (List) : List  specifing axis where cylindar is aligned (0-indexed)
-        center (List) :  List specifing the center of cylinder 
+        ignore_dims (List) : List  specifying axis where cylinder is aligned (0-indexed)
+        center (List) :  List specifying the center of cylinder
         radius (float): Radius of cylinder
 
     Returns:
@@ -19,6 +20,7 @@ def CylinderShape(grid, ignore_dims, center, radius):
             data = data + np.power(grid.vs[i] - center[i], 2)
     data = np.sqrt(data) - radius
     return data
+
 
 # Range is a list of list of ranges
 # def Rectangle4D(grid, range):
@@ -41,18 +43,18 @@ def CylinderShape(grid, ignore_dims, center, radius):
 
 
 def Rectangle6D(grid):
-    #data = np.zeros(grid.pts_each_dim)
-    #x1 = np.reshape(grid.vs[0], (25, 25, 25, 25, 25, 25))
+    # data = np.zeros(grid.pts_each_dim)
+    # x1 = np.reshape(grid.vs[0], (25, 25, 25, 25, 25, 25))
     data = np.maximum(grid.vs[0] - 0.05, -grid.vs[0] - 0.05)
-    data = np.maximum(data,  grid.vs[1] - 0.08)
+    data = np.maximum(data, grid.vs[1] - 0.08)
     data = np.maximum(data, -grid.vs[1] - 0.08)
-    data = np.maximum(data,  grid.vs[2] - 1.04)
+    data = np.maximum(data, grid.vs[2] - 1.04)
     data = np.maximum(data, -grid.vs[2] + 0.94)
-    data = np.maximum(data,  grid.vs[3] - 0.15)
+    data = np.maximum(data, grid.vs[3] - 0.15)
     data = np.maximum(data, -grid.vs[3] - 0.15)
-    data = np.maximum(data,  grid.vs[4] - 0.15)
+    data = np.maximum(data, grid.vs[4] - 0.15)
     data = np.maximum(data, -grid.vs[4] - 0.15)
-    data = np.maximum(data,  grid.vs[5] - 0.6)
+    data = np.maximum(data, grid.vs[5] - 0.6)
     data = np.maximum(data, -grid.vs[5] - 0.6)
     return data
 
@@ -61,14 +63,14 @@ def ShapeRectangle(grid, target_min, target_max):
     data = np.maximum(grid.vs[0] - target_max[0], -grid.vs[0] + target_min[0])
 
     for i in range(grid.dims):
-        data = np.maximum(data,  grid.vs[i] - target_max[i])
+        data = np.maximum(data, grid.vs[i] - target_max[i])
         data = np.maximum(data, -grid.vs[1] + target_min[i])
 
     return data
 
 
 def Rect_Around_Point(grid, target_point):
-    return ShapeRectangle(grid, target_point - 1.5*grid.dx, target_point + 1.5*grid.dx)
+    return ShapeRectangle(grid, target_point - 1.5 * grid.dx, target_point + 1.5 * grid.dx)
 
 
 def Lower_Half_Space(grid, dim, value):
@@ -108,6 +110,7 @@ def Upper_Half_Space(grid, dim, value):
             data += -grid.vs[i] + value
     return data
 
+
 def Union(shape1, shape2):
     """ Calculates the union of two shapes
 
@@ -119,6 +122,7 @@ def Union(shape1, shape2):
         np.ndarray: the element-wise minimum of two shapes
     """
     return np.minimum(shape1, shape2)
+
 
 def Intersection(shape1, shape2):
     """ Calculates the intersection of two shapes

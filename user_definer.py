@@ -1,11 +1,9 @@
-import numpy as np
 # Utility functions to initialize the problem
 from Grid.GridProcessing import Grid
 from Shapes.ShapesFunctions import *
 # Specify the  file that includes dynamic systems
-from dynamics.DubinsCar4D import *
-from dynamics.DubinsCapture import *
-from dynamics.DubinsCar4D2 import *
+from dynamics import DubinsCapture
+from dynamics import DubinsCar4D2
 # Plot options
 from plot_options import *
 # Solver core
@@ -57,7 +55,7 @@ my_car = DubinsCar4D2()
 # Use the grid to initialize initial value function
 Initial_value_f = CylinderShape(g, [2,3], np.zeros(4), 1)
 
-# Look-back lenght and time step
+# Look-back length and time step
 lookback_length = 1.0
 t_step = 0.05
 

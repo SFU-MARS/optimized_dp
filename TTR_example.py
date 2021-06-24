@@ -3,7 +3,7 @@ import numpy as np
 from Grid.GridProcessing import Grid
 from Shapes.ShapesFunctions import *
 # Specify the  file that includes dynamic systems
-from dynamics.DubinsCar import *
+from dynamics import DubinsCar
 # Plot options
 from plot_options import *
 # Solver core

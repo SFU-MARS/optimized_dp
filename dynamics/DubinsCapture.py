@@ -1,7 +1,8 @@
 import heterocl as hcl
 
+
 class DubinsCapture:
-    def __init__(self, x=[0,0,0], wMax=1.0, speed=1.0, dMax=1.0, uMode="max", dMode="min"):
+    def __init__(self, x=[0, 0, 0], wMax=1.0, speed=1.0, dMax=1.0, uMode="max", dMode="min"):
         self.x = x
         self.wMax = wMax
         self.speed = speed
@@ -22,7 +23,7 @@ class DubinsCapture:
         in3 = hcl.scalar(0, "in3")
         in4 = hcl.scalar(0, "in4")
 
-        #a_term = spat_deriv[0] * self.x[1] - spat_deriv[1]*self.x[0] - spat_deriv[2]
+        # a_term = spat_deriv[0] * self.x[1] - spat_deriv[1]*self.x[0] - spat_deriv[2]
 
         # Declare a variable
         a_term = hcl.scalar(0, "a_term")
@@ -69,8 +70,8 @@ class DubinsCapture:
         y_dot = hcl.scalar(0, "y_dot")
         theta_dot = hcl.scalar(0, "theta_dot")
 
-        x_dot[0] = -self.speed + self.speed*hcl.cos(state[2]) + uOpt[0]*state[1]
-        y_dot[0] = self.speed*hcl.sin(state[2]) - uOpt[0]*state[0]
+        x_dot[0] = -self.speed + self.speed * hcl.cos(state[2]) + uOpt[0] * state[1]
+        y_dot[0] = self.speed * hcl.sin(state[2]) - uOpt[0] * state[0]
         theta_dot[0] = dOpt[0] - uOpt[0]
 
         return (x_dot[0], y_dot[0], theta_dot[0])
