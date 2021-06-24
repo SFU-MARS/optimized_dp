@@ -1,12 +1,14 @@
 import numpy as np
+from typing import List
+from Grid.GridProcessing import Grid
 
 
-def CylinderShape(grid, ignore_dims, center, radius):
+def CylinderShape(grid: Grid, ignore_dims: List, center: List, radius: float) -> np.ndarray:
     """Creates an axis align cylinder implicit surface function
 
     Args:
         grid (Grid): Grid object
-        ignore_dims (List) : List  specifying axis where cylinder is aligned (0-indexed)
+        ignore_dims (List) : List specifying axis where cylinder is aligned (0-indexed)
         center (List) :  List specifying the center of cylinder
         radius (float): Radius of cylinder
 
@@ -42,7 +44,7 @@ def CylinderShape(grid, ignore_dims, center, radius):
 #     return data
 
 
-def Rectangle6D(grid):
+def Rectangle6D(grid: Grid):
     # data = np.zeros(grid.pts_each_dim)
     # x1 = np.reshape(grid.vs[0], (25, 25, 25, 25, 25, 25))
     data = np.maximum(grid.vs[0] - 0.05, -grid.vs[0] - 0.05)
@@ -73,7 +75,7 @@ def Rect_Around_Point(grid, target_point):
     return ShapeRectangle(grid, target_point - 1.5 * grid.dx, target_point + 1.5 * grid.dx)
 
 
-def Lower_Half_Space(grid, dim, value):
+def Lower_Half_Space(grid: Grid, dim: int, value: float) -> np.ndarray:
     """Creates an axis aligned lower half space 
 
     Args:
@@ -92,12 +94,12 @@ def Lower_Half_Space(grid, dim, value):
     return data
 
 
-def Upper_Half_Space(grid, dim, value):
+def Upper_Half_Space(grid: Grid, dim: int, value: float) -> np.ndarray:
     """Creates an axis aligned upper half space 
 
     Args:
         grid (Grid): Grid object
-        dim (int): Dimention of the half space (0-indexed)
+        dim (int): Dimension of the half space (0-indexed)
         value (float): Used in the implicit surface function for V > value
 
     Returns:
@@ -111,7 +113,7 @@ def Upper_Half_Space(grid, dim, value):
     return data
 
 
-def Union(shape1, shape2):
+def Union(shape1: np.ndarray, shape2: np.ndarray) -> np.ndarray:
     """ Calculates the union of two shapes
 
     Args:
@@ -124,7 +126,7 @@ def Union(shape1, shape2):
     return np.minimum(shape1, shape2)
 
 
-def Intersection(shape1, shape2):
+def Intersection(shape1: np.ndarray, shape2: np.ndarray) -> np.ndarray:
     """ Calculates the intersection of two shapes
 
     Args:
