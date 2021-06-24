@@ -5,7 +5,7 @@ from Shapes.ShapesFunctions import *
 from dynamics import DubinsCapture
 from dynamics import DubinsCar4D2
 # Plot options
-from plot_options import *
+from plot_options import PlotOptions
 # Solver core
 from solver import HJSolver
 
@@ -19,13 +19,12 @@ import math
 - Call HJSolver function
 """
 
-
 # Scenario 1
 g = Grid(np.array([-4.0, -4.0, -math.pi]), np.array([4.0, 4.0, math.pi]), 3, np.array([40, 40, 40]), [2])
 
 Initial_value_f = CylinderShape(g, [], np.zeros(3), 1)
 
-# Look-back lenght and time step
+# Look-back length and time step
 lookback_length = 2.0
 t_step = 0.05
 
@@ -33,7 +32,7 @@ small_number = 1e-5
 tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)
 my_car = DubinsCapture()
 
-po2 = PlotOptions("3d_plot", [0,1,2], [])
+po2 = PlotOptions("3d_plot", [0, 1, 2], [])
 
 """
 Assign one of the following strings to `compMethod` to specify the characteristics of computation
@@ -53,7 +52,7 @@ g = Grid(np.array([-3.0, -1.0, 0.0, -math.pi]), np.array([3.0, 4.0, 4.0, math.pi
 my_car = DubinsCar4D2()
 
 # Use the grid to initialize initial value function
-Initial_value_f = CylinderShape(g, [2,3], np.zeros(4), 1)
+Initial_value_f = CylinderShape(g, [2, 3], np.zeros(4), 1)
 
 # Look-back length and time step
 lookback_length = 1.0
@@ -62,5 +61,5 @@ t_step = 0.05
 small_number = 1e-5
 tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)
 
-po = PlotOptions("3d_plot", [0,1,3], [19])
+po = PlotOptions("3d_plot", [0, 1, 3], [19])
 HJSolver(my_car, g, Initial_value_f, tau, "minVWithV0", po)

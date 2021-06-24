@@ -8,12 +8,13 @@ from computeGraphs.graph_3D import *
 from computeGraphs.graph_4D import *
 from computeGraphs.graph_5D import *
 from computeGraphs.graph_6D import *
-from TimeToReach.TimeToReach_3D import  *
-from TimeToReach.TimeToReach_4D import  *
+from TimeToReach.TimeToReach_3D import *
+from TimeToReach.TimeToReach_4D import *
 from valueIteration.value_iteration_3D import *
 from valueIteration.value_iteration_4D import *
 from valueIteration.value_iteration_5D import *
 from valueIteration.value_iteration_6D import *
+
 
 def solveValueIteration(MDP_obj):
     print("Welcome to optimized_dp \n")
@@ -57,7 +58,7 @@ def solveValueIteration(MDP_obj):
     t_s = time.time()
     if MDP_obj._bounds.shape[0] == 3:
         f(V_opt, actions, intermeds, trans, interpV, gamma, epsilon, iVals, sVals, bounds, goal, ptsEachDim, count,
-            maxIters, useNN, fillVal)
+          maxIters, useNN, fillVal)
     else:
         f(V_opt, actions, intermeds, trans, interpV, gamma, epsilon, iVals, sVals, bounds, goal, ptsEachDim, count,
           maxIters, useNN)
@@ -103,9 +104,9 @@ def HJSolver(dynamics_obj, grid, init_value, tau, compMethod, plot_option):
 
     V_0 = hcl.asarray(init_value)
     V_1 = hcl.asarray(np.zeros(tuple(grid.pts_each_dim)))
-    l0  = hcl.asarray(init_value)
+    l0 = hcl.asarray(init_value)
     probe = hcl.asarray(np.zeros(tuple(grid.pts_each_dim)))
-    #obstacle = hcl.asarray(cstraint_values)
+    # obstacle = hcl.asarray(cstraint_values)
 
     list_x1 = np.reshape(grid.vs[0], grid.pts_each_dim[0])
     list_x2 = np.reshape(grid.vs[1], grid.pts_each_dim[1])
@@ -116,7 +117,6 @@ def HJSolver(dynamics_obj, grid, init_value, tau, compMethod, plot_option):
         list_x5 = np.reshape(grid.vs[4], grid.pts_each_dim[4])
     if grid.dims >= 6:
         list_x6 = np.reshape(grid.vs[5], grid.pts_each_dim[5])
-
 
     # Convert to hcl array type
     list_x1 = hcl.asarray(list_x1)
@@ -140,7 +140,7 @@ def HJSolver(dynamics_obj, grid, init_value, tau, compMethod, plot_option):
         solve_pde = graph_6D(dynamics_obj, grid, compMethod)
 
     # Print out code for different backend
-    #print(solve_pde)
+    # print(solve_pde)
 
     ################ USE THE EXECUTABLE ############
     # Variables used for timing
@@ -148,34 +148,33 @@ def HJSolver(dynamics_obj, grid, init_value, tau, compMethod, plot_option):
     iter = 0
     tNow = tau[0]
     print("Started running\n")
-    for i in range (1, len(tau)):
-        #tNow = tau[i-1]
-        t_minh= hcl.asarray(np.array((tNow, tau[i])))
+    for i in range(1, len(tau)):
+        # tNow = tau[i-1]
+        t_minh = hcl.asarray(np.array((tNow, tau[i])))
         while tNow <= tau[i] - 1e-4:
-             tmp_arr = V_0.asnumpy()
-             # Start timing
-             iter += 1
-             start = time.time()
+            tmp_arr = V_0.asnumpy()
+            # Start timing
+            iter += 1
+            start = time.time()
 
-             # Run the execution and pass input into graph
-             if grid.dims == 3:
+            # Run the execution and pass input into graph
+            if grid.dims == 3:
                 solve_pde(V_1, V_0, list_x1, list_x2, list_x3, t_minh, l0)
-             if grid.dims == 4:
+            if grid.dims == 4:
                 solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, t_minh, l0, probe)
-             if grid.dims == 5:
-                solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, list_x5 ,t_minh, l0)
-             if grid.dims == 6:
+            if grid.dims == 5:
+                solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, list_x5, t_minh, l0)
+            if grid.dims == 6:
                 solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6, t_minh, l0)
 
-             tNow = np.asscalar((t_minh.asnumpy())[0])
+            tNow = np.asscalar((t_minh.asnumpy())[0])
 
-             # Calculate computation time
-             execution_time += time.time() - start
+            # Calculate computation time
+            execution_time += time.time() - start
 
-             # Some information printing
-             print(t_minh)
-             print("Computational time to integrate (s): {:.5f}".format(time.time() - start))
-
+            # Some information printing
+            print(t_minh)
+            print("Computational time to integrate (s): {:.5f}".format(time.time() - start))
 
     # Time info printing
     print("Total kernel time (s): {:.5f}".format(execution_time))
@@ -190,8 +189,9 @@ def HJSolver(dynamics_obj, grid, init_value, tau, compMethod, plot_option):
     if args.plot:
         # plot Value table when speed is maximum
         plot_isosurface(grid, V_1.asnumpy(), plot_option)
-        #plot_isosurface(g, my_V, [0, 1, 3], 10)
+        # plot_isosurface(g, my_V, [0, 1, 3], 10)
     return V_1.asnumpy()
+
 
 def TTRSolver(dynamics_obj, grid, init_value, epsilon, plot_option):
     print("Welcome to optimized_dp \n")
@@ -257,7 +257,7 @@ def TTRSolver(dynamics_obj, grid, init_value, epsilon, plot_option):
         if grid.dims == 5:
             solve_TTR(V_0, list_x1, list_x2, list_x3, list_x4, list_x5)
         if grid.dims == 6:
-            solve_TTR(V_0, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6 )
+            solve_TTR(V_0, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6)
 
         error = np.max(np.abs(prev_val - V_0.asnumpy()))
         prev_val = V_0.asnumpy()
@@ -267,4 +267,3 @@ def TTRSolver(dynamics_obj, grid, init_value, epsilon, plot_option):
     ##################### PLOTTING #####################
     plot_isosurface(grid, V_0.asnumpy(), plot_option)
     return V_0.asnumpy()
-
