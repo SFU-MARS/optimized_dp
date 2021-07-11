@@ -6,9 +6,11 @@ import heterocl as hcl
  v_dot = a
  theta_dot = w
  """
+
+
 class DubinsCar4D:
-    def __init__(self, x=[0,0,0,0], uMin = [-1,-1], uMax = [1,1], dMin = [-0.25,-0.25],
-                 dMax=[0.25,0.25], uMode="min", dMode="max"):
+    def __init__(self, x=[0, 0, 0, 0], uMin=[-1, -1], uMax=[1, 1], dMin=[-0.25, -0.25],
+                 dMax=[0.25, 0.25], uMode="min", dMode="max"):
         """Creates a Dublin Car with the following states:
            X position, Y position, acceleration, heading
            The first element of user control and disturbance is acceleration
@@ -32,12 +34,12 @@ class DubinsCar4D:
         self.uMin = uMin
         self.dMax = dMax
         self.dMin = dMin
-        assert(uMode in ["min", "max"])
+        assert (uMode in ["min", "max"])
         self.uMode = uMode
         if uMode == "min":
-            assert(dMode == "max")
+            assert (dMode == "max")
         else:
-            assert(dMode == "min")
+            assert (dMode == "min")
         self.dMode = dMode
 
     def opt_ctrl(self, t, state, spat_deriv):
@@ -57,21 +59,21 @@ class DubinsCar4D:
         opt_a = hcl.scalar(self.uMax[0], "opt_a")
         opt_w = hcl.scalar(self.uMax[1], "opt_w")
         # Just create and pass back, even though they're not used
-        in3   = hcl.scalar(0, "in3")
-        in4   = hcl.scalar(0, "in4")
+        in3 = hcl.scalar(0, "in3")
+        in4 = hcl.scalar(0, "in4")
 
-        if self.uMode == "min":
+        with hcl.if_(self.uMode == "min")
             with hcl.if_(spat_deriv[2] > 0):
                 opt_a[0] = self.uMin[0]
             with hcl.if_(spat_deriv[3] > 0):
                 opt_w[0] = self.uMin[1]
-        else:
+        with hcl.else_():
             with hcl.if_(spat_deriv[2] < 0):
                 opt_a[0] = self.uMin[0]
             with hcl.if_(spat_deriv[3] < 0):
                 opt_w[0] = self.uMin[1]
         # return 3, 4 even if you don't use them
-        return (opt_a[0] ,opt_w[0], in3[0], in4[0])
+        return opt_a[0], opt_w[0], in3[0], in4[0]
 
     def opt_dstb(self, spat_deriv):
         """
@@ -85,8 +87,7 @@ class DubinsCar4D:
         d3 = hcl.scalar(0, "d3")
         d4 = hcl.scalar(0, "d4")
 
-        #with hcl.if_(self.dMode == "max"):
-        if self.dMode == "max":
+        with hcl.if_(self.dMode == "max"):
             with hcl.if_(spat_deriv[0] > 0):
                 d1[0] = self.dMax[0]
             with hcl.elif_(spat_deriv[0] < 0):
@@ -95,7 +96,7 @@ class DubinsCar4D:
                 d2[0] = self.dMax[1]
             with hcl.elif_(spat_deriv[1] < 0):
                 d2[0] = self.dMin[1]
-        else:
+        with hcl.else_():
             with hcl.if_(spat_deriv[0] > 0):
                 d1[0] = self.dMin[0]
             with hcl.elif_(spat_deriv[0] < 0):
@@ -105,7 +106,7 @@ class DubinsCar4D:
             with hcl.elif_(spat_deriv[1] < 0):
                 d2[0] = self.dMax[1]
 
-        return (d1[0], d2[0], d3[0], d4[0])
+        return d1[0], d2[0], d3[0], d4[0]
 
     def dynamics(self, t, state, uOpt, dOpt):
         x_dot = hcl.scalar(0, "x_dot")
@@ -118,4 +119,4 @@ class DubinsCar4D:
         v_dot[0] = uOpt[0]
         theta_dot[0] = uOpt[1]
 
-        return (x_dot[0], y_dot[0], v_dot[0] ,theta_dot[0])
+        return x_dot[0], y_dot[0], v_dot[0], theta_dot[0]
