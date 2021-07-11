@@ -80,7 +80,7 @@ def Lower_Half_Space(grid: Grid, dim: int, value: float) -> np.ndarray:
 
     Args:
         grid (Grid): Grid object
-        dim (int): Dimention of the half space (0-indexed)
+        dim (int): Dimension of the half space (0-indexed)
         value (float): Used in the implicit surface function for V < value
 
     Returns:

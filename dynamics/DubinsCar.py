@@ -24,7 +24,7 @@ class DubinsCar:
                 opt_w[0] = -opt_w
         return (opt_w[0], in3[0], in4[0])
 
-    def optDstb(self, t, state, spat_deriv):
+    def opt_dstb(self, t, state, spat_deriv):
         """
         :param spat_deriv: tuple of spatial derivative in all dimensions
         :return: a tuple of optimal disturbances

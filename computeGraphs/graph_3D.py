@@ -169,7 +169,7 @@ def graph_3D(my_object, g, compMethod):
                         # Use method of DubinsCar to solve optimal control instead
                         uOpt = my_object.opt_ctrl(t, (x1[i], x2[j], x3[k]),
                                                       (dV_dx[0], dV_dy[0], dV_dT[0]))
-                        dOpt = my_object.optDstb(t, (x1[i], x2[j], x3[k]),
+                        dOpt = my_object.opt_dstb(t, (x1[i], x2[j], x3[k]),
                                                  (dV_dx[0], dV_dy[0], dV_dT[0]))
 
                         # Calculate dynamical rates of changes
@@ -256,12 +256,12 @@ def graph_3D(my_object, g, compMethod):
                         dx_LU3 = hcl.scalar(0, "dx_LU3")
 
                         # Find LOWER BOUND optimal disturbance
-                        dOptL1[0], dOptL2[0], dOptL3[0] = my_object.optDstb(t,  (x1[i], x2[j], x3[k]),\
+                        dOptL1[0], dOptL2[0], dOptL3[0] = my_object.opt_dstb(t,  (x1[i], x2[j], x3[k]),\
                                                                             (min_deriv1[0], min_deriv2[0],min_deriv3[0]))
                         # probe[i, j, k] = dOptL1[0] + dOptL2[0] + dOptL3[0]
 
 
-                        dOptU1[0], dOptU2[0], dOptU3[0] = my_object.optDstb(t, (x1[i], x2[j], x3[k]),\
+                        dOptU1[0], dOptU2[0], dOptU3[0] = my_object.opt_dstb(t, (x1[i], x2[j], x3[k]),\
                                                                             (max_deriv1[0], max_deriv2[0],max_deriv3[0]))
                         # probe[i, j, k] = dOptL1[0] + dOptL2[0] + dOptL3[0]
 

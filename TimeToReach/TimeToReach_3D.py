@@ -33,7 +33,7 @@ def updatePhi(i, j, k, my_object, phi, g, x1, x2, x3):
     # Find the optimal control through my_object's API
     uOpt = my_object.opt_ctrl(0, (x1[i], x2[j], x3[k]),
                               (dV_dx1[0], dV_dx2[0], dV_dx3[0]))
-    dOpt = my_object.optDstb(0, (x1[i], x2[j], x3[k]),
+    dOpt = my_object.opt_dstb(0, (x1[i], x2[j], x3[k]),
                              (dV_dx1[0], dV_dx2[0], dV_dx3[0]))
 
     # Calculate dynamical rates of changes

@@ -36,9 +36,9 @@ class DubinsCapture:
         with hcl.elif_(a_term < 0):
             with hcl.if_(self.uMode == "max"):
                 opt_w[0] = -opt_w[0]
-        return (opt_w[0], in3[0], in4[0])
+        return opt_w[0], in3[0], in4[0]
 
-    def optDstb(self, t, state, spat_deriv):
+    def opt_dstb(self, t, state, spat_deriv):
         """
             :param spat_deriv: tuple of spatial derivative in all dimensions
                     state: x1, x2, x3
@@ -63,7 +63,7 @@ class DubinsCapture:
         with hcl.elif_(b_term[0] < 0):
             with hcl.if_(self.dMode == "max"):
                 d1[0] = -d1[0]
-        return (d1[0], d2[0], d3[0])
+        return d1[0], d2[0], d3[0]
 
     def dynamics(self, t, state, uOpt, dOpt):
         x_dot = hcl.scalar(0, "x_dot")
@@ -74,4 +74,4 @@ class DubinsCapture:
         y_dot[0] = self.speed * hcl.sin(state[2]) - uOpt[0] * state[0]
         theta_dot[0] = dOpt[0] - uOpt[0]
 
-        return (x_dot[0], y_dot[0], theta_dot[0])
+        return x_dot[0], y_dot[0], theta_dot[0]

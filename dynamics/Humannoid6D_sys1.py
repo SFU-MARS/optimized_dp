@@ -126,7 +126,7 @@ class Humanoid_6D:
                 
         return (uOpt1[0], uOpt2[0], uOpt3[0])
 
-    def optDstb(self, spat_deriv):
+    def opt_dstb(self, spat_deriv):
         """
         :param spat_deriv: spatial derivative in all dimensions
         :return: tuple of optimal disturbance
