@@ -1,6 +1,7 @@
 import plotly.graph_objects as go
 import numpy as np
 
+
 def plot_isosurface(grid, V, plot_option):
     dims_plot = plot_option.dims_plot
     idx = [slice(None)] * grid.dims
@@ -19,8 +20,9 @@ def plot_isosurface(grid, V, plot_option):
         complex_x = complex(0, grid.pts_each_dim[dim1])
         complex_y = complex(0, grid.pts_each_dim[dim2])
         complex_z = complex(0, grid.pts_each_dim[dim3])
-        mg_X, mg_Y, mg_Z = np.mgrid[grid.min[dim1]:grid.max[dim1]: complex_x, grid.min[dim2]:grid.max[dim2]: complex_y,
-                                      grid.min[dim3]:grid.max[dim3]: complex_z]
+        mg_X, mg_Y, mg_Z = np.mgrid[grid.min[dim1]:grid.max[dim1]:complex_x,
+                                    grid.min[dim2]:grid.max[dim2]: complex_y,
+                                    grid.min[dim3]:grid.max[dim3]: complex_z]
 
         # graph value table while keeping speed constant
         # if V.ndim == 4:
@@ -43,4 +45,3 @@ def plot_isosurface(grid, V, plot_option):
         ))
         fig.show()
         print("Please check the plot on your browser.")
-
