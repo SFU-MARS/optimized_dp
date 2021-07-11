@@ -1,5 +1,6 @@
 import heterocl as hcl
 import math
+from dynamics.dynamical_system import DynamicalSystem
 
 """
 4D DUBINS CAR DYNAMICS IMPLEMENTATION
@@ -17,7 +18,7 @@ L := wheelbase of car
 """
 
 
-class DubinsCar4D2:
+class DubinsCar4D2(DynamicalSystem):
     def __init__(
             self,
             x=[0, 0, 0, 0],

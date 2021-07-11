@@ -1,7 +1,8 @@
 import heterocl as hcl
+from dynamics.dynamical_system import DynamicalSystem
 
 
-class DubinsCar:
+class DubinsCar(DynamicalSystem):
     def __init__(self, x=[0, 0, 0], wMax=1, speed=1, dMax=[0, 0, 0], uMode="min", dMode="max"):
         self.x = x
         self.wMax = wMax

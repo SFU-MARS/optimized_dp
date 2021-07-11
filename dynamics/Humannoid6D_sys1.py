@@ -1,9 +1,9 @@
 import heterocl as hcl
 import numpy as np
-import time
-import math
+from dynamics.dynamical_system import DynamicalSystem
 
-class Humanoid_6D:
+
+class Humanoid_6D(DynamicalSystem):
     def __init__(self, x=[0, 0, 0, 0, 0, 0], uMin=np.array([-0.5*0.1, -5.0, -1.0]), uMax=np.array([0.5*0.1, 5.0, 1.0]),
                  dMin=np.array([0.0, 0.0, 0.0, 0.0]), dMax=np.array([0.0, 0.0, 0.0, 0.0]),
                  dims=6, uMode="min", dMode="max"):

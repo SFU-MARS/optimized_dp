@@ -1,4 +1,5 @@
 import heterocl as hcl
+from dynamics.dynamical_system import DynamicalSystem
 
 """ 4D DUBINS CAR DYNAMICS IMPLEMENTATION 
  x_dot = v * cos(theta)
@@ -8,7 +9,7 @@ import heterocl as hcl
  """
 
 
-class DubinsCar4D:
+class DubinsCar4D(DynamicalSystem):
     def __init__(self, x=[0, 0, 0, 0], uMin=[-1, -1], uMax=[1, 1], dMin=[-0.25, -0.25],
                  dMax=[0.25, 0.25], uMode="min", dMode="max"):
         """Creates a Dublin Car with the following states:
@@ -62,7 +63,7 @@ class DubinsCar4D:
         in3 = hcl.scalar(0, "in3")
         in4 = hcl.scalar(0, "in4")
 
-        with hcl.if_(self.uMode == "min")
+        with hcl.if_(self.uMode == "min"):
             with hcl.if_(spat_deriv[2] > 0):
                 opt_a[0] = self.uMin[0]
             with hcl.if_(spat_deriv[3] > 0):

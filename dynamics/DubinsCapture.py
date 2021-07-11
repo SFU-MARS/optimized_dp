@@ -1,7 +1,8 @@
 import heterocl as hcl
+from dynamics.dynamical_system import DynamicalSystem
 
 
-class DubinsCapture:
+class DubinsCapture(DynamicalSystem):
     def __init__(self, x=[0, 0, 0], wMax=1.0, speed=1.0, dMax=1.0, uMode="max", dMode="min"):
         self.x = x
         self.wMax = wMax
@@ -12,10 +13,13 @@ class DubinsCapture:
 
     def opt_ctrl(self, t, state, spat_deriv):
         """
-                :param  spat_deriv: tuple of spatial derivative in all dimensions
-                        state: x1, x2, x3
-                        t: time
-                :return: a tuple of optimal disturbances
+        Args:
+            t:
+            state: x1, x2, x3
+            spat_deriv: tuple of spatial derivatives in all dimensions
+
+        Returns:
+            a tuple of optimal disturbances
         """
 
         opt_w = hcl.scalar(self.wMax, "opt_w")
