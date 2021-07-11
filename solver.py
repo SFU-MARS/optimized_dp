@@ -2,7 +2,7 @@ import heterocl as hcl
 import numpy as np
 import time
 
-from Plots.plotting_utilities import *
+from plots import plot_isosurface
 from argparse import ArgumentParser
 from computeGraphs.graph_3D import *
 from computeGraphs.graph_4D import *

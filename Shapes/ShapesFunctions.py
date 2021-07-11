@@ -1,6 +1,6 @@
 import numpy as np
 from typing import List
-from Grid.GridProcessing import Grid
+from grid import Grid
 
 
 def CylinderShape(grid: Grid, ignore_dims: List, center: List, radius: float) -> np.ndarray:
@@ -79,7 +79,7 @@ def Lower_Half_Space(grid: Grid, dim: int, value: float) -> np.ndarray:
     """Creates an axis aligned lower half space 
 
     Args:
-        grid (Grid): Grid object
+        grid (Grid): grid object
         dim (int): Dimension of the half space (0-indexed)
         value (float): Used in the implicit surface function for V < value
 
@@ -98,7 +98,7 @@ def Upper_Half_Space(grid: Grid, dim: int, value: float) -> np.ndarray:
     """Creates an axis aligned upper half space 
 
     Args:
-        grid (Grid): Grid object
+        grid (Grid): grid object
         dim (int): Dimension of the half space (0-indexed)
         value (float): Used in the implicit surface function for V > value
 

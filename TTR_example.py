@@ -1,11 +1,10 @@
-import numpy as np
 # Utility functions to initialize the problem
-from Grid.GridProcessing import Grid
-from Shapes.ShapesFunctions import *
+from grid.GridProcessing import Grid
+from Shapes.ShapesFunctions import CylinderShape
 # Specify the  file that includes dynamic systems
 from dynamics import DubinsCar
 # Plot options
-from plot_options import *
+from plots.plot_options import *
 # Solver core
 from solver import *
 import math

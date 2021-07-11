@@ -1,15 +1,15 @@
 # Utility functions to initialize the problem
-from Grid.GridProcessing import Grid
-from Shapes.ShapesFunctions import *
+from grid import Grid
+from Shapes.ShapesFunctions import CylinderShape
 # Specify the  file that includes dynamic systems
 from dynamics import DubinsCapture
 from dynamics import DubinsCar4D2
 # Plot options
-from plot_options import PlotOptions
+from plots.plot_options import PlotOptions
 # Solver core
 from solver import HJSolver
 
-import math
+import numpy as np
 
 """ USER INTERFACES
 - Define grid
@@ -20,7 +20,7 @@ import math
 """
 
 # Scenario 1
-g = Grid(np.array([-4.0, -4.0, -math.pi]), np.array([4.0, 4.0, math.pi]), 3, np.array([40, 40, 40]), [2])
+g = Grid(np.array([-4.0, -4.0, -np.pi]), np.array([4.0, 4.0, np.pi]), 3, np.array([40, 40, 40]), [2])
 
 Initial_value_f = CylinderShape(g, [], np.zeros(3), 1)
 
@@ -46,7 +46,7 @@ Assign one of the following strings to `compMethod` to specify the characteristi
 HJSolver(my_car, g, Initial_value_f, tau, "minVWithV0", po2)
 
 # Second Scenario
-g = Grid(np.array([-3.0, -1.0, 0.0, -math.pi]), np.array([3.0, 4.0, 4.0, math.pi]), 4, np.array([60, 60, 20, 36]), [3])
+g = Grid(np.array([-3.0, -1.0, 0.0, -np.pi]), np.array([3.0, 4.0, 4.0, np.pi]), 4, np.array([30, 30, 20, 30]), [3])
 
 # Define my object
 my_car = DubinsCar4D2()
