@@ -105,7 +105,7 @@ def HJSolver(dynamics_obj, grid, init_value, tau, compMethod, plot_option, *, sa
     V_1 = hcl.asarray(np.zeros(tuple(grid.pts_each_dim)))
     # TODO: change to use hcl api
     # add extra dimension to grid of length tau
-    V_all_t = hcl.asarray(np.zeros(list(grid.pts_each_dim) + [len(tau)]))
+    V_all_t = np.zeros(list(grid.pts_each_dim) + [len(tau)])
     V_all_t[..., 0] = init_value
 
     l0 = hcl.asarray(init_value)
@@ -190,8 +190,10 @@ def HJSolver(dynamics_obj, grid, init_value, tau, compMethod, plot_option, *, sa
 
     ##################### PLOTTING #####################
     if args.plot:
-        # plot Value table when speed is maximum
-        plot_isosurface(grid, V_1.asnumpy(), plot_option)
+        if save_all_t:
+            plot_isosurface(grid, V_all_t, plot_option)
+        else:
+            plot_isosurface(grid, V_1.asnumpy(), plot_option)
 
     if save_all_t:
         return V_all_t
