@@ -6,7 +6,7 @@ def CylinderShape(grid, ignore_dims, center, radius):
     Args:
         grid (Grid): Grid object
         ignore_dims (List) : List  specifing axis where cylindar is aligned (0-indexed)
-        center (List) :  List specifing the center of cylinder 
+        center (List) :  List specifying the center of cylinder
         radius (float): Radius of cylinder
 
     Returns:
@@ -39,36 +39,17 @@ def CylinderShape(grid, ignore_dims, center, radius):
 #                     data[i0, i1, i2, i3] = min(range_list)
 #     return data
 
-
-def Rectangle6D(grid):
-    #data = np.zeros(grid.pts_each_dim)
-    #x1 = np.reshape(grid.vs[0], (25, 25, 25, 25, 25, 25))
-    data = np.maximum(grid.vs[0] - 0.05, -grid.vs[0] - 0.05)
-    data = np.maximum(data,  grid.vs[1] - 0.08)
-    data = np.maximum(data, -grid.vs[1] - 0.08)
-    data = np.maximum(data,  grid.vs[2] - 1.04)
-    data = np.maximum(data, -grid.vs[2] + 0.94)
-    data = np.maximum(data,  grid.vs[3] - 0.15)
-    data = np.maximum(data, -grid.vs[3] - 0.15)
-    data = np.maximum(data,  grid.vs[4] - 0.15)
-    data = np.maximum(data, -grid.vs[4] - 0.15)
-    data = np.maximum(data,  grid.vs[5] - 0.6)
-    data = np.maximum(data, -grid.vs[5] - 0.6)
-    return data
-
-
 def ShapeRectangle(grid, target_min, target_max):
     data = np.maximum(grid.vs[0] - target_max[0], -grid.vs[0] + target_min[0])
 
     for i in range(grid.dims):
         data = np.maximum(data,  grid.vs[i] - target_max[i])
-        data = np.maximum(data, -grid.vs[1] + target_min[i])
+        data = np.maximum(data, -grid.vs[i] + target_min[i])
 
     return data
 
-
 def Rect_Around_Point(grid, target_point):
-    return ShapeRectangle(grid, target_point - 1.5*grid.dx, target_point + 1.5*grid.dx)
+    return ShapeRectangle(grid, target_point - 1.5 * grid.dx, target_point + 1.5 * grid.dx)
 
 
 def Lower_Half_Space(grid, dim, value):
@@ -76,7 +57,7 @@ def Lower_Half_Space(grid, dim, value):
 
     Args:
         grid (Grid): Grid object
-        dim (int): Dimention of the half space (0-indexed)
+        dim (int): Dimension of the half space (0-indexed)
         value (float): Used in the implicit surface function for V < value
 
     Returns:
@@ -95,7 +76,7 @@ def Upper_Half_Space(grid, dim, value):
 
     Args:
         grid (Grid): Grid object
-        dim (int): Dimention of the half space (0-indexed)
+        dim (int): Dimension of the half space (0-indexed)
         value (float): Used in the implicit surface function for V > value
 
     Returns:
