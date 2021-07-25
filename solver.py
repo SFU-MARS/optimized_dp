@@ -88,8 +88,8 @@ def solveValueIteration(MDP_obj):
     # MDP_obj.writeResults(V, dir_path, file_name, just_values=True)
     return V
 
-
-def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod, plot_option, accuracy="low"):
+def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
+             plot_option, accuracy="low", save_all_t=False):
     print("Welcome to optimized_dp \n")
     if type(multiple_value) == list:
         init_value = multiple_value[0]
@@ -113,9 +113,13 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod, plot_option, a
 
     V_0 = hcl.asarray(init_value)
     V_1 = hcl.asarray(np.zeros(tuple(grid.pts_each_dim)))
-    l0  = hcl.asarray(init_value)
+    # TODO: change to use hcl api
+    # add extra dimension to grid of length tau
+    V_all_t = np.zeros(list(grid.pts_each_dim) + [len(tau)])
+    V_all_t[..., 0] = init_value
+
+    l0 = hcl.asarray(init_value)
     probe = hcl.asarray(np.zeros(tuple(grid.pts_each_dim)))
-    #obstacle = hcl.asarray(cstraint_values)
 
     list_x1 = np.reshape(grid.vs[0], grid.pts_each_dim[0])
     list_x2 = np.reshape(grid.vs[1], grid.pts_each_dim[1])
@@ -164,6 +168,7 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod, plot_option, a
     for i in range (1, len(tau)):
         #tNow = tau[i-1]
         t_minh= hcl.asarray(np.array((tNow, tau[i])))
+        print(i)
         while tNow <= tau[i] - 1e-4:
              tmp_arr = V_0.asnumpy()
              # Start timing
@@ -199,7 +204,8 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod, plot_option, a
              # Some information printing
              print(t_minh)
              print("Computational time to integrate (s): {:.5f}".format(time.time() - start))
-
+        # TODO: change to hcl api
+        V_all_t[..., i] = V_1.asnumpy()
 
     # Time info printing
     print("Total kernel time (s): {:.5f}".format(execution_time))
@@ -207,9 +213,12 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod, plot_option, a
 
     ##################### PLOTTING #####################
     if args.plot:
-        # plot Value table when speed is maximum
+        # Only plots last value array for now
         plot_isosurface(grid, V_1.asnumpy(), plot_option)
-        #plot_isosurface(g, my_V, [0, 1, 3], 10)
+
+    if save_all_t:
+        return V_all_t
+
     return V_1.asnumpy()
 
 def TTRSolver(dynamics_obj, grid, init_value, epsilon, plot_option):
