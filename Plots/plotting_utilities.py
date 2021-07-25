@@ -36,9 +36,9 @@ def plot_isosurface(grid, V, plot_option):
             z=mg_Z.flatten(),
             value=my_V.flatten(),
             colorscale='jet',
-            isomin=0,
+            isomin=plot_option.min_isosurface,
             surface_count=1,
-            isomax=0,
+            isomax=plot_option.max_isosurface,
             caps=dict(x_show=True, y_show=True)
         ))
         fig.show()
