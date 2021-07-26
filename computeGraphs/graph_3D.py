@@ -95,7 +95,7 @@ def graph_3D(my_object, g, compMethod, accuracy):
                             dV_dx_L[0], dV_dx_R[0] = spa_derivX(i, j, k, V_init, g)
                             dV_dy_L[0], dV_dy_R[0] = spa_derivY(i, j, k, V_init, g)
                             dV_dT_L[0], dV_dT_R[0] = spa_derivT(i, j, k, V_init, g)
-                        if accuracy == "high":
+                        if accuracy == "medium":
                             dV_dx_L[0], dV_dx_R[0] = secondOrderX(i, j, k, V_init, g)
                             dV_dy_L[0], dV_dy_R[0] = secondOrderY(i, j, k, V_init, g)
                             dV_dT_L[0], dV_dT_R[0] = secondOrderT(i, j, k, V_init, g)
