@@ -1,6 +1,5 @@
 import heterocl as hcl
 from dynamics.dynamical_system import DynamicalSystem
-import numpy as np
 
 
 class DubinsCapture(DynamicalSystem):
@@ -15,12 +14,12 @@ class DubinsCapture(DynamicalSystem):
     def opt_ctrl(self, t, state, spat_deriv):
         """
         Args:
-            t:
+            t: time
             state: x1, x2, x3
             spat_deriv: tuple of spatial derivatives in all dimensions
 
         Returns:
-            a tuple of optimal disturbances
+            a tuple of optimal control
         """
 
         opt_w = hcl.scalar(self.wMax, "opt_w")
@@ -45,10 +44,13 @@ class DubinsCapture(DynamicalSystem):
 
     def opt_dstb(self, t, state, spat_deriv):
         """
-            :param spat_deriv: tuple of spatial derivative in all dimensions
-                    state: x1, x2, x3
-                    t: time
-            :return: a tuple of optimal disturbances
+        Args:
+            t: time
+            state: x1, x2, x3
+            spat_deriv: tuple of spatial derivatives in all dimensions
+
+        Returns:
+            a tuple of optimal disturbances
         """
 
         # Graph takes in 4 possible inputs, by default, for now
@@ -80,14 +82,3 @@ class DubinsCapture(DynamicalSystem):
         theta_dot[0] = dOpt[0] - uOpt[0]
 
         return x_dot[0], y_dot[0], theta_dot[0]
-
-    def dynamics_non_hcl(self, t, state, uOpt, dOpt):
-        x_dot = 0.0
-        y_dot = 0.0
-        theta_dot = 0.0
-
-        x_dot = -self.speed + self.speed * np.cos(state[2]) + uOpt*state[1]
-        y_dot = self.speed * np.sin(state[2]) - uOpt * state[0]
-        theta_dot = dOpt - uOpt
-
-        return x_dot, y_dot, theta_dot
