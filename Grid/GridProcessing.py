@@ -3,25 +3,25 @@ import math
 
 
 class Grid:
-    def __init__(self, min, max, dims, pts_each_dim, pDim=[]):
+    def __init__(self, minBounds, maxBounds, dims, pts_each_dim, periodicDims=[]):
         """ 
 
         Args:
-            min (list): The lower bounds of each dimension in the grid
-            max (list): The upper bounds of each dimension in the grid
+            minBounds (list): The lower bounds of each dimension in the grid
+            maxBounds (list): The upper bounds of each dimension in the grid
             dims (int): The dimension of grid
             pts_each_dim (list): The number of points for each dimension in the grid
-            pDim (list, optional): A list of periodic dimentions (0-indexed). Defaults to [].
+            periodicDim (list, optional): A list of periodic dimentions (0-indexed). Defaults to [].
         """
-        self.max = max
-        self.min = min
+        self.max = maxBounds
+        self.min = minBounds
         self.dims = len(pts_each_dim)
         self.pts_each_dim = pts_each_dim
-        self.pDim = pDim
+        self.pDim = periodicDims
 
         # Exclude the upper bounds for periodic dimensions is not included 
         # e.g. [-pi, pi)
-        for dim in pDim:
+        for dim in self.pDim:
             self.max[dim] = self.min[dim] + \
                 (self.max[dim] - self.min[dim]) * \
                 (1 - 1/self.pts_each_dim[dim])

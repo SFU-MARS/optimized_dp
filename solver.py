@@ -4,12 +4,18 @@ import time
 
 from Plots.plotting_utilities import *
 from argparse import ArgumentParser
+
+# Backward reachable set computation library
 from computeGraphs.graph_3D import *
 from computeGraphs.graph_4D import *
 from computeGraphs.graph_5D import *
 from computeGraphs.graph_6D import *
+
 from TimeToReach.TimeToReach_3D import  *
 from TimeToReach.TimeToReach_4D import  *
+from TimeToReach.TimeToReach_5D import  *
+
+# Value Iteration library
 from valueIteration.value_iteration_3D import *
 from valueIteration.value_iteration_4D import *
 from valueIteration.value_iteration_5D import *
@@ -82,10 +88,14 @@ def solveValueIteration(MDP_obj):
     # MDP_obj.writeResults(V, dir_path, file_name, just_values=True)
     return V
 
-
-def HJSolver(dynamics_obj, grid, init_value, tau, compMethod, plot_option, *, save_all_t=False):
+def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
+             plot_option, accuracy="low", save_all_t=False):
     print("Welcome to optimized_dp \n")
-
+    if type(multiple_value) == list:
+        init_value = multiple_value[0]
+        constraint = multiple_value[1]
+    else:
+        init_value = multiple_value
     ################### PARSING ARGUMENTS FROM USERS #####################
 
     parser = ArgumentParser()
@@ -135,13 +145,16 @@ def HJSolver(dynamics_obj, grid, init_value, tau, compMethod, plot_option, *, sa
 
     # Get executable
     if grid.dims == 3:
-        solve_pde = graph_3D(dynamics_obj, grid, compMethod)
+        solve_pde = graph_3D(dynamics_obj, grid, compMethod["PrevSetsMode"], accuracy)
+
     if grid.dims == 4:
-        solve_pde = graph_4D(dynamics_obj, grid, compMethod)
+        solve_pde = graph_4D(dynamics_obj, grid, compMethod["PrevSetsMode"], accuracy)
+
     if grid.dims == 5:
-        solve_pde = graph_5D(dynamics_obj, grid, compMethod)
+        solve_pde = graph_5D(dynamics_obj, grid, compMethod["PrevSetsMode"], accuracy)
+
     if grid.dims == 6:
-        solve_pde = graph_6D(dynamics_obj, grid, compMethod)
+        solve_pde = graph_6D(dynamics_obj, grid, compMethod["PrevSetsMode"], accuracy)
 
     # Print out code for different backend
     #print(solve_pde)
@@ -177,6 +190,16 @@ def HJSolver(dynamics_obj, grid, init_value, tau, compMethod, plot_option, *, sa
              # Calculate computation time
              execution_time += time.time() - start
 
+             # If TargetSetMode is specified by user
+             if "TargetSetMode" in compMethod:
+                if compMethod["TargetSetMode"] == "max":
+                    tmp_val = np.maximum(V_0.asnumpy(), constraint)
+                elif compMethod["TargetSetMode"] == "min":
+                    tmp_val = np.minimum(V_0.asnumpy(), constraint)
+                # Update final result
+                V_1 = hcl.asarray(tmp_val)
+                # Update input for next iteration
+                V_0 = hcl.asarray(tmp_val)
 
              # Some information printing
              print(t_minh)
@@ -189,11 +212,9 @@ def HJSolver(dynamics_obj, grid, init_value, tau, compMethod, plot_option, *, sa
     print("Finished solving\n")
 
     ##################### PLOTTING #####################
-    # if args.plot:
-    #     if save_all_t:
-    #         plot_isosurface(grid, V_all_t, plot_option)
-    #     else:
-    #         plot_isosurface(grid, V_1.asnumpy(), plot_option)
+    if args.plot:
+        # Only plots last value array for now
+        plot_isosurface(grid, V_1.asnumpy(), plot_option)
 
     if save_all_t:
         return V_all_t
@@ -210,7 +231,7 @@ def TTRSolver(dynamics_obj, grid, init_value, epsilon, plot_option):
 
     # Convert initial distance value function to initial time-to-reach value function
     init_value[init_value < 0] = 0
-    init_value[init_value > 0] = 100
+    init_value[init_value > 0] = 1000
     V_0 = hcl.asarray(init_value)
     prev_val = np.zeros(init_value.shape)
 
@@ -243,17 +264,18 @@ def TTRSolver(dynamics_obj, grid, init_value, epsilon, plot_option):
     if grid.dims == 4:
         solve_TTR = TTR_4D(dynamics_obj, grid)
     if grid.dims == 5:
-        solve_TTR = TTR_5D(my_car, g)
+        solve_TTR = TTR_5D(dynamics_obj, grid)
     if grid.dims == 6:
-        solve_TTR = TTR_6D(my_car, g)
+        solve_TTR = TTR_6D(dynamics_obj, grid)
     print("Got Executable\n")
 
     # Print out code for different backend
     # print(solve_pde)
 
     ################ USE THE EXECUTABLE ############
-    error = 1000
+    error = 10000
     count = 0
+    start = time.time()
     while error > epsilon:
         print("Iteration: {} Error: {}".format(count, error))
         count += 1
@@ -268,7 +290,7 @@ def TTRSolver(dynamics_obj, grid, init_value, epsilon, plot_option):
 
         error = np.max(np.abs(prev_val - V_0.asnumpy()))
         prev_val = V_0.asnumpy()
-
+    print("Total TTR computation time (s): {:.5f}".format(time.time() - start))
     print("Finished solving\n")
 
     ##################### PLOTTING #####################
