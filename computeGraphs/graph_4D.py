@@ -2,157 +2,11 @@ import heterocl as hcl
 import numpy as np
 import time
 from computeGraphs.CustomGraphFunctions import *
-
-################## 4D SPATIAL DERIVATIVE FUNCTION #################
-
-# Calculate derivative on the first derivative  #
-def spa_derivX4_4d(i, j, k, l, V, g): # Left -> right == Outer Most -> Inner Most
-    left_deriv = hcl.scalar(0, "left_deriv")
-    right_deriv = hcl.scalar(0, "right_deriv")
-    if 3 not in g.pDim:
-        with hcl.if_(l == 0):
-            left_boundary = hcl.scalar(0, "left_boundary")
-            left_boundary[0] = V[i, j, k, l] + my_abs(V[i, j, k, l + 1] - V[i, j, k, l]) * my_sign(
-                V[i, j, k, l])
-            left_deriv[0] = (V[i, j, k, l] - left_boundary[0]) / g.dx[3]
-            right_deriv[0] = (V[i, j, k, l + 1] - V[i, j, k, l]) / g.dx[3]
-        with hcl.elif_(l == V.shape[3] - 1):
-            right_boundary = hcl.scalar(0, "right_boundary")
-            right_boundary[0] = V[i, j, k, l] + my_abs(V[i, j, k, l] - V[i, j, k, l - 1]) * my_sign(
-                V[i, j, k, l])
-            left_deriv[0] = (V[i, j, k, l] - V[i, j, k, l - 1]) / g.dx[3]
-            right_deriv[0] = (right_boundary[0] - V[i, j, k, l]) / g.dx[3]
-        with hcl.elif_(l != 0 and l != V.shape[3] - 1):
-            left_deriv[0] = (V[i, j, k, l] - V[i, j, k, l - 1]) / g.dx[3]
-            right_deriv[0] = (V[i, j, k, l + 1] - V[i, j, k, l]) / g.dx[3]
-        return left_deriv[0], right_deriv[0]
-    else:
-        with hcl.if_(l == 0):
-            left_boundary = hcl.scalar(0, "left_boundary")
-            left_boundary[0] = V[i, j, k, V.shape[3] - 1]
-            left_deriv[0] = (V[i, j, k, l] - left_boundary[0]) / g.dx[3]
-            right_deriv[0] = (V[i, j, k, l + 1] - V[i, j, k, l]) / g.dx[3]
-        with hcl.elif_(l == V.shape[3] - 1):
-            right_boundary = hcl.scalar(0, "right_boundary")
-            right_boundary[0] = V[i, j, k, 0]
-            left_deriv[0] = (V[i, j, k , l] - V[i, j, k, l - 1]) / g.dx[3]
-            right_deriv[0] = (right_boundary[0] - V[i, j, k, l]) / g.dx[3]
-        with hcl.elif_(l != 0 and l != V.shape[3] - 1):
-            left_deriv[0] = (V[i, j, k, l] - V[i, j, k, l - 1]) / g.dx[3]
-            right_deriv[0] = (V[i, j, k, l + 1] - V[i, j, k, l]) / g.dx[3]
-        return left_deriv[0], right_deriv[0]
-
-
-def spa_derivX3_4d(i, j, k, l, V, g): # Left -> right == Outer Most -> Inner Most
-    left_deriv = hcl.scalar(0, "left_deriv")
-    right_deriv = hcl.scalar(0, "right_deriv")
-    if 2 not in g.pDim:
-        with hcl.if_(k == 0):
-            left_boundary = hcl.scalar(0, "left_boundary")
-            left_boundary[0] = V[i, j, k, l] + my_abs(V[i, j, k + 1, l ] - V[i, j, k, l]) * my_sign(
-                V[i, j, k, l])
-            left_deriv[0] = (V[i, j, k, l] - left_boundary[0]) / g.dx[2]
-            right_deriv[0] = (V[i, j, k + 1, l] - V[i, j, k, l]) / g.dx[2]
-        with hcl.elif_(k == V.shape[2] - 1):
-            right_boundary = hcl.scalar(0, "right_boundary")
-            right_boundary[0] = V[i, j, k, l] + my_abs(V[i, j, k, l] - V[i, j, k - 1, l]) * my_sign(
-                V[i, j, k, l])
-            left_deriv[0] = (V[i, j, k, l] - V[i, j, k - 1, l]) / g.dx[2]
-            right_deriv[0] = (right_boundary[0] - V[i, j, k, l]) / g.dx[2]
-        with hcl.elif_(k != 0 and k != V.shape[2] - 1):
-            left_deriv[0] = (V[i, j, k, l] - V[i, j, k - 1, l]) / g.dx[2]
-            right_deriv[0] = (V[i, j, k + 1, l] - V[i, j, k, l]) / g.dx[2]
-        return left_deriv[0], right_deriv[0]
-    else:
-        with hcl.if_(k == 0):
-            left_boundary = hcl.scalar(0, "left_boundary")
-            left_boundary[0] = V[i, j, V.shape[2] - 1, l]
-            left_deriv[0] = (V[i, j, k, l] - left_boundary[0]) / g.dx[2]
-            right_deriv[0] = (V[i, j, k + 1, l] - V[i, j, k, l]) / g.dx[2]
-        with hcl.elif_(k == V.shape[2] - 1):
-            right_boundary = hcl.scalar(0, "right_boundary")
-            right_boundary[0] = V[i, j, 0, l]
-            left_deriv[0] = (V[i, j, k , l] - V[i, j, k - 1, l]) / g.dx[2]
-            right_deriv[0] = (right_boundary[0] - V[i, j, k, l]) / g.dx[2]
-        with hcl.elif_(k != 0 and k != V.shape[2] - 1):
-            left_deriv[0] = (V[i, j, k, l] - V[i, j, k - 1, l]) / g.dx[2]
-            right_deriv[0] = (V[i, j, k + 1, l] - V[i, j, k, l]) / g.dx[2]
-        return left_deriv[0], right_deriv[0]
-
-def spa_derivX2_4d(i, j, k, l, V, g): #
-    left_deriv = hcl.scalar(0, "left_deriv")
-    right_deriv = hcl.scalar(0, "right_deriv")
-    if 1 not in g.pDim:
-        with hcl.if_(j == 0):
-            left_boundary = hcl.scalar(0, "left_boundary")
-            left_boundary[0] = V[i, j, k, l] + my_abs(V[i, j + 1, k, l] - V[i, j, k, l]) * my_sign(
-                V[i, j, k, l])
-            left_deriv[0] = (V[i, j, k, l] - left_boundary[0]) / g.dx[1]
-            right_deriv[0] = (V[i, j + 1, k, l] - V[i, j, k, l]) / g.dx[1]
-        with hcl.elif_(j == V.shape[1] - 1):
-            right_boundary = hcl.scalar(0, "right_boundary")
-            right_boundary[0] = V[i, j, k, l] + my_abs(V[i, j, k, l] - V[i, j - 1, k, l]) * my_sign(
-                V[i, j, k, l])
-            left_deriv[0] = (V[i, j, k, l] - V[i, j - 1, k, l]) / g.dx[1]
-            right_deriv[0] = (right_boundary[0] - V[i, j, k, l]) / g.dx[1]
-        with hcl.elif_(j != 0 and j != V.shape[1] - 1):
-            left_deriv[0] = (V[i, j, k, l] - V[i, j - 1, k, l]) / g.dx[1]
-            right_deriv[0] = (V[i, j + 1, k, l] - V[i, j, k, l]) / g.dx[1]
-        return left_deriv[0], right_deriv[0]
-    else:
-        with hcl.if_(j == 0):
-            left_boundary = hcl.scalar(0, "left_boundary")
-            left_boundary[0] = V[i, V.shape[1] - 1 , k, l]
-            left_deriv[0] = (V[i, j, k, l] - left_boundary[0]) / g.dx[1]
-            right_deriv[0] = (V[i, j + 1, k, l] - V[i, j, k, l]) / g.dx[1]
-        with hcl.elif_(j == V.shape[1] - 1):
-            right_boundary = hcl.scalar(0, "right_boundary")
-            right_boundary[0] = V[i, 0, k, l]
-            left_deriv[0] = (V[i, j, k, l] - V[i, j - 1, k, l]) / g.dx[1]
-            right_deriv[0] = (right_boundary[0] - V[i, j, k, l]) / g.dx[1]
-        with hcl.elif_(j != 0 and j != V.shape[1] - 1):
-            left_deriv[0] = (V[i, j, k, l] - V[i, j - 1, k, l]) / g.dx[1]
-            right_deriv[0] = (V[i, j + 1, k, l] - V[i, j, k, l]) / g.dx[1]
-        return left_deriv[0], right_deriv[0]
-
-def spa_derivX1_4d(i, j, k, l, V, g): # Left -> right == Outer Most -> Inner Most
-    left_deriv = hcl.scalar(0, "left_deriv")
-    right_deriv = hcl.scalar(0, "right_deriv")
-    if 0 not in g.pDim:
-        with hcl.if_(i == 0):
-            left_boundary = hcl.scalar(0, "left_boundary")
-            left_boundary[0] = V[i, j, k, l] + my_abs(V[i + 1, j, k, l] - V[i, j, k, l]) * my_sign(
-                V[i, j, k, l])
-            left_deriv[0] = (V[i, j, k, l] - left_boundary[0]) / g.dx[0]
-            right_deriv[0] = (V[i + 1, j, k, l] - V[i, j, k, l]) / g.dx[0]
-        with hcl.elif_(i == V.shape[0] - 1):
-            right_boundary = hcl.scalar(0, "right_boundary")
-            right_boundary[0] = V[i, j, k, l] + my_abs(V[i, j, k, l] - V[i - 1, j, k, l]) * my_sign(
-                V[i, j, k, l])
-            left_deriv[0] = (V[i, j, k, l] - V[i - 1, j, k, l]) / g.dx[0]
-            right_deriv[0] = (right_boundary[0] - V[i, j, k, l]) / g.dx[0]
-        with hcl.elif_(i != 0 and i != V.shape[0] - 1):
-            left_deriv[0] = (V[i, j, k, l] - V[i -1, j, k, l]) / g.dx[0]
-            right_deriv[0] = (V[i + 1, j, k, l] - V[i, j, k, l]) / g.dx[0]
-        return left_deriv[0], right_deriv[0]
-    else:
-        with hcl.if_(i == 0):
-            left_boundary = hcl.scalar(0, "left_boundary")
-            left_boundary[0] = V[V.shape[0] - 1, j, k, l]
-            left_deriv[0] = (V[i, j, k, l] - left_boundary[0]) / g.dx[0]
-            right_deriv[0] = (V[i + 1, j, k, l] - V[i, j, k, l]) / g.dx[0]
-        with hcl.elif_(i == V.shape[0] - 1):
-            right_boundary = hcl.scalar(0, "right_boundary")
-            right_boundary[0] = V[0, j, k, l]
-            left_deriv[0] = (V[i, j, k, l] - V[i - 1, j, k, l]) / g.dx[0]
-            right_deriv[0] = (right_boundary[0] - V[i, j, k, l]) / g.dx[0]
-        with hcl.elif_(i != 0 and i != V.shape[0] - 1):
-            left_deriv[0] = (V[i, j, k, l] - V[i -1, j, k, l]) / g.dx[0]
-            right_deriv[0] = (V[i + 1, j, k, l] - V[i, j, k, l]) / g.dx[0]
-        return left_deriv[0], right_deriv[0]
+from spatialDerivatives.first_orderENO4D import *
+from spatialDerivatives.second_orderENO4D import *
 
 ########################## 4D Graph definition #################################
-def graph_4D(my_object, g, compMethod):
+def graph_4D(my_object, g, compMethod, accuracy):
     V_f = hcl.placeholder(tuple(g.pts_each_dim), name="V_f", dtype=hcl.Float())
     V_init = hcl.placeholder(tuple(g.pts_each_dim), name="V_init", dtype=hcl.Float())
     l0 = hcl.placeholder(tuple(g.pts_each_dim), name="l0", dtype=hcl.Float())
@@ -164,6 +18,7 @@ def graph_4D(my_object, g, compMethod):
     x2 = hcl.placeholder((g.pts_each_dim[1],), name="x2", dtype=hcl.Float())
     x3 = hcl.placeholder((g.pts_each_dim[2],), name="x3", dtype=hcl.Float())
     x4 = hcl.placeholder((g.pts_each_dim[3],), name="x4", dtype=hcl.Float())
+
     def graph_create(V_new, V_init, x1, x2, x3, x4, t, l0, probe):
         # Specify intermediate tensors
         deriv_diff1 = hcl.compute(V_init.shape, lambda *x:0, "deriv_diff1")
@@ -243,10 +98,16 @@ def graph_4D(my_object, g, compMethod):
 
                             # No tensor slice operation
                             # dV_dx_L[0], dV_dx_R[0] = spa_derivX(i, j, k)
-                            dV_dx1_L[0], dV_dx1_R[0] = spa_derivX1_4d(i, j, k, l, V_init, g)
-                            dV_dx2_L[0], dV_dx2_R[0] = spa_derivX2_4d(i, j, k, l, V_init, g)
-                            dV_dx3_L[0], dV_dx3_R[0] = spa_derivX3_4d(i, j, k, l, V_init, g)
-                            dV_dx4_L[0], dV_dx4_R[0] = spa_derivX4_4d(i, j, k, l, V_init, g)
+                            if accuracy == "low":
+                                dV_dx1_L[0], dV_dx1_R[0] = spa_derivX1_4d(i, j, k, l, V_init, g)
+                                dV_dx2_L[0], dV_dx2_R[0] = spa_derivX2_4d(i, j, k, l, V_init, g)
+                                dV_dx3_L[0], dV_dx3_R[0] = spa_derivX3_4d(i, j, k, l, V_init, g)
+                                dV_dx4_L[0], dV_dx4_R[0] = spa_derivX4_4d(i, j, k, l, V_init, g)
+                            if accuracy == "high":
+                                dV_dx1_L[0], dV_dx1_R[0] = secondOrderX1_4d(i, j, k, l, V_init, g)
+                                dV_dx2_L[0], dV_dx2_R[0] = secondOrderX2_4d(i, j, k, l, V_init, g)
+                                dV_dx3_L[0], dV_dx3_R[0] = secondOrderX3_4d(i, j, k, l, V_init, g)
+                                dV_dx4_L[0], dV_dx4_R[0] = secondOrderX4_4d(i, j, k, l, V_init, g)
 
                             # Saves spatial derivative diff into tables
                             deriv_diff1[i, j, k, l] = dV_dx1_R[0] - dV_dx1_L[0]
@@ -483,6 +344,7 @@ def graph_4D(my_object, g, compMethod):
         hcl.update(V_init, lambda i, j, k, l: V_new[i, j, k, l])
         return result
     s = hcl.create_schedule([V_f, V_init, x1, x2, x3, x4, t, l0, probe], graph_create)
+
     ##################### CODE OPTIMIZATION HERE ###########################
     print("Optimizing\n")
 

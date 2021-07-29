@@ -19,47 +19,25 @@ import numpy as np
 - Call HJSolver function
 """
 
-# Scenario 1
-g = Grid(np.array([-4.0, -4.0, -np.pi]), np.array([4.0, 4.0, np.pi]), 3, np.array([40, 40, 40]), [2])
+g = Grid(np.array([-5, -5, -np.pi]), np.array([5, 5, np.pi]), 3, np.array([41, 41, 41]), [2])
+target_set = CylinderShape(g, [], np.zeros(3), 1)
 
-Initial_value_f = CylinderShape(g, [], np.zeros(3), 1)
+tau_len = 200
+tau = np.linspace(0, 10, tau_len)
 
-# Look-back length and time step
-lookback_length = 2.0
-t_step = 0.05
+uMode = "min"
+dMode = "max"
 
-small_number = 1e-5
-tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)
-my_car = DubinsCapture()
+dyn_sys = DubinsCapture()
+po = PlotOptions(plot_type="3d_plot", dims_plot=[0,0,0], slices=[])
 
-po2 = PlotOptions("3d_plot", [0, 1, 2], [])
+if __name__ in "__main__":
+    V = HJSolver(dyn_sys, g, target_set, tau, "maxVWithVInit", po, save_all_t=True)
+    np.save("V_with_time", V)
+# for i in range(0, 20, 5):
+#     po = PlotOptions("3d_plot", [0, 1, 3], [9, i])
+#     print(f"time: {i}")
+#     plot_isosurface(g, V, po)
 
-"""
-Assign one of the following strings to `compMethod` to specify the characteristics of computation
-"none" -> compute Backward Reachable Set
-"minVWithV0" -> compute Backward Reachable Tube
-"maxVWithVInit" -> compute max V over time
-"minVWithVInit" compute min V over time
-"""
-
-# HJSolver(dynamics object, grid, initial value function, time length, system objectives, plotting options)
-HJSolver(my_car, g, Initial_value_f, tau, "minVWithV0", po2)
-
-# Second Scenario
-g = Grid(np.array([-3.0, -1.0, 0.0, -np.pi]), np.array([3.0, 4.0, 4.0, np.pi]), 4, np.array([30, 30, 20, 30]), [3])
-
-# Define my object
-my_car = DubinsCar4D2()
-
-# Use the grid to initialize initial value function
-Initial_value_f = CylinderShape(g, [2, 3], np.zeros(4), 1)
-
-# Look-back length and time step
-lookback_length = 1.0
-t_step = 0.05
-
-small_number = 1e-5
-tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)
-
-po = PlotOptions("3d_plot", [0, 1, 3], [19])
-HJSolver(my_car, g, Initial_value_f, tau, "minVWithV0", po)
+# po = PlotOptions("3d_plot", [0, 1, 3], [9, 19])
+# plot_isosurface(g, V, po)

@@ -64,15 +64,15 @@ def updatePhi(i, j, k, l, my_object, phi, g, x1, x2, x3, x4, debugger):
     c = hcl.scalar(0, "c")
     c[0] = sigma1[0] / g.dx[0] + sigma2[0] / g.dx[1] + sigma3[0] / g.dx[2] + sigma4[0] / g.dx[3]
 
-    diss1[0] = sigma1[0] * ((dV_dx1_R[0] - dV_dx1_L[0]) / 2 + phi[i, j, k] / g.dx[0])
-    diss2[0] = sigma2[0] * ((dV_dx2_R[0] - dV_dx2_L[0]) / 2 + phi[i, j, k] / g.dx[1])
-    diss3[0] = sigma3[0] * ((dV_dx3_R[0] - dV_dx3_L[0]) / 2 + phi[i, j, k] / g.dx[2])
-    diss4[0] = sigma4[0] * ((dV_dx4_R[0] - dV_dx4_L[0]) / 2 + phi[i, j, k] / g.dx[3])
+    diss1[0] = sigma1[0] * ((dV_dx1_R[0] - dV_dx1_L[0]) / 2 + phi[i, j, k, l] / g.dx[0])
+    diss2[0] = sigma2[0] * ((dV_dx2_R[0] - dV_dx2_L[0]) / 2 + phi[i, j, k, l] / g.dx[1])
+    diss3[0] = sigma3[0] * ((dV_dx3_R[0] - dV_dx3_L[0]) / 2 + phi[i, j, k, l] / g.dx[2])
+    diss4[0] = sigma4[0] * ((dV_dx4_R[0] - dV_dx4_L[0]) / 2 + phi[i, j, k, l] / g.dx[3])
 
     # New phi
     phiNew[0] = (-H[0] + diss1[0] + diss2[0] + diss3[0] + diss4[0]) / c[0]
     debugger[i, j, k, l] = phiNew[0]
-    phi[i, j, k, l] = my_min(phi[i, j ,k, l], phiNew[0])
+    phi[i, j, k, l] = my_min(phi[i, j, k, l], phiNew[0])
 
 def EvalBoundary(phi, g, debug2):
     if 0 not in g.pDim:
@@ -242,7 +242,7 @@ def TTR_4D(my_object, g):
     x1 = hcl.placeholder((g.pts_each_dim[0],), name="x1", dtype=hcl.Float())
     x2 = hcl.placeholder((g.pts_each_dim[1],), name="x2", dtype=hcl.Float())
     x3 = hcl.placeholder((g.pts_each_dim[2],), name="x3", dtype=hcl.Float())
-    x4 = hcl.placeholder((g.pts_each_dim[2],), name="x4", dtype=hcl.Float())
+    x4 = hcl.placeholder((g.pts_each_dim[3],), name="x4", dtype=hcl.Float())
     phi = hcl.placeholder(tuple(g.pts_each_dim), name="phi", dtype=hcl.Float())
     debugger = hcl.placeholder(tuple(g.pts_each_dim), name="debugger", dtype=hcl.Float())
     debug2 = hcl.placeholder((0,), "debug2")

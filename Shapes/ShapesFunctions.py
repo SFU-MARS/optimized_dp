@@ -65,11 +65,10 @@ def ShapeRectangle(grid, target_min, target_max):
     data = np.maximum(grid.vs[0] - target_max[0], -grid.vs[0] + target_min[0])
 
     for i in range(grid.dims):
-        data = np.maximum(data, grid.vs[i] - target_max[i])
-        data = np.maximum(data, -grid.vs[1] + target_min[i])
+        data = np.maximum(data,  grid.vs[i] - target_max[i])
+        data = np.maximum(data, -grid.vs[i] + target_min[i])
 
     return data
-
 
 def Rect_Around_Point(grid, target_point):
     return ShapeRectangle(grid, target_point - 1.5 * grid.dx, target_point + 1.5 * grid.dx)
@@ -79,7 +78,7 @@ def Lower_Half_Space(grid: Grid, dim: int, value: float) -> np.ndarray:
     """Creates an axis aligned lower half space 
 
     Args:
-        grid (Grid): grid object
+        grid (Grid): Grid object
         dim (int): Dimension of the half space (0-indexed)
         value (float): Used in the implicit surface function for V < value
 

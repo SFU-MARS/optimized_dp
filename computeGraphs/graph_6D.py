@@ -1,138 +1,13 @@
 import heterocl as hcl
 import time
 from computeGraphs.CustomGraphFunctions import *
-
-##############################  6D DERIVATIVE FUNCTIONS #############################
-def spa_derivX6_6d(i, j, k, l, m, n, V, g):  # Left -> right == Outer Most -> Inner Most
-    left_deriv = hcl.scalar(0, "left_deriv")
-    right_deriv = hcl.scalar(0, "right_deriv")
-    with hcl.if_(n == 0):
-        left_boundary = hcl.scalar(0, "left_boundary")
-        left_boundary[0] = V[i, j, k, l, m, n] + my_abs(V[i, j, k, l, m, n + 1] - V[i, j, k, l, m, n]) * my_sign(
-            V[i, j, k, l, m, n])
-        left_deriv[0] = (V[i, j, k, l, m, n] - left_boundary[0]) / g.dx[5]
-        right_deriv[0] = (V[i, j, k, l, m, n + 1] - V[i, j, k, l, m, n]) / g.dx[5]
-    with hcl.elif_(n == V.shape[5] - 1):
-        right_boundary = hcl.scalar(0, "right_boundary")
-        right_boundary[0] = V[i, j, k, l, m, n] + my_abs(V[i, j, k, l, m, n] - V[i, j, k, l, m, n - 1]) * my_sign(
-            V[i, j, k, l, m, n])
-        left_deriv[0] = (V[i, j, k, l, m, n] - V[i, j, k, l, m, n - 1]) / g.dx[5]
-        right_deriv[0] = (right_boundary[0] - V[i, j, k, l, m, n]) / g.dx[5]
-    with hcl.elif_(n != 0 and n != V.shape[5] - 1):
-        left_deriv[0] = (V[i, j, k, l, m, n] - V[i, j, k, l, m, n - 1]) / g.dx[5]
-        right_deriv[0] = (V[i, j, k, l, m, n + 1] - V[i, j, k, l, m, n]) / g.dx[5]
-    return left_deriv[0], right_deriv[0]
-
-
-def spa_derivX5_6d(i, j, k, l, m, n, V, g):  # Left -> right == Outer Most -> Inner Most
-    left_deriv = hcl.scalar(0, "left_deriv")
-    right_deriv = hcl.scalar(0, "right_deriv")
-    with hcl.if_(m == 0):
-        left_boundary = hcl.scalar(0, "left_boundary")
-        left_boundary[0] = V[i, j, k, l, m, n] + my_abs(V[i, j, k, l, m + 1, n] - V[i, j, k, l, m, n]) * my_sign(
-            V[i, j, k, l, m, n])
-        left_deriv[0] = (V[i, j, k, l, m, n] - left_boundary[0]) / g.dx[4]
-        right_deriv[0] = (V[i, j, k, l, m + 1, n] - V[i, j, k, l, m, n]) / g.dx[4]
-    with hcl.elif_(m == V.shape[4] - 1):
-        right_boundary = hcl.scalar(0, "right_boundary")
-        right_boundary[0] = V[i, j, k, l, m, n] + my_abs(V[i, j, k, l, m, n] - V[i, j, k, l, m - 1, n]) * my_sign(
-            V[i, j, k, l, m, n])
-        left_deriv[0] = (V[i, j, k, l, m, n] - V[i, j, k, l, m - 1, n]) / g.dx[4]
-        right_deriv[0] = (right_boundary[0] - V[i, j, k, l, m, n]) / g.dx[4]
-    with hcl.elif_(m != 0 and m != V.shape[4] - 1):
-        left_deriv[0] = (V[i, j, k, l, m, n] - V[i, j, k, l, m - 1, n]) / g.dx[4]
-        right_deriv[0] = (V[i, j, k, l, m + 1, n] - V[i, j, k, l, m, n]) / g.dx[4]
-    return left_deriv[0], right_deriv[0]
-
-
-def spa_derivX4_6d(i, j, k, l, m, n, V, g):  # Left -> right == Outer Most -> Inner Most
-    left_deriv = hcl.scalar(0, "left_deriv")
-    right_deriv = hcl.scalar(0, "right_deriv")
-    with hcl.if_(l == 0):
-        left_boundary = hcl.scalar(0, "left_boundary")
-        left_boundary[0] = V[i, j, k, l, m, n] + my_abs(V[i, j, k, l + 1, m, n] - V[i, j, k, l, m, n]) * my_sign(
-            V[i, j, k, l, m, n])
-        left_deriv[0] = (V[i, j, k, l, m, n] - left_boundary[0]) / g.dx[3]
-        right_deriv[0] = (V[i, j, k, l + 1, m, n] - V[i, j, k, l, m, n]) / g.dx[3]
-    with hcl.elif_(l == V.shape[3] - 1):
-        right_boundary = hcl.scalar(0, "right_boundary")
-        right_boundary[0] = V[i, j, k, l, m, n] + my_abs(V[i, j, k, l, m, n] - V[i, j, k, l - 1, m, n]) * my_sign(
-            V[i, j, k, l, m, n])
-        left_deriv[0] = (V[i, j, k, l, m, n] - V[i, j, k, l - 1, m, n]) / g.dx[3]
-        right_deriv[0] = (right_boundary[0] - V[i, j, k, l, m, n]) / g.dx[3]
-    with hcl.elif_(l != 0 and l != V.shape[3] - 1):
-        left_deriv[0] = (V[i, j, k, l, m, n] - V[i, j, k, l - 1, m, n]) / g.dx[3]
-        right_deriv[0] = (V[i, j, k, l + 1, m, n] - V[i, j, k, l, m, n]) / g.dx[3]
-    return left_deriv[0], right_deriv[0]
-
-
-def spa_derivX3_6d(i, j, k, l, m, n, V, g):  # Left -> right == Outer Most -> Inner Most
-    left_deriv = hcl.scalar(0, "left_deriv")
-    right_deriv = hcl.scalar(0, "right_deriv")
-    with hcl.if_(k == 0):
-        left_boundary = hcl.scalar(0, "left_boundary")
-        left_boundary[0] = V[i, j, k, l, m, n] + my_abs(V[i, j, k + 1, l, m, n] - V[i, j, k, l, m, n]) * my_sign(
-            V[i, j, k, l, m, n])
-        left_deriv[0] = (V[i, j, k, l, m, n] - left_boundary[0]) / g.dx[2]
-        right_deriv[0] = (V[i, j, k + 1, l, m, n] - V[i, j, k, l, m, n]) / g.dx[2]
-    with hcl.elif_(k == V.shape[2] - 1):
-        right_boundary = hcl.scalar(0, "right_boundary")
-        right_boundary[0] = V[i, j, k, l, m, n] + my_abs(V[i, j, k, l, m, n] - V[i, j, k - 1, l, m, n]) * my_sign(
-            V[i, j, k, l, m, n])
-        left_deriv[0] = (V[i, j, k, l, m, n] - V[i, j, k - 1, l, m, n]) / g.dx[2]
-        right_deriv[0] = (right_boundary[0] - V[i, j, k, l, m, n]) / g.dx[2]
-    with hcl.elif_(k != 0 and k != V.shape[2] - 1):
-        left_deriv[0] = (V[i, j, k, l, m, n] - V[i, j, k - 1, l, m, n]) / g.dx[2]
-        right_deriv[0] = (V[i, j, k + 1, l, m, n] - V[i, j, k, l, m, n]) / g.dx[2]
-    return left_deriv[0], right_deriv[0]
-
-
-def spa_derivX2_6d(i, j, k, l, m, n, V, g):  # Left -> right == Outer Most -> Inner Most
-    left_deriv = hcl.scalar(0, "left_deriv")
-    right_deriv = hcl.scalar(0, "right_deriv")
-    with hcl.if_(j == 0):
-        left_boundary = hcl.scalar(0, "left_boundary")
-        left_boundary[0] = V[i, j, k, l, m, n] + my_abs(V[i, j + 1, k, l, m, n] - V[i, j, k, l, m, n]) * my_sign(
-            V[i, j, k, l, m, n])
-        left_deriv[0] = (V[i, j, k, l, m, n] - left_boundary[0]) / g.dx[1]
-        right_deriv[0] = (V[i, j + 1, k, l, m, n] - V[i, j, k, l, m, n]) / g.dx[1]
-    with hcl.elif_(j == V.shape[1] - 1):
-        right_boundary = hcl.scalar(0, "right_boundary")
-        right_boundary[0] = V[i, j, k, l, m, n] + my_abs(V[i, j, k, l, m, n] - V[i, j - 1, k, l, m, n]) * my_sign(
-            V[i, j, k, l, m, n])
-        left_deriv[0] = (V[i, j, k, l, m, n] - V[i, j - 1, k, l, m, n]) / g.dx[1]
-        right_deriv[0] = (right_boundary[0] - V[i, j, k, l, m, n]) / g.dx[1]
-    with hcl.elif_(j != 0 and j != V.shape[1] - 1):
-        left_deriv[0] = (V[i, j, k, l, m, n] - V[i, j - 1, k, l, m, n]) / g.dx[1]
-        right_deriv[0] = (V[i, j + 1, k, l, m, n] - V[i, j, k, l, m, n]) / g.dx[1]
-    return left_deriv[0], right_deriv[0]
-
-
-def spa_derivX1_6d(i, j, k, l, m, n, V, g):  # Left -> right == Outer Most -> Inner Most
-    left_deriv = hcl.scalar(0, "left_deriv")
-    right_deriv = hcl.scalar(0, "right_deriv")
-    with hcl.if_(i == 0):
-        left_boundary = hcl.scalar(0, "left_boundary")
-        left_boundary[0] = V[i, j, k, l, m, n] + my_abs(V[i + 1, j, k, l, m, n] - V[i, j, k, l, m, n]) * my_sign(
-            V[i, j, k, l, m, n])
-        left_deriv[0] = (V[i, j, k, l, m, n] - left_boundary[0]) / g.dx[0]
-        right_deriv[0] = (V[i + 1, j, k, l, m, n] - V[i, j, k, l, m, n]) / g.dx[0]
-    with hcl.elif_(i == V.shape[0] - 1):
-        right_boundary = hcl.scalar(0, "right_boundary")
-        right_boundary[0] = V[i, j, k, l, m, n] + my_abs(V[i, j, k, l, m, n] - V[i - 1, j, k, l, m, n]) * my_sign(
-            V[i, j, k, l, m, n])
-        left_deriv[0] = (V[i, j, k, l, m, n] - V[i - 1, j, k, l, m, n]) / g.dx[0]
-        right_deriv[0] = (right_boundary[0] - V[i, j, k, l, m, n]) / g.dx[0]
-    with hcl.elif_(i != 0 and i != V.shape[0] - 1):
-        left_deriv[0] = (V[i, j, k, l, m, n] - V[i - 1, j, k, l, m, n]) / g.dx[0]
-        right_deriv[0] = (V[i + 1, j, k, l, m, n] - V[i, j, k, l, m, n]) / g.dx[0]
-    return left_deriv[0], right_deriv[0]
-
+from spatialDerivatives.first_orderENO6D import *
+from spatialDerivatives.second_orderENO6D import *
 
 ########################## 6D graph definition ########################
 
 # Note that t has 2 elements t1, t2
-def graph_6D(my_object, g, compMethod):
+def graph_6D(my_object, g, compMethod, accuracy):
     V_f = hcl.placeholder(tuple(g.pts_each_dim), name="V_f", dtype=hcl.Float())
     V_init = hcl.placeholder(tuple(g.pts_each_dim), name="V_init", dtype=hcl.Float())
     l0 = hcl.placeholder(tuple(g.pts_each_dim), name="l0", dtype=hcl.Float())
@@ -239,12 +114,20 @@ def graph_6D(my_object, g, compMethod):
 
                                     # No tensor slice operation
                                     # dV_dx_L[0], dV_dx_R[0] = spa_derivX(i, j, k)
-                                    dV_dx1_L[0], dV_dx1_R[0] = spa_derivX1_6d(i, j, k, l, m, n, V_init, g)
-                                    dV_dx2_L[0], dV_dx2_R[0] = spa_derivX2_6d(i, j, k, l, m, n, V_init, g)
-                                    dV_dx3_L[0], dV_dx3_R[0] = spa_derivX3_6d(i, j, k, l, m, n, V_init, g)
-                                    dV_dx4_L[0], dV_dx4_R[0] = spa_derivX4_6d(i, j, k, l, m, n, V_init, g)
-                                    dV_dx5_L[0], dV_dx5_R[0] = spa_derivX5_6d(i, j, k, l, m, n, V_init, g)
-                                    dV_dx6_L[0], dV_dx6_R[0] = spa_derivX6_6d(i, j, k, l, m, n, V_init, g)
+                                    if accuracy == "low":
+                                        dV_dx1_L[0], dV_dx1_R[0] = spa_derivX1_6d(i, j, k, l, m, n, V_init, g)
+                                        dV_dx2_L[0], dV_dx2_R[0] = spa_derivX2_6d(i, j, k, l, m, n, V_init, g)
+                                        dV_dx3_L[0], dV_dx3_R[0] = spa_derivX3_6d(i, j, k, l, m, n, V_init, g)
+                                        dV_dx4_L[0], dV_dx4_R[0] = spa_derivX4_6d(i, j, k, l, m, n, V_init, g)
+                                        dV_dx5_L[0], dV_dx5_R[0] = spa_derivX5_6d(i, j, k, l, m, n, V_init, g)
+                                        dV_dx6_L[0], dV_dx6_R[0] = spa_derivX6_6d(i, j, k, l, m, n, V_init, g)
+                                    if accuracy == "high":
+                                        dV_dx1_L[0], dV_dx1_R[0] = secondOrderX1_6d(i, j, k, l, m, n, V_init, g)
+                                        dV_dx2_L[0], dV_dx2_R[0] = secondOrderX2_6d(i, j, k, l, m, n, V_init, g)
+                                        dV_dx3_L[0], dV_dx3_R[0] = secondOrderX3_6d(i, j, k, l, m, n, V_init, g)
+                                        dV_dx4_L[0], dV_dx4_R[0] = secondOrderX4_6d(i, j, k, l, m, n, V_init, g)
+                                        dV_dx5_L[0], dV_dx5_R[0] = secondOrderX5_6d(i, j, k, l, m, n, V_init, g)
+                                        dV_dx6_L[0], dV_dx6_R[0] = secondOrderX6_6d(i, j, k, l, m, n, V_init, g)
 
                                     # Saves spatial derivative diff into tables
                                     deriv_diff1[i, j, k, l, m, n] = dV_dx1_R[0] - dV_dx1_L[0]

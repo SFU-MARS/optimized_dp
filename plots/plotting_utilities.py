@@ -4,14 +4,17 @@ import numpy as np
 
 def plot_isosurface(grid, V, plot_option):
     dims_plot = plot_option.dims_plot
+    # TODO: tmp account for time dim
+    #grid.dims += 1
     idx = [slice(None)] * grid.dims
     slice_idx = 0
 
-    dims_list = list(range(0, grid.dims))
+    dims_list = list(range(grid.dims))
     for i in dims_list:
         if i not in dims_plot:
             idx[i] = plot_option.slices[slice_idx]
             slice_idx += 1
+
 
     if len(dims_plot) != 3:
         raise Exception('dims_plot length should be equal to 3\n')
@@ -23,10 +26,9 @@ def plot_isosurface(grid, V, plot_option):
         mg_X, mg_Y, mg_Z = np.mgrid[grid.min[dim1]:grid.max[dim1]:complex_x,
                                     grid.min[dim2]:grid.max[dim2]: complex_y,
                                     grid.min[dim3]:grid.max[dim3]: complex_z]
+        mg_X, mg_Y, mg_Z = np.mgrid[grid.min[dim1]:grid.max[dim1]: complex_x, grid.min[dim2]:grid.max[dim2]: complex_y,
+                           grid.min[dim3]:grid.max[dim3]: complex_z]
 
-        # graph value table while keeping speed constant
-        # if V.ndim == 4:
-        #     V = V[:, :, s, :]
         my_V = V[tuple(idx)]
 
         if (V > 0.0).all() or (V < 0.0).all():
@@ -38,9 +40,9 @@ def plot_isosurface(grid, V, plot_option):
             z=mg_Z.flatten(),
             value=my_V.flatten(),
             colorscale='jet',
-            isomin=0,
+            isomin=plot_option.min_isosurface,
             surface_count=1,
-            isomax=0,
+            isomax=plot_option.max_isosurface,
             caps=dict(x_show=True, y_show=True)
         ))
         fig.show()
