@@ -189,11 +189,11 @@ def HJSolver(dynamics_obj, grid, init_value, tau, compMethod, plot_option, *, sa
     print("Finished solving\n")
 
     ##################### PLOTTING #####################
-    if args.plot:
-        if save_all_t:
-            plot_isosurface(grid, V_all_t, plot_option)
-        else:
-            plot_isosurface(grid, V_1.asnumpy(), plot_option)
+    # if args.plot:
+    #     if save_all_t:
+    #         plot_isosurface(grid, V_all_t, plot_option)
+    #     else:
+    #         plot_isosurface(grid, V_1.asnumpy(), plot_option)
 
     if save_all_t:
         return V_all_t

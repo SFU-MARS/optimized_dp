@@ -1,4 +1,5 @@
 import heterocl as hcl
+import numpy as np
 
 class DubinsCapture:
     def __init__(self, x=[0,0,0], wMax=1.0, speed=1.0, dMax=1.0, uMode="max", dMode="min"):
@@ -74,3 +75,14 @@ class DubinsCapture:
         theta_dot[0] = dOpt[0] - uOpt[0]
 
         return (x_dot[0], y_dot[0], theta_dot[0])
+
+    def dynamics_non_hcl(self, t, state, uOpt, dOpt):
+        x_dot = 0.0
+        y_dot = 0.0
+        theta_dot = 0.0
+
+        x_dot = -self.speed + self.speed * np.cos(state[2]) + uOpt*state[1]
+        y_dot = self.speed * np.sin(state[2]) - uOpt * state[0]
+        theta_dot = dOpt - uOpt
+
+        return x_dot, y_dot, theta_dot
