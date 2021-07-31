@@ -89,7 +89,7 @@ def solveValueIteration(MDP_obj):
     return V
 
 def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
-             plot_option, accuracy="low", save_all_t=False):
+             plot_option, accuracy="low"):
     print("Welcome to optimized_dp \n")
     if type(multiple_value) == list:
         init_value = multiple_value[0]
@@ -113,11 +113,6 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
 
     V_0 = hcl.asarray(init_value)
     V_1 = hcl.asarray(np.zeros(tuple(grid.pts_each_dim)))
-    # TODO: change to use hcl api
-    # add extra dimension to grid of length tau
-    V_all_t = np.zeros(list(grid.pts_each_dim) + [len(tau)])
-    V_all_t[..., 0] = init_value
-
     l0 = hcl.asarray(init_value)
     probe = hcl.asarray(np.zeros(tuple(grid.pts_each_dim)))
 
@@ -168,7 +163,6 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
     for i in range (1, len(tau)):
         #tNow = tau[i-1]
         t_minh= hcl.asarray(np.array((tNow, tau[i])))
-        print(i)
         while tNow <= tau[i] - 1e-4:
              tmp_arr = V_0.asnumpy()
              # Start timing
@@ -204,8 +198,6 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
              # Some information printing
              print(t_minh)
              print("Computational time to integrate (s): {:.5f}".format(time.time() - start))
-        # TODO: change to hcl api
-        V_all_t[..., i] = V_1.asnumpy()
 
     # Time info printing
     print("Total kernel time (s): {:.5f}".format(execution_time))
@@ -215,9 +207,6 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
     if args.plot:
         # Only plots last value array for now
         plot_isosurface(grid, V_1.asnumpy(), plot_option)
-
-    if save_all_t:
-        return V_all_t
 
     return V_1.asnumpy()
 

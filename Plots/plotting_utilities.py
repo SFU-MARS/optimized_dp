@@ -4,8 +4,6 @@ import numpy as np
 
 def plot_isosurface(grid, V, plot_option):
     dims_plot = plot_option.dims_plot
-    # TODO: tmp account for time dim
-    #grid.dims += 1
     idx = [slice(None)] * grid.dims
     slice_idx = 0
 
