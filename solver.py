@@ -6,10 +6,7 @@ from Plots.plotting_utilities import *
 from argparse import ArgumentParser
 
 # Backward reachable set computation library
-from computeGraphs.graph_3D import *
-from computeGraphs.graph_4D import *
-from computeGraphs.graph_5D import *
-from computeGraphs.graph_6D import *
+from computeGraphs import graph_3D, graph_4D, graph_5D, graph_6D
 
 from TimeToReach.TimeToReach_3D import  *
 from TimeToReach.TimeToReach_4D import  *

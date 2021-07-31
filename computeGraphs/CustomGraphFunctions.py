@@ -1,9 +1,9 @@
 import heterocl as hcl
-import numpy as np
-import time
+
+
 # Custom function
 
-def my_min(a,b):
+def my_min(a, b):
     result = hcl.scalar(0, "result")
     with hcl.if_(a < b):
         result[0] = a
@@ -11,14 +11,16 @@ def my_min(a,b):
         result[0] = b
     return result[0]
 
+
 # Input is value, output is value
-def my_max(a,b):
+def my_max(a, b):
     result = hcl.scalar(0, "result")
     with hcl.if_(a > b):
         result.v = a
     with hcl.else_():
         result.v = b
     return result.v
+
 
 # Input is value, output is value
 def max_4n(num1, num2, num3, num4):
@@ -29,6 +31,7 @@ def max_4n(num1, num2, num3, num4):
 
     return largest[0]
 
+
 # Input is a value, output is value
 def my_abs(my_x):
     abs_value = hcl.scalar(0, "abs_value", dtype=hcl.Float())
@@ -38,6 +41,7 @@ def my_abs(my_x):
         abs_value.v = -my_x
     return abs_value.v
 
+
 def new_abs(my_x):
     my_value = hcl.scalar(0, "my_value", dtype=hcl.Float())
     with hcl.if_(my_x > 0):
@@ -45,6 +49,7 @@ def new_abs(my_x):
     with hcl.else_():
         my_value.v = -my_x
     return my_value.v
+
 
 def my_sign(x):
     sign = hcl.scalar(0, "sign", dtype=hcl.Float())
@@ -117,6 +122,3 @@ def my_sign(x):
 #         left_deriv[0] = (V[k, j, i] - V[k-1, j, i]) / g.dx[2]
 #         right_deriv[0] = (V[k+1, j, i] - V[k, j, i]) / g.dx[2]
 #     return left_deriv[0], right_deriv[0]
-
-
-
