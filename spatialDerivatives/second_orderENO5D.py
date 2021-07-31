@@ -1,5 +1,6 @@
 import heterocl as hcl
-from computeGraphs.CustomGraphFunctions import *
+from computeGraphs.CustomGraphFunctions import my_abs, my_sign
+
 
 ##############################  5D DERIVATIVE FUNCTIONS #############################
 def secondOrderX5_5d(i, j, k, l, m, V, g):  # Left -> right == Outer Most -> Inner Most

@@ -1,10 +1,11 @@
 import heterocl as hcl
-from computeGraphs.CustomGraphFunctions import *
+from computeGraphs.CustomGraphFunctions import my_abs, my_sign
+
 
 ################## 4D SPATIAL DERIVATIVE FUNCTION #################
 
 # Calculate derivative on the first derivative  #
-def secondOrderX4_4d(i, j, k, l, V, g): # Left -> right == Outer Most -> Inner Most
+def secondOrderX4_4d(i, j, k, l, V, g):  # Left -> right == Outer Most -> Inner Most
     left_deriv = hcl.scalar(0, "left_deriv")
     right_deriv = hcl.scalar(0, "right_deriv")
 
@@ -298,7 +299,7 @@ def secondOrderX4_4d(i, j, k, l, V, g): # Left -> right == Outer Most -> Inner M
         return left_deriv[0], right_deriv[0]
 
 
-def secondOrderX3_4d(i, j, k, l, V, g): # Left -> right == Outer Most -> Inner Most
+def secondOrderX3_4d(i, j, k, l, V, g):  # Left -> right == Outer Most -> Inner Most
     left_deriv = hcl.scalar(0, "left_deriv")
     right_deriv = hcl.scalar(0, "right_deriv")
 
@@ -591,7 +592,8 @@ def secondOrderX3_4d(i, j, k, l, V, g): # Left -> right == Outer Most -> Inner M
 
         return left_deriv[0], right_deriv[0]
 
-def secondOrderX2_4d(i, j, k, l, V, g): #
+
+def secondOrderX2_4d(i, j, k, l, V, g):  #
     left_deriv = hcl.scalar(0, "left_deriv")
     right_deriv = hcl.scalar(0, "right_deriv")
 
@@ -884,7 +886,8 @@ def secondOrderX2_4d(i, j, k, l, V, g): #
 
         return left_deriv[0], right_deriv[0]
 
-def secondOrderX1_4d(i, j, k, l, V, g): # Left -> right == Outer Most -> Inner Most
+
+def secondOrderX1_4d(i, j, k, l, V, g):  # Left -> right == Outer Most -> Inner Most
     left_deriv = hcl.scalar(0, "left_deriv")
     right_deriv = hcl.scalar(0, "right_deriv")
 

@@ -1,5 +1,6 @@
 import heterocl as hcl
-from computeGraphs.CustomGraphFunctions import *
+from computeGraphs.CustomGraphFunctions import my_abs, my_sign
+
 
 ################## 3D SPATIAL DERIVATIVE FUNCTION #################
 def secondOrderX(i, j, k, V, g):

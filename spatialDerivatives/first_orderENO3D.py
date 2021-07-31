@@ -1,5 +1,6 @@
 import heterocl as hcl
-from computeGraphs.CustomGraphFunctions import *
+from computeGraphs.CustomGraphFunctions import my_abs, my_sign
+
 
 ################## 3D SPATIAL DERIVATIVE FUNCTION #################
 def spa_derivX(i, j, k, V, g):
@@ -7,14 +8,12 @@ def spa_derivX(i, j, k, V, g):
     right_deriv = hcl.scalar(0, "right_deriv")
     with hcl.if_(i == 0):
         left_boundary = hcl.scalar(0, "left_boundary")
-        left_boundary[0] = V[i, j, k] + my_abs(V[i + 1, j, k] - V[i, j, k]) * my_sign(\
-            V[i, j, k])
+        left_boundary[0] = V[i, j, k] + my_abs(V[i + 1, j, k] - V[i, j, k]) * my_sign(V[i, j, k])
         left_deriv[0] = (V[i, j, k] - left_boundary[0]) / g.dx[0]
         right_deriv[0] = (V[i + 1, j, k] - V[i, j, k]) / g.dx[0]
     with hcl.elif_(i == V.shape[0] - 1):
         right_boundary = hcl.scalar(0, "right_boundary")
-        right_boundary[0] = V[i, j, k] + my_abs(V[i, j, k] - V[i - 1, j, k]) * my_sign(
-            V[i, j, k])
+        right_boundary[0] = V[i, j, k] + my_abs(V[i, j, k] - V[i - 1, j, k]) * my_sign(V[i, j, k])
         left_deriv[0] = (V[i, j, k] - V[i - 1, j, k]) / g.dx[0]
         right_deriv[0] = (right_boundary[0] - V[i, j, k]) / g.dx[0]
     with hcl.elif_(i != 0 and i != V.shape[0] - 1):

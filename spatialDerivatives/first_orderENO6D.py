@@ -1,5 +1,6 @@
 import heterocl as hcl
-from computeGraphs.CustomGraphFunctions import *
+from computeGraphs.CustomGraphFunctions import my_abs, my_sign
+
 
 ##############################  6D DERIVATIVE FUNCTIONS #############################
 def spa_derivX6_6d(i, j, k, l, m, n, V, g):  # Left -> right == Outer Most -> Inner Most
