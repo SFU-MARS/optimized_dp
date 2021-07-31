@@ -2,7 +2,7 @@ import heterocl as hcl
 import numpy as np
 import time
 
-from Plots.plotting_utilities import *
+from Plots.plotting_utilities import plot_isosurface
 from argparse import ArgumentParser
 
 # Backward reachable set computation library
