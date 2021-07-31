@@ -8,9 +8,7 @@ from argparse import ArgumentParser
 # Backward reachable set computation library
 from computeGraphs import graph_3D, graph_4D, graph_5D, graph_6D
 
-from TimeToReach.TimeToReach_3D import  *
-from TimeToReach.TimeToReach_4D import  *
-from TimeToReach.TimeToReach_5D import  *
+from TimeToReach import TTR_3D, TTR_4D, TTR_5D
 
 # Value Iteration library
 from valueIteration.value_iteration_3D import *
