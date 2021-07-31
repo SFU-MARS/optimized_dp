@@ -1,13 +1,13 @@
 import numpy as np
 # Utility functions to initialize the problem
-from Grid.GridProcessing import Grid
+from grid import Grid
 from Shapes.ShapesFunctions import *
 # Specify the  file that includes dynamic systems
-from dynamics.DubinsCar import *
+from dynamics import DubinsCar
 # Plot options
-from plot_options import *
+from plot_options import PlotOptions
 # Solver core
-from solver import *
+from solver import HJSolver
 import math
 
 # Compute BRS only

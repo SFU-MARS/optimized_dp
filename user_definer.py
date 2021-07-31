@@ -1,13 +1,11 @@
 import numpy as np
 # Utility functions to initialize the problem
-from Grid.GridProcessing import Grid
-from Shapes.ShapesFunctions import *
+from grid import Grid
+from Shapes.ShapesFunctions import CylinderShape
 # Specify the  file that includes dynamic systems
-from dynamics.DubinsCar4D import *
-from dynamics.DubinsCapture import *
-from dynamics.DubinsCar4D2 import *
+from dynamics import DubinsCapture, DubinsCar4D2
 # Plot options
-from plot_options import *
+from plot_options import PlotOptions
 # Solver core
 from solver import HJSolver
 
@@ -27,7 +25,7 @@ g = Grid(np.array([-4.0, -4.0, -math.pi]), np.array([4.0, 4.0, math.pi]), 3, np.
 
 Initial_value_f = CylinderShape(g, [], np.zeros(3), 1)
 
-# Look-back lenght and time step
+# Look-back length and time step
 lookback_length = 2.0
 t_step = 0.05
 
