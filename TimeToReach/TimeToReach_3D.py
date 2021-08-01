@@ -1,8 +1,7 @@
 import heterocl as hcl
-import numpy as np
-import time
-import os
-from computeGraphs.graph_3D import *
+from computeGraphs.CustomGraphFunctions import my_abs, my_max, my_min
+from spatialDerivatives.first_orderENO3D import spa_derivT, spa_derivX, spa_derivY
+
 
 # Update the phi function at position (i,j,k)
 def updatePhi(i, j, k, my_object, phi, g, x1, x2, x3):
@@ -61,14 +60,15 @@ def updatePhi(i, j, k, my_object, phi, g, x1, x2, x3):
 
     # New phi
     phiNew[0] = (-H[0] + diss1[0] + diss2[0] + diss3[0]) / c[0]
-    #debugger[i,j,k] = phiNew[0]
-    phi[i, j, k] = my_min(phi[i, j ,k], phiNew[0])
+    # debugger[i,j,k] = phiNew[0]
+    phi[i, j, k] = my_min(phi[i, j, k], phiNew[0])
+
 
 def EvalBoundary(phi, g):
     if 0 not in g.pDim:
         with hcl.for_(0, phi.shape[1], name="j") as j:
             with hcl.for_(0, phi.shape[2], name="k") as k:
-                #debug2[0] = j
+                # debug2[0] = j
                 tmp1 = hcl.scalar(0, "tmp1")
                 tmp1[0] = 2 * phi[1, j, k] - phi[2, j, k]
                 tmp1[0] = my_max(tmp1[0], phi[2, j, k])
@@ -116,97 +116,96 @@ def evaluateConvergence(newV, oldV, epsilon, reSweep):
     with hcl.if_(delta[0] > epsilon[0]):
         reSweep[0] = 1
 
+
 ######################################### TIME-TO-REACH COMPUTATION ##########################################
 
 def TTR_3D(my_object, g):
     def solve_phiNew(phi, x1, x2, x3):
-            l_i = 0 if 0 in g.pDim else 1
-            h_i = phi.shape[0] if 0 in g.pDim else phi.shape[0] - 1
-            l_j = 0 if 1 in g.pDim else 1
-            h_j = phi.shape[1] if 1 in g.pDim else phi.shape[1] - 1
-            l_k = 0 if 2 in g.pDim else 1
-            h_k = phi.shape[2] if 2 in g.pDim else phi.shape[2] - 1
-            # Perform value iteration by sweeping in direction 1
-            with hcl.Stage("Sweep_1"):
-                with hcl.for_(l_i, h_i, name="i") as i:
-                    with hcl.for_(l_j, h_j, name="j") as j:
-                        with hcl.for_(l_k, h_k, name="k") as k:
-                            updatePhi(i, j, k, my_object, phi, g, x1, x2, x3)
-                            # debug2[0] = j
-                EvalBoundary(phi, g)
+        l_i = 0 if 0 in g.pDim else 1
+        h_i = phi.shape[0] if 0 in g.pDim else phi.shape[0] - 1
+        l_j = 0 if 1 in g.pDim else 1
+        h_j = phi.shape[1] if 1 in g.pDim else phi.shape[1] - 1
+        l_k = 0 if 2 in g.pDim else 1
+        h_k = phi.shape[2] if 2 in g.pDim else phi.shape[2] - 1
+        # Perform value iteration by sweeping in direction 1
+        with hcl.Stage("Sweep_1"):
+            with hcl.for_(l_i, h_i, name="i") as i:
+                with hcl.for_(l_j, h_j, name="j") as j:
+                    with hcl.for_(l_k, h_k, name="k") as k:
+                        updatePhi(i, j, k, my_object, phi, g, x1, x2, x3)
+                        # debug2[0] = j
+            EvalBoundary(phi, g)
 
-            # Perform value iteration by sweeping in direction 2
-            with hcl.Stage("Sweep_2"):
-                with hcl.for_(l_i, h_i, name="i") as i:
-                    with hcl.for_(l_j, h_j, name="j") as j:
-                        with hcl.for_(l_k, h_k, name="k") as k:
-                            i2 = phi.shape[0] - i - 1
-                            j2 = phi.shape[1] - j - 1
-                            k2 = phi.shape[2] - k - 1
-                            updatePhi(i2, j2, k2, my_object, phi, g, x1, x2, x3)
-                EvalBoundary(phi, g)
+        # Perform value iteration by sweeping in direction 2
+        with hcl.Stage("Sweep_2"):
+            with hcl.for_(l_i, h_i, name="i") as i:
+                with hcl.for_(l_j, h_j, name="j") as j:
+                    with hcl.for_(l_k, h_k, name="k") as k:
+                        i2 = phi.shape[0] - i - 1
+                        j2 = phi.shape[1] - j - 1
+                        k2 = phi.shape[2] - k - 1
+                        updatePhi(i2, j2, k2, my_object, phi, g, x1, x2, x3)
+            EvalBoundary(phi, g)
 
-            # Perform value iteration by sweeping in direction 3
-            with hcl.Stage("Sweep_3"):
-                with hcl.for_(l_i, h_i, name="i") as i:
-                    with hcl.for_(l_j, h_j, name="j") as j:
-                        with hcl.for_(l_k, h_k, name="k") as k:
-                            j2 = phi.shape[1] - j - 1
-                            k2 = phi.shape[2] - k - 1
-                            updatePhi(i, j2, k2, my_object, phi, g, x1, x2, x3)
-                EvalBoundary(phi, g)
+        # Perform value iteration by sweeping in direction 3
+        with hcl.Stage("Sweep_3"):
+            with hcl.for_(l_i, h_i, name="i") as i:
+                with hcl.for_(l_j, h_j, name="j") as j:
+                    with hcl.for_(l_k, h_k, name="k") as k:
+                        j2 = phi.shape[1] - j - 1
+                        k2 = phi.shape[2] - k - 1
+                        updatePhi(i, j2, k2, my_object, phi, g, x1, x2, x3)
+            EvalBoundary(phi, g)
 
+        # Perform value iteration by sweeping in direction 4
+        with hcl.Stage("Sweep_4"):
+            with hcl.for_(l_i, h_i, name="i") as i:
+                with hcl.for_(l_j, h_j, name="j") as j:
+                    with hcl.for_(l_k, h_k, name="k") as k:
+                        i2 = phi.shape[0] - i - 1
+                        j2 = phi.shape[1] - j - 1
+                        updatePhi(i2, j2, k, my_object, phi, g, x1, x2, x3)
+            EvalBoundary(phi, g)
 
-            # Perform value iteration by sweeping in direction 4
-            with hcl.Stage("Sweep_4"):
-                with hcl.for_(l_i, h_i, name="i") as i:
-                    with hcl.for_(l_j, h_j, name="j") as j:
-                        with hcl.for_(l_k, h_k, name="k") as k:
-                            i2 = phi.shape[0] - i - 1
-                            j2 = phi.shape[1] - j - 1
-                            updatePhi(i2, j2, k, my_object, phi, g, x1, x2, x3)
-                EvalBoundary(phi, g)
+        # Perform value iteration by sweeping in direction 5
+        with hcl.Stage("Sweep_5"):
+            with hcl.for_(l_i, h_i, name="i") as i:
+                with hcl.for_(l_j, h_j, name="j") as j:
+                    with hcl.for_(l_k, h_k, name="k") as k:
+                        i2 = phi.shape[0] - i - 1
+                        k2 = phi.shape[2] - k - 1
+                        updatePhi(i2, j, k2, my_object, phi, g, x1, x2, x3)
+            EvalBoundary(phi, g)
 
-            # Perform value iteration by sweeping in direction 5
-            with hcl.Stage("Sweep_5"):
-                with hcl.for_(l_i, h_i, name="i") as i:
-                    with hcl.for_(l_j, h_j, name="j") as j:
-                        with hcl.for_(l_k, h_k, name="k") as k:
-                            i2 = phi.shape[0] - i - 1
-                            k2 = phi.shape[2] - k - 1
-                            updatePhi(i2, j, k2, my_object, phi, g, x1, x2, x3)
-                EvalBoundary(phi, g)
+        # Perform value iteration by sweeping in direction 6
+        with hcl.Stage("Sweep_6"):
+            with hcl.for_(l_i, h_i, name="i") as i:
+                with hcl.for_(l_j, h_j, name="j") as j:
+                    with hcl.for_(l_k, h_k, name="k") as k:
+                        i2 = phi.shape[0] - i - 1
+                        updatePhi(i2, j, k, my_object, phi, g, x1, x2, x3)
+            EvalBoundary(phi, g)
 
+        # Perform value iteration by sweeping in direction 7
+        with hcl.Stage("Sweep_7"):
+            with hcl.for_(l_i, h_i, name="i") as i:
+                with hcl.for_(l_j, h_j, name="j") as j:
+                    with hcl.for_(l_k, h_k, name="k") as k:
+                        j2 = phi.shape[1] - j - 1
+                        updatePhi(i, j2, k, my_object, phi, g, x1, x2, x3)
+            EvalBoundary(phi, g)
 
-            # Perform value iteration by sweeping in direction 6
-            with hcl.Stage("Sweep_6"):
-                with hcl.for_(l_i, h_i, name="i") as i:
-                    with hcl.for_(l_j, h_j, name="j") as j:
-                        with hcl.for_(l_k, h_k, name="k") as k:
-                            i2 = phi.shape[0] - i - 1
-                            updatePhi(i2, j, k, my_object, phi, g, x1, x2, x3)
-                EvalBoundary(phi, g)
-
-            # Perform value iteration by sweeping in direction 7
-            with hcl.Stage("Sweep_7"):
-                with hcl.for_(l_i, h_i, name="i") as i:
-                    with hcl.for_(l_j, h_j, name="j") as j:
-                        with hcl.for_(l_k, h_k, name="k") as k:
-                            j2 = phi.shape[1] - j - 1
-                            updatePhi(i, j2, k, my_object, phi, g, x1, x2, x3)
-                EvalBoundary(phi, g)
-
-            # Perform value iteration by sweeping in direction 8
-            with hcl.Stage("Sweep_8"):
-                with hcl.for_(l_i, h_i, name="i") as i:
-                    with hcl.for_(l_j, h_j, name="j") as j:
-                        with hcl.for_(l_k, h_k, name="k") as k:
-                            k2 = phi.shape[2] - k - 1
-                            updatePhi(i, j, k2, my_object, phi, g, x1, x2, x3)
-                EvalBoundary(phi, g)
+        # Perform value iteration by sweeping in direction 8
+        with hcl.Stage("Sweep_8"):
+            with hcl.for_(l_i, h_i, name="i") as i:
+                with hcl.for_(l_j, h_j, name="j") as j:
+                    with hcl.for_(l_k, h_k, name="k") as k:
+                        k2 = phi.shape[2] - k - 1
+                        updatePhi(i, j, k2, my_object, phi, g, x1, x2, x3)
+            EvalBoundary(phi, g)
 
     ###################################### SETUP PLACEHOLDERS ######################################
-    
+
     # Initialize the HCL environment
     hcl.init()
     hcl.config.init_dtype = hcl.Float()
@@ -215,9 +214,9 @@ def TTR_3D(my_object, g):
     x1 = hcl.placeholder((g.pts_each_dim[0],), name="x1", dtype=hcl.Float())
     x2 = hcl.placeholder((g.pts_each_dim[1],), name="x2", dtype=hcl.Float())
     x3 = hcl.placeholder((g.pts_each_dim[2],), name="x3", dtype=hcl.Float())
-    phi      = hcl.placeholder(tuple(g.pts_each_dim), name="phi", dtype=hcl.Float())
-    #debugger = hcl.placeholder(tuple(g.pts_each_dim), name="debugger", dtype=hcl.Float())
-    #debug2 = hcl.placeholder((0,), "debug2")
+    phi = hcl.placeholder(tuple(g.pts_each_dim), name="phi", dtype=hcl.Float())
+    # debugger = hcl.placeholder(tuple(g.pts_each_dim), name="debugger", dtype=hcl.Float())
+    # debug2 = hcl.placeholder((0,), "debug2")
 
     # Create a static schedule -- graph
     s = hcl.create_schedule([phi, x1, x2, x3], solve_phiNew)

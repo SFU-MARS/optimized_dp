@@ -1,8 +1,6 @@
 import heterocl as hcl
-import numpy as np
-import time
-import os
-from computeGraphs.graph_4D import *
+from computeGraphs.CustomGraphFunctions import my_abs, my_max, my_min
+from spatialDerivatives.first_orderENO4D import spa_derivX1_4d, spa_derivX2_4d, spa_derivX3_4d, spa_derivX4_4d
 
 
 # Update the phi function at position (i,j,k)
