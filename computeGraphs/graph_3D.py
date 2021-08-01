@@ -1,12 +1,9 @@
 import heterocl as hcl
-import numpy as np
-import time
-from computeGraphs.CustomGraphFunctions import *
-from spatialDerivatives.first_orderENO3D import *
-from spatialDerivatives.second_orderENO3D import *
+from computeGraphs.CustomGraphFunctions import my_abs, my_max
+from spatialDerivatives.first_orderENO3D import spa_derivT, spa_derivX, spa_derivY
+from spatialDerivatives.second_orderENO3D import secondOrderT, secondOrderX, secondOrderY
 
-#from user_definer import *
-#def graph_3D(dynamics_obj, grid):
+
 def graph_3D(my_object, g, compMethod, accuracy):
     V_f = hcl.placeholder(tuple(g.pts_each_dim), name="V_f", dtype=hcl.Float())
     V_init = hcl.placeholder(tuple(g.pts_each_dim), name="V_init", dtype=hcl.Float())

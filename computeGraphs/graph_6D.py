@@ -1,7 +1,9 @@
 import heterocl as hcl
-from computeGraphs.CustomGraphFunctions import *
-from spatialDerivatives.first_orderENO6D import *
-from spatialDerivatives.second_orderENO6D import *
+from computeGraphs.CustomGraphFunctions import my_abs, my_max
+from spatialDerivatives.first_orderENO6D import spa_derivX1_6d, spa_derivX2_6d, spa_derivX3_6d, \
+    spa_derivX4_6d, spa_derivX5_6d, spa_derivX6_6d
+from spatialDerivatives.second_orderENO6D import secondOrderX1_6d, secondOrderX2_6d, secondOrderX3_6d,\
+    secondOrderX4_6d, secondOrderX5_6d, secondOrderX6_6d
 
 ########################## 6D graph definition ########################
 

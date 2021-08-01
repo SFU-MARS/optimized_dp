@@ -1,7 +1,7 @@
 import heterocl as hcl
-from computeGraphs.CustomGraphFunctions import *
-from spatialDerivatives.first_orderENO4D import *
-from spatialDerivatives.second_orderENO4D import *
+from computeGraphs.CustomGraphFunctions import my_abs, my_max
+from spatialDerivatives.first_orderENO4D import spa_derivX1_4d, spa_derivX2_4d, spa_derivX3_4d, spa_derivX4_4d
+from spatialDerivatives.second_orderENO4D import secondOrderX1_4d, secondOrderX2_4d, secondOrderX3_4d, secondOrderX4_4d
 
 ########################## 4D Graph definition #################################
 def graph_4D(my_object, g, compMethod, accuracy):
