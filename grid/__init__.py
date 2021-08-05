@@ -1,1 +1,1 @@
-from GridProcessing import Grid
+from grid.GridProcessing import Grid
