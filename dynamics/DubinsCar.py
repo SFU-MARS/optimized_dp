@@ -2,8 +2,9 @@ import heterocl as hcl
 import numpy as np
 import time
 
+
 class DubinsCar:
-    def __init__(self, x=[0,0,0], wMax=1, speed=1, dMax=[0,0,0], uMode="min", dMode="max"):
+    def __init__(self, x=[0, 0, 0], wMax=1, speed=1, dMax=[0, 0, 0], uMode="min", dMode="max"):
         self.x = x
         self.wMax = wMax
         self.speed = speed
@@ -41,8 +42,15 @@ class DubinsCar:
         y_dot = hcl.scalar(0, "y_dot")
         theta_dot = hcl.scalar(0, "theta_dot")
 
-        x_dot[0] = self.speed*hcl.cos(state[2])
-        y_dot[0] = self.speed*hcl.sin(state[2])
+        x_dot[0] = self.speed * hcl.cos(state[2])
+        y_dot[0] = self.speed * hcl.sin(state[2])
         theta_dot[0] = uOpt[0]
 
         return (x_dot[0], y_dot[0], theta_dot[0])
+
+    def dynamics_non_hcl(self, t, state, u, d):
+        x_dot = self.speed * np.cos(state[2]) + d[0]
+        y_dot = self.speed * np.sin(state[2]) + d[1]
+        theta_dot = u + d[2]
+
+        return x_dot, y_dot, theta_dot
