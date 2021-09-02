@@ -9,3 +9,4 @@
 /valueIteration/3D_value_iteration_francis.py
 *.npy
 *.txt
+.idea
