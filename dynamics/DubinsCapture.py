@@ -37,7 +37,7 @@ class DubinsCapture:
                 opt_w[0] = -opt_w[0]
         return (opt_w[0], in3[0], in4[0])
 
-    def optDstb(self, t, state, spat_deriv):
+    def opt_dstb(self, t, state, spat_deriv):
         """
             :param spat_deriv: tuple of spatial derivative in all dimensions
                     state: x1, x2, x3

@@ -137,7 +137,7 @@ def graph_6D(V_new, V_init, deriv_diff1, deriv_diff2, deriv_diff3, deriv_diff4, 
                                 # Find optimal control
                                 uOpt = myROV_6D.opt_ctrl(t,(dV_dx1[0], dV_dx2[0], dV_dx3[0], dV_dx4[0], dV_dx5[0], dV_dx6[0]))
                                 # Find optimal disturbance
-                                dOpt = myROV_6D.optDstb((dV_dx1[0], dV_dx2[0], dV_dx3[0], dV_dx4[0], dV_dx5[0], dV_dx6[0]))
+                                dOpt = myROV_6D.opt_dstb((dV_dx1[0], dV_dx2[0], dV_dx3[0], dV_dx4[0], dV_dx5[0], dV_dx6[0]))
 
                                 # Find rates of changes based on dynamics equation
                                 dx1_dt, dx2_dt, dx3_dt, dx4_dt, dx5_dt, dx6_dt = myROV_6D.dynamics(t, (x1[i], x2[j], x3[k], x4[l], x5[m], x6[n]), uOpt, dOpt)
@@ -244,9 +244,9 @@ def graph_6D(V_new, V_init, deriv_diff1, deriv_diff2, deriv_diff3, deriv_diff4, 
         # Find UPPER BOUND optimal control
         uOptU1[0], uOptU2[0], uOptU3[0], uOptU4[0] = myROV_6D.opt_ctrl(t, (max_deriv1[0], max_deriv2[0], max_deriv3[0], max_deriv4[0], max_deriv5[0], max_deriv6[0]))
         # Find LOWER BOUND optimal disturbance
-        dOptL1[0], dOptL2[0], dOptL3[0], dOptL4[0] = myROV_6D.optDstb((min_deriv1[0], min_deriv2[0], min_deriv3[0], min_deriv4[0], min_deriv5[0], min_deriv6[0]))
+        dOptL1[0], dOptL2[0], dOptL3[0], dOptL4[0] = myROV_6D.opt_dstb((min_deriv1[0], min_deriv2[0], min_deriv3[0], min_deriv4[0], min_deriv5[0], min_deriv6[0]))
         # Find UPPER BOUND optimal disturbance
-        dOptU1[0], dOptU2[0], dOptU3[0], dOptU4[0] = myROV_6D.optDstb((max_deriv1[0], max_deriv2[0], max_deriv3[0], max_deriv4[0], min_deriv5[0], min_deriv6[0]))
+        dOptU1[0], dOptU2[0], dOptU3[0], dOptU4[0] = myROV_6D.opt_dstb((max_deriv1[0], max_deriv2[0], max_deriv3[0], max_deriv4[0], min_deriv5[0], min_deriv6[0]))
 
         with hcl.for_(0, V_init.shape[0], name="i") as i:
             with hcl.for_(0, V_init.shape[1], name="j") as j:

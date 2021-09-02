@@ -48,7 +48,7 @@ def updatePhi(i, j, k, l, m, my_object, phi, g, x1, x2, x3, x4, x5):
     uOpt = my_object.opt_ctrl(0, (x1[i], x2[j], x3[k], x4[l], x5[m]),
                               (dV_dx1[0], dV_dx2[0], dV_dx3[0], dV_dx4[0], dV_dx5[0]))
     # Find optimal disturbance
-    dOpt = my_object.optDstb((dV_dx1[0], dV_dx2[0], dV_dx3[0], dV_dx4[0], dV_dx5[0]))
+    dOpt = my_object.opt_dstb((dV_dx1[0], dV_dx2[0], dV_dx3[0], dV_dx4[0], dV_dx5[0]))
 
     # Find rates of changes based on dynamics equation
     dx1_dt, dx2_dt, dx3_dt, dx4_dt, dx5_dt = my_object.dynamics(0, (x1[i], x2[j], x3[k], x4[l], x5[m]), uOpt, dOpt)
