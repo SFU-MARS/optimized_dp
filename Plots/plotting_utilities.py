@@ -110,7 +110,7 @@ def plot_trajectory(grid, V_all_t, trajectory):
                         levels=0,
                         colors="black",
                         linewidths=3)
-        point.set_data(traj[i][0], traj[i][1])
+        point.set_data(trajectory[i][0], trajectory[i][1])
         return c, cf, point
 
     anim = animation.FuncAnimation(fig, animate, init_func=init, frames=V_all_t.shape[-1], interval=50)
