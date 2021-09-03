@@ -58,9 +58,6 @@ def spa_deriv(index, V, g, periodic_dims=[]):
             left_deriv = (V[index] - V[prev_index]) / g.dx[dim]
             right_deriv = (V[next_index] - V[index]) / g.dx[dim]
 
-        print(f"{dim=}")
-        print(f"{next_index=}, {index=}, {prev_index=}")
-        print(f"{left_deriv=}, {right_deriv=}")
         spa_derivatives.append((left_deriv + right_deriv) / 2)
 
-    return spa_derivatives
+    return np.array(spa_derivatives)
