@@ -17,13 +17,17 @@ class DubinsCar:
         # Just create and pass back, even though they're not used
         in3 = hcl.scalar(0, "in3")
         in4 = hcl.scalar(0, "in4")
-        with hcl.if_(spat_deriv[2] > 0):
-            with hcl.if_(self.uMode == "min"):
+        with hcl.if_(self.uMode == "min"):
+            with hcl.if_(spat_deriv[2] >= 0):
                 opt_w[0] = -opt_w
-        with hcl.elif_(spat_deriv[2] < 0):
-            with hcl.if_(self.uMode == "max"):
+            with hcl.else_():
+                opt_w[0] = opt_w
+        with hcl.elif_(self.uMode == "max"):
+            with hcl.if_(spat_deriv[2] >= 0):
+                opt_w[0] = opt_w
+            with hcl.else_():
                 opt_w[0] = -opt_w
-        return (opt_w[0], in3[0], in4[0])
+        return opt_w[0], in3[0], in4[0]
 
     def optDstb(self, t, state, spat_deriv):
         """
@@ -46,11 +50,37 @@ class DubinsCar:
         y_dot[0] = self.speed * hcl.sin(state[2])
         theta_dot[0] = uOpt[0]
 
-        return (x_dot[0], y_dot[0], theta_dot[0])
+        return x_dot[0], y_dot[0], theta_dot[0]
 
     def dynamics_non_hcl(self, t, state, u, d):
-        x_dot = self.speed * np.cos(state[2]) + d[0]
-        y_dot = self.speed * np.sin(state[2]) + d[1]
-        theta_dot = u + d[2]
+        x_dot = self.speed * np.cos(state[2]) + d
+        y_dot = self.speed * np.sin(state[2]) + d
+        theta_dot = u + d
 
         return x_dot, y_dot, theta_dot
+
+    def opt_ctrl_non_hcl(self, t, state, spat_deriv):
+        opt_w = self.wMax
+        if self.uMode == "min":
+            if spat_deriv[2] >= 0:
+                opt_w = -opt_w
+            else:
+                opt_w = opt_w
+        if self.uMode == "max":
+            if spat_deriv[2] >= 0:
+                opt_w = opt_w
+            else:
+                opt_w = -opt_w
+        return opt_w
+
+    def optDstb_non_hcl(self, t, state, spat_deriv):
+        return 0.0
+
+    def update_state(self):
+        """
+        Make sure state is within grid bounds
+        """
+        if self.x[2] < -np.pi:
+            self.x[2] += 2 * np.pi
+        elif self.x[2] > np.pi:
+            self.x[2] -= 2 * np.pi
