@@ -96,14 +96,7 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
         constraint = multiple_value[1]
     else:
         init_value = multiple_value
-    ################### PARSING ARGUMENTS FROM USERS #####################
-
-    parser = ArgumentParser()
-    parser.add_argument("-p", "--plot", default=True, type=bool)
-    # # Print out LLVM option only
-    # parser.add_argument("-l", "--llvm", default=False, type=bool)
-    args = parser.parse_args()
-
+    
     hcl.init()
     hcl.config.init_dtype = hcl.Float(32)
 
@@ -204,7 +197,7 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
     print("Finished solving\n")
 
     ##################### PLOTTING #####################
-    if args.plot:
+    if plot_option.do_plot :
         # Only plots last value array for now
         plot_isosurface(grid, V_1.asnumpy(), plot_option)
 
