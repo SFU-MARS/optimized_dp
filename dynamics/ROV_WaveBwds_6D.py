@@ -80,7 +80,7 @@ class ROV_WaveBwds_6D:
 
         return (uOpt1[0], uOpt2[0], uOpt3[0], uOpt4[0])
 
-    def optDstb(self, spat_deriv):
+    def opt_dstb(self, spat_deriv):
         dOpt1 = hcl.scalar(0, "dOpt1")
         dOpt2 = hcl.scalar(0, "dOpt2")
         dOpt3 = hcl.scalar(0, "dOpt3")

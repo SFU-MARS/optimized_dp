@@ -127,7 +127,7 @@ def graph_4D(my_object, g, compMethod, accuracy):
                                                       (dV_dx1[0], dV_dx2[0], dV_dx3[0], dV_dx4[0]))
 
                             # Find optimal disturbance
-                            dOpt = my_object.optDstb((dV_dx1[0], dV_dx2[0], dV_dx3[0], dV_dx4[0]))
+                            dOpt = my_object.opt_dstb((dV_dx1[0], dV_dx2[0], dV_dx3[0], dV_dx4[0]))
 
                             # Find rates of changes based on dynamics equation
                             dx1_dt, dx2_dt, dx3_dt, dx4_dt = my_object.dynamics(t, (x1[i], x2[j], x3[k], x4[l]), uOpt, dOpt)
@@ -201,10 +201,10 @@ def graph_4D(my_object, g, compMethod, accuracy):
             alpha3 = hcl.scalar(0, "alpha3")
             alpha4 = hcl.scalar(0, "alpha4")
             # Find LOWER BOUND optimal disturbance
-            dOptL1[0], dOptL2[0], dOptL3[0], dOptL4[0] = my_object.optDstb((min_deriv1[0], min_deriv2[0], \
+            dOptL1[0], dOptL2[0], dOptL3[0], dOptL4[0] = my_object.opt_dstb((min_deriv1[0], min_deriv2[0], \
                                                                             min_deriv3[0], min_deriv4[0]))
 
-            dOptU1[0], dOptL2[0], dOptL3[0], dOptL4[0] = my_object.optDstb((max_deriv1[0], max_deriv2[0], \
+            dOptU1[0], dOptL2[0], dOptL3[0], dOptL4[0] = my_object.opt_dstb((max_deriv1[0], max_deriv2[0], \
                                                                             max_deriv3[0], max_deriv4[0]))
             uOptL1 = hcl.scalar(0, "uOptL1")
             uOptL2 = hcl.scalar(0, "uOptL2")
