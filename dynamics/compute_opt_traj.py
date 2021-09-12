@@ -4,41 +4,53 @@ from dynamics.update_state import update_state
 import numpy as np
 
 
-def compute_opt_traj(grid: Grid, V, tau, dyn_sys):
-    assert V.shape[-1] == len(tau)
+def compute_opt_traj(grid: Grid, V, tau, dyn_sys, subsamples=1):
+    """
+    Computes the optimal trajectory, controls and disturbance to a minimal BRT/BRS
 
-    subsamples = 1
+    Args:
+        grid:
+        V:
+        tau:
+        dyn_sys:
+        subsamples: Number of times opt_u and opt_d are calculated within dt
+
+    Returns:
+        traj: State of dyn_sys from time tau[-1] to tau[0]
+        opt_u: Optimal control at each time
+        opt_d: Optimal disturbance at each time
+
+    """
+    assert V.shape[-1] == len(tau)
+    if grid.get_value(V[..., -1], dyn_sys.x) > 0:
+        raise ValueError(f"Value must be within BRT/BRS for optimal trajectory to be computed")
+
     dt = tau[1] - tau[0] / subsamples
 
-    # traj stores state of dyn_sys from look_back_length -> 0
-    # first entry is dyn_sys at time -t
-    # second entry is dyn_sys at time -t + delta t
-    # traj(t, x)
+    # first entry is dyn_sys at time tau[-1]
+    # second entry is dyn_sys at time tau[-2]...
     traj = np.empty((V.shape[-1], len(dyn_sys.x)))
+    traj[0] = dyn_sys.x
+
     opt_u = []
     opt_d = []
 
-    traj[0] = dyn_sys.x
-    t_earliest = 0
+    t_earliest = -1
 
     for time_idx, time in enumerate(tau, start=1):
-        # earliest timestep when dyn_sys is inside reachable set
         brs_at_t = V[..., t_earliest]
 
-        # compute gradient
-        index = grid.get_index(dyn_sys.x)
-        gradient = spa_deriv(index, brs_at_t, grid, periodic_dims=[2])
-        print(f"{gradient=}")
+        gradient = spa_deriv(grid.get_index(dyn_sys.x), brs_at_t, grid, periodic_dims=[2])
 
-        print(gradient)
-        # apply optimal control and disturbance
         for _ in range(subsamples):
             u = dyn_sys.opt_ctrl_non_hcl(_, dyn_sys.x, gradient)
-            # d = dyn_sys.optDstb_non_hcl(_, dyn_sys.x, gradient)
-            update_state(dyn_sys, u, 0, dt)
+            d = dyn_sys.opt_dstb_non_hcl(_, dyn_sys.x, gradient)
+            update_state(dyn_sys, u, d, dt)
+            opt_u.append(u)
+            opt_d.append(d)
 
         if time_idx != V.shape[-1]:
             traj[time_idx] = dyn_sys.x
 
-    return traj
+    return traj, opt_u, opt_d
 
