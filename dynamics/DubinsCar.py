@@ -73,7 +73,7 @@ class DubinsCar:
                 opt_w = -opt_w
         return opt_w
 
-    def optDstb_non_hcl(self, t, state, spat_deriv):
+    def opt_dstb_non_hcl(self, t, state, spat_deriv):
         return 0.0
 
     def update_state(self):
