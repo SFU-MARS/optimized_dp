@@ -36,6 +36,18 @@ class DubinsCar:
         d3 = hcl.scalar(0, "d3")
         return (d1[0], d2[0], d3[0])
 
+    def opt_ctrl_non_hcl(self, t, state, spat_deriv):
+        opt_w = self.wMax
+        # Just create and pass back, even though they're not used
+        if spat_deriv[2] > 0:
+            if self.uMode == "min":
+                opt_w = -opt_w
+        elif spat_deriv[2] < 0:
+            if self.uMode == "max":
+                opt_w[0] = -opt_w
+        return opt_w
+
+
     def dynamics(self, t, state, uOpt, dOpt):
         x_dot = hcl.scalar(0, "x_dot")
         y_dot = hcl.scalar(0, "y_dot")

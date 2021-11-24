@@ -3,9 +3,7 @@ import numpy as np
 from Grid.GridProcessing import Grid
 from Shapes.ShapesFunctions import *
 # Specify the  file that includes dynamic systems
-from dynamics.DubinsCar4D import *
-from dynamics.DubinsCapture import *
-from dynamics.DubinsCar4D2 import *
+from dynamics.DubinsCar import *
 # Plot options
 from plot_options import *
 # Solver core
@@ -24,7 +22,7 @@ import math
 # Scenario 1
 g = Grid(np.array([-4.0, -4.0, -math.pi]), np.array([4.0, 4.0, math.pi]), 3, np.array([40, 40, 40]), [2])
 
-Initial_value_f = CylinderShape(g, [], np.zeros(3), 1)
+Initial_value_f = CylinderShape(g, [2], np.zeros(3), 1)
 
 # Look-back lenght and time step
 lookback_length = 2.0
@@ -32,10 +30,9 @@ t_step = 0.05
 
 small_number = 1e-5
 tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)
-my_car = DubinsCapture()
+my_car = DubinsCar(uMode='max', dMode='min')
 
-po2 = PlotOptions(do_plot=False, plot_type="3d_plot", plotDims=[0,1,2],
-                  slicesCut=[])
+po = PlotOptions(do_plot=False, plot_type="3d_plot", plotDims=[0,1,2], slicesCut=[])
 
 """
 Assign one of the following strings to `PrevSetMode` to specify the characteristics of computation
@@ -57,27 +54,5 @@ Assign one of the following strings to `PrevSetMode` to specify the characterist
 
 compMethods = { "PrevSetsMode": "minVWithV0"}
 # HJSolver(dynamics object, grid, initial value function, time length, system objectives, plotting options)
-HJSolver(my_car, g, Initial_value_f, tau, compMethods, po2)
-
-# Second Scenario
-g = Grid(np.array([-3.0, -1.0, 0.0, -math.pi]), np.array([3.0, 4.0, 4.0, math.pi]), 4, np.array([60, 60, 20, 36]), [3])
-
-# Define my object
-my_car = DubinsCar4D2()
-
-# Use the grid to initialize initial value function
-Initial_value_f = CylinderShape(g, [2,3], np.zeros(4), 1)
-
-# Look-back lenght and time step
-lookback_length = 1.0
-t_step = 0.05
-
-small_number = 1e-5
-
-tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)
-
-po = PlotOptions(do_plot=False, plot_type="3d_plot", plotDims=[0,1,3],
-                  slicesCut=[19])
-
-compMethods = { "PrevSetsMode": "minVWithV0"}
-HJSolver(my_car, g, Initial_value_f, tau, compMethods, po)
+V = HJSolver(my_car, g, Initial_value_f, tau, compMethods, po)
+np.save('V', V)
