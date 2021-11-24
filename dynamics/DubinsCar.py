@@ -44,7 +44,7 @@ class DubinsCar:
                 opt_w = -opt_w
         elif spat_deriv[2] < 0:
             if self.uMode == "max":
-                opt_w[0] = -opt_w
+                opt_w = -opt_w
         return opt_w
 
 
