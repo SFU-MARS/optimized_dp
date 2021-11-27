@@ -14,9 +14,6 @@ def graph_3D(my_object, g, compMethod, accuracy):
     t = hcl.placeholder((2,), name="t", dtype=hcl.Float())
     probe = hcl.placeholder(tuple(g.pts_each_dim), name="probe", dtype=hcl.Float())
 
-    #my_object = dynamics_obj
-    #g = grid
-
     # Positions vector
     x1 = hcl.placeholder((g.pts_each_dim[0],), name="x1", dtype=hcl.Float())
     x2 = hcl.placeholder((g.pts_each_dim[1],), name="x2", dtype=hcl.Float())
@@ -316,7 +313,7 @@ def graph_3D(my_object, g, compMethod, accuracy):
     s_H = graph_create.Hamiltonian
     s_D = graph_create.Dissipation
 
-    # Thread parallelize hamiltonian and dissipation
+    # Thread parallelize hamiltonian and dissipation computation
     s[s_H].parallel(s_H.i)
     s[s_D].parallel(s_D.i)
 
@@ -326,6 +323,4 @@ def graph_3D(my_object, g, compMethod, accuracy):
 
     # Return executable
     return (hcl.build(s))
-
-
-
+    

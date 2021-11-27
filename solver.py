@@ -89,13 +89,14 @@ def solveValueIteration(MDP_obj):
     return V
 
 def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
-             plot_option, accuracy="low"):
+             plot_option, saveAllTimeSteps=False ,accuracy="low"):
     print("Welcome to optimized_dp \n")
     if type(multiple_value) == list:
         init_value = multiple_value[0]
         constraint = multiple_value[1]
     else:
         init_value = multiple_value
+        constraint = None
     
     hcl.init()
     hcl.config.init_dtype = hcl.Float(32)
@@ -104,11 +105,27 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
 
     print("Initializing\n")
 
+    if constraint is None:
+        print("No obstacles set !")
+    else: 
+        print("Obstacles set exists !")
+        constraint_dim = constraint.ndim
+
+        # Time-varying obstacle sets
+        if constraint_dim > grid.dims:
+            constraint_i = constraint[...,0]
+        else:
+            # Time-invariant obstacle set
+            constraint_i = constraint
+
+    # Tensors input to our computation graph
     V_0 = hcl.asarray(init_value)
     V_1 = hcl.asarray(np.zeros(tuple(grid.pts_each_dim)))
     l0 = hcl.asarray(init_value)
+    # For debugging purposes
     probe = hcl.asarray(np.zeros(tuple(grid.pts_each_dim)))
 
+    # Array for each state values
     list_x1 = np.reshape(grid.vs[0], grid.pts_each_dim[0])
     list_x2 = np.reshape(grid.vs[1], grid.pts_each_dim[1])
     list_x3 = np.reshape(grid.vs[2], grid.pts_each_dim[2])
@@ -119,8 +136,7 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
     if grid.dims >= 6:
         list_x6 = np.reshape(grid.vs[5], grid.pts_each_dim[5])
 
-
-    # Convert to hcl array type
+    # Convert state arrays to hcl array type
     list_x1 = hcl.asarray(list_x1)
     list_x2 = hcl.asarray(list_x2)
     list_x3 = hcl.asarray(list_x3)
@@ -131,7 +147,7 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
     if grid.dims >= 6:
         list_x6 = hcl.asarray(list_x6)
 
-    # Get executable
+    # Get executable, obstacle check intial value function
     if grid.dims == 3:
         solve_pde = graph_3D(dynamics_obj, grid, compMethod["PrevSetsMode"], accuracy)
 
@@ -144,8 +160,13 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
     if grid.dims == 6:
         solve_pde = graph_6D(dynamics_obj, grid, compMethod["PrevSetsMode"], accuracy)
 
-    # Print out code for different backend
-    #print(solve_pde)
+    """ Be careful, for high-dimensional array (5D or higher), saving value arrays at all the time steps may 
+    cause your computer to run out of memory """
+    if saveAllTimeSteps is True:
+        valfuncs = np.zeros(np.insert(tuple(grid.pts_each_dim), grid.dims, len(tau)))
+        valfuncs[..., -1 ] = V_0.asnumpy()
+        print(valfuncs.shape)
+
 
     ################ USE THE EXECUTABLE ############
     # Variables used for timing
@@ -156,6 +177,11 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
     for i in range (1, len(tau)):
         #tNow = tau[i-1]
         t_minh= hcl.asarray(np.array((tNow, tau[i])))
+        
+        # taking obstacle at each timestep
+        if "TargetSetMode" in compMethod and constraint_dim > grid.dims:
+            constraint_i = constraint[...,i]
+
         while tNow <= tau[i] - 1e-4:
              tmp_arr = V_0.asnumpy()
              # Start timing
@@ -180,9 +206,9 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
              # If TargetSetMode is specified by user
              if "TargetSetMode" in compMethod:
                 if compMethod["TargetSetMode"] == "max":
-                    tmp_val = np.maximum(V_0.asnumpy(), constraint)
+                    tmp_val = np.maximum(V_0.asnumpy(), -constraint_i)
                 elif compMethod["TargetSetMode"] == "min":
-                    tmp_val = np.minimum(V_0.asnumpy(), constraint)
+                    tmp_val = np.minimum(V_0.asnumpy(), -constraint_i)
                 # Update final result
                 V_1 = hcl.asarray(tmp_val)
                 # Update input for next iteration
@@ -191,6 +217,9 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
              # Some information printing
              print(t_minh)
              print("Computational time to integrate (s): {:.5f}".format(time.time() - start))
+        
+        if saveAllTimeSteps is True:
+            valfuncs[..., -1-i] = V_1.asnumpy()
 
     # Time info printing
     print("Total kernel time (s): {:.5f}".format(execution_time))
@@ -200,6 +229,9 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
     if plot_option.do_plot :
         # Only plots last value array for now
         plot_isosurface(grid, V_1.asnumpy(), plot_option)
+
+    if saveAllTimeSteps is True:
+        return valfuncs
 
     return V_1.asnumpy()
 

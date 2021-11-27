@@ -26,7 +26,7 @@ g = Grid(np.array([-4.0, -4.0, -math.pi]), np.array([4.0, 4.0, math.pi]), 3, np.
 
 Initial_value_f = CylinderShape(g, [], np.zeros(3), 1)
 
-# Look-back lenght and time step
+# Look-back length and time step
 lookback_length = 2.0
 t_step = 0.05
 
@@ -48,6 +48,7 @@ Assign one of the following strings to `PrevSetMode` to specify the characterist
 }
 
 (optional)
+Please specify this mode if you would like to solve a reach-avoid problem
 "TargetSetMode":
 {
 "min" -> min with target set,
@@ -57,7 +58,7 @@ Assign one of the following strings to `PrevSetMode` to specify the characterist
 
 compMethods = { "PrevSetsMode": "minVWithV0"}
 # HJSolver(dynamics object, grid, initial value function, time length, system objectives, plotting options)
-HJSolver(my_car, g, Initial_value_f, tau, compMethods, po2)
+result = HJSolver(my_car, g, Initial_value_f, tau, compMethods, po2, saveAllTimeSteps=True )
 
 # Second Scenario
 g = Grid(np.array([-3.0, -1.0, 0.0, -math.pi]), np.array([3.0, 4.0, 4.0, math.pi]), 4, np.array([60, 60, 20, 36]), [3])
@@ -80,4 +81,4 @@ po = PlotOptions(do_plot=False, plot_type="3d_plot", plotDims=[0,1,3],
                   slicesCut=[19])
 
 compMethods = { "PrevSetsMode": "minVWithV0"}
-HJSolver(my_car, g, Initial_value_f, tau, compMethods, po)
+result = HJSolver(my_car, g, Initial_value_f, tau, compMethods, po, saveAllTimeSteps=True)
