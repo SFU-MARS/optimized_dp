@@ -20,8 +20,8 @@ import math
 
 # Scenario 1
 g = Grid(np.array([-4.0, -4.0, -math.pi]), np.array([4.0, 4.0, math.pi]), 3, np.array([40, 40, 40]), [2])
-
-Initial_value_f = CylinderShape(g, [2], np.zeros(3), 0.75)
+r = 0.75 + 0.4
+Initial_value_f = CylinderShape(g, [2], np.zeros(3), r) # rad of obstacle + robot radius
 
 # Look-back lenght and time step
 lookback_length = 2.0
@@ -53,4 +53,4 @@ Assign one of the following strings to `PrevSetMode` to specify the characterist
 
 compMethods = { "PrevSetsMode": "minVWithV0"}
 V = HJSolver(my_car, g, Initial_value_f, tau, compMethods, po)
-np.save('V_r075', V)
+np.save(f'V_r{r}_grid40', V)
