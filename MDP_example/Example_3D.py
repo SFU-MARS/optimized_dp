@@ -10,7 +10,7 @@ import os
 #                                                                                                  #
 # 1. REQUIRED FUNCTIONS                                                                            #
 # The user is required to provide implementations of the following state transition and reward     #
-# functions within ./MDP/:                                                                         #
+# functions:                                                                                       #
 #                                                                                                  #
 #       transition(sVals, action, bounds, trans, goal)                                             #
 #       reward(sVals, action, bounds, goal, trans)                                                 #
