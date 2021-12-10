@@ -80,4 +80,7 @@ class Grid:
             [float]: V(state)
         """
         index = self.get_index(state)
+        # print(index)
+        # for i, idx in enumerate(index):
+        #     print(self.grid_points[i][idx])
         return V[index]

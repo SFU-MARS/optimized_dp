@@ -47,6 +47,19 @@ class DubinsCar:
                 opt_w = -opt_w
         return opt_w
 
+    def least_restrictive_ctrl(self, t, state, spat_deriv, ctrl):
+        assert self.uMode == 'max'
+        b = spat_deriv[0] * np.cos(state[2]) + spat_deriv[1] * np.sin(state[2])
+        m = spat_deriv[2]
+        opt_w = self.opt_ctrl_non_hcl(t, state, spat_deriv)
+        # print('mx + b: = ', b + m * ctrl[0])
+        # assert m * opt_w + b >= 0
+        # if m * ctrl + b < 0:
+            # ctrl =  -b / m
+
+        # assert -opt_w <= ctrl <= opt_w
+        return ctrl
+
 
     def dynamics(self, t, state, uOpt, dOpt):
         x_dot = hcl.scalar(0, "x_dot")
