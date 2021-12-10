@@ -4,6 +4,7 @@ from Grid.GridProcessing import Grid
 from Shapes.ShapesFunctions import *
 # Specify the  file that includes dynamic systems
 from dynamics.Air3D import Air3D
+from dynamics.DubinsCar import DubinsCar
 # Plot options
 from plot_options import *
 # Solver core
@@ -19,8 +20,8 @@ import math
 """
 
 # Scenario 1
-g = Grid(np.array([-1.0, -1.0, -math.pi]), np.array([1.0, 1.0, math.pi]), 3, np.array([101, 101, 101]), [2])
-r = 0.25
+g = Grid(np.array([-1.0, -1.0, -math.pi]), np.array([1.0, 1.0, math.pi]), 3, np.array([40, 40, 40]), [2])
+r = (0.75 + 0.4) / 8
 Initial_value_f = CylinderShape(g, [2], np.zeros(3), r) # rad of obstacle + robot radius
 
 # Look-back lenght and time step
@@ -29,7 +30,7 @@ t_step = 0.05
 
 small_number = 1e-5
 tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)
-my_car = Air3D(uMode='max', dMode='min')
+my_car = DubinsCar(uMode='max', dMode='min', speed=1)
 
 po = PlotOptions(do_plot=True, plot_type="3d_plot", plotDims=[0,1,2], slicesCut=[])
 
@@ -53,4 +54,8 @@ Assign one of the following strings to `PrevSetMode` to specify the characterist
 
 compMethods = { "PrevSetsMode": "minVWithV0"}
 V = HJSolver(my_car, g, Initial_value_f, tau, compMethods, po)
-np.save(f'V_air3D_{r}', V)
+# np.save(f'V_air3D_{r}', V)
+
+# g = Grid(np.array([-4.0, -4.0, -math.pi]), np.array([4.0, 4.0, math.pi]), 3, np.array([101, 101, 101]), [2])
+# from Plots.plotting_utilities import *
+# plot_isosurface(g, V, po)

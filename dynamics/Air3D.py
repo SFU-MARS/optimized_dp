@@ -21,13 +21,14 @@ class Air3D:
         det = hcl.scalar(0, 'det')
         det[0] = spat_deriv[0] * state[1] - spat_deriv[1] * state[0] - spat_deriv[2]
 
+        with hcl.if_(self.uMode == 'max'):
+            with hcl.if_(det < 0):
+                    opt_w[0] = -opt_w
+
         with hcl.if_(self.uMode == "min"):
             with hcl.if_(det > 0):
                     opt_w[0] = -opt_w
 
-        with hcl.if_(self.uMode == 'max'):
-            with hcl.if_(det < 0):
-                    opt_w[0] = -opt_w
         return opt_w[0], in3[0], in4[0]
 
     def opt_dstb(self, t, state, spat_deriv):
@@ -41,13 +42,14 @@ class Air3D:
         # Just create and pass back, even though they're not used
         d3 = hcl.scalar(0, "d3")
 
-        with hcl.if_(self.uMode == "min"):
-            with hcl.if_(spat_deriv[0] >= 0):
-                    opt_d[0] = -opt_d
-
         with hcl.if_(self.uMode == "max"):
             with hcl.if_(spat_deriv[2] < 0):
                     opt_d[0] = -opt_d
+
+        with hcl.if_(self.uMode == "min"):
+            with hcl.if_(spat_deriv[2] >= 0):
+                    opt_d[0] = -opt_d
+
 
         return opt_d[0], d2[0], d3[0]
 
