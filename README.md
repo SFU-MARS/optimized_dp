@@ -1,6 +1,8 @@
-# Optimizing Dynamic Programming-Based Algorithms
-This is an on-going project in an attempt to make solving grid-based dynamic programming problems, 
-such as Hamilton-Jacobi partial differential equations (HJ PDE) and table-based value iteration, easier and faster.
+# Optimizing Dynamic Programming-Based Algorithms Solver
+The repo contains implementation of dynamic programming based algorithms in optimal control. Specifically, the solvers support 3 main classes of algorithms: level set based algorithms for solving Hamilton-Jacobi-Issac (HJI) partial differential equation (PDEs) arising in reachability analysis and differential games, time-to-reach (TTR) computations of dynamical systems in reachability analysis, and value-iterations algorithm for solving continuous state-space action-space Markov Decision Process (MDP). All these algorithms share the property of being implemented on a multidimensional grid and hence, their computational complexities increase exponentially as a function of dimension. For all the aforementioned algorithms, our toolbox allows computation up to 6 dimensions, which we think is the limit of dynammic programming on most modern personal computers.
+
+In comparison with previous works, our toolbox strives to be both efficient in implementation while being user-friendly. This is reflected in our choice of having Python as a language for initializing problems and having python-like HeteroCL language for the core algorithms implementation and dynamical systems specification. Please find more details about using the repo for solving your problems in this page, and should you have any questions/problems/requests please direct the messages to Minh Bui at buiminhb@sfu.ca 
+
 
 # Quickstart (Ubuntu 18 & 20)
 Please install the following:
