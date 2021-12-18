@@ -1,4 +1,4 @@
-# Optimizing Dynamic Programming-Based Algorithms Solver (OptimizedDP)
+# Optimized Dynamic Programming-Based Algorithms Solver (OptimizedDP)
 The repo contains implementation of dynamic programming based algorithms in optimal control. Specifically, the solver supports 3 main classes of algorithms: level set based algorithm for solving Hamilton-Jacobi-Issac (HJI) partial differential equation (PDE) arising in reachability analysis and differential games [1], time-to-reach (TTR) computations of dynamical systems in reachability analysis [2], and value-iterations algorithm for solving continuous state-space action-space Markov Decision Process (MDP). All these algorithms share the property of being implemented on a multidimensional grid and hence, their computational complexities increase exponentially as a function of dimension. For all the aforementioned algorithms, our toolbox allows computation up to 6 dimensions, which we think is the limit of dynammic programming on most modern personal computers.
 
 In comparison with previous works, our toolbox strives to be both efficient in implementation while being user-friendly. This is reflected in our choice of having Python as a language for initializing problems and having python-like HeteroCL [3] language for the core algorithms implementation and dynamical systems specification. Please find more details about using the repo for solving your problems in this page, and should you have any questions/problems/requests please direct the messages to Minh Bui at buiminhb@sfu.ca 
@@ -67,16 +67,15 @@ targetSet = CylinderShape(g, [2], np.array([0.0, 1.0, 0.0]), 0.70)
 po = PlotOptions( "3d_plot", plotDims=[0,1,2], slicesCut=[],
                   min_isosurface=lookback_length, max_isosurface=lookback_length)
 
-# First compute TTR set
+# Convergence threshold
 epsilon = 0.001
 V_0 = TTRSolver(my_car, g, targetSet, epsilon, po)
 ```
 * To run the example : `python3 TTR_example.py`
 # Current code structure
-* user_definer.py: specify grid numbers, dynamic systems intialization, initial value function ,computation method.
-* solver.py: Compute HJ PDE, the end result is V1 value function
+* solver.py: Containing python APIs to interact with the numerical solver
 * dynamics/ : User's dynamical system specification
-* Shapes/ShapesFunctions.py : Add-in functions for calculating different intial value functions
+* Shapes/ShapesFunctions.py : Add-in functions for initializing different shapes/intial value functions
 * computeGraphs/CustomGraphFunctions.py: Ready-to-user HeteroCL style utility functions
 
 
