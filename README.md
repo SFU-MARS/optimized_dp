@@ -24,11 +24,12 @@ Please install the following:
 * Note: If you're on Ubuntu 20.04, you may have encounter an error regarding ``` libtinfo5 ```. To fix,
 please just run this command ```sudo apt-install libtinfo5 ``` 
 
-# Solving the HJI PDE
+# Solving the Hamilton-Jacobi-Issac (HJI) PDE
 * We provide a running example of solving HJI PDE in the file user_definer.py:
 ```python
 g = Grid(np.array([-4.0, -4.0, -math.pi]), np.array([4.0, 4.0, math.pi]), 3, np.array([40, 40, 40]), [2])
 
+# A sphere shape (no dimension passed in) 
 Initial_value_f = CylinderShape(g, [], np.zeros(3), 1)
 
 # Look-back length and time step
@@ -50,6 +51,7 @@ result = HJSolver(my_car, g, Initial_value_f, tau, compMethods, po2, saveAllTime
 ```
 * To run the example, execute the command `python3 user_definer.py`
 * If the parameter `do_plot` is set to `True` when initializing `PlotOptions`, there will be a 3D green colored sub-zero level set popping up in your default browser like below. 
+![BallPic](images/ball_pic.png)
 * Notes: For 6 dimensions, recommended grid size is 20-30 each dimension on system with 32Gbs of DRAM.
 * Create a class file in folder dynamics/ to specify your own system dynamics. Remember to import the class in your running example.  
 
