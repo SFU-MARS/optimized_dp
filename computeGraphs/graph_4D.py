@@ -127,7 +127,8 @@ def graph_4D(my_object, g, compMethod, accuracy):
                                                       (dV_dx1[0], dV_dx2[0], dV_dx3[0], dV_dx4[0]))
 
                             # Find optimal disturbance
-                            dOpt = my_object.opt_dstb((dV_dx1[0], dV_dx2[0], dV_dx3[0], dV_dx4[0]))
+                            dOpt = my_object.opt_dstb(t, (x1[i], x2[j], x3[k], x4[l]),
+                                                      (dV_dx1[0], dV_dx2[0], dV_dx3[0], dV_dx4[0]))
 
                             # Find rates of changes based on dynamics equation
                             dx1_dt, dx2_dt, dx3_dt, dx4_dt = my_object.dynamics(t, (x1[i], x2[j], x3[k], x4[l]), uOpt, dOpt)
@@ -182,9 +183,7 @@ def graph_4D(my_object, g, compMethod, accuracy):
                                 max_deriv4[0] = dV_dx4_R[0]
 
         # Calculate dissipation amount
-
         with hcl.Stage("Dissipation"):
-            #dOptU = hcl.compute((4,), lambda x: 0, "dOptU")
             # Storing alphas
             dOptL1 = hcl.scalar(0, "dOptL1")
             dOptL2 = hcl.scalar(0, "dOptL2")
@@ -200,11 +199,22 @@ def graph_4D(my_object, g, compMethod, accuracy):
             alpha2 = hcl.scalar(0, "alpha2")
             alpha3 = hcl.scalar(0, "alpha3")
             alpha4 = hcl.scalar(0, "alpha4")
-            # Find LOWER BOUND optimal disturbance
-            dOptL1[0], dOptL2[0], dOptL3[0], dOptL4[0] = my_object.opt_dstb((min_deriv1[0], min_deriv2[0], \
+
+            """ 
+                NOTE: If optimal adversarial disturbance is not dependent on states
+                , the below approximate LOWER/UPPER BOUND optimal disturbance is  accurate.
+                If that's not the case, move the next two statements into the nested loops and modify the states passed in 
+                as my_object.opt_dstb(t, (x1[i], x2[j], x3[k], x4[l], ...), ...).
+                The reason we don't have this line in the nested loop by default is to avoid redundant computations
+                for certain systems where disturbance are not dependent on states.
+                In general, dissipation amount can just be approximates.  
+            """
+            dOptL1[0], dOptL2[0], dOptL3[0], dOptL4[0] = my_object.opt_dstb(t, (x1[0], x2[0], x3[0], x4[0]),
+                                                                            (min_deriv1[0], min_deriv2[0], \
                                                                             min_deriv3[0], min_deriv4[0]))
 
-            dOptU1[0], dOptL2[0], dOptL3[0], dOptL4[0] = my_object.opt_dstb((max_deriv1[0], max_deriv2[0], \
+            dOptU1[0], dOptL2[0], dOptL3[0], dOptL4[0] = my_object.opt_dstb(t, (x1[0], x2[0], x3[0], x4[0]),
+                                                                            (max_deriv1[0], max_deriv2[0], \
                                                                             max_deriv3[0], max_deriv4[0]))
             uOptL1 = hcl.scalar(0, "uOptL1")
             uOptL2 = hcl.scalar(0, "uOptL2")
@@ -241,6 +251,14 @@ def graph_4D(my_object, g, compMethod, accuracy):
                             dx_LU3 = hcl.scalar(0, "dx_LU3")
                             dx_LU4 = hcl.scalar(0, "dx_LU4")
 
+                            # dOptL1[0], dOptL2[0], dOptL3[0], dOptL4[0] = my_object.opt_dstb(t, (x1[i], x2[j], x3[k], x4[l]),
+                            #                                                 (min_deriv1[0], min_deriv2[0], \
+                            #                                                 min_deriv3[0], min_deriv4[0]))
+
+                            # dOptU1[0], dOptL2[0], dOptL3[0], dOptL4[0] = my_object.opt_dstb(t, (x1[i], x2[j], x3[k], x4[l]),
+                            #                                                 (max_deriv1[0], max_deriv2[0], \
+                            #                                                 max_deriv3[0], max_deriv4[0]))
+
                             # Find LOWER BOUND optimal control
                             uOptL1[0], uOptL2[0], uOptL3[0], uOptL4[0]= my_object.opt_ctrl(t, (x1[i], x2[j], x3[k], x4[l]),
                                                                       (min_deriv1[0], min_deriv2[0], min_deriv3[0],
@@ -274,9 +292,6 @@ def graph_4D(my_object, g, compMethod, accuracy):
                             alpha3[0] = my_max(dx_LL3[0], dx_LU3[0])
                             alpha4[0] = my_max(dx_LL4[0], dx_LU4[0])
 
-                            #dx_UL3 = hcl.scalar(0, "dx_UL3")
-                            # dx_UL1[0], dx_UL2[0], dx_UL3[0], dx_UL4[0] = my_object.dynamics(t, (x1[i], x2[j], x3[k], x4[l]),
-                            #                                                                 uOptU, dOptL)
                             dx_UL1[0], dx_UL2[0], dx_UL3[0], dx_UL4[0] = my_object.dynamics(t, (x1[i], x2[j], x3[k], x4[l]),\
                                                                                             (uOptU1[0], uOptU2[0], uOptU3[0], uOptU4[0]), \
                                                                                             (dOptL1[0], dOptL2[0], dOptL3[0], dOptL4[0]))
@@ -284,6 +299,7 @@ def graph_4D(my_object, g, compMethod, accuracy):
                             dx_UL2[0] = my_abs(dx_UL2[0])
                             dx_UL3[0] = my_abs(dx_UL3[0])
                             dx_UL4[0] = my_abs(dx_UL4[0])
+                            
                             # Calculate alpha
                             alpha1[0] = my_max(alpha1[0], dx_UL1[0])
                             alpha2[0] = my_max(alpha2[0], dx_UL2[0])
@@ -297,7 +313,8 @@ def graph_4D(my_object, g, compMethod, accuracy):
                             dx_UU2[0] = my_abs(dx_UU2[0])
                             dx_UU3[0] = my_abs(dx_UU3[0])
                             dx_UU4[0] = my_abs(dx_UU4[0])
-                            # Calculate alpha
+
+                            # Calculate alphas
                             alpha1[0] = my_max(alpha1[0], dx_UU1[0])
                             alpha2[0] = my_max(alpha2[0], dx_UU2[0])
                             alpha3[0] = my_max(alpha3[0], dx_UU3[0])
@@ -308,15 +325,11 @@ def graph_4D(my_object, g, compMethod, accuracy):
                                         deriv_diff1[i, j, k, l] * alpha1[0] + deriv_diff2[i, j, k, l] * alpha2[0] + deriv_diff3[
                                     i, j, k, l] * alpha3[0] + deriv_diff4[i, j, k, l] * alpha4[0])
                             #probe[i, j, k, l] = alpha1[0]
-                            #V_init[i, j, k, l] + 0.00749716 * V_new[i,j,k,l]
 
                             # Finally
                             V_new[i, j, k, l] = -(V_new[i, j, k, l] - diss[0])
-                            #probe[i, j, k, l] = V_new[i, j, k, l]*0.00749716
-                            #probe[i, j, k, l] = V_init[i, j, k, l] + V_new[i, j, k, l] *0.00749716
+                            
                             # Get maximum alphas in each dimension
-
-                            # Calculate alphas
                             with hcl.if_(alpha1[0] > max_alpha1[0]):
                                 max_alpha1[0] = alpha1[0]
                             with hcl.if_(alpha2[0] > max_alpha2[0]):
@@ -326,7 +339,7 @@ def graph_4D(my_object, g, compMethod, accuracy):
                             with hcl.if_(alpha4[0] > max_alpha4[0]):
                                 max_alpha4[0] = alpha4[0]
 
-                                # Determine time step
+        # Determine time step
         delta_t = hcl.compute((1,), lambda x: step_bound(), name="delta_t")
         # Integrate
         result = hcl.update(V_new, lambda i, j, k, l: V_init[i, j, k, l] + V_new[i, j, k, l] * delta_t[0])
