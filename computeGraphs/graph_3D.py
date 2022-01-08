@@ -82,10 +82,6 @@ def graph_3D(my_object, g, compMethod, accuracy):
                         dV_dT_L = hcl.scalar(0, "dV_dT_L")
                         dV_dT_R = hcl.scalar(0, "dV_dT_R")
                         dV_dT = hcl.scalar(0, "dV_dT")
-                        # Variables to keep track of dynamics
-                        # dx_dt = hcl.scalar(0, "dx_dt")
-                        # dy_dt = hcl.scalar(0, "dy_dt")
-                        # dtheta_dt = hcl.scalar(0, "dtheta_dt")
 
                         # No tensor slice operation
                         if accuracy == "low":
@@ -118,7 +114,6 @@ def graph_3D(my_object, g, compMethod, accuracy):
 
                         # Calculate Hamiltonian terms:
                         V_new[i, j, k] = -(dx_dt * dV_dx[0] + dy_dt * dV_dy[0] + dtheta_dt * dV_dT[0])
-                        #probe[i, j, k] = V_new[i, j, k]
 
                         # Get derivMin
                         with hcl.if_(dV_dx_L[0] < min_deriv1[0]):
@@ -199,26 +194,18 @@ def graph_3D(my_object, g, compMethod, accuracy):
                         # Find LOWER BOUND optimal disturbance
                         dOptL1[0], dOptL2[0], dOptL3[0] = my_object.opt_dstb(t,  (x1[i], x2[j], x3[k]),\
                                                                             (min_deriv1[0], min_deriv2[0],min_deriv3[0]))
-                        # probe[i, j, k] = dOptL1[0] + dOptL2[0] + dOptL3[0]
-
 
                         dOptU1[0], dOptU2[0], dOptU3[0] = my_object.opt_dstb(t, (x1[i], x2[j], x3[k]),\
                                                                             (max_deriv1[0], max_deriv2[0],max_deriv3[0]))
-                        # probe[i, j, k] = dOptL1[0] + dOptL2[0] + dOptL3[0]
 
                         # Find LOWER BOUND optimal control
                         uOptL1[0], uOptL2[0], uOptL3[0] = my_object.opt_ctrl(t, (x1[i], x2[j], x3[k]), \
                                                                                         (min_deriv1[0], min_deriv2[0],min_deriv3[0]))
-                        # probe[i, j, k] = uOptL1[0] + uOptL2[0] + uOptL3[0]
-
 
                         # Find UPPER BOUND optimal control
                         uOptU1[0], uOptU2[0], uOptU3[0] = my_object.opt_ctrl(t, (x1[i], x2[j], x3[k]),
                                                                                         (max_deriv1[0], max_deriv2[0],
                                                                                          max_deriv3[0]))
-                        #probe[i, j, k] = uOptU1[0] + uOptU2[0] + uOptU3[0]
-
-
                         # Find magnitude of rates of changes
                         dx_LL1[0], dx_LL2[0], dx_LL3[0] = my_object.dynamics(t, (x1[i], x2[j], x3[k]),
                                                                                         (uOptL1[0], uOptL2[0], uOptL3[0]), \
@@ -226,7 +213,6 @@ def graph_3D(my_object, g, compMethod, accuracy):
                         dx_LL1[0] = my_abs(dx_LL1[0])
                         dx_LL2[0] = my_abs(dx_LL2[0])
                         dx_LL3[0] = my_abs(dx_LL3[0])
-                        #probe[i, j, k] = dx_LL1[0] + dx_LL2[0] + dx_LL3[0]
 
                         dx_LU1[0], dx_LU2[0], dx_LU3[0] = my_object.dynamics(t, (x1[i], x2[j], x3[k]),
                                                                                         (uOptL1[0], uOptL2[0], uOptL3[0]), \
@@ -240,9 +226,6 @@ def graph_3D(my_object, g, compMethod, accuracy):
                         alpha2[0] = my_max(dx_LL2[0], dx_LU2[0])
                         alpha3[0] = my_max(dx_LL3[0], dx_LU3[0])
 
-                        # dx_UL3 = hcl.scalar(0, "dx_UL3")
-                        # dx_UL1[0], dx_UL2[0], dx_UL3[0], dx_UL4[0] = my_object.dynamics(t, (x1[i], x2[j], x3[k], x4[l]),
-                        #                                                                 uOptU, dOptL)
                         dx_UL1[0], dx_UL2[0], dx_UL3[0]= my_object.dynamics(t, (x1[i], x2[j], x3[k]),\
                                                                                             (uOptU1[0], uOptU2[0], uOptU3[0]), \
                                                                                             (dOptL1[0], dOptL2[0], dOptL3[0]))
@@ -265,16 +248,13 @@ def graph_3D(my_object, g, compMethod, accuracy):
                         alpha1[0] = my_max(alpha1[0], dx_UU1[0])
                         alpha2[0] = my_max(alpha2[0], dx_UU2[0])
                         alpha3[0] = my_max(alpha3[0], dx_UU3[0])
-                        #probe[i, j, k] = alpha1[0] + alpha2[0] + alpha3[0]
 
                         diss = hcl.scalar(0, "diss")
                         diss[0] = 0.5 * (
                                 deriv_diff1[i, j, k] * alpha1[0] + deriv_diff2[i, j, k] * alpha2[0] + deriv_diff3[i, j, k] * alpha3[0])
-                        # probe[i, j, k] = alpha2[0]
+                        
                         # Finally
                         V_new[i, j, k] = -(V_new[i, j, k] - diss[0])
-                        # probe[i, j, k] = alpha3[0]
-                        # Get maximum alphas in each dimension
 
                         # Calculate alphas
                         with hcl.if_(alpha1[0] > max_alpha1[0]):

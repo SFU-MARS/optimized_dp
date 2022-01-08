@@ -71,11 +71,6 @@ def graph_5D(my_object, g, compMethod, accuracy):
             with hcl.if_(V_new[i, j, k, l, m] > l0[i, j, k, l, m]):
                 V_new[i, j, k, l, m] = l0[i, j, k, l, m]
 
-        # Max(V, g )
-        # def maxVWithCStraint(i, j, k, l, m):
-        #     with hcl.if_(V_new[i, j, k, l, m] < 5.0):
-        #         V_new[i, j, k, l, m] = 1.0
-
         # Min with V_before
         def minVWithVInit(i, j, k, l, m):
             with hcl.if_(V_new[i, j, k, l, m] > V_init[i, j, k, l, m]):
