@@ -25,7 +25,7 @@ def solveValueIteration(MDP_obj):
     print("Welcome to optimized_dp \n")
     # Initialize the HCL environment
     hcl.init()
-    hcl.config.init_dtype = hcl.Float()
+    hcl.config.init_dtype = hcl.Float(32)
 
     ########################################## INITIALIZE ##########################################
 
@@ -89,7 +89,9 @@ def solveValueIteration(MDP_obj):
     return V
 
 def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
-             plot_option, saveAllTimeSteps=False ,accuracy="low"):
+             plot_option, saveAllTimeSteps=False,
+             accuracy="low", untilConvergent=False, epsilon=2e-3):
+
     print("Welcome to optimized_dp \n")
     if type(multiple_value) == list:
         init_value = multiple_value[0]
@@ -174,6 +176,9 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
     iter = 0
     tNow = tau[0]
     print("Started running\n")
+
+    # Backward reachable set/tube will be computed over the specified time horizon
+    # Or until convergent ( which ever happens first )
     for i in range (1, len(tau)):
         #tNow = tau[i-1]
         t_minh= hcl.asarray(np.array((tNow, tau[i])))
@@ -183,28 +188,28 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
             constraint_i = constraint[...,i]
 
         while tNow <= tau[i] - 1e-4:
-             tmp_arr = V_0.asnumpy()
-             # Start timing
-             iter += 1
-             start = time.time()
+            prev_arr = V_0.asnumpy()
+            # Start timing
+            iter += 1
+            start = time.time()
 
-             # Run the execution and pass input into graph
-             if grid.dims == 3:
+            # Run the execution and pass input into graph
+            if grid.dims == 3:
                 solve_pde(V_1, V_0, list_x1, list_x2, list_x3, t_minh, l0)
-             if grid.dims == 4:
+            if grid.dims == 4:
                 solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, t_minh, l0, probe)
-             if grid.dims == 5:
+            if grid.dims == 5:
                 solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, list_x5 ,t_minh, l0)
-             if grid.dims == 6:
+            if grid.dims == 6:
                 solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6, t_minh, l0)
 
-             tNow = np.asscalar((t_minh.asnumpy())[0])
+            tNow = np.asscalar((t_minh.asnumpy())[0])
 
-             # Calculate computation time
-             execution_time += time.time() - start
+            # Calculate computation time
+            execution_time += time.time() - start
 
-             # If TargetSetMode is specified by user
-             if "TargetSetMode" in compMethod:
+            # If TargetSetMode is specified by user
+            if "TargetSetMode" in compMethod:
                 if compMethod["TargetSetMode"] == "max":
                     tmp_val = np.maximum(V_0.asnumpy(), -constraint_i)
                 elif compMethod["TargetSetMode"] == "min":
@@ -214,12 +219,23 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
                 # Update input for next iteration
                 V_0 = hcl.asarray(tmp_val)
 
-             # Some information printing
-             print(t_minh)
-             print("Computational time to integrate (s): {:.5f}".format(time.time() - start))
-        
-        if saveAllTimeSteps is True:
-            valfuncs[..., -1-i] = V_1.asnumpy()
+            # Some information printin
+            print(t_minh)
+            print("Computational time to integrate (s): {:.5f}".format(time.time() - start))
+
+            if untilConvergent is True:
+                # Compare difference between V_{t-1} and V_{t} and choose the max changes
+                diff = np.amax(np.abs(V_1.asnumpy() - prev_arr))
+                print("Max difference between V_old and V_new : {:.5f}".format(diff))
+                if diff < epsilon:
+                    print("Result converged ! Exiting the compute loop. Have a good day.")
+                    break
+        else: # if it didn't break because of convergent condition
+            if saveAllTimeSteps is True:
+                valfuncs[..., -1-i] = V_1.asnumpy()
+            continue
+        break # only if convergent condition is achieved
+
 
     # Time info printing
     print("Total kernel time (s): {:.5f}".format(execution_time))
@@ -231,6 +247,7 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
         plot_isosurface(grid, V_1.asnumpy(), plot_option)
 
     if saveAllTimeSteps is True:
+        valfuncs[..., 0] = V_1.asnumpy()
         return valfuncs
 
     return V_1.asnumpy()
