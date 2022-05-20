@@ -46,7 +46,7 @@ class ROV_WaveBwds_6D:
         self.Buoy   = self.b * self.g    # buoyancy
         self.B      = np.array([[3.2,0.0], [0.6, 1.0]])
 
-    def opt_ctrl(self, t, spat_deriv):
+    def opt_ctrl(self, t, state, spat_deriv):
         uOpt1 = hcl.scalar(0, "uOpt1")
         uOpt2 = hcl.scalar(0, "uOpt2")
         uOpt3 = hcl.scalar(0, "uOpt3")
@@ -80,7 +80,7 @@ class ROV_WaveBwds_6D:
 
         return (uOpt1[0], uOpt2[0], uOpt3[0], uOpt4[0])
 
-    def opt_dstb(self, spat_deriv):
+    def opt_dstb(self, t, state, spat_deriv):
         dOpt1 = hcl.scalar(0, "dOpt1")
         dOpt2 = hcl.scalar(0, "dOpt2")
         dOpt3 = hcl.scalar(0, "dOpt3")
@@ -130,7 +130,7 @@ class ROV_WaveBwds_6D:
 
         return (dOpt1[0], dOpt2[0], dOpt3[0], dOpt4[0])
 
-    def dynamics(self, t,state, uOpt, dOpt): # Assume order of state is (x_a, z_a, u_r, w_r, x, z)
+    def dynamics(self, t, state, uOpt, dOpt): # Assume order of state is (x_a, z_a, u_r, w_r, x, z)
         # Some constants for convenience
         G1 = hcl.scalar(0, "G1")
         F1 = hcl.scalar(0, "F1")

@@ -344,9 +344,9 @@ def graph_4D(my_object, g, compMethod, accuracy):
         # Integrate
         result = hcl.update(V_new, lambda i, j, k, l: V_init[i, j, k, l] + V_new[i, j, k, l] * delta_t[0])
         # Different computation method check
-        if compMethod == 'maxVWithV0':
+        if compMethod == 'maxVWithV0' or compMethod == 'maxVWithVTarget':
             result = hcl.update(V_new, lambda i, j, k, l: maxVWithV0(i, j, k, l))
-        if compMethod == 'minVWithV0':
+        if compMethod == 'minVWithV0' or compMethod == 'minVWithVTarget':
             result = hcl.update(V_new, lambda i, j, k, l: minVWithV0(i, j, k, l))
         if compMethod == 'minVWithVInit':
             result = hcl.update(V_new, lambda i, j, k, l: minVWithVInit(i, j, k, l))

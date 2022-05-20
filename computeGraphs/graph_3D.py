@@ -272,9 +272,9 @@ def graph_3D(my_object, g, compMethod, accuracy):
         result = hcl.update(V_new, lambda i, j, k: V_init[i, j, k] + V_new[i, j, k] * delta_t[0])
 
         # Different computation method check
-        if compMethod == 'maxVWithV0':
+        if compMethod == 'maxVWithV0' or compMethod == 'maxVWithVTarget':
             result = hcl.update(V_new, lambda i, j, k: maxVWithV0(i, j, k))
-        if compMethod == 'minVWithV0':
+        if compMethod == 'minVWithV0' or compMethod == 'minVWithVTarget':
             result = hcl.update(V_new, lambda i, j, k: minVWithV0(i, j, k))
         if compMethod == 'minVWithVInit':
             result = hcl.update(V_new, lambda i, j, k: minVWithVInit(i, j, k))
