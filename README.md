@@ -64,6 +64,44 @@ result = HJSolver(my_car, g, Initial_value_f, tau, compMethods, po2, saveAllTime
 * Notes: For 6 dimensions, recommended grid size is 20-30 each dimension on system with 32Gbs of DRAM.
 * Create a class file in folder dynamics/ to specify your own system dynamics. Remember to import the class in your running example.  
 
+## System dynamic specification
+It can noticed in ```user_definer.py``` that the class DubinsCapture is imported from the folder ```dynamics/```, where our example system dynamics. 
+```python 
+import heterocl as hcl
+
+class DubinsCapture:
+    def __init__(self, x=[0,0,0], wMax=1.0, speed=1.0, dMax=1.0, uMode="max", dMode="min"):
+        self.x = x
+        (...)
+        self.dMode = dMode
+
+    def opt_ctrl(self, t, state, spat_deriv):
+        """
+                :param  spat_deriv: tuple of spatial derivative in all dimensions
+                        state: x1, x2, x3
+                        t: time
+                :return: a tuple of optimal disturbances
+        """
+
+        (...)
+        return (opt_w[0], in3[0], in4[0])
+
+    def opt_dstb(self, t, state, spat_deriv):
+        """
+            :param spat_deriv: tuple of spatial derivative in all dimensions
+                    state: x1, x2, x3
+                    t: time
+            :return: a tuple of optimal disturbances
+        """
+        (...)        
+        return (d1[0], d2[0], d3[0])
+
+    def dynamics(self, t, state, uOpt, dOpt):
+        (...)
+        return (x_dot[0], y_dot[0], theta_dot[0])
+``` 
+
+
 # Time-to-Reach computation
 * We have provided an example in `TTR_example.py`: 
 ```python
