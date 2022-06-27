@@ -91,46 +91,46 @@ def EvalBoundary(phi, g, debug2):
                     phi[phi.shape[0] - 1, j, k, l] = my_min(tmp2[0], phi[phi.shape[0] - 1, j, k, l])
 
     if 1 not in g.pDim:
-        with hcl.for_(0, phi.shape[0], name="i") as i:
+        with hcl.for_(0, phi.shape[0], name="i") as i2:
             with hcl.for_(0, phi.shape[2], name="k") as k:
                 with hcl.for_(0, phi.shape[3], name="l") as l:
                     tmp1 = hcl.scalar(0, "tmp1")
-                    tmp1[0] = 2 * phi[i, 1, k, l] - phi[i, 2, k, l]
-                    tmp1[0] = my_max(tmp1[0], phi[i, 2, k, l ])
-                    phi[i, 0, k, l] = my_min(tmp1[0], phi[i, 0, k, l])
+                    tmp1[0] = 2 * phi[i2, 1, k, l] - phi[i2, 2, k, l]
+                    tmp1[0] = my_max(tmp1[0], phi[i2, 2, k, l ])
+                    phi[i2, 0, k, l] = my_min(tmp1[0], phi[i2, 0, k, l])
 
                     tmp2 = hcl.scalar(0, "tmp2")
-                    tmp2[0] = 2 * phi[i, phi.shape[1] - 2, k, l] - phi[i, phi.shape[1] - 3, k, l]
-                    tmp2[0] = my_max(tmp2[0], phi[i, phi.shape[1] - 3, k, l])
-                    phi[i, phi.shape[1] - 1, k, l] = my_min(tmp2[0], phi[i, phi.shape[1] - 1, k, l])
+                    tmp2[0] = 2 * phi[i2, phi.shape[1] - 2, k, l] - phi[i2, phi.shape[1] - 3, k, l]
+                    tmp2[0] = my_max(tmp2[0], phi[i2, phi.shape[1] - 3, k, l])
+                    phi[i2, phi.shape[1] - 1, k, l] = my_min(tmp2[0], phi[i2, phi.shape[1] - 1, k, l])
 
     if 2 not in g.pDim:
-        with hcl.for_(0, phi.shape[0], name="i") as i:
+        with hcl.for_(0, phi.shape[0], name="i") as i2:
             with hcl.for_(0, phi.shape[1], name="j") as j:
                 with hcl.for_(0, phi.shape[3], name="l") as l:
                     tmp1 = hcl.scalar(0, "tmp1")
-                    tmp1[0] = 2 * phi[i, j, 1, l] - phi[i, j, 2, l]
-                    tmp1[0] = my_max(tmp1[0], phi[i, j, 2, l])
-                    phi[i, j, 0, l] = my_min(tmp1[0], phi[i, j, 0, l])
+                    tmp1[0] = 2 * phi[i2, j, 1, l] - phi[i2, j, 2, l]
+                    tmp1[0] = my_max(tmp1[0], phi[i2, j, 2, l])
+                    phi[i2, j, 0, l] = my_min(tmp1[0], phi[i2, j, 0, l])
 
                     tmp2 = hcl.scalar(0, "tmp2")
-                    tmp2[0] = 2 * phi[i, j, phi.shape[2] - 2, l] - phi[i, j, phi.shape[2] - 3, l]
-                    tmp2[0] = my_max(tmp2[0], phi[i, j, phi.shape[2] - 3, l])
-                    phi[i, j, phi.shape[2] - 1, l] = my_min(tmp2[0], phi[i, j, phi.shape[2] - 1, l])
+                    tmp2[0] = 2 * phi[i2, j, phi.shape[2] - 2, l] - phi[i2, j, phi.shape[2] - 3, l]
+                    tmp2[0] = my_max(tmp2[0], phi[i2, j, phi.shape[2] - 3, l])
+                    phi[i2, j, phi.shape[2] - 1, l] = my_min(tmp2[0], phi[i2, j, phi.shape[2] - 1, l])
 
     if 3 not in g.pDim:
-        with hcl.for_(0, phi.shape[0], name="i") as i:
+        with hcl.for_(0, phi.shape[0], name="i") as i2:
             with hcl.for_(0, phi.shape[1], name="j") as j:
                 with hcl.for_(0, phi.shape[2], name="k") as k:
                     tmp1 = hcl.scalar(0, "tmp1")
-                    tmp1[0] = 2 * phi[i, j, k, 1] - phi[i, j, k, 2]
-                    tmp1[0] = my_max(tmp1[0], phi[i, j, k, 2])
-                    phi[i, j, k, 0] = my_min(tmp1[0], phi[i, j, k, 0])
+                    tmp1[0] = 2 * phi[i2, j, k, 1] - phi[i2, j, k, 2]
+                    tmp1[0] = my_max(tmp1[0], phi[i2, j, k, 2])
+                    phi[i2, j, k, 0] = my_min(tmp1[0], phi[i2, j, k, 0])
 
                     tmp2 = hcl.scalar(0, "tmp2")
-                    tmp2[0] = 2 * phi[i, j, k, phi.shape[2] - 2] - phi[i, j, k, phi.shape[2] - 3]
-                    tmp2[0] = my_max(tmp2[0], phi[i, j, k, phi.shape[2] - 3])
-                    phi[i, j, k, phi.shape[2] - 1] = my_min(tmp2[0], phi[i, j, k, phi.shape[2] - 1])
+                    tmp2[0] = 2 * phi[i2, j, k, phi.shape[2] - 2] - phi[i2, j, k, phi.shape[2] - 3]
+                    tmp2[0] = my_max(tmp2[0], phi[i2, j, k, phi.shape[2] - 3])
+                    phi[i2, j, k, phi.shape[2] - 1] = my_min(tmp2[0], phi[i2, j, k, phi.shape[2] - 1])
 
 
 
@@ -249,6 +249,24 @@ def TTR_4D(my_object, g):
 
     # Create a static schedule -- graph
     s = hcl.create_schedule([phi, x1, x2, x3, x4, debugger, debug2], solve_phiNew)
+
+    sweep_1 = solve_phiNew.Sweep_1
+    sweep_2 = solve_phiNew.Sweep_2
+    sweep_3 = solve_phiNew.Sweep_3
+    sweep_4 = solve_phiNew.Sweep_4
+    sweep_5 = solve_phiNew.Sweep_5
+    sweep_6 = solve_phiNew.Sweep_6
+    sweep_7 = solve_phiNew.Sweep_7
+    sweep_8 = solve_phiNew.Sweep_8
+
+    s[sweep_1].parallel(sweep_1.i)
+    s[sweep_2].parallel(sweep_2.i)
+    s[sweep_3].parallel(sweep_3.i)
+    s[sweep_4].parallel(sweep_4.i)
+    s[sweep_5].parallel(sweep_5.i)
+    s[sweep_6].parallel(sweep_6.i)
+    s[sweep_7].parallel(sweep_7.i)
+    s[sweep_8].parallel(sweep_8.i)
 
     # Build an executable and return
     return hcl.build(s)

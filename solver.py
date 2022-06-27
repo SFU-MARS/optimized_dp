@@ -94,10 +94,11 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
 
     print("Welcome to optimized_dp \n")
     if type(multiple_value) == list:
-        init_value = multiple_value[0]
-        constraint = multiple_value[1]
+        # We have both goal and obstacle set
+        target = multiple_value[0] # Target set
+        constraint = multiple_value[1] # Obstacle set
     else:
-        init_value = multiple_value
+        target = multiple_value
         constraint = None
     
     hcl.init()
@@ -109,6 +110,7 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
 
     if constraint is None:
         print("No obstacles set !")
+        init_value = target
     else: 
         print("Obstacles set exists !")
         constraint_dim = constraint.ndim
@@ -120,10 +122,18 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
             # Time-invariant obstacle set
             constraint_i = constraint
 
+        init_value = np.maximum(target, -constraint_i)
+
     # Tensors input to our computation graph
     V_0 = hcl.asarray(init_value)
     V_1 = hcl.asarray(np.zeros(tuple(grid.pts_each_dim)))
-    l0 = hcl.asarray(init_value)
+
+    # Check which target set or initial value set
+    if compMethod["TargetSetMode"] != "minVWithVTarget" and compMethod["TargetSetMode"] != "maxVWithVTarget":
+        l0 = hcl.asarray(init_value)
+    else:
+        l0 = hcl.asarray(target)
+
     # For debugging purposes
     probe = hcl.asarray(np.zeros(tuple(grid.pts_each_dim)))
 
@@ -151,16 +161,16 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
 
     # Get executable, obstacle check intial value function
     if grid.dims == 3:
-        solve_pde = graph_3D(dynamics_obj, grid, compMethod["PrevSetsMode"], accuracy)
+        solve_pde = graph_3D(dynamics_obj, grid, compMethod["TargetSetMode"], accuracy)
 
     if grid.dims == 4:
-        solve_pde = graph_4D(dynamics_obj, grid, compMethod["PrevSetsMode"], accuracy)
+        solve_pde = graph_4D(dynamics_obj, grid, compMethod["TargetSetMode"], accuracy)
 
     if grid.dims == 5:
-        solve_pde = graph_5D(dynamics_obj, grid, compMethod["PrevSetsMode"], accuracy)
+        solve_pde = graph_5D(dynamics_obj, grid, compMethod["TargetSetMode"], accuracy)
 
     if grid.dims == 6:
-        solve_pde = graph_6D(dynamics_obj, grid, compMethod["PrevSetsMode"], accuracy)
+        solve_pde = graph_6D(dynamics_obj, grid, compMethod["TargetSetMode"], accuracy)
 
     """ Be careful, for high-dimensional array (5D or higher), saving value arrays at all the time steps may 
     cause your computer to run out of memory """
@@ -184,7 +194,7 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
         t_minh= hcl.asarray(np.array((tNow, tau[i])))
         
         # taking obstacle at each timestep
-        if "TargetSetMode" in compMethod and constraint_dim > grid.dims:
+        if "ObstacleSetMode" in compMethod and constraint_dim > grid.dims:
             constraint_i = constraint[...,i]
 
         while tNow <= tau[i] - 1e-4:
@@ -208,11 +218,11 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
             # Calculate computation time
             execution_time += time.time() - start
 
-            # If TargetSetMode is specified by user
-            if "TargetSetMode" in compMethod:
-                if compMethod["TargetSetMode"] == "max":
+            # If ObstacleSetMode is specified by user
+            if "ObstacleSetMode" in compMethod:
+                if compMethod["ObstacleSetMode"] == "maxVWithObstacle":
                     tmp_val = np.maximum(V_0.asnumpy(), -constraint_i)
-                elif compMethod["TargetSetMode"] == "min":
+                elif compMethod["ObstacleSetMode"] == "minVWithObstacle":
                     tmp_val = np.minimum(V_0.asnumpy(), -constraint_i)
                 # Update final result
                 V_1 = hcl.asarray(tmp_val)

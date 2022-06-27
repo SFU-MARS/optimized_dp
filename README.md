@@ -25,12 +25,12 @@ Please install the following:
 
     ``` pip3 install future plotly==4.5.0 ```
     
-* Run the example code from optimized_dp root directory: ``` python3 user_definer.py ```
+* Run the example code from optimized_dp root directory: ``` python3 examples.py ```
 * Note: If you're on Ubuntu 20.04, you may have encounter an error regarding ``` libtinfo5 ```. To fix,
 please just run this command ```sudo apt-install libtinfo5 ``` 
 
 # Solving the Hamilton-Jacobi-Issac (HJI) PDE
-* We provide a running example of solving HJI PDE in the file user_definer.py:
+* We provide a running example of solving HJI PDE in the file examples.py:
 ```python
 g = Grid(np.array([-4.0, -4.0, -math.pi]), np.array([4.0, 4.0, math.pi]), 3, np.array([40, 40, 40]), [2])
 
@@ -54,7 +54,7 @@ po2 = PlotOptions(do_plot=False, plot_type="3d_plot", plotDims=[0,1,2],
 compMethods = { "PrevSetsMode": "minVWithV0"}
 result = HJSolver(my_car, g, Initial_value_f, tau, compMethods, po2, saveAllTimeSteps=True )
 ```
-* To run the example, execute the command `python3 user_definer.py`
+* To run the example, execute the command `python3 examples.py`
 * If the parameter `do_plot` is set to `True` when initializing `PlotOptions`, there will be a 3D green colored sub-zero level set popping up in your default browser like below. 
 <!-- ![BallPic](images/ball_pic.png) -->
 <div align="center">

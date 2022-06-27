@@ -80,30 +80,30 @@ def EvalBoundary(phi, g):
                 phi[phi.shape[0] - 1, j, k] = my_min(tmp2[0], phi[phi.shape[0] - 1, j, k])
 
     if 1 not in g.pDim:
-        with hcl.for_(0, phi.shape[0], name="i") as i:
+        with hcl.for_(0, phi.shape[0], name="i2") as i2:
             with hcl.for_(0, phi.shape[2], name="k") as k:
                 tmp1 = hcl.scalar(0, "tmp1")
-                tmp1[0] = 2 * phi[i, 1, k] - phi[i, 2, k]
-                tmp1[0] = my_max(tmp1[0], phi[i, 2, k])
-                phi[i, 0, k] = my_min(tmp1[0], phi[i, 0, k])
+                tmp1[0] = 2 * phi[i2, 1, k] - phi[i2, 2, k]
+                tmp1[0] = my_max(tmp1[0], phi[i2, 2, k])
+                phi[i2, 0, k] = my_min(tmp1[0], phi[i2, 0, k])
 
                 tmp2 = hcl.scalar(0, "tmp2")
-                tmp2[0] = 2 * phi[i, phi.shape[1] - 2, k] - phi[i, phi.shape[1] - 3, k]
-                tmp2[0] = my_max(tmp2[0], phi[i, phi.shape[1] - 3, k])
-                phi[i, phi.shape[1] - 1, k] = my_min(tmp2[0], phi[i, phi.shape[1] - 1, k])
+                tmp2[0] = 2 * phi[i2, phi.shape[1] - 2, k] - phi[i2, phi.shape[1] - 3, k]
+                tmp2[0] = my_max(tmp2[0], phi[i2, phi.shape[1] - 3, k])
+                phi[i2, phi.shape[1] - 1, k] = my_min(tmp2[0], phi[i2, phi.shape[1] - 1, k])
 
     if 2 not in g.pDim:
-        with hcl.for_(0, phi.shape[0], name="i") as i:
+        with hcl.for_(0, phi.shape[0], name="i2") as i2:
             with hcl.for_(0, phi.shape[1], name="j") as j:
                 tmp1 = hcl.scalar(0, "tmp1")
-                tmp1[0] = 2 * phi[i, j, 1] - phi[i, j, 2]
-                tmp1[0] = my_max(tmp1[0], phi[i, j, 2])
-                phi[i, j, 0] = my_min(tmp1[0], phi[i, j, 0])
+                tmp1[0] = 2 * phi[i2, j, 1] - phi[i2, j, 2]
+                tmp1[0] = my_max(tmp1[0], phi[i2, j, 2])
+                phi[i2, j, 0] = my_min(tmp1[0], phi[i2, j, 0])
 
                 tmp2 = hcl.scalar(0, "tmp2")
-                tmp2[0] = 2 * phi[i, j, phi.shape[2] - 2] - phi[i, j, phi.shape[2] - 3]
-                tmp2[0] = my_max(tmp2[0], phi[i, j, phi.shape[2] - 3])
-                phi[i, j, phi.shape[2] - 1] = my_min(tmp2[0], phi[i, j, phi.shape[2] - 1])
+                tmp2[0] = 2 * phi[i2, j, phi.shape[2] - 2] - phi[i2, j, phi.shape[2] - 3]
+                tmp2[0] = my_max(tmp2[0], phi[i2, j, phi.shape[2] - 3])
+                phi[i2, j, phi.shape[2] - 1] = my_min(tmp2[0], phi[i2, j, phi.shape[2] - 1])
 
 
 # Returns 0 if convergence has been reached
@@ -135,7 +135,7 @@ def TTR_3D(my_object, g):
                             # debug2[0] = j
                 EvalBoundary(phi, g)
 
-            # Perform value iteration by sweeping in direction 2
+            #Perform value iteration by sweeping in direction 2
             with hcl.Stage("Sweep_2"):
                 with hcl.for_(l_i, h_i, name="i") as i:
                     with hcl.for_(l_j, h_j, name="j") as j:
@@ -221,6 +221,23 @@ def TTR_3D(my_object, g):
 
     # Create a static schedule -- graph
     s = hcl.create_schedule([phi, x1, x2, x3], solve_phiNew)
+    sweep_1 = solve_phiNew.Sweep_1
+    sweep_2 = solve_phiNew.Sweep_2
+    sweep_3 = solve_phiNew.Sweep_3
+    sweep_4 = solve_phiNew.Sweep_4
+    sweep_5 = solve_phiNew.Sweep_5
+    sweep_6 = solve_phiNew.Sweep_6
+    sweep_7 = solve_phiNew.Sweep_7
+    sweep_8 = solve_phiNew.Sweep_8
+
+    s[sweep_1].parallel(sweep_1.i)
+    s[sweep_2].parallel(sweep_2.i)
+    s[sweep_3].parallel(sweep_3.i)
+    s[sweep_4].parallel(sweep_4.i)
+    s[sweep_5].parallel(sweep_5.i)
+    s[sweep_6].parallel(sweep_6.i)
+    s[sweep_7].parallel(sweep_7.i)
+    s[sweep_8].parallel(sweep_8.i)
 
     # Build an executable and return
     return hcl.build(s)

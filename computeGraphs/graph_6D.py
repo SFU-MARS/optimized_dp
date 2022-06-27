@@ -70,17 +70,21 @@ def graph_6D(my_object, g, compMethod, accuracy):
             # t[0] = min_deriv2[0]
             return stepBound[0]
 
-        def maxVWithV0(i, j, k, l, m, n):  # Take the max
+        # Operation with target value array
+        def maxVWithV0(i, j, k, l, m, n):  # Take max
             with hcl.if_(V_new[i, j, k, l, m, n] < l0[i, j, k, l, m, n]):
                 V_new[i, j, k, l, m, n] = l0[i, j, k, l, m, n]
 
-        # Max(V, g )
-        def maxVWithCStraint(i, j, k, l, m, n):
-            with hcl.if_(V_new[i, j, k, l, m, n] < 5.0):
-                V_new[i, j, k, l, m, n] = 1.0
+        def minVWithV0(i, j, k, l, m, n):  # Take min
+            with hcl.if_(V_new[i, j, k, l, m, n] > l0[i, j, k, l, m, n]):
+                V_new[i, j, k, l, m, n] = l0[i, j, k, l, m, n]
 
-        # Min with V_before
+        # Operations over time
         def minVWithVInit(i, j, k, l, m, n):
+            with hcl.if_(V_new[i, j, k, l, m, n] > V_init[i, j, k, l, m, n]):
+                V_new[i, j, k, l, m, n] = V_init[i, j, k, l, m, n]
+
+        def maxVWithVInit(i, j, k, l, m, n):
             with hcl.if_(V_new[i, j, k, l, m, n] > V_init[i, j, k, l, m, n]):
                 V_new[i, j, k, l, m, n] = V_init[i, j, k, l, m, n]
 
@@ -149,8 +153,8 @@ def graph_6D(my_object, g, compMethod, accuracy):
                                     uOpt = my_object.opt_ctrl(t, (x1[i], x2[j], x3[k], x4[l], x5[m], x6[n]), (
                                     dV_dx1[0], dV_dx2[0], dV_dx3[0], dV_dx4[0], dV_dx5[0], dV_dx6[0]))
                                     # Find optimal disturbance
-                                    dOpt = my_object.opt_dstb(
-                                        (dV_dx1[0], dV_dx2[0], dV_dx3[0], dV_dx4[0], dV_dx5[0], dV_dx6[0]))
+                                    dOpt = my_object.opt_dstb(t, (x1[i], x2[j], x3[k], x4[l], x5[m], x6[n]), (
+                                    dV_dx1[0], dV_dx2[0], dV_dx3[0], dV_dx4[0], dV_dx5[0], dV_dx6[0]))
 
                                     # Find rates of changes based on dynamics equation
                                     dx1_dt, dx2_dt, dx3_dt, dx4_dt, dx5_dt, dx6_dt = my_object.dynamics(t, (
@@ -253,11 +257,21 @@ def graph_6D(my_object, g, compMethod, accuracy):
             alpha5 = hcl.scalar(0, "alpha5")
             alpha6 = hcl.scalar(0, "alpha6")
 
+            """ 
+                NOTE: If optimal adversarial disturbance is not dependent on states
+                , the below approximate LOWER/UPPER BOUND optimal disturbance is  accurate.
+                If that's not the case, move the next two statements into the nested loops and modify the states passed in 
+                as my_object.opt_dstb(t, (x1[i], x2[j], x3[k], x4[l], ...), ...).
+                The reason we don't have this line in the nested loop by default is to avoid redundant computations
+                for certain systems where disturbance are not dependent on states.
+                In general, dissipation amount can just be approximates.  
+            """
+
             # Find LOWER BOUND optimal disturbance
-            dOptL1[0], dOptL2[0], dOptL3[0], dOptL4[0] = my_object.opt_dstb(
+            dOptL1[0], dOptL2[0], dOptL3[0], dOptL4[0] = my_object.opt_dstb(t, (x1[0], x2[0], x3[0], x4[0], x5[0], x6[0]),
                 (min_deriv1[0], min_deriv2[0], min_deriv3[0], min_deriv4[0], min_deriv5[0], min_deriv6[0]))
             # Find UPPER BOUND optimal disturbance
-            dOptU1[0], dOptU2[0], dOptU3[0], dOptU4[0] = my_object.opt_dstb(
+            dOptU1[0], dOptU2[0], dOptU3[0], dOptU4[0] = my_object.opt_dstb(t, (x1[0], x2[0], x3[0], x4[0], x5[0], x6[0]),
                 (max_deriv1[0], max_deriv2[0], max_deriv3[0], max_deriv4[0], max_deriv5[0], max_deriv6[0]))
             with hcl.for_(0, V_init.shape[0], name="i") as i:
                 with hcl.for_(0, V_init.shape[1], name="j") as j:
@@ -402,10 +416,12 @@ def graph_6D(my_object, g, compMethod, accuracy):
         # if compMethod == 'HJ_PDE':
         result = hcl.update(V_new,
                             lambda i, j, k, l, m, n: V_init[i, j, k, l, m, n] + V_new[i, j, k, l, m, n] * delta_t[0])
-        if compMethod == 'maxVWithV0':
+        if compMethod == 'maxVWithV0' or compMethod == 'maxVWithVTarget':
             result = hcl.update(V_new, lambda i, j, k, l, m, n: maxVWithV0(i, j, k, l, m, n))
-        if compMethod == 'maxVWithCStraint':
-            result = hcl.update(V_new, lambda i, j, k, l, m, n: maxVWithCStraint(i, j, k, l, m, n))
+        if compMethod == 'minVWithV0' or compMethod == 'minVWithVTarget':
+            result = hcl.update(V_new, lambda i, j, k, l, m, n: minVWithV0(i, j, k, l, m, n))
+        if compMethod == 'maxVWithVInit':
+            result = hcl.update(V_new, lambda i, j, k, l, m, n: maxVWithVInit(i, j, k, l, m, n))
         if compMethod == 'minVWithVInit':
             result = hcl.update(V_new, lambda i, j, k, l, m, n: minVWithVInit(i, j, k, l, m, n))
         # Copy V_new to V_init

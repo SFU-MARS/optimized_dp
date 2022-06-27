@@ -375,9 +375,9 @@ def graph_5D(my_object, g, compMethod, accuracy):
         # if compMethod == 'HJ_PDE':
         result = hcl.update(V_new,
                             lambda i, j, k, l, m: V_init[i, j, k, l, m] + V_new[i, j, k, l, m] * delta_t[0])
-        if compMethod == 'maxVWithV0':
+        if compMethod == 'maxVWithV0' or compMethod == 'maxVWithVTarget':
             result = hcl.update(V_new, lambda i, j, k, l, m: maxVWithV0(i, j, k, l, m))
-        if compMethod == 'minVWithV0':
+        if compMethod == 'minVWithV0' or compMethod == 'minVWithVTarget':
             result = hcl.update(V_new, lambda i, j, k, l, m: minVWithV0(i, j, k, l, m))
         if compMethod == 'maxVWithVInit':
             result = hcl.update(V_new, lambda i, j, k, l, m: maxVWithVInit(i, j, k, l, m))
