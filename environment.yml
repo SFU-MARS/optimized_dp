@@ -1,6 +1,7 @@
 name: odp
 channels:
   - conda-forge
+  - cornell-zhang
   - defaults
 dependencies:
   - _libgcc_mutex=0.1
@@ -116,8 +117,4 @@ dependencies:
   - xz=5.2.5
   - zlib=1.2.12
   - zstd=1.5.2
-  - pip:
-    - heterocl==0.1
-    - pyqt5-sip==4.19.18
-    - pyqtchart==5.12
-    - pyqtwebengine==5.12.1
+  - heterocl=0.3
