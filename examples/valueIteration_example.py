@@ -3,7 +3,7 @@ import math
 import os
 # import MDP.Example_3D as MDP
 #import MDP.Example_6D as MDP
-from solver import *
+from odp.solver import *
 
 import numpy as np
 import math

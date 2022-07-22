@@ -1,15 +1,16 @@
+import imp
 import numpy as np
 # Utility functions to initialize the problem
-from Grid.GridProcessing import Grid
-from Shapes.ShapesFunctions import *
+from odp.Grid import Grid
+from odp.Shapes import *
+
 # Specify the  file that includes dynamic systems
-from dynamics.DubinsCar4D import *
-from dynamics.DubinsCapture import *
-from dynamics.DubinsCar4D2 import *
+from odp.dynamics import DubinsCapture
+from odp.dynamics import DubinsCar4D2
 # Plot options
-from plot_options import *
+from odp.Plots import PlotOptions
 # Solver core
-from solver import HJSolver
+from odp.solver import HJSolver
 
 import math
 

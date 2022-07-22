@@ -1,13 +1,13 @@
 import numpy as np
 # Utility functions to initialize the problem
-from Grid.GridProcessing import Grid
-from Shapes.ShapesFunctions import *
+from odp.Grid import Grid
+from odp.Shapes import *
 # Specify the  file that includes dynamic systems
-from dynamics.DubinsCar import *
+from odp.dynamics import DubinsCar
 # Plot options
-from plot_options import *
+from odp.Plots import PlotOptions 
 # Solver core
-from solver import *
+from odp.solver import HJSolver
 import math
 
 # Compute BRS only
@@ -26,7 +26,7 @@ t_step = 0.05
 small_number = 1e-5
 tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)
 
-compMethod = { "PrevSetsMode": "minVWithV0"}
+compMethod = { "TargetSetMode": "minVWithV0"}
 accuracy = "low"
 correct_result = HJSolver(my_car, g, targeSet,
                           tau, compMethod, po, accuracy)
