@@ -213,7 +213,7 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
             if grid.dims == 6:
                 solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6, t_minh, l0)
 
-            tNow = np.asscalar((t_minh.asnumpy())[0])
+            tNow = t_minh.asnumpy()[0]
 
             # Calculate computation time
             execution_time += time.time() - start
