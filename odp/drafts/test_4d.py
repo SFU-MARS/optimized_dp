@@ -8,7 +8,6 @@ from CustomGraphFunctions import *
 from InvertPendulum import *
 from argparse import ArgumentParser
 
-import math
 
 """ USER INTERFACES
 - Define grid
@@ -246,7 +245,7 @@ def main():
     ##################### CODE OPTIMIZATION HERE ###########################
 
     # Accessing the hamiltonian stage
-    s_H = graph_4D.Hamiltonian
+    graph_4D.Hamiltonian
 
     #
 

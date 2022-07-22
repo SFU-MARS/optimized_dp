@@ -1,7 +1,5 @@
 import heterocl as hcl
 import numpy as np
-import time
-import os
 
 ######################################### HELPER FUNCTIONS #########################################
 

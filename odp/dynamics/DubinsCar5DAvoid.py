@@ -1,6 +1,5 @@
 import heterocl as hcl
 import numpy as np
-import time
 
 """
 DubinsCar5D avoidance System 

@@ -1,5 +1,4 @@
 import numpy as np
-import math
 import os
 import MDP.Example_7D as MDP
 import valueIteration as VI

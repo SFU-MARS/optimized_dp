@@ -1,7 +1,5 @@
 import heterocl as hcl
 import numpy as np
-import time
-import os
 from odp.computeGraphs.graph_3D import *
 
 # Update the phi function at position (i,j,k)

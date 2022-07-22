@@ -231,26 +231,26 @@ def graph_6D(V_new, V_init, deriv_diff1, deriv_diff2, deriv_diff3, deriv_diff4, 
 
     # Calculate dissipation amount
     with hcl.Stage("Dissipation"):
-        uOptL1 = hcl.scalar(0, "uOptL1")
-        uOptL2 = hcl.scalar(0, "uOptL2")
-        uOptL3 = hcl.scalar(0, "uOptL3")
-        uOptL4 = hcl.scalar(0, "uOptL4")
+        hcl.scalar(0, "uOptL1")
+        hcl.scalar(0, "uOptL2")
+        hcl.scalar(0, "uOptL3")
+        hcl.scalar(0, "uOptL4")
 
 
-        uOptU1 = hcl.scalar(0, "uOptU1")
-        uOptU2 = hcl.scalar(0, "uOptU2")
-        uOptU3 = hcl.scalar(0, "uOptU3")
-        uOptU4 = hcl.scalar(0, "uOptU4")
+        hcl.scalar(0, "uOptU1")
+        hcl.scalar(0, "uOptU2")
+        hcl.scalar(0, "uOptU3")
+        hcl.scalar(0, "uOptU4")
 
-        dOptL1 = hcl.scalar(0, "dOptL1")
-        dOptL2 = hcl.scalar(0, "dOptL2")
-        dOptL3 = hcl.scalar(0, "dOptL3")
-        dOptL4 = hcl.scalar(0, "dOptL4")
+        hcl.scalar(0, "dOptL1")
+        hcl.scalar(0, "dOptL2")
+        hcl.scalar(0, "dOptL3")
+        hcl.scalar(0, "dOptL4")
 
-        dOptU1 = hcl.scalar(0, "dOptU1")
-        dOptU2 = hcl.scalar(0, "dOptU2")
-        dOptU3 = hcl.scalar(0, "dOptU3")
-        dOptU4 = hcl.scalar(0, "dOptU4")
+        hcl.scalar(0, "dOptU1")
+        hcl.scalar(0, "dOptU2")
+        hcl.scalar(0, "dOptU3")
+        hcl.scalar(0, "dOptU4")
 
         # Storing alphas
         alpha1 = hcl.scalar(0, "alpha1")

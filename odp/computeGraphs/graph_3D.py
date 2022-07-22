@@ -1,6 +1,5 @@
 import heterocl as hcl
 import numpy as np
-import time
 from odp.computeGraphs.CustomGraphFunctions import *
 from odp.spatialDerivatives.first_orderENO3D import *
 from odp.spatialDerivatives.second_orderENO3D import *

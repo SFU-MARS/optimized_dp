@@ -1,7 +1,6 @@
 import heterocl as hcl
 import numpy as np
 import time
-import os
 import odp.valueIteration.user_definer_7D as UD
 
 

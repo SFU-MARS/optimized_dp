@@ -1,5 +1,4 @@
 import numpy as np
-import math
 import os
 
 _bounds     = np.array([[-5.0, 5.0],[-5.0, 5.0],[-3.1415, 3.1415]])

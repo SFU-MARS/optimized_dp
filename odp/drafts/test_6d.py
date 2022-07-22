@@ -10,7 +10,6 @@ from argparse import ArgumentParser
 
 import scipy.io as sio
 
-import math
 
 """ USER INTERFACES
 - Define grid

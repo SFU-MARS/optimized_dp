@@ -1,7 +1,5 @@
 import heterocl as hcl
 import numpy as np
-import time
-import math
 
 class Humanoid_6D:
     def __init__(self, x=[0, 0, 0, 0, 0, 0], uMin=np.array([-0.5*0.1, -5.0, -1.0]), uMax=np.array([0.5*0.1, 5.0, 1.0]),

@@ -1,5 +1,4 @@
 import heterocl as hcl
-import time
 from odp.computeGraphs.CustomGraphFunctions import *
 from odp.spatialDerivatives.first_orderENO6D import *
 from odp.spatialDerivatives.second_orderENO6D import *
