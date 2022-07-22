@@ -2,24 +2,14 @@ import heterocl as hcl
 import numpy as np
 import time
 
-from Plots.plotting_utilities import *
-from argparse import ArgumentParser
+from odp.Plots import plot_isosurface
 
 # Backward reachable set computation library
-from computeGraphs.graph_3D import *
-from computeGraphs.graph_4D import *
-from computeGraphs.graph_5D import *
-from computeGraphs.graph_6D import *
-
-from TimeToReach.TimeToReach_3D import  *
-from TimeToReach.TimeToReach_4D import  *
-from TimeToReach.TimeToReach_5D import  *
+from odp.computeGraphs import graph_3D, graph_4D, graph_5D, graph_6D
+from odp.TimeToReach import TTR_3D, TTR_4D, TTR_5D 
 
 # Value Iteration library
-from valueIteration.value_iteration_3D import *
-from valueIteration.value_iteration_4D import *
-from valueIteration.value_iteration_5D import *
-from valueIteration.value_iteration_6D import *
+from odp.valueIteration import value_iteration_3D, value_iteration_4D, value_iteration_5D, value_iteration_6D
 
 def solveValueIteration(MDP_obj):
     print("Welcome to optimized_dp \n")

@@ -2,7 +2,7 @@ import heterocl as hcl
 import numpy as np
 import time
 import os
-from computeGraphs.graph_3D import *
+from odp.computeGraphs.graph_3D import *
 
 # Update the phi function at position (i,j,k)
 def updatePhi(i, j, k, my_object, phi, g, x1, x2, x3):

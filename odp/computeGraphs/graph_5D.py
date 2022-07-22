@@ -1,7 +1,7 @@
 import heterocl as hcl
-from computeGraphs.CustomGraphFunctions import *
-from spatialDerivatives.second_orderENO5D import *
-from spatialDerivatives.first_orderENO5D import *
+from odp.computeGraphs.CustomGraphFunctions import *
+from odp.spatialDerivatives.second_orderENO5D import *
+from odp.spatialDerivatives.first_orderENO5D import *
 ########################## 5D graph definition ########################
 
 # Note that t has 2 elements t1, t2

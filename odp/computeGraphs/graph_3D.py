@@ -1,9 +1,9 @@
 import heterocl as hcl
 import numpy as np
 import time
-from computeGraphs.CustomGraphFunctions import *
-from spatialDerivatives.first_orderENO3D import *
-from spatialDerivatives.second_orderENO3D import *
+from odp.computeGraphs.CustomGraphFunctions import *
+from odp.spatialDerivatives.first_orderENO3D import *
+from odp.spatialDerivatives.second_orderENO3D import *
 
 #from user_definer import *
 #def graph_3D(dynamics_obj, grid):

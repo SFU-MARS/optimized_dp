@@ -1,9 +1,9 @@
 import heterocl as hcl
 import numpy as np
 import time
-from computeGraphs.CustomGraphFunctions import *
-from spatialDerivatives.first_orderENO4D import *
-from spatialDerivatives.second_orderENO4D import *
+from odp.computeGraphs.CustomGraphFunctions import *
+from odp.spatialDerivatives.first_orderENO4D import *
+from odp.spatialDerivatives.second_orderENO4D import *
 
 ########################## 4D Graph definition #################################
 def graph_4D(my_object, g, compMethod, accuracy):

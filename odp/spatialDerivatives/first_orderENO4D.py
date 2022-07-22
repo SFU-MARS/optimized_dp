@@ -1,5 +1,5 @@
 import heterocl as hcl
-from computeGraphs.CustomGraphFunctions import *
+from odp.computeGraphs.CustomGraphFunctions import *
 
 
 ################## 4D SPATIAL DERIVATIVE FUNCTION #################

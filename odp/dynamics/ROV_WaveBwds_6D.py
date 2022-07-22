@@ -2,7 +2,7 @@ import heterocl as hcl
 import numpy as np
 import time
 import math
-from computeGraphs.CustomGraphFunctions import my_abs
+from odp.computeGraphs.CustomGraphFunctions import my_abs
 
 class ROV_WaveBwds_6D:
     def __init__(self, x=[0, 0, 0, 0, 0, 0], uMin=np.array([-6, -15]), uMax=np.array([6, 15]), pMin=np.array([-0.2, -0.15]), pMax=np.array([0.2, 0.15]),

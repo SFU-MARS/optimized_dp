@@ -2,7 +2,7 @@ import heterocl as hcl
 import numpy as np
 import time
 import os
-from computeGraphs.graph_4D import *
+from odp.computeGraphs.graph_4D import *
 
 
 # Update the phi function at position (i,j,k)

@@ -1,5 +1,5 @@
 import heterocl as hcl
-from computeGraphs.CustomGraphFunctions import *
+from odp.computeGraphs.CustomGraphFunctions import *
 
 ##############################  6D DERIVATIVE FUNCTIONS #############################
 def secondOrderX6_6d(i, j, k, l, m, n, V, g):  # Left -> right == Outer Most -> Inner Most

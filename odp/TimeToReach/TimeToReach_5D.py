@@ -2,7 +2,7 @@ import heterocl as hcl
 import numpy as np
 import time
 import os
-from computeGraphs.graph_5D import *
+from odp.computeGraphs.graph_5D import *
 
 ######################################### HELPER FUNCTIONS #########################################
 
