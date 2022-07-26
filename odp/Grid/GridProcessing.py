@@ -1,9 +1,9 @@
 import numpy as np
 import math
-
+from scipy.interpolate import RegularGridInterpolator
 
 class Grid:
-    def __init__(self, minBounds, maxBounds, dims, pts_each_dim, periodicDims=[]):
+    def __init__(self, minBounds, maxBounds, pts_each_dim, periodicDims=[]):
         """ 
 
         Args:
@@ -13,10 +13,11 @@ class Grid:
             pts_each_dim (list): The number of points for each dimension in the grid
             periodicDim (list, optional): A list of periodic dimentions (0-indexed). Defaults to [].
         """
-        self.max = maxBounds
-        self.min = minBounds
+        assert len(minBounds) == len(maxBounds) == len(pts_each_dim)
+        self.max = np.array(maxBounds)
+        self.min = np.array(minBounds)
         self.dims = len(pts_each_dim)
-        self.pts_each_dim = pts_each_dim
+        self.pts_each_dim = np.array(pts_each_dim) 
         self.pDim = periodicDims
 
         # Exclude the upper bounds for periodic dimensions is not included 
@@ -33,9 +34,8 @@ class Grid:
         """
         self.vs = []
         self.grid_points = []
-        for i in range(dims):
-            tmp = np.linspace(self.min[i], self.max[i],
-                              num=self.pts_each_dim[i])
+        for i in range(self.dims):
+            tmp = np.linspace(self.min[i], self.max[i], num=self.pts_each_dim[i])
             broadcast_map = np.ones(self.dims, dtype=int)
             broadcast_map[i] = self.pts_each_dim[i]
             self.grid_points.append(tmp)
@@ -45,6 +45,8 @@ class Grid:
             # the size of the grid for one of the axis
             tmp = np.reshape(tmp, tuple(broadcast_map))
             self.vs.append(tmp)
+
+        self.interpolate_value_fn = None
 
     def get_index(self, state):
         """ Returns a tuple of the closest index of each state in the grid
@@ -79,5 +81,7 @@ class Grid:
         Returns:
             [float]: V(state)
         """
-        index = self.get_index(state)
-        return V[index]
+        if not self.interpolate_value_fn:
+            self.interpolate_value_fn = RegularGridInterpolator(self.grid_points, V)
+
+        return self.interpolate_value_fn(state)
