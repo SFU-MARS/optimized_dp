@@ -11,26 +11,20 @@ In comparison with previous works, our toolbox strives to be both efficient in i
 # Quickstart (Ubuntu 18 & 20)
 Please install the following:
 * Install Anaconda (https://docs.anaconda.com/anaconda/install/linux/)
-* Install heteroCL (http://heterocl.csl.cornell.edu/doc/installation.html):
+* Create a virtual environemnt using the provided `environment.yml`
 
-    Create new conda environment: ``` conda create --name hcl-env ```
+    ``` conda env create -f environment.yml ```
     
-    Activate new conda environment: ``` conda activate hcl-env ```
-    
-    Install pre-built heterocl: ``` conda install -c cornell-zhang heterocl -c conda-forge```
+* Install the `optimized_dp` repository
 
-    Note: You might also need to install module "future" if encounter an error, with this command ``` pip3 install future ```.  
-    
-* Potential Python modules to install if you run into errors:
+    ``` pip install -e . ```
+* Note: If you're on Ubuntu 20.04, you may have encounter an error regarding ``` libtinfo5 ```. 
+  To fix, please just run this command 
 
-    ``` pip3 install future plotly==4.5.0 ```
-    
-* Run the example code from optimized_dp root directory: ``` python3 examples.py ```
-* Note: If you're on Ubuntu 20.04, you may have encounter an error regarding ``` libtinfo5 ```. To fix,
-please just run this command ```sudo apt-install libtinfo5 ``` 
+    ```sudo apt-install libtinfo5 ``` 
 
 # Solving the Hamilton-Jacobi-Issac (HJI) PDE
-* We provide a running example of solving HJI PDE in the file examples.py:
+* We provide a running example of solving HJI PDE in the file [`examples/examples.py`](https://github.com/SFU-MARS/optimized_dp/examples/examples.py):
 ```python
 g = Grid(np.array([-4.0, -4.0, -math.pi]), np.array([4.0, 4.0, math.pi]), 3, np.array([40, 40, 40]), [2])
 
@@ -103,7 +97,7 @@ class DubinsCapture:
 
 
 # Time-to-Reach computation
-* We have provided an example in `TTR_example.py`: 
+* We have provided an example in [`examples/TTR_example.py`](https://github.com/SFU-MARS/optimized_dp/examples/TTR_example.py):
 ```python
 # -------------------------------- ONE-SHOT TTR COMPUTATION ---------------------------------- #
 g = Grid(minBounds=np.array([-3.0, -1.0, -math.pi]), maxBounds=np.array([3.0, 4.0, math.pi]),
