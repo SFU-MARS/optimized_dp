@@ -20,7 +20,7 @@ from argparse import ArgumentParser
 """
 
 # What value to use for grid
-g = grid(np.array([-3.0, -1.0, -3.0, -1.0]), np.array([3.0, 1.0, 3.0, 1.0]), 4 ,np.array([60,60,60, 60])) # Leave out periodic field
+g = grid(np.array([-3.0, -1.0, -3.0, -1.0]), np.array([3.0, 1.0, 3.0, 1.0]), np.array([60,60,60, 60])) # Leave out periodic field
 # Use the grid to initialize initial value function
 my_shape = Rectangle4D(g, [[-0.05, 0.05], [-0.01, 0.01], [0.99, 1.01], [-0.01, 0.01]])
 # Define my object

@@ -23,7 +23,7 @@ import scipy.io as sio
 
 # Grid field in this order: x_a, z_a, u_r, w_r, x, z
 
-g = grid(np.array([-5.0, -5.0, -0.5, -0.7, -5.0, 2.0]), np.array([5.0, 5.0, 0.5, 0.7, 5.0, 12.0]), 6, np.array([25,25,25, 25, 25, 25])) # Leave out periodic field
+g = grid(np.array([-5.0, -5.0, -0.5, -0.7, -5.0, 2.0]), np.array([5.0, 5.0, 0.5, 0.7, 5.0, 12.0]), np.array([25,25,25, 25, 25, 25])) # Leave out periodic field
 # Use the grid to initialize initial value function
 my_shape = Cylinder6D(g, [3, 4, 5, 6])
 # Define my object

@@ -20,7 +20,7 @@ import math
 """
 
 # Create a grid
-g = grid(np.array([-5.0, -5.0, -math.pi]), np.array([5.0, 5.0, math.pi]), 3 ,np.array([100,100,100]), 2)
+g = grid(np.array([-5.0, -5.0, -math.pi]), np.array([5.0, 5.0, math.pi]), np.array([100,100,100]), 2)
 # Use the grid to initialize initial value function
 shape = CyclinderShape(g, 3, np.zeros(3), 1)
 # Define my car

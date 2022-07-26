@@ -24,7 +24,7 @@ import math
 
 # Grid field in this order: x, x_dot, z, z_dot, theta, theta_dot
 
-g = grid(np.array([-0.5, -1.0, 0.5, -2.0, -math.pi/2, -8.0]), np.array([0.5,1.0, 1.5, 2.0, math.pi/2, 8.0]), 6, np.array([29,29,29, 29, 29, 29])) # Leave out periodic field
+g = grid(np.array([-0.5, -1.0, 0.5, -2.0, -math.pi/2, -8.0]), np.array([0.5,1.0, 1.5, 2.0, math.pi/2, 8.0]), np.array([29,29,29, 29, 29, 29])) # Leave out periodic field
 # Define my object
 my_humanoid = Humanoid_6D()
 

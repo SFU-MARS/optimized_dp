@@ -26,7 +26,7 @@ Please install the following:
 # Solving the Hamilton-Jacobi-Issac (HJI) PDE
 * We provide a running example of solving HJI PDE in the file [`examples/examples.py`](https://github.com/SFU-MARS/optimized_dp/examples/examples.py):
 ```python
-g = Grid(np.array([-4.0, -4.0, -math.pi]), np.array([4.0, 4.0, math.pi]), 3, np.array([40, 40, 40]), [2])
+g = Grid(np.array([-4.0, -4.0, -math.pi]), np.array([4.0, 4.0, math.pi]), np.array([40, 40, 40]), [2])
 
 # A sphere shape (no dimension passed in) 
 Initial_value_f = CylinderShape(g, [], np.zeros(3), 1)
@@ -101,7 +101,7 @@ class DubinsCapture:
 ```python
 # -------------------------------- ONE-SHOT TTR COMPUTATION ---------------------------------- #
 g = Grid(minBounds=np.array([-3.0, -1.0, -math.pi]), maxBounds=np.array([3.0, 4.0, math.pi]),
-         dims=3, pts_each_dim=np.array([50, 50, 50]), periodicDims=[2])
+         pts_each_dim=np.array([50, 50, 50]), periodicDims=[2])
 # Car is trying to reach the target
 my_car = DubinsCar(uMode="min")
 

@@ -24,7 +24,7 @@ import math
 
 ##################################################### EXAMPLE 1 #####################################################
 
-g = Grid(np.array([-4.0, -4.0, -math.pi]), np.array([4.0, 4.0, math.pi]), 3, np.array([40, 40, 40]), [2])
+g = Grid(np.array([-4.0, -4.0, -math.pi]), np.array([4.0, 4.0, math.pi]), np.array([40, 40, 40]), [2])
 
 # Implicit function is a spherical shape - check out CylinderShape API
 Initial_value_f = CylinderShape(g, [], np.zeros(3), 1)
@@ -76,7 +76,7 @@ result = HJSolver(my_car, g, Initial_value_f, tau, compMethods, po2, saveAllTime
 
 ##################################################### EXAMPLE 2 #####################################################
 
-g = Grid(np.array([-3.0, -1.0, 0.0, -math.pi]), np.array([3.0, 4.0, 4.0, math.pi]), 4, np.array([60, 60, 20, 36]), [3])
+g = Grid(np.array([-3.0, -1.0, 0.0, -math.pi]), np.array([3.0, 4.0, 4.0, math.pi]), np.array([60, 60, 20, 36]), [3])
 
 # Define my object
 my_car = DubinsCar4D2()
@@ -102,7 +102,7 @@ result = HJSolver(my_car, g, Initial_value_f, tau, compMethods, po, saveAllTimeS
 ##################################################### EXAMPLE 3 #####################################################
 
 # Third scenario with Reach-Avoid set
-g = Grid(np.array([-4.0, -4.0, -math.pi]), np.array([4.0, 4.0, math.pi]), 3, np.array([40, 40, 40]), [2])
+g = Grid(np.array([-4.0, -4.0, -math.pi]), np.array([4.0, 4.0, math.pi]), np.array([40, 40, 40]), [2])
 
 # Reachable set
 goal = CylinderShape(g, [2], np.zeros(3), 0.5)

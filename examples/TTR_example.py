@@ -12,7 +12,7 @@ import math
 
 # Compute BRS only
 g = Grid(minBounds=np.array([-3.0, -1.0, -math.pi]), maxBounds=np.array([3.0, 4.0, math.pi]),
-         dims=3, pts_each_dim=np.array([80, 80, 80]), periodicDims=[2])
+         pts_each_dim=np.array([80, 80, 80]), periodicDims=[2])
 # Car is trying to reach the target
 my_car = DubinsCar(uMode="min")
 
