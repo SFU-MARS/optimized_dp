@@ -97,10 +97,9 @@ def test_heterocl_spa_deriv_3d():
     ans = 2 * state
     print(spa_deriv, ans)
 
-    # assert np.allclose(spa_deriv, ans)
+    assert np.allclose(spa_deriv, ans)
 
 
-# test_heterocl_spa_deriv_3d()
 
 
 def test_heterocl_spa_deriv_4d():
@@ -185,7 +184,6 @@ def test_heterocl_spa_deriv_4d():
     # assert np.allclose(spa_deriv, ans)
 
 
-test_heterocl_spa_deriv_4d()
 
 
 def test_heterocl_spa_deriv_5d():
@@ -286,7 +284,6 @@ def test_heterocl_spa_deriv_5d():
     # assert np.allclose(spa_deriv, ans)
 
 
-# test_heterocl_spa_deriv_5d()
 
 def test_heterocl_spa_deriv_6d():
     hcl.init()
@@ -393,5 +390,7 @@ def test_heterocl_spa_deriv_6d():
 
     # assert np.allclose(spa_deriv, ans)
 
-
+test_heterocl_spa_deriv_3d()
+test_heterocl_spa_deriv_4d()
 test_heterocl_spa_deriv_5d()
+test_heterocl_spa_deriv_6d()
