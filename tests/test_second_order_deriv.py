@@ -394,10 +394,3 @@ def test_heterocl_spa_deriv_6d():
     # print(spa_deriv, ans)
 
     # assert np.allclose(spa_deriv, ans)
-
-
-
-test_heterocl_spa_deriv_3d()
-test_heterocl_spa_deriv_4d()
-test_heterocl_spa_deriv_5d()
-test_heterocl_spa_deriv_6d()
