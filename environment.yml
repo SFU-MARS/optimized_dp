@@ -3,6 +3,7 @@ channels:
   - conda-forge
   - cornell-zhang
   - defaults
+  - plotly
 dependencies:
   - _libgcc_mutex=0.1
   - _openmp_mutex=4.5
@@ -118,3 +119,4 @@ dependencies:
   - zlib=1.2.12
   - zstd=1.5.2
   - heterocl=0.3
+  - plotly=5.10
