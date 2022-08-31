@@ -328,7 +328,7 @@ def TTRSolver(dynamics_obj, grid, init_value, epsilon, plot_option):
     plot_isosurface(grid, V_0.asnumpy(), plot_option)
     return V_0.asnumpy()
 
-def computeSpatDerivArray(grid, V, dynamics_obj, deriv_dim, accuracy="low"):
+def computeSpatDerivArray(grid, V, deriv_dim, accuracy="low"):
     # Return a tensor same size as V that contains spatial derivatives at every state in V
     hcl.init()
     hcl.config.init_dtype = hcl.Float(32)
@@ -341,13 +341,13 @@ def computeSpatDerivArray(grid, V, dynamics_obj, deriv_dim, accuracy="low"):
 
     # Get executable, obstacle check intial value function
     if grid.dims == 3:
-        compute_SpatDeriv = graph_3D(dynamics_obj, grid, "None", accuracy,
+        compute_SpatDeriv = graph_3D(None, grid, "None", accuracy,
                                      generate_SpatDeriv=True, deriv_dim=deriv_dim)
     if grid.dims == 4:
-        compute_SpatDeriv = graph_4D(dynamics_obj, grid, "None", accuracy,
+        compute_SpatDeriv = graph_4D(None, grid, "None", accuracy,
                                      generate_SpatDeriv=True, deriv_dim=deriv_dim)
     if grid.dims == 5:
-        compute_SpatDeriv = graph_5D(dynamics_obj, grid, "None", accuracy,
+        compute_SpatDeriv = graph_5D(None, grid, "None", accuracy,
                                      generate_SpatDeriv=True, deriv_dim=deriv_dim)
 
     compute_SpatDeriv(V_0, spatial_deriv)

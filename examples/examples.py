@@ -75,9 +75,9 @@ result = HJSolver(my_car, g, Initial_value_f, tau, compMethods, po2, saveAllTime
 
 last_time_step_result = result[..., 0]
 # Compute spatial derivatives at every state
-x_derivative = computeSpatDerivArray(g, last_time_step_result, my_car, deriv_dim=1, accuracy="low")
-y_derivative = computeSpatDerivArray(g, last_time_step_result, my_car, deriv_dim=2, accuracy="low")
-T_derivative = computeSpatDerivArray(g, last_time_step_result, my_car, deriv_dim=3, accuracy="low")
+x_derivative = computeSpatDerivArray(g, last_time_step_result, deriv_dim=1, accuracy="low")
+y_derivative = computeSpatDerivArray(g, last_time_step_result, deriv_dim=2, accuracy="low")
+T_derivative = computeSpatDerivArray(g, last_time_step_result, deriv_dim=3, accuracy="low")
 
 # Let's compute optimal control at some random idices
 spat_deriv_vector = (x_derivative[10,20,30], y_derivative[10,20,30], T_derivative[10,20,30])
@@ -115,10 +115,10 @@ result = HJSolver(my_car, g, Initial_value_f, tau, compMethods, po, saveAllTimeS
 last_time_step_result = result[..., 0]
 
 # Compute spatial derivatives at every state
-x_derivative = computeSpatDerivArray(g, last_time_step_result, my_car, deriv_dim=1, accuracy="low")
-y_derivative = computeSpatDerivArray(g, last_time_step_result, my_car, deriv_dim=2, accuracy="low")
-v_derivative = computeSpatDerivArray(g, last_time_step_result, my_car, deriv_dim=3, accuracy="low")
-T_derivative = computeSpatDerivArray(g, last_time_step_result, my_car, deriv_dim=4, accuracy="low")
+x_derivative = computeSpatDerivArray(g, last_time_step_result, deriv_dim=1, accuracy="low")
+y_derivative = computeSpatDerivArray(g, last_time_step_result, deriv_dim=2, accuracy="low")
+v_derivative = computeSpatDerivArray(g, last_time_step_result, deriv_dim=3, accuracy="low")
+T_derivative = computeSpatDerivArray(g, last_time_step_result, deriv_dim=4, accuracy="low")
 
 # Let's compute optimal control at some random idices
 spat_deriv_vector = (x_derivative[10,20,15,15], y_derivative[10,20,15,15],
