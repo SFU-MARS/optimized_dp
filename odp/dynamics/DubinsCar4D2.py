@@ -109,7 +109,8 @@ class DubinsCar4D2:
         d3 = hcl.scalar(0, "d3")
         d4 = hcl.scalar(0, "d4")
 
-        with hcl.if_(self.dMode == "max"):
+        #with hcl.if_(self.dMode == "max"):
+        if self.dMode == "max":
             with hcl.if_(spat_deriv[0] > 0):
                 d1[0] = self.dMax[0]
             with hcl.elif_(spat_deriv[0] < 0):
@@ -118,7 +119,8 @@ class DubinsCar4D2:
                 d2[0] = self.dMax[1]
             with hcl.elif_(spat_deriv[1] < 0):
                 d2[0] = self.dMin[1]
-        with hcl.else_():
+        # w
+        else:
             with hcl.if_(spat_deriv[0] > 0):
                 d1[0] = self.dMin[0]
             with hcl.elif_(spat_deriv[0] < 0):
@@ -144,3 +146,39 @@ class DubinsCar4D2:
         theta_dot[0] = state[2] * (hcl.sin(uOpt[1]) / hcl.cos(uOpt[1])) / L[0]
 
         return (x_dot[0], y_dot[0], v_dot[0], theta_dot[0])
+
+    # The below function can have whatever form or parameters users want
+    # These functions are not used in HeteroCL program, hence is pure Python code and
+    # can be used after the value function has been obtained.
+
+    def optCtrl_inPython(self, spat_deriv):
+        """
+        :param t: time t
+        :param state: tuple of coordinates
+        :param spat_deriv: tuple of spatial derivative in all dimensions
+        :return:
+        """
+        # System dynamics
+        # x_dot     = v * cos(theta) + d_1
+        # y_dot     = v * sin(theta) + d_2
+        # v_dot = a
+        # theta_dot = v * tan(delta) / L
+        opt_a = self.uMax[0]
+        opt_w = self.uMax[1]
+
+        # The initialized control only change sign in the following cases
+        if self.uMode == "min":
+            if spat_deriv[2] > 0:
+                opt_a = self.uMin[0]
+            if spat_deriv[3] > 0:
+                opt_w = self.uMin[1]
+        else:
+            if spat_deriv[2] < 0:
+                opt_a = self.uMin[0]
+            if spat_deriv[3] < 0:
+                opt_w = self.uMin[1]
+
+        return opt_a, opt_w
+
+
+

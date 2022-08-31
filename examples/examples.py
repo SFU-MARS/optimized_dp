@@ -10,7 +10,7 @@ from odp.dynamics import DubinsCar4D2
 # Plot options
 from odp.Plots import PlotOptions
 # Solver core
-from odp.solver import HJSolver
+from odp.solver import HJSolver, computeSpatDerivArray
 
 import math
 
@@ -49,7 +49,7 @@ po2 = PlotOptions(do_plot=True, plot_type="3d_plot", plotDims=[0,1,2],
 Assign one of the following strings to `TargetSetMode` to specify the characteristics of computation
 "TargetSetMode":
 {
-"none" -> compute Backward Reachable Set, 
+"none" -> compute Backward Reachable Set,
 "minVWithV0" -> min V with V0 (compute Backward Reachable Tube),
 "maxVWithV0" -> max V with V0,
 "maxVWithVInit" -> compute max V over time,
@@ -73,6 +73,19 @@ compMethods = { "TargetSetMode": "minVWithV0"}
 # HJSolver(dynamics object, grid, initial value function, time length, system objectives, plotting options)
 result = HJSolver(my_car, g, Initial_value_f, tau, compMethods, po2, saveAllTimeSteps=True )
 
+last_time_step_result = result[..., 0]
+# Compute spatial derivatives at every state
+x_derivative = computeSpatDerivArray(g, last_time_step_result, my_car, deriv_dim=1, accuracy="low")
+y_derivative = computeSpatDerivArray(g, last_time_step_result, my_car, deriv_dim=2, accuracy="low")
+T_derivative = computeSpatDerivArray(g, last_time_step_result, my_car, deriv_dim=3, accuracy="low")
+
+# Let's compute optimal control at some random idices
+spat_deriv_vector = (x_derivative[10,20,30], y_derivative[10,20,30], T_derivative[10,20,30])
+state_vector = (g.grid_points[0][10], g.grid_points[1][20], g.grid_points[2][30])
+
+# Compute the optimal control
+opt_ctrl = my_car.optCtrl_inPython(state_vector, spat_deriv_vector)
+print("Optimal control is {}\n".format(opt_ctrl))
 
 ##################################################### EXAMPLE 2 #####################################################
 
@@ -98,6 +111,23 @@ po = PlotOptions(do_plot=True, plot_type="3d_plot", plotDims=[0,1,3],
 # In this example, we compute a Backward Reachable Tube
 compMethods = { "TargetSetMode": "minVWithV0"}
 result = HJSolver(my_car, g, Initial_value_f, tau, compMethods, po, saveAllTimeSteps=True)
+
+last_time_step_result = result[..., 0]
+
+# Compute spatial derivatives at every state
+x_derivative = computeSpatDerivArray(g, last_time_step_result, my_car, deriv_dim=1, accuracy="low")
+y_derivative = computeSpatDerivArray(g, last_time_step_result, my_car, deriv_dim=2, accuracy="low")
+v_derivative = computeSpatDerivArray(g, last_time_step_result, my_car, deriv_dim=3, accuracy="low")
+T_derivative = computeSpatDerivArray(g, last_time_step_result, my_car, deriv_dim=4, accuracy="low")
+
+# Let's compute optimal control at some random idices
+spat_deriv_vector = (x_derivative[10,20,15,15], y_derivative[10,20,15,15],
+                     v_derivative[10,20,15,15], T_derivative[10,20,15,15])
+
+# Compute the optimal control
+opt_a, opt_w = my_car.optCtrl_inPython(spat_deriv_vector)
+print("Optimal accel is {}\n".format(opt_a))
+print("Optimal rotation is {}\n".format(opt_w))
 
 ##################################################### EXAMPLE 3 #####################################################
 
@@ -126,7 +156,7 @@ po2 = PlotOptions(do_plot=True, plot_type="3d_plot", plotDims=[0,1,2],
 Assign one of the following strings to `TargetSetMode` to specify the characteristics of computation
 "TargetSetMode":
 {
-"none" -> compute Backward Reachable Set, 
+"none" -> compute Backward Reachable Set,
 "minVWithV0" -> min V with V0 (compute Backward Reachable Tube),
 "maxVWithV0" -> max V with V0,
 "maxVWithVInit" -> compute max V over time,

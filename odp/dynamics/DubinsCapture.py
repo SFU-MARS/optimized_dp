@@ -74,3 +74,18 @@ class DubinsCapture:
         theta_dot[0] = dOpt[0] - uOpt[0]
 
         return (x_dot[0], y_dot[0], theta_dot[0])
+
+    # The below function can have whatever form or parameters users want
+    # These functions are not used in HeteroCL program, hence is pure Python code and
+    # can be used after the value function has been obtained.
+    def optCtrl_inPython(self, state, spat_deriv):
+        a_term = spat_deriv[0] * state[1] - spat_deriv[1] * state[0] - spat_deriv[2]
+
+        opt_w = self.wMax
+        if a_term >= 0:
+            if self.uMode == "min":
+                opt_w = -self.wMax
+        else:
+            if self.uMode == "max":
+                opt_w = -self.wMax
+        return opt_w

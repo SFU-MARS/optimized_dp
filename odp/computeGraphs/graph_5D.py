@@ -5,7 +5,7 @@ from odp.spatialDerivatives.first_orderENO5D import *
 ########################## 5D graph definition ########################
 
 # Note that t has 2 elements t1, t2
-def graph_5D(my_object, g, compMethod, accuracy):
+def graph_5D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv_dim=1):
     V_f = hcl.placeholder(tuple(g.pts_each_dim), name="V_f", dtype=hcl.Float())
     V_init = hcl.placeholder(tuple(g.pts_each_dim), name="V_init", dtype=hcl.Float())
     l0 = hcl.placeholder(tuple(g.pts_each_dim), name="l0", dtype=hcl.Float())
@@ -387,22 +387,59 @@ def graph_5D(my_object, g, compMethod, accuracy):
         hcl.update(V_init, lambda i, j, k, l, m: V_new[i, j, k, l, m])
         return result
 
+    def returnDerivative(V_array, Deriv_array):
+        with hcl.Stage("ComputeDeriv"):
+            with hcl.for_(0, V_array.shape[0], name="i") as i:
+                with hcl.for_(0, V_array.shape[1], name="j") as j:
+                    with hcl.for_(0, V_array.shape[2], name="k") as k:
+                        with hcl.for_(0, V_array.shape[3], name="l") as l:
+                            with hcl.for_(0, V_array.shape[4], name="m") as m:
+                                dV_dx_L = hcl.scalar(0, "dV_dx_L")
+                                dV_dx_R = hcl.scalar(0, "dV_dx_R")
+                                if accuracy == "low":
+                                    if deriv_dim == 1:
+                                        dV_dx_L[0], dV_dx_R[0] = spa_derivX1_5d(i, j, k, l, m, V_array, g)
+                                    if deriv_dim == 2:
+                                        dV_dx_L[0], dV_dx_R[0] = spa_derivX2_5d(i, j, k, l, m, V_array, g)
+                                    if deriv_dim == 3:
+                                        dV_dx_L[0], dV_dx_R[0] = spa_derivX3_5d(i, j, k, l, m, V_array, g)
+                                    if deriv_dim == 4:
+                                        dV_dx_L[0], dV_dx_R[0] = spa_derivX4_5d(i, j, k, l, m, V_array, g)
+                                    if deriv_dim == 5:
+                                        dV_dx_L[0], dV_dx_R[0] = spa_derivX5_5d(i, j, k, l, m, V_array, g)
 
-    s = hcl.create_schedule([V_f, V_init, x1, x2, x3, x4, x5, t, l0], graph_create)
-    ##################### CODE OPTIMIZATION HERE ###########################
-    print("Optimizing\n")
+                                if accuracy == "medium":
+                                    if deriv_dim == 1:
+                                        dV_dx_L[0], dV_dx_R[0] = secondOrderX1_5d(i, j, k, l, m, V_array, g)
+                                    if deriv_dim == 2:
+                                        dV_dx_L[0], dV_dx_R[0] = secondOrderX2_5d(i, j, k, l, m, V_array, g)
+                                    if deriv_dim == 3:
+                                        dV_dx_L[0], dV_dx_R[0] = secondOrderX3_5d(i, j, k, l, m, V_array, g)
+                                    if deriv_dim == 4:
+                                        dV_dx_L[0], dV_dx_R[0] = secondOrderX4_5d(i, j, k, l, m, V_array, g)
+                                    if deriv_dim == 5:
+                                        dV_dx_L[0], dV_dx_R[0] = secondOrderX5_5d(i, j, k, l, m, V_array, g)
 
-    # Accessing the hamiltonian and dissipation stage
-    s_H = graph_create.Hamiltonian
-    s_D = graph_create.Dissipation
+                                Deriv_array[i, j, k, l, m] = (dV_dx_L[0] + dV_dx_R[0]) / 2
 
-    # Thread parallelize hamiltonian and dissipation
-    s[s_H].parallel(s_H.i)
-    s[s_D].parallel(s_D.i)
+    if generate_SpatDeriv == False:
+        s = hcl.create_schedule([V_f, V_init, x1, x2, x3, x4, x5, t, l0], graph_create)
+        ##################### CODE OPTIMIZATION HERE ###########################
+        print("Optimizing\n")
 
-    # Inspect IR
-    # if args.llvm:
-    #    print(hcl.lower(s))
+        # Accessing the hamiltonian and dissipation stage
+        s_H = graph_create.Hamiltonian
+        s_D = graph_create.Dissipation
+
+        # Thread parallelize hamiltonian and dissipation
+        s[s_H].parallel(s_H.i)
+        s[s_D].parallel(s_D.i)
+
+        # Inspect IR
+        # if args.llvm:
+        #    print(hcl.lower(s))
+    else:
+        s = hcl.create_schedule([V_init, V_f], returnDerivative)
 
     # Return executable
     return (hcl.build(s))
