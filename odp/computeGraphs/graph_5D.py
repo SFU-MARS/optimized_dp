@@ -112,7 +112,7 @@ def graph_5D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
                                         dV_dx3_L[0], dV_dx3_R[0] = spa_derivX3_5d(i, j, k, l, m, V_init, g)
                                         dV_dx4_L[0], dV_dx4_R[0] = spa_derivX4_5d(i, j, k, l, m, V_init, g)
                                         dV_dx5_L[0], dV_dx5_R[0] = spa_derivX5_5d(i, j, k, l, m, V_init, g)
-                                    if accuracy == "high":
+                                    if accuracy == "medium":
                                         dV_dx1_L[0], dV_dx1_R[0] = secondOrderX1_5d(i, j, k, l, m, V_init, g)
                                         dV_dx2_L[0], dV_dx2_R[0] = secondOrderX2_5d(i, j, k, l, m, V_init, g)
                                         dV_dx3_L[0], dV_dx3_R[0] = secondOrderX3_5d(i, j, k, l, m, V_init, g)
