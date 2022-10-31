@@ -108,6 +108,7 @@ class AttackerDefender4D:
         return (d1[0], d2[0], d3[0], d4[0])
 
     def dynamics(self, t, state, uOpt, dOpt):
+        # the original x_A is not a scalar
         x_dot = hcl.scalar(0, "x_dot")
         y_dot = hcl.scalar(0, "y_dot")
         v_dot = hcl.scalar(0, "v_dot")
