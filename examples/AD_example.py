@@ -30,11 +30,11 @@ g = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, 
 # Define my object dynamics, not finished yet
 my_2agents = AttackerDefender4D(uMode="min", dMode="max")
 
-# Reach set, not finished yet
-goal = ShapeRectangle(g, [0.6, 0.1], [0.8, 0.3])
+# Reach set, how to define the goal state to the defender or in 4 dimensions?
+goal = ShapeRectangle(g, [0.6, 0.1, -1.0, -1.0], [0.8, 0.3, 1.0, 1.0])
 
-# Avoid set, need 1 more obstacle
-obstacle = ShapeRectangle(g, [-0.1, -1.0], [0.1, -0.3])
+# Avoid set, how to add 1 more 1 more obstacle?
+obstacle = ShapeRectangle(g, [-0.1, -1.0, -0.1, -1.0], [0.1, -0.3, 0.1, -0.3])
 
 # Look-back length and time step
 lookback_length = 1.0  # try some longer time
