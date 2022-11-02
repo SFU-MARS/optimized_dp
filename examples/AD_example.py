@@ -27,7 +27,7 @@ import math
 
 g = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([45, 45, 45, 45]))
 
-# Define my object dynamics, not finished yet
+# Define my object dynamics
 my_2agents = AttackerDefender4D(uMode="min", dMode="max")
 
 # Reach set, how to define the goal state to the defender or in 4 dimensions?
@@ -37,7 +37,7 @@ goal = ShapeRectangle(g, [0.6, 0.1, -1.0, -1.0], [0.8, 0.3, 1.0, 1.0])
 obstacle = ShapeRectangle(g, [-0.1, -1.0, -0.1, -1.0], [0.1, -0.3, 0.1, -0.3])
 
 # Look-back length and time step
-lookback_length = 1.0  # try some longer time
+lookback_length = 1.5  # try 2.0 the output figure is none
 t_step = 0.05
 
 # Actual calculation process, ask Minh
@@ -45,7 +45,7 @@ small_number = 1e-5
 tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)
 
 po = PlotOptions(do_plot=True, plot_type="3d_plot", plotDims=[0, 1, 3],
-                 slicesCut=[19])
+                 slicesCut=[10])
 
 # In this example, we compute a Reach-Avoid Tube
 compMethods = {"TargetSetMode": "minVWithVTarget",
