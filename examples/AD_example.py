@@ -53,6 +53,7 @@ compMethods = {"TargetSetMode": "minVWithVTarget",
 
 
 result = HJSolver(my_2agents, g, [goal, obstacle], tau, compMethods, po, saveAllTimeSteps=True)
+# print(f'The shape of the result is {result.shape}')
 
 # last_time_step_result = result[..., 0]
 #
