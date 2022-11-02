@@ -1,4 +1,4 @@
-import imp
+# import imp
 import numpy as np
 # Utility functions to initialize the problem
 from odp.Grid import Grid
@@ -7,7 +7,7 @@ from odp.Shapes import *
 # Specify the  file that includes dynamic systems
 from odp.dynamics import DubinsCapture
 from odp.dynamics import DubinsCar4D2
-from odp.dynamics import AttackerDefender4D
+from odp.dynamics.AttackerDefender4D import AttackerDefender4D
 # Plot options
 from odp.Plots import PlotOptions
 # Solver core
