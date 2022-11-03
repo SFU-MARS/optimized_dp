@@ -40,12 +40,12 @@ obstacle = ShapeRectangle(g, [-0.1, -1.0, -0.1, -1.0], [0.1, -0.3, 0.1, -0.3])
 lookback_length = 1.5  # try 2.0 the output figure is none
 t_step = 0.05
 
-# Actual calculation process, ask Minh
+# Actual calculation process, needs to add new plot function to draw a 2D figure
 small_number = 1e-5
 tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)
 
-po = PlotOptions(do_plot=True, plot_type="3d_plot", plotDims=[0, 1, 3],
-                 slicesCut=[10])
+po = PlotOptions(do_plot=True, plot_type="3d_plot", plotDims=[0, 1, 2],
+                 slicesCut=[29])
 
 # In this example, we compute a Reach-Avoid Tube
 compMethods = {"TargetSetMode": "minVWithVTarget",
