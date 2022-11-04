@@ -33,7 +33,7 @@ class Grid:
         """
         self.vs = []
         """
-        self.grid_points is same as self.vs; however, it is not reshaped. 
+        self.grid_points is the same as self.vs; however, it is not reshaped. 
         self.grid_points[i] is a numpy array with length pts_each_dim[i] 
         """
         self.grid_points = []
