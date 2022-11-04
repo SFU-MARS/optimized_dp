@@ -33,8 +33,10 @@ my_2agents = AttackerDefender4D(uMode="min", dMode="max")
 # Reach set, how to define the goal state to the defender or in 4 dimensions?
 goal = ShapeRectangle(g, [0.6, 0.1, -1.0, -1.0], [0.8, 0.3, 1.0, 1.0])
 
-# Avoid set, how to add 1 more 1 more obstacle?
-obstacle = ShapeRectangle(g, [-0.1, -1.0, -0.1, -1.0], [0.1, -0.3, 0.1, -0.3])
+# Avoid set, not finished yet
+obs1 = ShapeRectangle(g, [-0.1, -1.0, -0.1, -1.0], [0.1, -0.3, 0.1, -0.3])
+obs2 = ShapeRectangle(g, [-0.2, 0.25, -2000, -2000], [0.1, -0.3, 0.1, -0.3])
+obstacle = np.min(obs1, obs2)
 
 # Look-back length and time step
 lookback_length = 1.5  # try 2.0 the output figure is none
