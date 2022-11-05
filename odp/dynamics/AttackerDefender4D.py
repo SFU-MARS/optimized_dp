@@ -1,5 +1,6 @@
 import heterocl as hcl
 import math
+import numpy as np
 
 """ 4D 1v1 AttackerDefender DYNAMICS IMPLEMENTATION 
  xA1_dot = vA * u1
@@ -133,13 +134,13 @@ class AttackerDefender4D:
         # These functions are not used in HeteroCL program, hence is pure Python code and
         # can be used after the value function has been obtained.
 
-        def optCtrl_inPython(self, spat_deriv):
-            """
-            :param t: time t
-            :param state: tuple of coordinates
-            :param spat_deriv: tuple of spatial derivative in all dimensions
-            :return:
-            """
+    def optCtrl_inPython(self, spat_deriv):
+        """
+        :param t: time t
+        :param state: tuple of coordinates
+        :param spat_deriv: tuple of spatial derivative in all dimensions
+        :return:
+        """
         # System dynamics
         # xA1_dot = vA * u1
         # xA2_dot = vA * u2
@@ -161,3 +162,15 @@ class AttackerDefender4D:
                 opt_w = self.uMin[1]
 
         return opt_a, opt_w
+
+    def capture_set(self, grid, capture_radius, mode):
+
+        data = np.zeros(grid.pts_each_dim)
+
+        data = data + np.power(grid.vs[0] - grid.vs[2], 2)
+        data = data + np.power(grid.vs[1] - grid.vs[3], 2)
+        # data = np.sqrt(data) - radius
+        if mode == "capture":
+            return np.sqrt(data) - capture_radius
+        if mode == "escape":
+            return capture_radius - np.sqrt(data)
