@@ -25,17 +25,17 @@ import math
 
 ##################################################### EXAMPLE 4 1v1AttackerDefender #####################################################
 
-g = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([45, 45, 45, 45]))
+g = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([30, 30, 30, 30]))
 
 # Define my object dynamics
 my_2agents = AttackerDefender4D(uMode="min", dMode="max")
 
-# Reach set, how to define the goal state to the defender or in 4 dimensions?
+# Reach set, run and see what it is!
 goal = ShapeRectangle(g, [0.6, 0.1, -1.0, -1.0], [0.8, 0.3, 1.0, 1.0])
 
 # Avoid set, not finished yet
-obs1 = ShapeRectangle(g, [-0.1, -1.0, -0.1, -1.0], [0.1, -0.3, 0.1, -0.3])
-obs2 = ShapeRectangle(g, [-0.2, 0.25, -2000, -2000], [0.1, -0.3, 0.1, -0.3])
+obs1 = ShapeRectangle(g, [-0.1, -1.0, -2000, -2000], [0.1, -0.3, 2000, 2000])
+obs2 = ShapeRectangle(g, [-0.2, 0.25, -2000, -2000], [0.1, -0.3, 2000, 2000])
 obstacle = np.min(obs1, obs2)
 
 # Look-back length and time step
