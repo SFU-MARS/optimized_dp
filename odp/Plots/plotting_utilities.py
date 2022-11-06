@@ -13,7 +13,8 @@ def plot_isosurface(grid, V, plot_option):
             idx[i] = plot_option.slices[slice_idx]
             slice_idx += 1
 
-
+    # if len(dims_plot) == 2:
+    #
     if len(dims_plot) != 3:
         raise Exception('dims_plot length should be equal to 3\n')
     else:
