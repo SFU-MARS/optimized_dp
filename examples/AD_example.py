@@ -30,13 +30,19 @@ g = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, 
 # Define my object dynamics
 my_2agents = AttackerDefender4D(uMode="min", dMode="max")
 
-# Reach set, run and see what it is!
-goal = ShapeRectangle(g, [0.6, 0.1, -1.0, -1.0], [0.8, 0.3, 1.0, 1.0])
-
 # Avoid set, not finished yet
-obs1 = ShapeRectangle(g, [-0.1, -1.0, -2000, -2000], [0.1, -0.3, 2000, 2000])
-obs2 = ShapeRectangle(g, [-0.2, 0.25, -2000, -2000], [0.1, -0.3, 2000, 2000])
-obstacle = np.min(obs1, obs2)
+obs1_attack = ShapeRectangle(g, [-0.1, -1.0, -2000, -2000], [0.1, -0.3, 2000, 2000])  # attacker stuck in obs1
+obs2_attack = ShapeRectangle(g, [-0.2, 0.25, -2000, -2000], [0.1, -0.3, 2000, 2000])  # attacker stuck in obs2
+obs3_capture = my_2agents.capture_set(g, 0.1, "capture")  # attacker being captured by defender
+avoid_set = np.minimum(obs3_capture, np.minimum(obs1_attack, obs2_attack))
+
+# Reach set, run and see what it is!
+goal1_destination = ShapeRectangle(g, [0.6, 0.1, -1.0, -1.0], [0.8, 0.3, 1.0, 1.0])  # attacker arrives target region
+goal2_escape = my_2agents.capture_set(g, 0.1, "escape")  # attacker escape from defender
+obs1_defend = ShapeRectangle(g, [-2000, -2000, -0.1, -1.0], [2000, 2000, 0.1, -0.3])  # defender stuck in obs1
+obs2_defend = ShapeRectangle(g, [-2000, -2000, -0.2, 0.25], [2000, 2000, 0.1, -0.3])  # defender stuck in obs2
+reach_set = np.minimum(np.maximum(goal1_destination, goal2_escape), np.minimum(obs1_defend, obs2_defend))
+
 
 # Look-back length and time step
 lookback_length = 1.5  # try 2.0 the output figure is none
@@ -54,7 +60,7 @@ compMethods = {"TargetSetMode": "minVWithVTarget",
                "ObstacleSetMode": "maxVWithObstacle"}
 
 
-result = HJSolver(my_2agents, g, [goal, obstacle], tau, compMethods, po, saveAllTimeSteps=True)
+result = HJSolver(my_2agents, g, [reach_set, avoid_set], tau, compMethods, po, saveAllTimeSteps=True)
 # print(f'The shape of the result is {result.shape}')
 
 # last_time_step_result = result[..., 0]
