@@ -23,7 +23,7 @@ import math
 
 ##################################################### EXAMPLE 4 1v1AttackerDefender ####################################
 
-g = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([30, 30, 30, 30]))
+g = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([31, 31, 31, 31]))
 
 # Define my object dynamics
 my_2agents = AttackerDefender4D(uMode="min", dMode="max")
@@ -41,9 +41,8 @@ obs1_defend = ShapeRectangle(g, [-1000, -1000, -0.1, -1.0], [1000, 1000, 0.1, -0
 obs2_defend = ShapeRectangle(g, [-1000, -1000, -0.1, 0.30], [1000, 1000, 0.1, 0.60])  # defender stuck in obs2
 reach_set = np.minimum(np.maximum(goal1_destination, goal2_escape), np.minimum(obs1_defend, obs2_defend))
 
-
 # Look-back length and time step
-lookback_length = 8.0  # try 1.5, 2.0, 2.5, 3.0, 5.0, 6.0, 8.0
+lookback_length = 4.0  # try 1.5, 2.0, 2.5, 3.0, 5.0, 6.0, 8.0
 t_step = 0.05
 
 # Actual calculation process, needs to add new plot function to draw a 2D figure
@@ -51,13 +50,11 @@ small_number = 1e-5
 tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)
 
 # while plotting make sure the len(slicesCut) + len(plotDims) = grid.dims
-po = PlotOptions(do_plot=True, plot_type="2d_plot", plotDims=[0, 1],
-                 slicesCut=[20, 20])
+po = PlotOptions(do_plot=True, plot_type="3d_plot", plotDims=[0, 1, 2], slicesCut=[23])
 
 # In this example, we compute a Reach-Avoid Tube
 compMethods = {"TargetSetMode": "minVWithVTarget",
                "ObstacleSetMode": "maxVWithObstacle"}
-
 
 result = HJSolver(my_2agents, g, [reach_set, avoid_set], tau, compMethods, po, saveAllTimeSteps=True)
 # save the value function
@@ -80,5 +77,3 @@ np.save('1v1AttackDefend.npy', result)
 # opt_a, opt_w = my_2agents.optCtrl_inPython(spat_deriv_vector)
 # print("Optimal accel is {}\n".format(opt_a))
 # print("Optimal rotation is {}\n".format(opt_w))
-
-
