@@ -18,14 +18,17 @@ def plot_isosurface(grid, V, plot_option):
         complex_x = complex(0, grid.pts_each_dim[dim1])
         complex_y = complex(0, grid.pts_each_dim[dim2])
         mg_X, mg_Y= np.mgrid[grid.min[dim1]:grid.max[dim1]: complex_x, grid.min[dim2]:grid.max[dim2]: complex_y]
+        print("Plotting beautiful 2D plots. Please wait\n")
         fig = go.Figure(data=go.Contour(
             x=mg_X.flatten(),
             y=mg_Y.flatten(),
             z=V.flatten(),
+            colorscale='jet'
         ))
         fig.show()
+        print("Please check the plot on your browser.")
 
-    if len(dims_plot) == 3:
+    elif len(dims_plot) == 3:
         dim1, dim2, dim3 = dims_plot[0], dims_plot[1], dims_plot[2]
         complex_x = complex(0, grid.pts_each_dim[dim1])
         complex_y = complex(0, grid.pts_each_dim[dim2])
@@ -37,7 +40,7 @@ def plot_isosurface(grid, V, plot_option):
 
         if (V > 0.0).all() or (V < 0.0).all():
             print("Implicit surface will not be shown since all values have the same sign ")
-        print("Plotting beautiful plots. Please wait\n")
+        print("Plotting beautiful 3D plots. Please wait\n")
         fig = go.Figure(data=go.Isosurface(
             x=mg_X.flatten(),
             y=mg_Y.flatten(),
@@ -51,5 +54,6 @@ def plot_isosurface(grid, V, plot_option):
         ))
         fig.show()
         print("Please check the plot on your browser.")
+
     else:
-        raise Exception('dims_plot length should be equal to 3\n')
+        raise Exception('dims_plot length should be equal to 2 or 3\n')
