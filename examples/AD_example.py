@@ -28,22 +28,22 @@ g = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, 
 # Define my object dynamics
 my_2agents = AttackerDefender4D(uMode="min", dMode="max")
 
-# Avoid set, not finished yet
-obs1_attack = ShapeRectangle(g, [-0.1, -1.0, -100, -100], [0.1, -0.3, 100, 100])  # attacker stuck in obs1
-obs2_attack = ShapeRectangle(g, [-0.2, 0.25, -100, -100], [0.1, -0.3, 100, 100])  # attacker stuck in obs2
+# Avoid set, no constraint means inf
+obs1_attack = ShapeRectangle(g, [-0.1, -1.0, -1000, -1000], [0.1, -0.3, 1000, 1000])  # attacker stuck in obs1
+obs2_attack = ShapeRectangle(g, [-0.1, 0.30, -1000, -1000], [0.1, 0.60, 1000, 1000])  # attacker stuck in obs2
 obs3_capture = my_2agents.capture_set(g, 0.1, "capture")  # attacker being captured by defender
 avoid_set = np.minimum(obs3_capture, np.minimum(obs1_attack, obs2_attack))
 
 # Reach set, run and see what it is!
-goal1_destination = ShapeRectangle(g, [0.6, 0.1, -1.0, -1.0], [0.8, 0.3, 1.0, 1.0])  # attacker arrives target region
+goal1_destination = ShapeRectangle(g, [0.6, 0.1, -1000, -1000], [0.8, 0.3, 1000, 1000])  # attacker arrives target
 goal2_escape = my_2agents.capture_set(g, 0.1, "escape")  # attacker escape from defender
-obs1_defend = ShapeRectangle(g, [-100, -100, -0.1, -1.0], [100, 100, 0.1, -0.3])  # defender stuck in obs1
-obs2_defend = ShapeRectangle(g, [-100, -100, -0.2, 0.25], [100, 100, 0.1, -0.3])  # defender stuck in obs2
+obs1_defend = ShapeRectangle(g, [-1000, -1000, -0.1, -1.0], [1000, 1000, 0.1, -0.3])  # defender stuck in obs1
+obs2_defend = ShapeRectangle(g, [-1000, -1000, -0.1, 0.30], [1000, 1000, 0.1, 0.60])  # defender stuck in obs2
 reach_set = np.minimum(np.maximum(goal1_destination, goal2_escape), np.minimum(obs1_defend, obs2_defend))
 
 
 # Look-back length and time step
-lookback_length = 1.5  # try 2.0 the output figure is none
+lookback_length = 8.0  # try 1.5, 2.0, 2.5, 3.0, 5.0, 6.0, 8.0
 t_step = 0.05
 
 # Actual calculation process, needs to add new plot function to draw a 2D figure
@@ -60,6 +60,8 @@ compMethods = {"TargetSetMode": "minVWithVTarget",
 
 
 result = HJSolver(my_2agents, g, [reach_set, avoid_set], tau, compMethods, po, saveAllTimeSteps=True)
+# save the value function
+np.save('1v1AttackDefend.npy', result)
 # print(f'The shape of the result is {result.shape}')
 
 # last_time_step_result = result[..., 0]
