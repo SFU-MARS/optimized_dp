@@ -164,7 +164,7 @@ class AttackerDefender4D:
         return opt_a, opt_w
 
     def capture_set(self, grid, capture_radius, mode):
-
+        # this function is the distance between 1 attacker and 1 defender
         data = np.zeros(grid.pts_each_dim)
 
         data = data + np.power(grid.vs[0] - grid.vs[2], 2)
