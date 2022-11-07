@@ -37,8 +37,8 @@ avoid_set = np.minimum(obs3_capture, np.minimum(obs1_attack, obs2_attack))
 # Reach set, run and see what it is!
 goal1_destination = ShapeRectangle(g, [0.6, 0.1, -1.0, -1.0], [0.8, 0.3, 1.0, 1.0])  # attacker arrives target region
 goal2_escape = my_2agents.capture_set(g, 0.1, "escape")  # attacker escape from defender
-obs1_defend = ShapeRectangle(g, [-100, -100, -0.1, -1.0], [100, 2000, 0.1, -0.3])  # defender stuck in obs1
-obs2_defend = ShapeRectangle(g, [-100, -100, -0.2, 0.25], [100, 2000, 0.1, -0.3])  # defender stuck in obs2
+obs1_defend = ShapeRectangle(g, [-100, -100, -0.1, -1.0], [100, 100, 0.1, -0.3])  # defender stuck in obs1
+obs2_defend = ShapeRectangle(g, [-100, -100, -0.2, 0.25], [100, 100, 0.1, -0.3])  # defender stuck in obs2
 reach_set = np.minimum(np.maximum(goal1_destination, goal2_escape), np.minimum(obs1_defend, obs2_defend))
 
 
