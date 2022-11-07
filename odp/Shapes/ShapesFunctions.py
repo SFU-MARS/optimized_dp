@@ -40,7 +40,7 @@ def CylinderShape(grid, ignore_dims, center, radius):
 #     return data
 
 def ShapeRectangle(grid, target_min, target_max):
-    data = np.maximum(grid.vs[0] - target_max[0], -grid.vs[0] + target_min[0])
+    data = np.maximum(grid.vs[0] - target_max[0], -grid.vs[0] + target_min[0])  # can I use np.zeros(grid.pts_each_dim)
 
     for i in range(grid.dims):
         data = np.maximum(data,  grid.vs[i] - target_max[i])

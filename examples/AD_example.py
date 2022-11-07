@@ -29,8 +29,8 @@ g = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, 
 my_2agents = AttackerDefender4D(uMode="min", dMode="max")
 
 # Avoid set, not finished yet
-obs1_attack = ShapeRectangle(g, [-0.1, -1.0, -2000, -2000], [0.1, -0.3, 2000, 2000])  # attacker stuck in obs1
-obs2_attack = ShapeRectangle(g, [-0.2, 0.25, -2000, -2000], [0.1, -0.3, 2000, 2000])  # attacker stuck in obs2
+obs1_attack = ShapeRectangle(g, [-0.1, -1.0, -100, -100], [0.1, -0.3, 100, 100])  # attacker stuck in obs1
+obs2_attack = ShapeRectangle(g, [-0.2, 0.25, -100, -100], [0.1, -0.3, 100, 100])  # attacker stuck in obs2
 obs3_capture = my_2agents.capture_set(g, 0.1, "capture")  # attacker being captured by defender
 avoid_set = np.minimum(obs3_capture, np.minimum(obs1_attack, obs2_attack))
 
