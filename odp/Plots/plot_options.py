@@ -5,11 +5,11 @@ class PlotOptions:
     if plot_type not in ["2d_plot", "3d_plot"]:
         raise Exception("Illegal plot type !")
 
-    if plot_type == "2d_plot" :
+    if plot_type == "2d_plot":
         if len(plotDims) != 2:
             raise Exception("Make sure that dim_plot size is 2 !!")
 
-    if plot_type == "3d_plot" :
+    if plot_type == "3d_plot":
         if len(plotDims) != 3:
             raise Exception("Make sure that dim_plot size is 3 !!")
 

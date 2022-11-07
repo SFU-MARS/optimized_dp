@@ -13,11 +13,19 @@ def plot_isosurface(grid, V, plot_option):
             idx[i] = plot_option.slices[slice_idx]
             slice_idx += 1
 
-    # if len(dims_plot) == 2:
-    #
-    if len(dims_plot) != 3:
-        raise Exception('dims_plot length should be equal to 3\n')
-    else:
+    if len(dims_plot) == 2:
+        dim1, dim2 = dims_plot[0], dims_plot[1]
+        complex_x = complex(0, grid.pts_each_dim[dim1])
+        complex_y = complex(0, grid.pts_each_dim[dim2])
+        mg_X, mg_Y= np.mgrid[grid.min[dim1]:grid.max[dim1]: complex_x, grid.min[dim2]:grid.max[dim2]: complex_y]
+        fig = go.Figure(data=go.Contour(
+            x=mg_X.flatten(),
+            y=mg_Y.flatten(),
+            z=V.flatten(),
+        ))
+        fig.show()
+
+    if len(dims_plot) == 3:
         dim1, dim2, dim3 = dims_plot[0], dims_plot[1], dims_plot[2]
         complex_x = complex(0, grid.pts_each_dim[dim1])
         complex_y = complex(0, grid.pts_each_dim[dim2])
@@ -43,3 +51,5 @@ def plot_isosurface(grid, V, plot_option):
         ))
         fig.show()
         print("Please check the plot on your browser.")
+    else:
+        raise Exception('dims_plot length should be equal to 3\n')

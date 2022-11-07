@@ -50,8 +50,9 @@ t_step = 0.05
 small_number = 1e-5
 tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)
 
-po = PlotOptions(do_plot=True, plot_type="3d_plot", plotDims=[0, 1, 2],
-                 slicesCut=[29])
+# while plotting make sure the len(slicesCut) + len(plotDims) = grid.dims
+po = PlotOptions(do_plot=True, plot_type="2d_plot", plotDims=[0, 1],
+                 slicesCut=[20, 20])
 
 # In this example, we compute a Reach-Avoid Tube
 compMethods = {"TargetSetMode": "minVWithVTarget",
