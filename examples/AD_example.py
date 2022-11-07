@@ -5,8 +5,6 @@ from odp.Grid import Grid
 from odp.Shapes import *
 
 # Specify the  file that includes dynamic systems
-from odp.dynamics import DubinsCapture
-from odp.dynamics import DubinsCar4D2
 from odp.dynamics.AttackerDefender4D import AttackerDefender4D
 # Plot options
 from odp.Plots import PlotOptions
@@ -23,7 +21,7 @@ import math
 - Call HJSolver function
 """
 
-##################################################### EXAMPLE 4 1v1AttackerDefender #####################################################
+##################################################### EXAMPLE 4 1v1AttackerDefender ####################################
 
 g = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([30, 30, 30, 30]))
 
