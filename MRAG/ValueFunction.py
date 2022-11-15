@@ -1,4 +1,3 @@
-# import imp
 import numpy as np
 # Utility functions to initialize the problem
 from odp.Grid import Grid
@@ -11,7 +10,6 @@ from odp.Plots import PlotOptions
 from odp.Plots.plotting_utilities import plot_2d
 # Solver core
 from odp.solver import HJSolver, computeSpatDerivArray
-
 import math
 
 """ USER INTERFACES
@@ -43,7 +41,7 @@ obs2_defend = ShapeRectangle(g, [-1000, -1000, -0.1, 0.30], [1000, 1000, 0.1, 0.
 reach_set = np.minimum(np.maximum(goal1_destination, goal2_escape), np.minimum(obs1_defend, obs2_defend))
 
 # Look-back length and time step
-lookback_length = 4.0  # try 1.5, 2.0, 2.5, 3.0, 5.0, 6.0, 8.0
+lookback_length = 5.0  # try 1.5, 2.0, 2.5, 3.0, 5.0, 6.0, 8.0
 t_step = 0.05
 
 # Actual calculation process, needs to add new plot function to draw a 2D figure
@@ -61,10 +59,6 @@ result = HJSolver(my_2agents, g, [reach_set, avoid_set], tau, compMethods, po, s
 # save the value function
 np.save('1v1AttackDefend.npy', result)
 
-# plot_2d figure
-value_function = np.load('1v1AttackDefend.npy')
-V_2D = value_function[:, :, 29, 29, -1]  # 0 is reachable set, -1 is target set
-plot_2d(g, V_2D=V_2D)
 
 # # Compute spatial derivatives at every state
 # last_time_step_result = result[..., 0]
