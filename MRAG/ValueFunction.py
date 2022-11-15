@@ -8,6 +8,7 @@ from odp.Shapes import *
 from odp.dynamics.AttackerDefender4D import AttackerDefender4D
 # Plot options
 from odp.Plots import PlotOptions
+from odp.Plots.plotting_utilities import plot_2d
 # Solver core
 from odp.solver import HJSolver, computeSpatDerivArray
 
@@ -31,12 +32,12 @@ my_2agents = AttackerDefender4D(uMode="min", dMode="max")
 # Avoid set, no constraint means inf
 obs1_attack = ShapeRectangle(g, [-0.1, -1.0, -1000, -1000], [0.1, -0.3, 1000, 1000])  # attacker stuck in obs1
 obs2_attack = ShapeRectangle(g, [-0.1, 0.30, -1000, -1000], [0.1, 0.60, 1000, 1000])  # attacker stuck in obs2
-obs3_capture = my_2agents.capture_set(g, 0.1, "capture")  # attacker being captured by defender
+obs3_capture = my_2agents.capture_set(g, 0.01, "capture")  # attacker being captured by defender, try different radius
 avoid_set = np.minimum(obs3_capture, np.minimum(obs1_attack, obs2_attack))
 
 # Reach set, run and see what it is!
 goal1_destination = ShapeRectangle(g, [0.6, 0.1, -1000, -1000], [0.8, 0.3, 1000, 1000])  # attacker arrives target
-goal2_escape = my_2agents.capture_set(g, 0.1, "escape")  # attacker escape from defender
+goal2_escape = my_2agents.capture_set(g, 0.01, "escape")  # attacker escape from defender
 obs1_defend = ShapeRectangle(g, [-1000, -1000, -0.1, -1.0], [1000, 1000, 0.1, -0.3])  # defender stuck in obs1
 obs2_defend = ShapeRectangle(g, [-1000, -1000, -0.1, 0.30], [1000, 1000, 0.1, 0.60])  # defender stuck in obs2
 reach_set = np.minimum(np.maximum(goal1_destination, goal2_escape), np.minimum(obs1_defend, obs2_defend))
@@ -50,7 +51,7 @@ small_number = 1e-5
 tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)
 
 # while plotting make sure the len(slicesCut) + len(plotDims) = grid.dims
-po = PlotOptions(do_plot=True, plot_type="3d_plot", plotDims=[0, 1, 2], slicesCut=[23])
+po = PlotOptions(do_plot=False, plot_type="2d_plot", plotDims=[0, 1], slicesCut=[23, 23])
 
 # In this example, we compute a Reach-Avoid Tube
 compMethods = {"TargetSetMode": "minVWithVTarget",
@@ -59,11 +60,14 @@ compMethods = {"TargetSetMode": "minVWithVTarget",
 result = HJSolver(my_2agents, g, [reach_set, avoid_set], tau, compMethods, po, saveAllTimeSteps=True)
 # save the value function
 np.save('1v1AttackDefend.npy', result)
-# print(f'The shape of the result is {result.shape}')
 
-# last_time_step_result = result[..., 0]
-#
+# plot_2d figure
+value_function = np.load('1v1AttackDefend.npy')
+V_2D = value_function[:, :, 29, 29, -1]  # 0 is reachable set, -1 is target set
+plot_2d(g, V_2D=V_2D)
+
 # # Compute spatial derivatives at every state
+# last_time_step_result = result[..., 0]
 # x_derivative = computeSpatDerivArray(g, last_time_step_result, deriv_dim=1, accuracy="low")
 # y_derivative = computeSpatDerivArray(g, last_time_step_result, deriv_dim=2, accuracy="low")
 # v_derivative = computeSpatDerivArray(g, last_time_step_result, deriv_dim=3, accuracy="low")
