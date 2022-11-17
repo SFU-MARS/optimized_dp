@@ -57,4 +57,4 @@ bpGraph = [[1, 1, 0, 1],
 
 g = MaxMatching(bpGraph)
 
-print("Maximum number of applicants that can get job is %d " % g.maxBPM())
+print("Maximum matching number of this game is %d " % g.maxBPM())
