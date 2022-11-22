@@ -7,8 +7,9 @@ from odp.solver import HJSolver, computeSpatDerivArray
 # plot value_function in 2d figure
 # g must be the same as one in the ValueFunction.py
 g = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([31, 31, 31, 31]))
-value_function = np.load('1v1AttackDefend.npy')
-V_2D = value_function[:, :, 20, 23, -1]  # 0 is reachable set, -1 is target set
+# value_function = np.load('1v1AttackDefend.npy')
+value_function = np.load('result.npy')
+V_2D = value_function[:, :, 10, 23, 0]  # 0 is reachable set, -1 is target set
 plot_2d(g, V_2D=V_2D)
 
 # plot the 2D map

@@ -70,31 +70,31 @@ class DubinsCar4D2:
         :return:
         """
         # System dynamics
-        # x_dot     = v * cos(theta) + d_1
-        # y_dot     = v * sin(theta) + d_2
-        # v_dot = a
-        # theta_dot = v * tan(delta) / L
+        # xA1_dot = vA * u1
+        # xA2_dot = vA * u2
+        # xD1_dot = vD * d1
+        # xD2_dot = vD * d2
 
         # Graph takes in 4 possible inputs, by default, for now
-        opt_a = hcl.scalar(self.uMax[0], "opt_a")
-        opt_w = hcl.scalar(self.uMax[1], "opt_w")
+        # In 1v1AttackerDefender, a(t) = [a1, a2]^T
+        opt_a1 = hcl.scalar(self.uMax[0], "opt_a1")
+        opt_a2 = hcl.scalar(self.uMax[1], "opt_a2")
         # Just create and pass back, even though they're not used
         in3 = hcl.scalar(0, "in3")
         in4 = hcl.scalar(0, "in4")
 
-
         if self.uMode == "min":
-            with hcl.if_(spat_deriv[2] > 0):
-                opt_a[0] = self.uMin[0]
-            with hcl.if_(spat_deriv[3] > 0):
-                opt_w[0] = self.uMin[1]
+            with hcl.if_(spat_deriv[0] > 0):
+                opt_a1[0] = self.uMin[0]  # now is Bang-bang control and I should revise it into equation (11)
+            with hcl.if_(spat_deriv[1] > 0):
+                opt_a2[0] = self.uMin[1]
         else:
-            with hcl.if_(spat_deriv[2] < 0):
-                opt_a[0] = self.uMin[0]
-            with hcl.if_(spat_deriv[3] < 0):
-                opt_w[0] = self.uMin[1]
+            with hcl.if_(spat_deriv[0] < 0):
+                opt_a1[0] = self.uMin[0]
+            with hcl.if_(spat_deriv[1] < 0):
+                opt_a2[0] = self.uMin[1]
         # return 3, 4 even if you don't use them
-        return (opt_a[0], opt_w[0], in3[0], in4[0])
+        return opt_a1[0], opt_a2[0], in3[0], in4[0]
 
 
     def opt_dstb(self, t, state, spat_deriv):
