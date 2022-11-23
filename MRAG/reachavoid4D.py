@@ -139,8 +139,8 @@ def main():
     
     goal_a = ShapeRectangle(g, [0.6, 0.1, -1000, -1000], [0.8, 0.3, 1000, 1000])  # attacker arrives target
 
-    capture_region = attacker_perpective.capture_set(g, 0.3, "capture")
-    escape_region = attacker_perpective.capture_set(g, 0.3, "escape")
+    capture_region = attacker_perpective.capture_set(g, 0.1, "capture")
+    escape_region = attacker_perpective.capture_set(g, 0.1, "escape")
     #reach = np.maximum(goal_a, escape_region)
     reach = np.minimum(np.maximum(goal_a, escape_region), obstacle_reach)
     avoid = np.minimum(obstacle, capture_region)
