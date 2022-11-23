@@ -74,4 +74,18 @@ def plot_2d(grid, V_2D):
     fig.show()
     print("Please check the plot on your browser.")
 
-# def plot_2d_with_map(grid, V_2D):
+
+def plot_2d_with_map(grid, V_2D):
+    dims_plot = [0, 1]
+    dim1, dim2 = dims_plot[0], dims_plot[1]
+    complex_x = complex(0, grid.pts_each_dim[dim1])
+    complex_y = complex(0, grid.pts_each_dim[dim2])
+    mg_X, mg_Y = np.mgrid[grid.min[dim1]:grid.max[dim1]: complex_x, grid.min[dim2]:grid.max[dim2]: complex_y]
+    print("Plotting beautiful 2D plots. Please wait\n")
+    fig = go.Figure(data=go.Contour(
+        x=mg_X.flatten(),
+        y=mg_Y.flatten(),
+        z=V_2D.flatten(),
+    ))
+    fig.show()
+    print("Please check the plot on your browser.")

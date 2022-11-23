@@ -45,16 +45,16 @@ class MaxMatching:
                 matched_defenders.append(index+1)
                 matched_pairs.append((matched[index]+1, index+1))  # (attacker, defender)
         for pair in zip(matched_defenders, matched_attackers):
-            print(f'The attacker{pair[1]} is defended by the defender {pair[0]} \n')
+            print(f'The attacker{pair[1]} is defended by the defender {pair[0]}')
         return result
 
 
 # test
-bpGraph = [[1, 1, 0, 1],
-           [1, 0, 0, 1],
-           [0, 1, 0, 0],
-           [1, 0, 0, 0]]
-
-g = MaxMatching(bpGraph)
-
-print("Maximum matching number of this game is %d " % g.maxBPM())
+# bpGraph = [[1, 1, 0, 1],
+#            [1, 0, 0, 1],
+#            [0, 1, 0, 0],
+#            [1, 0, 0, 0]]
+#
+# g = MaxMatching(bpGraph)
+#
+# print("Maximum matching number of this game is %d " % g.maxBPM())
