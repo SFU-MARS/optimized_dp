@@ -73,3 +73,5 @@ def plot_2d(grid, V_2D):
     ))
     fig.show()
     print("Please check the plot on your browser.")
+
+# def plot_2d_with_map(grid, V_2D):

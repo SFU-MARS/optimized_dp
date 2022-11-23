@@ -7,6 +7,7 @@ import numpy as np
  xA2_dot = vA * u2
  xD1_dot = vD * d1
  xD2_dot = vD * d2
+ Designed by Hanyang Hu, not correct.
  """
 
 

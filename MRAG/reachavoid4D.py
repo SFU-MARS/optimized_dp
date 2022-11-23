@@ -124,7 +124,7 @@ class ReachAvoid:
         
 
 def main():
-    g = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([31, 31, 31, 31]))
+    g = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([45, 45, 45, 45]))
     # Initialize the dynamics. We assume the attackers' perspective.
     attacker_perpective = ReachAvoid(uMode='min', dMode='max')
 
@@ -150,7 +150,7 @@ def main():
    # plot_isosurface(g, avoid, po1) #plot the reach and avoid sets for debugging.
    # plot_isosurface(g, reach, po1)
 
-    lookback_length = 5.0
+    lookback_length = 10.0
     t_step = 0.05
     small_number = 1e-5
     tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)

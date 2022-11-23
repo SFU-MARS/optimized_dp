@@ -22,7 +22,7 @@ import math
 
 ##################################################### EXAMPLE 4 1v1AttackerDefender ####################################
 
-g = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([31, 31, 31, 31]))
+g = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([45, 45, 45, 45]))
 
 # Define my object dynamics
 my_2agents = AttackerDefender4D(uMode="min", dMode="max")  # todo the dynamics have some bugs
@@ -30,7 +30,7 @@ my_2agents = AttackerDefender4D(uMode="min", dMode="max")  # todo the dynamics h
 # Avoid set, no constraint means inf
 obs1_attack = ShapeRectangle(g, [-0.1, -1.0, -1000, -1000], [0.1, -0.3, 1000, 1000])  # attacker stuck in obs1
 obs2_attack = ShapeRectangle(g, [-0.1, 0.30, -1000, -1000], [0.1, 0.60, 1000, 1000])  # attacker stuck in obs2
-obs3_capture = my_2agents.capture_set(g, 0.01, "capture")  # attacker being captured by defender, try different radius
+obs3_capture = my_2agents.capture_set(g, 0.05, "capture")  # attacker being captured by defender, try different radius
 avoid_set = np.minimum(obs3_capture, np.minimum(obs1_attack, obs2_attack))
 
 # Reach set, run and see what it is!
@@ -41,7 +41,7 @@ obs2_defend = ShapeRectangle(g, [-1000, -1000, -0.1, 0.30], [1000, 1000, 0.1, 0.
 reach_set = np.minimum(np.maximum(goal1_destination, goal2_escape), np.minimum(obs1_defend, obs2_defend))
 
 # Look-back length and time step
-lookback_length = 5.0  # try 1.5, 2.0, 2.5, 3.0, 5.0, 6.0, 8.0
+lookback_length = 10.0  # try 1.5, 2.0, 2.5, 3.0, 5.0, 6.0, 8.0
 t_step = 0.05
 
 # Actual calculation process, needs to add new plot function to draw a 2D figure
@@ -56,6 +56,7 @@ compMethods = {"TargetSetMode": "minVWithVTarget",
                "ObstacleSetMode": "maxVWithObstacle"}
 
 result = HJSolver(my_2agents, g, [reach_set, avoid_set], tau, compMethods, po, saveAllTimeSteps=True)
+print(f'The shape of the value function is {result.shape} \n')
 # save the value function
 np.save('1v1AttackDefend.npy', result)
 

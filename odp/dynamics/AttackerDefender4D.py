@@ -72,8 +72,8 @@ class AttackerDefender4D:
         :return:
         """
         # In 1v1AttackerDefender, a(t) = [a1, a2]^T
-        opt_a1 = hcl.scalar(self.uMax[0], "opt_a1")
-        opt_a2 = hcl.scalar(self.uMax[1], "opt_a2")
+        opt_a1 = hcl.scalar(0, "opt_a1")
+        opt_a2 = hcl.scalar(0, "opt_a2")
         # Just create and pass back, even though they're not used
         in3 = hcl.scalar(0, "in3")
         in4 = hcl.scalar(0, "in4")
@@ -117,8 +117,7 @@ class AttackerDefender4D:
             d1[0] = -1 * deriv1[0]/ dstb_len
             d2[0] = -1 * deriv2[0] / dstb_len
 
-        return (d1[0], d2[0], d3[0], d4[0])
-
+        return d1[0], d2[0], d3[0], d4[0]
 
         # The below function can have whatever form or parameters users want
         # These functions are not used in HeteroCL program, hence is pure Python code and
