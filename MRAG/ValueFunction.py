@@ -41,7 +41,7 @@ obs2_defend = ShapeRectangle(g, [-1000, -1000, -0.1, 0.30], [1000, 1000, 0.1, 0.
 reach_set = np.minimum(np.maximum(goal1_destination, goal2_escape), np.minimum(obs1_defend, obs2_defend))
 
 # Look-back length and time step
-lookback_length = 10.0  # try 1.5, 2.0, 2.5, 3.0, 5.0, 6.0, 8.0
+lookback_length = 8.0  # try 1.5, 2.0, 2.5, 3.0, 5.0, 6.0, 8.0
 t_step = 0.05
 
 # Actual calculation process, needs to add new plot function to draw a 2D figure
@@ -52,8 +52,7 @@ tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)
 po = PlotOptions(do_plot=False, plot_type="2d_plot", plotDims=[0, 1], slicesCut=[23, 23])
 
 # In this example, we compute a Reach-Avoid Tube
-compMethods = {"TargetSetMode": "minVWithVTarget",
-               "ObstacleSetMode": "maxVWithObstacle"}
+compMethods = {"TargetSetMode": "minVWithVTarget", "ObstacleSetMode": "maxVWithObstacle"}
 
 result = HJSolver(my_2agents, g, [reach_set, avoid_set], tau, compMethods, po, saveAllTimeSteps=True)
 print(f'The shape of the value function is {result.shape} \n')

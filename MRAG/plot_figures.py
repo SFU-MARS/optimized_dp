@@ -2,14 +2,16 @@ import matplotlib.pyplot as plt
 import numpy as np
 from odp.Plots.plotting_utilities import plot_2d
 from odp.Grid import Grid
+from utilities import loca2slices, check
 from odp.solver import HJSolver, computeSpatDerivArray
 
 # plot value_function in 2d figure
 # g must be the same as one in the ValueFunction.py
 g = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([45, 45, 45, 45]))
 value_function = np.load('1v1AttackDefend.npy')
-# value_function = np.load('result.npy')
-V_2D = value_function[:, :, 15, 33, 0]  # 0 is reachable set, -1 is target set
+x_defender, y_defender = loca2slices(x_location=-0.3, y_location=0.5, slices=45)
+print(f'The defender is at the location [{x_defender}, {y_defender}] \n')
+V_2D = value_function[:, :, x_defender, y_defender, 0]  # 0 is reachable set, -1 is target set
 plot_2d(g, V_2D=V_2D)
 
 # plot the 2D map
