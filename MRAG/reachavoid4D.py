@@ -161,7 +161,7 @@ def main():
                 
     # HJSolver(dynamics object, g, initial value function, time length, system objectives, plotting options)
     result = HJSolver(attacker_perpective, g, [reach, avoid], tau, compMethods, po2, saveAllTimeSteps=True)
-    np.save('result.npy',result)
+    np.save('result.npy', result)
     print(result.shape)
     # print(result[0], result[30][30][30][30], result[15][15][15][15], result[15][10][15][10], result[0][15][1][15])
 
