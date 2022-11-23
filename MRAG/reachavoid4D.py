@@ -124,10 +124,9 @@ class ReachAvoid:
         
 
 def main():
-    g = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]),
-            4, np.array([31, 31, 31, 31]))
+    g = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([31, 31, 31, 31]))
     # Initialize the dynamics. We assume the attackers' perspective.
-    attacker_perpective = ReachAvoid(uMode = 'min', dMode = 'max')
+    attacker_perpective = ReachAvoid(uMode='min', dMode='max')
 
     # static obstacles from the baseline paper
     obs1 = ShapeRectangle(g, [-0.1, -1.0, -1000, -1000], [0.1, -0.3, 1000, 1000])  # attacker stuck in obs1
@@ -146,8 +145,8 @@ def main():
     reach = np.minimum(np.maximum(goal_a, escape_region), obstacle_reach)
     avoid = np.minimum(obstacle, capture_region)
 
-    po1 = PlotOptions(do_plot=False, plot_type="3d_plot", plotDims=[0,1,2],
-                  slicesCut=[3])
+    # po1 = PlotOptions(do_plot=False, plot_type="3d_plot", plotDims=[0,1,2],
+    #               slicesCut=[3])
    # plot_isosurface(g, avoid, po1) #plot the reach and avoid sets for debugging.
    # plot_isosurface(g, reach, po1)
 
@@ -157,9 +156,8 @@ def main():
     tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)
 
     # Get our first safety bubble.
-    po2 = PlotOptions(do_plot=False, plot_type = "3d_plot", plotDims = [0,1,3], slicesCut=[2])
-    compMethods = { "TargetSetMode": "minVWithVTarget",
-                "ObstacleSetMode": "maxVWithObstacle"}
+    po2 = PlotOptions(do_plot=False, plot_type="3d_plot", plotDims=[0, 1, 3], slicesCut=[2])
+    compMethods = { "TargetSetMode": "minVWithVTarget", "ObstacleSetMode": "maxVWithObstacle"}
                 
     # HJSolver(dynamics object, g, initial value function, time length, system objectives, plotting options)
     result = HJSolver(attacker_perpective, g, [reach, avoid], tau, compMethods, po2, saveAllTimeSteps=True)
