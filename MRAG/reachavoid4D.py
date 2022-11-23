@@ -157,7 +157,7 @@ def main():
 
     # Get our first safety bubble.
     po2 = PlotOptions(do_plot=False, plot_type="3d_plot", plotDims=[0, 1, 3], slicesCut=[2])
-    compMethods = { "TargetSetMode": "minVWithVTarget", "ObstacleSetMode": "maxVWithObstacle"}
+    compMethods = {"TargetSetMode": "minVWithVTarget", "ObstacleSetMode": "maxVWithObstacle"}
                 
     # HJSolver(dynamics object, g, initial value function, time length, system objectives, plotting options)
     result = HJSolver(attacker_perpective, g, [reach, avoid], tau, compMethods, po2, saveAllTimeSteps=True)
