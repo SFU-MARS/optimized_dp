@@ -25,7 +25,7 @@ import math
 g = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([31, 31, 31, 31]))
 
 # Define my object dynamics
-my_2agents = AttackerDefender4D(uMode="min", dMode="max")
+my_2agents = AttackerDefender4D(uMode="min", dMode="max")  # todo the dynamics have some bugs
 
 # Avoid set, no constraint means inf
 obs1_attack = ShapeRectangle(g, [-0.1, -1.0, -1000, -1000], [0.1, -0.3, 1000, 1000])  # attacker stuck in obs1
