@@ -12,7 +12,7 @@ import numpy as np
 
 class AttackerDefender4D:
     def __init__(self, x=[0, 0, 0, 0], uMin=-1, uMax=1, dMin=-1,
-                 dMax=1, uMode="min", dMode="max", speed_a=1, speed_b=1):
+                 dMax=1, uMode="min", dMode="max", speed_a=1.5, speed_b=1):
         """Creates an Attacker and Defender with the following states:
            X1 position, Y1 position, X2 position, Y2 position
            The controls are the control inputs of the Attacker.
@@ -153,13 +153,21 @@ class AttackerDefender4D:
         return opt_a, opt_w
 
     def capture_set(self, grid, capture_radius, mode):
-        # this function is the distance between 1 attacker and 1 defender
-        data = np.zeros(grid.pts_each_dim)
-
-        data = data + np.power(grid.vs[0] - grid.vs[2], 2)
-        data = data + np.power(grid.vs[1] - grid.vs[3], 2)
-        # data = np.sqrt(data) - radius
+        # using meshgrid
+        xa, ya, xd, yd = np.meshgrid(grid.grid_points[0], grid.grid_points[1],
+                                     grid.grid_points[2], grid.grid_points[3], indexing='ij')
+        data = np.power(xa - xd, 2) + np.power(ya - yd, 2)
         if mode == "capture":
             return np.sqrt(data) - capture_radius
         if mode == "escape":
             return capture_radius - np.sqrt(data)
+        # this function is the distance between 1 attacker and 1 defender
+        # data = np.zeros(grid.pts_each_dim)
+        #
+        # data = data + np.power(grid.vs[0] - grid.vs[2], 2)
+        # data = data + np.power(grid.vs[1] - grid.vs[3], 2)
+        # # data = np.sqrt(data) - radius
+        # if mode == "capture":
+        #     return np.sqrt(data) - capture_radius
+        # if mode == "escape":
+        #     return capture_radius - np.sqrt(data)

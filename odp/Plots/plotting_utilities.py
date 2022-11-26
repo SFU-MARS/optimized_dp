@@ -70,6 +70,10 @@ def plot_2d(grid, V_2D):
         x=mg_X.flatten(),
         y=mg_Y.flatten(),
         z=V_2D.flatten(),
+        zmin=0.0,
+        ncontours=1,
+        zmax=0.0,
+
     ))
     fig.show()
     print("Please check the plot on your browser.")

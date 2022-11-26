@@ -7,7 +7,7 @@ from odp.Shapes import *
 from odp.dynamics.AttackerDefender4D import AttackerDefender4D
 # Plot options
 from odp.Plots import PlotOptions
-from odp.Plots.plotting_utilities import plot_2d
+from odp.Plots.plotting_utilities import plot_2d, plot_isosurface
 # Solver core
 from odp.solver import HJSolver, computeSpatDerivArray
 import math
@@ -28,20 +28,24 @@ g = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, 
 my_2agents = AttackerDefender4D(uMode="min", dMode="max")  # todo the dynamics have some bugs
 
 # Avoid set, no constraint means inf
-obs1_attack = ShapeRectangle(g, [-0.1, -1000, -1000, -1000], [0.1, -0.3, 1000, 1000])  # attacker stuck in obs1
+obs1_attack = ShapeRectangle(g, [-0.1, -1.0, -1000, -1000], [0.1, -0.3, 1000, 1000])  # attacker stuck in obs1
 obs2_attack = ShapeRectangle(g, [-0.1, 0.30, -1000, -1000], [0.1, 0.60, 1000, 1000])  # attacker stuck in obs2
 obs3_capture = my_2agents.capture_set(g, 0.05, "capture")  # attacker being captured by defender, try different radius
-avoid_set = np.minimum(obs3_capture, np.minimum(obs1_attack, obs2_attack))
+# avoid_set = np.minimum(obs3_capture, np.minimum(obs1_attack, obs2_attack))
+# avoid_set = np.minimum(obs1_attack, obs2_attack)  # test1 when no capture things
+avoid_set = obs2_attack  # test2 with only obs1
 
 # Reach set, run and see what it is!
 goal1_destination = ShapeRectangle(g, [0.6, 0.1, -1000, -1000], [0.8, 0.3, 1000, 1000])  # attacker arrives target
 goal2_escape = my_2agents.capture_set(g, 0.05, "escape")  # attacker escape from defender
 obs1_defend = ShapeRectangle(g, [-1000, -1000, -0.1, -1000], [1000, 1000, 0.1, -0.3])  # defender stuck in obs1
 obs2_defend = ShapeRectangle(g, [-1000, -1000, -0.1, 0.30], [1000, 1000, 0.1, 0.60])  # defender stuck in obs2
-reach_set = np.minimum(np.maximum(goal1_destination, goal2_escape), np.minimum(obs1_defend, obs2_defend))
+# reach_set = np.minimum(np.maximum(goal1_destination, goal2_escape), np.minimum(obs1_defend, obs2_defend))
+# reach_set = np.minimum(goal1_destination, np.minimum(obs1_defend, obs2_defend))  # test1 when no capture things
+reach_set = np.minimum(goal1_destination, obs2_defend)
 
 # Look-back length and time step
-lookback_length = 5.0  # try 1.5, 2.0, 2.5, 3.0, 5.0, 6.0, 8.0
+lookback_length = 10.0  # try 1.5, 2.0, 2.5, 3.0, 5.0, 6.0, 8.0
 t_step = 0.05
 
 # Actual calculation process, needs to add new plot function to draw a 2D figure
@@ -49,7 +53,10 @@ small_number = 1e-5
 tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)
 
 # while plotting make sure the len(slicesCut) + len(plotDims) = grid.dims
-po = PlotOptions(do_plot=False, plot_type="2d_plot", plotDims=[0, 1], slicesCut=[23, 23])
+po = PlotOptions(do_plot=True, plot_type="2d_plot", plotDims=[0, 1], slicesCut=[22, 22])
+# plot the 2 obs
+# plot_isosurface(g, np.minimum(obs1_attack, obs2_attack), po)
+# plot_isosurface(g, obs3_capture, po)
 
 # In this example, we compute a Reach-Avoid Tube
 compMethods = {"TargetSetMode": "minVWithVTarget", "ObstacleSetMode": "maxVWithObstacle"}
