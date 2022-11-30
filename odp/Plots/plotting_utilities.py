@@ -65,6 +65,9 @@ def plot_2d(grid, V_2D):
     complex_x = complex(0, grid.pts_each_dim[dim1])
     complex_y = complex(0, grid.pts_each_dim[dim2])
     mg_X, mg_Y = np.mgrid[grid.min[dim1]:grid.max[dim1]: complex_x, grid.min[dim2]:grid.max[dim2]: complex_y]
+    # print(f'The shape of mg_X before flatten is {mg_X.shape}')
+    # print(f'The shape of mg_Y before flatten is {mg_Y.shape}')
+    # print(f'The shape of V_2D before flatten is {V_2D.shape}')
     print("Plotting beautiful 2D plots. Please wait\n")
     fig = go.Figure(data=go.Contour(
         x=mg_X.flatten(),
@@ -73,9 +76,13 @@ def plot_2d(grid, V_2D):
         zmin=0.0,
         ncontours=1,
         zmax=0.0,
-
     ))
+
+      
     fig.show()
+    # print(f'The shape of x after flatten is {mg_X.flatten().shape}')
+    # print(f'The shape of y after flatten is {mg_Y.flatten().shape}')
+    # print(f'The shape of z after flatten is {V_2D.flatten().shape}')
     print("Please check the plot on your browser.")
 
 

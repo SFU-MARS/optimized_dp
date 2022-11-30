@@ -31,19 +31,23 @@ my_2agents = AttackerDefender4D(uMode="min", dMode="max")  # todo the dynamics m
 obs1_attack = ShapeRectangle(g, [-0.1, -1.0, -1000, -1000], [0.1, -0.3, 1000, 1000])  # attacker stuck in obs1
 obs2_attack = ShapeRectangle(g, [-0.1, 0.30, -1000, -1000], [0.1, 0.60, 1000, 1000])  # attacker stuck in obs2
 obs3_capture = my_2agents.capture_set(g, 0.05, "capture")  # attacker being captured by defender, try different radius
+obs_circle = CylinderShape(g, [2, 3], np.array([0.0, 0.5, 0.0, 0.0]), 0.3) # debug4: try circle obstacle
 # avoid_set = np.minimum(obs3_capture, np.minimum(obs1_attack, obs2_attack))
 # avoid_set = np.minimum(obs1_attack, obs2_attack)  # test when no capture things
-avoid_set = obs2_attack  # test with only obs1
+# avoid_set = obs2_attack  # debug1: only obs1
+avoid_set = obs_circle # debug4: try circle obstacle
 
 # Reach set, run and see what it is!
 goal1_destination = ShapeRectangle(g, [0.6, 0.1, -1000, -1000], [0.8, 0.3, 1000, 1000])  # attacker arrives target
 goal2_escape = my_2agents.capture_set(g, 0.05, "escape")  # attacker escape from defender
 obs1_defend = ShapeRectangle(g, [-1000, -1000, -0.1, -1000], [1000, 1000, 0.1, -0.3])  # defender stuck in obs1
 obs2_defend = ShapeRectangle(g, [-1000, -1000, -0.1, 0.30], [1000, 1000, 0.1, 0.60])  # defender stuck in obs2
-reach_set = np.minimum(np.maximum(goal1_destination, goal2_escape), np.minimum(obs1_defend, obs2_defend))
-# reach_set = np.minimum(goal1_destination, np.minimum(obs1_defend, obs2_defend))  # test1 when no capture things
-# reach_set = np.minimum(goal1_destination, obs2_defend)
-# reach_set = goal1_destination
+obs_circle_defend = CylinderShape(g, [0, 1], np.array([0.0, 0.5, 0.0, 0.0]), 0.3) # debug4: try circle obstacle
+# reach_set = np.minimum(np.maximum(goal1_destination, goal2_escape), np.minimum(obs1_defend, obs2_defend))
+# reach_set = np.minimum(goal1_destination, np.minimum(obs1_defend, obs2_defend))  
+# reach_set = np.minimum(goal1_destination, obs2_defend)  # debug3: goal desintaion and obstacle2
+reach_set = np.minimum(goal1_destination, obs_circle_defend) # debug4: try circle obstacle
+# reach_set = goal1_destination # debug2: only goal destination
 
 # Look-back length and time step
 lookback_length = 5.0  # try 1.5, 2.0, 2.5, 3.0, 5.0, 6.0, 8.0
