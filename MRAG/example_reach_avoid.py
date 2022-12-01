@@ -30,24 +30,19 @@ import math
 g = Grid(np.array([-1.0, -1.0, -math.pi]), np.array([1.0, 1.0, math.pi]), 3, np.array([40, 40, 40]), [2])
 
 # Reachable set
-goal = CylinderShape(g, [2], np.array([0.5, 0.5, 0]), 0.3)
+goal = CylinderShape(g, [2], np.array([0.5, 0.5, 0]), 0.2) # debug7
+# goal = ShapeRectangle1(g, [0.6, 0.1, 0.0], [0.8, 0.3, 0.0], [2])  # debug8
+
 
 # Avoid set
 # obstacle = CylinderShape(g, [2], np.array([1.0, 1.0, 0.0]), 0.5)
 
 # Avoid set, no constraint means inf
-# obstacle = ShapeRectangle1(g, [-0.1, 0.30, 0.0], [0.1, 0.60, 0.0], [2])
-obstacle = CylinderShape(g, [2], np.array([0.0, 0.0, 0.0]), 0.3)
-
-# obs1_attack = ShapeRectangle(g, [-0.1, -1.0, -1000, -1000], [0.1, -0.3, 1000, 1000])  # attacker stuck in obs1
-# obs2_attack = ShapeRectangle(g, [-0.1, 0.30, -1000, -1000], [0.1, 0.60, 1000, 1000])  # attacker stuck in obs2
-# obs3_capture = my_2agents.capture_set(g, 0.05, "capture")  # attacker being captured by defender, try different radius
-# # avoid_set = np.minimum(obs3_capture, np.minimum(obs1_attack, obs2_attack))
-# # avoid_set = np.minimum(obs1_attack, obs2_attack)  # test when no capture things
-# avoid_set = obs2_attack  # debug1: only obs1
+obstacle = CylinderShape(g, [2], np.array([0.0, 0.5, 0.0]), 0.3) # debug7
+# obstacle = ShapeRectangle1(g, [-0.1, 0.30, 0.0], [0.1, 0.60, 0.0], [2])  # debug8
 
 # Look-back length and time step
-lookback_length = 15.0
+lookback_length = 20.0
 t_step = 0.05
 
 small_number = 1e-5
