@@ -22,7 +22,7 @@ import math
 
 ##################################################### EXAMPLE 4 1v1AttackerDefender ####################################
 
-g = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([80, 80, 80, 80])) # original 45
+g = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([45, 45, 45, 45])) # original 45,; 80 doesn't work
 
 # Define my object dynamics
 my_2agents = AttackerDefender4D(uMode="min", dMode="max")  # todo the dynamics may have some bugs
