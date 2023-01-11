@@ -2,7 +2,7 @@
 
 ### 1. Debug 1 for the 'not rectangle' look with the value function
 
-#### Change the value (https://github.com/SFU-MARS/optimized_dp/blob/master/odp/computeGraphs/graph_4D.py#L52) from 0.8 
+#### Change the value (https://github.com/Hu-Hanyang/optimized_dp/blob/6cbec48660659df6ab13f59d50367cd01f29d60a/odp/computeGraphs/graph_4D.py#L52) from 0.8 
 
 ##### 0. Original setup and result
 
