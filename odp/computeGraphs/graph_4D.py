@@ -49,7 +49,7 @@ def graph_4D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
             stepBoundInv[0] = max_alpha1[0] / g.dx[0] + max_alpha2[0] / g.dx[1] + max_alpha3[0] / g.dx[2] + max_alpha4[0] / \
                               g.dx[3]
 
-            stepBound[0] = 0.8 / stepBoundInv[0]
+            stepBound[0] = 0.8 / stepBoundInv[0]  # debug from 0.8 to 
             with hcl.if_(stepBound > t[1] - t[0]):
                 stepBound[0] = t[1] - t[0]
 
