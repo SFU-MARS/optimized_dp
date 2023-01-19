@@ -3,8 +3,8 @@ import numpy as np
 from odp.Grid import Grid
 from odp.Shapes import *
 
-# Specify the  file that includes dynamic systems
-from odp.dynamics.AttackerDefender4D import AttackerDefender4D
+# Specify the  file that includes dynamic systems, AttackerDefender4D
+from odp.dynamics.AttackerDefender4D0 import AttackerDefender4D 
 # Plot options
 from odp.Plots import PlotOptions
 from odp.Plots.plotting_utilities import plot_2d, plot_isosurface
@@ -72,10 +72,10 @@ po = PlotOptions(do_plot=False, plot_type="2d_plot", plotDims=[0, 1], slicesCut=
 # plot_isosurface(g, obs3_capture, po)
 
 # In this example, we compute a Reach-Avoid Tube
-# compMethods = {"TargetSetMode": "minVWithVTarget", "ObstacleSetMode": "maxVWithObstacle"} # original one
-compMethods = {"TargetSetMode": "minVWithVTarget"}
-# result = HJSolver(my_2agents, g, [reach_set, avoid_set], tau, compMethods, po, saveAllTimeSteps=True) # original one
-result = HJSolver(my_2agents, g, avoid_set, tau, compMethods, po, saveAllTimeSteps=True)
+compMethods = {"TargetSetMode": "minVWithVTarget", "ObstacleSetMode": "maxVWithObstacle"} # original one
+# compMethods = {"TargetSetMode": "minVWithVTarget"}
+result = HJSolver(my_2agents, g, [reach_set, avoid_set], tau, compMethods, po, saveAllTimeSteps=True) # original one
+# result = HJSolver(my_2agents, g, avoid_set, tau, compMethods, po, saveAllTimeSteps=True)
 
 print(f'The shape of the value function is {result.shape} \n')
 # save the value function
