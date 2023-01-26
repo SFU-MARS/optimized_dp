@@ -12,7 +12,7 @@ import numpy as np
 
 class AttackerDefender4D:
     def __init__(self, x=[0, 0, 0, 0], uMin=-1, uMax=1, dMin=-1,
-                 dMax=1, uMode="min", dMode="max", speed_a=1.5, speed_b=1):
+                 dMax=1, uMode="min", dMode="max", speed_a=1, speed_b=1):
         """Creates an Attacker and Defender with the following states:
            X1 position, Y1 position, X2 position, Y2 position
            The controls are the control inputs of the Attacker.
@@ -82,13 +82,21 @@ class AttackerDefender4D:
         deriv2 = hcl.scalar(0, "deriv2")
         deriv1[0] = spat_deriv[0]
         deriv2[0] = spat_deriv[1]
-        ctrl_len = hcl.sqrt(deriv1[0] * deriv1[0] + deriv2[0] * deriv2[0])
+        ctrl_len = hcl.sqrt(deriv1[0] * deriv1[0] + deriv2[0] * deriv2[0])        
         if self.uMode == "min":
-            opt_a1[0] = -1.0 * deriv1[0] / ctrl_len
-            opt_a2[0] = -1.0 * deriv2[0] / ctrl_len
+            with hcl.if_(ctrl_len == 0):
+                opt_a1[0] = 0.0
+                opt_a2[0] = 0.0
+            with hcl.else_():
+                opt_a1[0] = -1.0 * deriv1[0] / ctrl_len
+                opt_a2[0] = -1.0 * deriv2[0] / ctrl_len
         else:
-            opt_a1[0] = deriv1[0] / ctrl_len
-            opt_a2[0] = deriv2[0] / ctrl_len
+            with hcl.if_(ctrl_len == 0):
+                opt_a1[0] = 0.0
+                opt_a2[0] = 0.0
+            with hcl.else_():
+                opt_a1[0] = deriv1[0] / ctrl_len
+                opt_a2[0] = deriv2[0] / ctrl_len
         # return 3, 4 even if you don't use them
         return opt_a1[0], opt_a2[0], in3[0], in4[0]
 
@@ -111,11 +119,19 @@ class AttackerDefender4D:
         dstb_len = hcl.sqrt(deriv1[0] * deriv1[0] + deriv2[0] * deriv2[0])
         # with hcl.if_(self.dMode == "max"):
         if self.dMode == 'max':
-            d1[0] = deriv1[0] / dstb_len
-            d2[0] = deriv2[0] / dstb_len
+            with hcl.if_(dstb_len == 0):
+                d1[0] = 0.0
+                d2[0] = 0.0
+            with hcl.else_():
+                d1[0] = deriv1[0] / dstb_len
+                d2[0] = deriv2[0] / dstb_len
         else:
-            d1[0] = -1 * deriv1[0]/ dstb_len
-            d2[0] = -1 * deriv2[0] / dstb_len
+            with hcl.if_(dstb_len == 0):
+                d1[0] = 0.0
+                d2[0] = 0.0
+            with hcl.else_():
+                d1[0] = -1 * deriv1[0]/ dstb_len
+                d2[0] = -1 * deriv2[0] / dstb_len
 
         return d1[0], d2[0], d3[0], d4[0]
 

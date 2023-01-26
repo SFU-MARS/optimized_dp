@@ -4,7 +4,7 @@ from odp.Grid import Grid
 from odp.Shapes import *
 
 # Specify the  file that includes dynamic systems, AttackerDefender4D
-from odp.dynamics.AttackerDefender4D0 import AttackerDefender4D 
+from odp.dynamics.AttackerDefender4D import AttackerDefender4D 
 # Plot options
 from odp.Plots import PlotOptions
 from odp.Plots.plotting_utilities import plot_2d, plot_isosurface
@@ -58,7 +58,7 @@ reach_set = np.minimum(np.maximum(goal1_destination, goal2_escape), np.minimum(o
 # reach_set = goal1_destination 
 
 # Look-back length and time step
-lookback_length = 5.0  # try 1.5, 2.0, 2.5, 3.0, 5.0, 6.0, 8.0
+lookback_length = 0.5  # try 1.5, 2.0, 2.5, 3.0, 5.0, 6.0, 8.0
 t_step = 0.05
 
 # Actual calculation process, needs to add new plot function to draw a 2D figure
