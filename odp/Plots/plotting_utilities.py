@@ -73,23 +73,42 @@ def plot_2d(grid, V_2D):
         zmin=0.0,
         ncontours=1,
         zmax=0.0,
-
     ))
     fig.show()
     print("Please check the plot on your browser.")
 
 
-def plot_2d_with_map(grid, V_2D):
+def plot_2d_with_avoid(grid, V_2D):
     dims_plot = [0, 1]
     dim1, dim2 = dims_plot[0], dims_plot[1]
     complex_x = complex(0, grid.pts_each_dim[dim1])
     complex_y = complex(0, grid.pts_each_dim[dim2])
     mg_X, mg_Y = np.mgrid[grid.min[dim1]:grid.max[dim1]: complex_x, grid.min[dim2]:grid.max[dim2]: complex_y]
+    x_obstacle = np.linspace(-0.5, 0.5, num=mg_X.flatten().shape[0])
+    y_obstacle = np.linspace(-0.5, 0.5, num=mg_X.flatten().shape[0])
+    V_obstacle = np.ones(V_2D.shape)
+    # print(f'The shape of mg_X before flatten is {mg_X.shape}')
+    # print(f'The shape of mg_Y before flatten is {mg_Y.shape}')
+    # print(f'The shape of V_2D before flatten is {V_2D.shape}')
     print("Plotting beautiful 2D plots. Please wait\n")
     fig = go.Figure(data=go.Contour(
         x=mg_X.flatten(),
         y=mg_Y.flatten(),
         z=V_2D.flatten(),
+        zmin=0.0,
+        ncontours=1,
+        zmax=0.0,
+    ))
+    fig.add_trace(go.Contour(
+        x=x_obstacle.flatten(),
+        y=y_obstacle.flatten(),
+        z=V_obstacle.flatten(),
+        zmin=0.0,
+        ncontours=1,
+        zmax=0.0,
     ))
     fig.show()
+    # print(f'The shape of x after flatten is {mg_X.flatten().shape}')
+    # print(f'The shape of y after flatten is {mg_Y.flatten().shape}')
+    # print(f'The shape of z after flatten is {V_2D.flatten().shape}')
     print("Please check the plot on your browser.")

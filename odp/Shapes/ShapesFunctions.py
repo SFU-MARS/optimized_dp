@@ -48,6 +48,15 @@ def ShapeRectangle(grid, target_min, target_max):
 
     return data
 
+def ShapeRectangle1(grid, target_min, target_max, ignore_dims):
+    data = np.maximum(grid.vs[0] - target_max[0], -grid.vs[0] + target_min[0])  # can I use np.zeros(grid.pts_each_dim)
+    for i in range(grid.dims):
+        if i not in ignore_dims:
+            data = np.maximum(data,  grid.vs[i] - target_max[i])
+            data = np.maximum(data, -grid.vs[i] + target_min[i])
+    return data
+
+
 def Rect_Around_Point(grid, target_point):
     return ShapeRectangle(grid, target_point - 1.5 * grid.dx, target_point + 1.5 * grid.dx)
 
