@@ -59,3 +59,4 @@ result:
 It seems that the bug is caused by the dynamics. The control (both attacker and defender) could be zero sometimes. Adding the zero-judgement logic, the problem seems solved.
 
 ### 2. Records of the simulation
+#### When the attacker speed = defender speed
