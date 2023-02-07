@@ -4,7 +4,7 @@ from odp.Grid import Grid
 from odp.Shapes import *
 
 # Specify the  file that includes dynamic systems, AttackerDefender4D
-from odp.dynamics.AttackerDefender4D import AttackerDefender4D 
+from AttackerDefender4D import AttackerDefender4D 
 # Plot options
 from odp.Plots import PlotOptions
 from odp.Plots.plotting_utilities import plot_2d, plot_isosurface
