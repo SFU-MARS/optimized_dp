@@ -1,6 +1,6 @@
 ## optimized_dp records
 
-### 1. Debug 1 for the 'not rectangle' look with the value function
+### Debug 1 for the 'not rectangle' look with the value function
 
 #### Change the value (https://github.com/Hu-Hanyang/optimized_dp/blob/6cbec48660659df6ab13f59d50367cd01f29d60a/odp/computeGraphs/graph_4D.py#L52) from 0.8 
 
@@ -27,36 +27,8 @@ V_2D = value_function[:, :, x_defender, y_defender, 0]  # 0 is reachable set, -1
 plot_2d(g, V_2D=V_2D)
 ```
 
-result:
-
-![](/localhome/hha160/optimized_dp/MRAG/debug_figures/debug0_original.png)
-
-##### 1. to 0.7
-
-result:
-
-![](/localhome/hha160/optimized_dp/MRAG/debug_figures/debug1_0.7.png)
-
-##### 2. to 0.6
-
-result:
-
-![](/localhome/hha160/optimized_dp/MRAG/debug_figures/debug1_0.6.png)
-
-##### 3. to 0.5
-
-result:
-
-![](/localhome/hha160/optimized_dp/MRAG/debug_figures/debug1_0.5.png)
-
-##### 4. to 0.1
-
-result:
-
-![](/localhome/hha160/optimized_dp/MRAG/debug_figures/debug1_0.1.png)
-
-#### Try
+### Bug 1 - Solved
 It seems that the bug is caused by the dynamics. The control (both attacker and defender) could be zero sometimes. Adding the zero-judgement logic, the problem seems solved.
 
 ### 2. Records of the simulation
-#### When the attacker speed = defender speed
+#### $v_A = v_D = 1.0$

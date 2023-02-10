@@ -2,7 +2,6 @@ import numpy as np
 # Utility functions to initialize the problem
 from odp.Grid import Grid
 from odp.Shapes import *
-
 # Specify the  file that includes dynamic systems, AttackerDefender4D
 from AttackerDefender4D import AttackerDefender4D 
 # Plot options
@@ -30,7 +29,7 @@ my_2agents = AttackerDefender4D(uMode="min", dMode="max")  # todo the dynamics m
 # Avoid set, no constraint means inf
 obs1_attack = ShapeRectangle(g, [-0.1, -1.0, -1000, -1000], [0.1, -0.3, 1000, 1000])  # attacker stuck in obs1
 obs2_attack = ShapeRectangle(g, [-0.1, 0.30, -1000, -1000], [0.1, 0.60, 1000, 1000])  # attacker stuck in obs2
-obs3_capture = my_2agents.capture_set(g, 0.05, "capture")  # attacker being captured by defender, try different radius
+obs3_capture = my_2agents.capture_set(g, 0.1, "capture")  # attacker being captured by defender, try different radius
 avoid_set = np.minimum(obs3_capture, np.minimum(obs1_attack, obs2_attack)) # original
 # debugging
 # avoid_set = np.minimum(obs3_capture, obs2_attack) # debug1
@@ -58,8 +57,8 @@ reach_set = np.minimum(np.maximum(goal1_destination, goal2_escape), np.minimum(o
 # reach_set = goal1_destination 
 
 # Look-back length and time step
-lookback_length = 1.0  # try 1.5, 2.0, 2.5, 3.0, 5.0, 6.0, 8.0
-t_step = 0.05
+lookback_length = 1.5  # try 1.5, 2.0, 2.5, 3.0, 5.0, 6.0, 8.0
+t_step = 0.025
 
 # Actual calculation process, needs to add new plot function to draw a 2D figure
 small_number = 1e-5
