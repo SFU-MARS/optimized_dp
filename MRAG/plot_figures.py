@@ -13,7 +13,7 @@ value_function = np.load('1v1AttackDefend.npy')
 print(f'The shape of the value function is {value_function.shape} \n')
 # define the locations of the defender
 x_d = -0.3
-y_d = -0.5
+y_d = 0.5
 x_defender, y_defender = loca2slices(x_location=x_d, y_location=y_d, slices=45)
 print(f'The defender is at the location [{x_d}, {y_d}] \n')
 V_2D = value_function[:, :, x_defender, y_defender, 0]  # 0 is reachable set, -1 is target set

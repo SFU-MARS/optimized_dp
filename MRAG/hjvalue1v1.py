@@ -3,7 +3,7 @@ import numpy as np
 from odp.Grid import Grid
 from odp.Shapes import *
 # Specify the  file that includes dynamic systems, AttackerDefender4D
-from AttackerDefender4D import AttackerDefender4D 
+from MRAG.AttackerDefender1v1 import AttackerDefender4D 
 # Plot options
 from odp.Plots import PlotOptions
 from odp.Plots.plotting_utilities import plot_2d, plot_isosurface
