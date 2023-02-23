@@ -3,23 +3,24 @@ import math
 import numpy as np
 
 """ 6D 2v1 AttackerDefender DYNAMICS IMPLEMENTATION 
- xA11_dot = vA * u1
- xA12_dot = vA * u2
- xA
+ xA11_dot = vA * u11
+ xA12_dot = vA * u12
+ xA21_dot = vA * u21
+ xA22_dot = vA * u22
  xD1_dot = vD * d1
  xD2_dot = vD * d2
  """
 
 
 class AttackerDefender2v1:
-    def __init__(self, x=[0, 0, 0, 0], uMin=-1, uMax=1, dMin=-1,
+    def __init__(self, x=[0, 0, 0, 0, 0, 0], uMin=-1, uMax=1, dMin=-1,
                  dMax=1, uMode="min", dMode="max", speed_a=1.0, speed_b=1.0):
-        """Creates an Attacker and Defender with the following states:
+        """Creates 2 Attackers and 1 Defender with the following states:
            X1 position, Y1 position, X2 position, Y2 position
-           The controls are the control inputs of the Attacker.
+           The controls are the control inputs of the Attackers.
            The disturbances are the control inputs of the Defender.
         Args:
-            x (list, optional): Initial state . Defaults to [0,0,0,0].
+            x (list, optional): Initial state . Defaults to [0,0,0,0,0,0].
             uMin (list, optional): Lowerbound of user control. Defaults to [-1,-1].
             uMax (list, optional): Upperbound of user control.
                                    Defaults to [1,1].
@@ -30,7 +31,7 @@ class AttackerDefender2v1:
                                    * "max" : have optimal control avoid goal
                                    Defaults to "min".
             dMode (str, optional): Accepts whether "min" or "max" and should be opposite of uMode.
-                                   Defaults to "max".
+                                   Defaults to "max". reach-avoid game is a min(u) max(d) game
         """
         self.x = x
         self.uMax = uMax
@@ -53,17 +54,21 @@ class AttackerDefender2v1:
         # vA = hcl.scalar(1.0, "vA")
         # vD = hcl.scalar(1.0, "vD")
 
-        xA1_dot = hcl.scalar(0, "xA1_dot")
-        xA2_dot = hcl.scalar(0, "xA2_dot")
+        xA11_dot = hcl.scalar(0, "xA11_dot")
+        xA12_dot = hcl.scalar(0, "xA12_dot")
+        xA21_dot = hcl.scalar(0, "xA21_dot")
+        xA22_dot = hcl.scalar(0, "xA22_dot")
         xD1_dot = hcl.scalar(0, "xD1_dot")
         xD2_dot = hcl.scalar(0, "xD2_dot")
 
-        xA1_dot[0] = self.speed_a * uOpt[0]
-        xA2_dot[0] = self.speed_a * uOpt[1]
+        xA11_dot[0] = self.speed_a * uOpt[0]
+        xA12_dot[0] = self.speed_a * uOpt[1]
+        xA21_dot[0] = self.speed_a * uOpt[2] 
+        xA22_dot[0] = self.speed_a * uOpt[3] 
         xD1_dot[0] = self.speed_d * dOpt[0]
         xD2_dot[0] = self.speed_d * dOpt[1]
 
-        return xA1_dot[0], xA2_dot[0], xD1_dot[0], xD2_dot[0]
+        return xA11_dot[0], xA12_dot[0], xA21_dot[0], xA22_dot[0], xD1_dot[0], xD2_dot[0]
 
     def opt_ctrl(self, t, state, spat_deriv):
         """
@@ -72,34 +77,48 @@ class AttackerDefender2v1:
         :param spat_deriv: tuple of spatial derivative in all dimensions
         :return:
         """
-        # In 1v1AttackerDefender, a(t) = [a1, a2]^T
+        # In 2v1AttackerDefender, a(t) = [a1, a2, a3, a4]^T
         opt_a1 = hcl.scalar(0, "opt_a1")
         opt_a2 = hcl.scalar(0, "opt_a2")
+        opt_a3 = hcl.scalar(0, "opt_a3")
+        opt_a4 = hcl.scalar(0, "opt_a4")        
         # Just create and pass back, even though they're not used
-        in3 = hcl.scalar(0, "in3")
-        in4 = hcl.scalar(0, "in4")
+        # in3 = hcl.scalar(0, "in3")
+        # in4 = hcl.scalar(0, "in4")
         # declare the hcl scalars for relevant spat_derivs
         deriv1 = hcl.scalar(0, "deriv1")
         deriv2 = hcl.scalar(0, "deriv2")
+        deriv3 = hcl.scalar(0, "deriv3")
+        deriv4= hcl.scalar(0, "deriv4")
         deriv1[0] = spat_deriv[0]
         deriv2[0] = spat_deriv[1]
-        ctrl_len = hcl.sqrt(deriv1[0] * deriv1[0] + deriv2[0] * deriv2[0])        
+        deriv3[0] = spat_deriv[2]
+        deriv4[0] = spat_deriv[3]
+        ctrl_len = hcl.sqrt(deriv1[0] * deriv1[0] + deriv2[0] * deriv2[0] + deriv3[0] * deriv3[0] + deriv4[0] * deriv4[0])        
         if self.uMode == "min":
             with hcl.if_(ctrl_len == 0):
                 opt_a1[0] = 0.0
                 opt_a2[0] = 0.0
+                opt_a3[0] = 0.0
+                opt_a4[0] = 0.0
             with hcl.else_():
                 opt_a1[0] = -1.0 * deriv1[0] / ctrl_len
                 opt_a2[0] = -1.0 * deriv2[0] / ctrl_len
+                opt_a3[0] = -1.0 * deriv3[0] / ctrl_len
+                opt_a4[0] = -1.0 * deriv4[0] / ctrl_len
         else:
             with hcl.if_(ctrl_len == 0):
                 opt_a1[0] = 0.0
                 opt_a2[0] = 0.0
+                opt_a3[0] = 0.0
+                opt_a4[0] = 0.0
             with hcl.else_():
                 opt_a1[0] = deriv1[0] / ctrl_len
                 opt_a2[0] = deriv2[0] / ctrl_len
+                opt_a3[0] = deriv3[0] / ctrl_len
+                opt_a4[0] = deriv4[0] / ctrl_len
         # return 3, 4 even if you don't use them
-        return opt_a1[0], opt_a2[0], in3[0], in4[0]
+        return opt_a1[0], opt_a2[0], opt_a3[0], opt_a4[0]
 
     def opt_dstb(self, t, state, spat_deriv):
         """
@@ -169,11 +188,13 @@ class AttackerDefender2v1:
 
         return opt_a, opt_w
 
-    def capture_set(self, grid, capture_radius, mode):
+    def capture_set1(self, grid, capture_radius, mode):
+        ## todo: not sure whether this works or not
         # using meshgrid
-        xa, ya, xd, yd = np.meshgrid(grid.grid_points[0], grid.grid_points[1],
-                                     grid.grid_points[2], grid.grid_points[3], indexing='ij')
-        data = np.power(xa - xd, 2) + np.power(ya - yd, 2)
+        xa1, ya1, xa2, ya2, xd, yd = np.meshgrid(grid.grid_points[0], grid.grid_points[1],
+                                     grid.grid_points[2], grid.grid_points[3],
+                                     grid.grid_points[4], grid.grid_points[5], indexing='ij')
+        data = np.power(xa1 - xd, 2) + np.power(ya1 - yd, 2)
         if mode == "capture":
             return np.sqrt(data) - capture_radius
         if mode == "escape":
@@ -188,3 +209,15 @@ class AttackerDefender2v1:
         #     return np.sqrt(data) - capture_radius
         # if mode == "escape":
         #     return capture_radius - np.sqrt(data)
+
+    def capture_set2(self, grid, capture_radius, mode):
+        ## todo: need to rewrite this function depending on the meshgrid
+        # using meshgrid
+        xa1, ya1, xa2, ya2, xd, yd = np.meshgrid(grid.grid_points[0], grid.grid_points[1],
+                                     grid.grid_points[2], grid.grid_points[3],
+                                     grid.grid_points[4], grid.grid_points[5], indexing='ij')
+        data = np.power(xa2 - xd, 2) + np.power(ya2 - yd, 2)
+        if mode == "capture":
+            return np.sqrt(data) - capture_radius
+        if mode == "escape":
+            return capture_radius - np.sqrt(data)
