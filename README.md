@@ -122,7 +122,7 @@ V_0 = TTRSolver(my_car, g, targetSet, epsilon, po)
 * computeGraphs/CustomGraphFunctions.py: Ready-to-user HeteroCL style utility functions
 
 ### Citation (Bibtex)  
-Please cite our paper if you use it for your own research:
+Please cite our paper if you use the toolbox in your research:
 ```
 @misc{https://doi.org/10.48550/arxiv.2204.05520,
   doi = {10.48550/ARXIV.2204.05520},
