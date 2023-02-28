@@ -27,10 +27,13 @@ grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0,
 agents_2v1 = AttackerDefender2v1(uMode="min", dMode="max")  # 2v1 (6 dim dynamics)
 
 # Avoid set, no constraint means inf
-obs1_attack = ShapeRectangle(grids, [-0.1, -1.0, -1000, -1000, -1000, -1000], [0.1, -0.3, 1000, 1000, 1000, 1000])  # a1 get stuck in the obs1
-obs2_attack = ShapeRectangle(grids, [-0.1, 0.30, -1000, -1000], [0.1, 0.60, 1000, 1000])  # attacker stuck in obs2
-obs3_capture = agents_2v1.capture_set(grids, 0.1, "capture")  # attacker being captured by defender, try different radius
-avoid_set = np.minimum(obs3_capture, np.minimum(obs1_attack, obs2_attack)) # original
+obs1_a1 = ShapeRectangle(grids, [-0.1, -1.0, -1000, -1000, -1000, -1000], [0.1, -0.3, 1000, 1000, 1000, 1000])  # a1 get stuck in the obs1
+obs2_a1 = ShapeRectangle(grids, [-0.1, 0.30, -1000, -1000, -1000, -1000], [0.1, 0.60, 1000, 1000, 1000, 1000])  # a1 get stuck in the obs2
+obs1_a2 = ShapeRectangle(grids, [-1000, -1000, -0.1, -1.0, -1000, -1000], [1000, 1000, 0.1, -0.3, 1000, 1000])  # a2 get stuck in the obs1
+obs2_a2 = ShapeRectangle(grids, [-1000, -1000, -0.1, 0.30, -1000, -1000], [1000, 1000, 0.1, 0.60, 1000, 1000])  # a2 get stuck in the obs2
+capture_a1 = agents_2v1.capture_set1(grids, 0.1, "capture")  # a1 is captured
+capture_a2 = agents_2v1.capture_set2(grids, 0.1, "capture")  # a1 is captured
+avoid_set = np.minimum(np.minimum(np.minimum(obs1_a2, obs2_a2), np.minimum(obs1_a1, obs2_a1)), np.minimum(capture_a1, capture_a2)) # is order necessary?
 
 # Reach set, run and see what it is!
 goal1_destination = ShapeRectangle(grids, [0.6, 0.1, -1000, -1000], [0.8, 0.3, 1000, 1000])  # attacker arrives target

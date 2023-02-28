@@ -24,12 +24,12 @@ import math
 grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([45, 45, 45, 45])) # original 45
 
 # Define my object dynamics
-my_2agents = AttackerDefender1v1(uMode="min", dMode="max")  # 1v1 (4 dims dynamics)
+agents_1v1 = AttackerDefender1v1(uMode="min", dMode="max")  # 1v1 (4 dims dynamics)
 
 # Avoid set, no constraint means inf
 obs1_attack = ShapeRectangle(grids, [-0.1, -1.0, -1000, -1000], [0.1, -0.3, 1000, 1000])  # attacker stuck in obs1
 obs2_attack = ShapeRectangle(grids, [-0.1, 0.30, -1000, -1000], [0.1, 0.60, 1000, 1000])  # attacker stuck in obs2
-obs3_capture = my_2agents.capture_set(grids, 0.1, "capture")  # attacker being captured by defender, try different radius
+obs3_capture = agents_1v1.capture_set(grids, 0.1, "capture")  # attacker being captured by defender, try different radius
 avoid_set = np.minimum(obs3_capture, np.minimum(obs1_attack, obs2_attack)) # original
 # debugging
 # avoid_set = np.minimum(obs3_capture, obs2_attack) # debug1
@@ -40,7 +40,7 @@ avoid_set = np.minimum(obs3_capture, np.minimum(obs1_attack, obs2_attack)) # ori
 
 # Reach set, run and see what it is!
 goal1_destination = ShapeRectangle(grids, [0.6, 0.1, -1000, -1000], [0.8, 0.3, 1000, 1000])  # attacker arrives target
-goal2_escape = my_2agents.capture_set(grids, 0.1, "escape")  # attacker escape from defender
+goal2_escape = agents_1v1.capture_set(grids, 0.1, "escape")  # attacker escape from defender
 obs1_defend = ShapeRectangle(grids, [-1000, -1000, -0.1, -1000], [1000, 1000, 0.1, -0.3])  # defender stuck in obs1
 obs2_defend = ShapeRectangle(grids, [-1000, -1000, -0.1, 0.30], [1000, 1000, 0.1, 0.60])  # defender stuck in obs2
 reach_set = np.minimum(np.maximum(goal1_destination, goal2_escape), np.minimum(obs1_defend, obs2_defend)) # original
@@ -73,7 +73,7 @@ po = PlotOptions(do_plot=False, plot_type="2d_plot", plotDims=[0, 1], slicesCut=
 # In this example, we compute a Reach-Avoid Tube
 compMethods = {"TargetSetMode": "minVWithVTarget", "ObstacleSetMode": "maxVWithObstacle"} # original one
 # compMethods = {"TargetSetMode": "minVWithVTarget"}
-result = HJSolver(my_2agents, grids, [reach_set, avoid_set], tau, compMethods, po, saveAllTimeSteps=True) # original one
+result = HJSolver(agents_1v1, grids, [reach_set, avoid_set], tau, compMethods, po, saveAllTimeSteps=True) # original one
 # result = HJSolver(my_2agents, g, avoid_set, tau, compMethods, po, saveAllTimeSteps=True)
 
 print(f'The shape of the value function is {result.shape} \n')
