@@ -14,7 +14,7 @@ import numpy as np
 
 class AttackerDefender2v1:
     def __init__(self, x=[0, 0, 0, 0, 0, 0], uMin=-1, uMax=1, dMin=-1,
-                 dMax=1, uMode="min", dMode="max", speed_a=1.0, speed_b=1.0):
+                 dMax=1, uMode="min", dMode="max", speed_a=1.0, speed_d=1.0):
         """Creates 2 Attackers and 1 Defender with the following states:
            X1 position, Y1 position, X2 position, Y2 position
            The controls are the control inputs of the Attackers.
@@ -22,8 +22,7 @@ class AttackerDefender2v1:
         Args:
             x (list, optional): Initial state . Defaults to [0,0,0,0,0,0].
             uMin (list, optional): Lowerbound of user control. Defaults to [-1,-1].
-            uMax (list, optional): Upperbound of user control.
-                                   Defaults to [1,1].
+            uMax (list, optional): Upperbound of user control. Defaults to [1,1].
             dMin (list, optional): Lowerbound of disturbance to user control, . Defaults to [-0.25,-0.25].
             dMax (list, optional): Upperbound of disturbance to user control. Defaults to [0.25,0.25].
             uMode (str, optional): Accepts either "min" or "max".
@@ -32,6 +31,8 @@ class AttackerDefender2v1:
                                    Defaults to "min".
             dMode (str, optional): Accepts whether "min" or "max" and should be opposite of uMode.
                                    Defaults to "max". reach-avoid game is a min(u) max(d) game
+            speed_a (int, optional): The maximum speed of the attacker. Defaults to 1.0.
+            speed_d (int, optional): The maximum speed of the defender. Defaults to 1.0.
         """
         self.x = x
         self.uMax = uMax
@@ -47,7 +48,7 @@ class AttackerDefender2v1:
         self.dMode = dMode
         # maximum speed of attackers and defenders
         self.speed_a = speed_a
-        self.speed_d = speed_b
+        self.speed_d = speed_d
 
     def dynamics(self, t, state, uOpt, dOpt):
         # maximum velocity

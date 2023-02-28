@@ -3,7 +3,7 @@ import numpy as np
 from odp.Grid import Grid
 from odp.Shapes import *
 # Specify the  file that includes dynamic systems, AttackerDefender4D
-from MRAG.AttackerDefender1v1 import AttackerDefender4D 
+from MRAG.AttackerDefender1v1 import AttackerDefender1v1 
 # Plot options
 from odp.Plots import PlotOptions
 from odp.Plots.plotting_utilities import plot_2d, plot_isosurface
@@ -21,15 +21,15 @@ import math
 
 ##################################################### EXAMPLE 4 1v1AttackerDefender ####################################
 
-g = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([45, 45, 45, 45])) # original 45
+grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([45, 45, 45, 45])) # original 45
 
 # Define my object dynamics
-my_2agents = AttackerDefender4D(uMode="min", dMode="max")  # todo the dynamics may have some bugs
+my_2agents = AttackerDefender1v1(uMode="min", dMode="max")  # 1v1 (4 dims dynamics)
 
 # Avoid set, no constraint means inf
-obs1_attack = ShapeRectangle(g, [-0.1, -1.0, -1000, -1000], [0.1, -0.3, 1000, 1000])  # attacker stuck in obs1
-obs2_attack = ShapeRectangle(g, [-0.1, 0.30, -1000, -1000], [0.1, 0.60, 1000, 1000])  # attacker stuck in obs2
-obs3_capture = my_2agents.capture_set(g, 0.1, "capture")  # attacker being captured by defender, try different radius
+obs1_attack = ShapeRectangle(grids, [-0.1, -1.0, -1000, -1000], [0.1, -0.3, 1000, 1000])  # attacker stuck in obs1
+obs2_attack = ShapeRectangle(grids, [-0.1, 0.30, -1000, -1000], [0.1, 0.60, 1000, 1000])  # attacker stuck in obs2
+obs3_capture = my_2agents.capture_set(grids, 0.1, "capture")  # attacker being captured by defender, try different radius
 avoid_set = np.minimum(obs3_capture, np.minimum(obs1_attack, obs2_attack)) # original
 # debugging
 # avoid_set = np.minimum(obs3_capture, obs2_attack) # debug1
@@ -39,10 +39,10 @@ avoid_set = np.minimum(obs3_capture, np.minimum(obs1_attack, obs2_attack)) # ori
 # avoid_set = obs_circle # debug6
 
 # Reach set, run and see what it is!
-goal1_destination = ShapeRectangle(g, [0.6, 0.1, -1000, -1000], [0.8, 0.3, 1000, 1000])  # attacker arrives target
-goal2_escape = my_2agents.capture_set(g, 0.1, "escape")  # attacker escape from defender
-obs1_defend = ShapeRectangle(g, [-1000, -1000, -0.1, -1000], [1000, 1000, 0.1, -0.3])  # defender stuck in obs1
-obs2_defend = ShapeRectangle(g, [-1000, -1000, -0.1, 0.30], [1000, 1000, 0.1, 0.60])  # defender stuck in obs2
+goal1_destination = ShapeRectangle(grids, [0.6, 0.1, -1000, -1000], [0.8, 0.3, 1000, 1000])  # attacker arrives target
+goal2_escape = my_2agents.capture_set(grids, 0.1, "escape")  # attacker escape from defender
+obs1_defend = ShapeRectangle(grids, [-1000, -1000, -0.1, -1000], [1000, 1000, 0.1, -0.3])  # defender stuck in obs1
+obs2_defend = ShapeRectangle(grids, [-1000, -1000, -0.1, 0.30], [1000, 1000, 0.1, 0.60])  # defender stuck in obs2
 reach_set = np.minimum(np.maximum(goal1_destination, goal2_escape), np.minimum(obs1_defend, obs2_defend)) # original
 # debugging
 # reach_set = np.minimum(np.maximum(goal1_destination, goal2_escape), obs2_defend) # debug1
@@ -73,7 +73,7 @@ po = PlotOptions(do_plot=False, plot_type="2d_plot", plotDims=[0, 1], slicesCut=
 # In this example, we compute a Reach-Avoid Tube
 compMethods = {"TargetSetMode": "minVWithVTarget", "ObstacleSetMode": "maxVWithObstacle"} # original one
 # compMethods = {"TargetSetMode": "minVWithVTarget"}
-result = HJSolver(my_2agents, g, [reach_set, avoid_set], tau, compMethods, po, saveAllTimeSteps=True) # original one
+result = HJSolver(my_2agents, grids, [reach_set, avoid_set], tau, compMethods, po, saveAllTimeSteps=True) # original one
 # result = HJSolver(my_2agents, g, avoid_set, tau, compMethods, po, saveAllTimeSteps=True)
 
 print(f'The shape of the value function is {result.shape} \n')
