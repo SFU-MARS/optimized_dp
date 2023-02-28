@@ -17,6 +17,7 @@ y_d = 0.5
 x_defender, y_defender = loca2slices(x_location=x_d, y_location=y_d, slices=45)
 print(f'The defender is at the location [{x_d}, {y_d}] \n')
 V_2D = value_function[:, :, x_defender, y_defender, 0]  # 0 is reachable set, -1 is target set
+# print(f'The value function of the attacker at the location (0, 0) is {value_function[0, 0, x_defender, y_defender, 0]}. \n')
 plot_2d(grids, V_2D=V_2D)
 
 # plot value_function in 2d figure for debug
