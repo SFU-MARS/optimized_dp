@@ -34,13 +34,17 @@ obs2_a2 = ShapeRectangle(grids, [-1000, -1000, -0.1, 0.30, -1000, -1000], [1000,
 capture_a1 = agents_2v1.capture_set1(grids, 0.1, "capture")  # a1 is captured
 capture_a2 = agents_2v1.capture_set2(grids, 0.1, "capture")  # a1 is captured
 avoid_set = np.minimum(np.minimum(np.minimum(obs1_a2, obs2_a2), np.minimum(obs1_a1, obs2_a1)), np.minimum(capture_a1, capture_a2)) # is order necessary?
+# debug
+
 
 # Reach set, run and see what it is!
-goal1_destination = ShapeRectangle(grids, [0.6, 0.1, -1000, -1000], [0.8, 0.3, 1000, 1000])  # attacker arrives target
-goal2_escape = agents_2v1.capture_set(grids, 0.1, "escape")  # attacker escape from defender
-obs1_defend = ShapeRectangle(grids, [-1000, -1000, -0.1, -1000], [1000, 1000, 0.1, -0.3])  # defender stuck in obs1
-obs2_defend = ShapeRectangle(grids, [-1000, -1000, -0.1, 0.30], [1000, 1000, 0.1, 0.60])  # defender stuck in obs2
-reach_set = np.minimum(np.maximum(goal1_destination, goal2_escape), np.minimum(obs1_defend, obs2_defend)) # original
+goal1_destination = ShapeRectangle(grids, [0.6, 0.1, 0.6, 0.1, -1000, -1000], [0.8, 0.3, 0.8, 0.3, 1000, 1000])  # a1 and a2 both arrive the goal
+escape_a1 = agents_2v1.capture_set1(grids, 0.1, "escape")  # a1 escape
+escape_a2 = agents_2v1.capture_set2(grids, 0.1, "escape")  # a2 escape
+obs1_defend = ShapeRectangle(grids, [-1000, -1000, -1000, -1000, -0.1, -1000], [1000, 1000, 1000, 1000, 0.1, -0.3])  # defender stuck in obs1
+obs2_defend = ShapeRectangle(grids, [-1000, -1000, -1000, -1000, -0.1, 0.30], [1000, 1000, 1000, 1000, 0.1, 0.60])  # defender stuck in obs2
+reach_set = np.minimum(np.maximum(np.maximum(goal1_destination, escape_a1), np.maximum(goal1_destination, escape_a2)),  
+                       np.minimum(obs1_defend, obs2_defend)) 
 
 # Look-back length and time step
 lookback_length = 1.5  # try 1.5, 2.0, 2.5, 3.0, 5.0, 6.0, 8.0
