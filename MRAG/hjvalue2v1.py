@@ -63,4 +63,4 @@ result = HJSolver(agents_2v1, grids, [reach_set, avoid_set], tau, compMethods, p
 
 print(f'The shape of the value function is {result.shape} \n')
 # save the value function
-np.save('MRAG/2v1AttackDefend.npy', result)
+np.save('/localhome/hha160/optimized_dp/MRAG/2v1AttackDefend.npy', result)
