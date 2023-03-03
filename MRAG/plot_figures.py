@@ -9,7 +9,7 @@ import math
 # plot value_function in 2d figure
 # g must be the same as one in the ValueFunction.py
 grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([45, 45, 45, 45]))
-value_function = np.load('1v1AttackDefend.npy')
+value_function = np.load('MRAG/1v1AttackDefend.npy')
 print(f'The shape of the value function is {value_function.shape} \n')
 # define the locations of the defender
 x_d = -0.3

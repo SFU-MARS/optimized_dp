@@ -78,7 +78,7 @@ result = HJSolver(agents_1v1, grids, [reach_set, avoid_set], tau, compMethods, p
 
 print(f'The shape of the value function is {result.shape} \n')
 # save the value function
-np.save('1v1AttackDefend.npy', result)
+np.save('MRAG/1v1AttackDefend.npy', result)
 
 
 # # Compute spatial derivatives at every state
