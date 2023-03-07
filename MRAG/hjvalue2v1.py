@@ -22,6 +22,9 @@ import math
 ##################################################### EXAMPLE 5 2v1AttackerDefender ####################################
 
 grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 6, np.array([10, 10, 10, 10, 10, 10])) # original 45, on mars-14 20 is the upper bound
+for i, element in enumerate(grids.vs):
+    grids.vs[i] = np.float32(element)
+print(grids.vs[0].dtype)
 
 # Define my object dynamics
 agents_2v1 = AttackerDefender2v1(uMode="min", dMode="max")  # 2v1 (6 dim dynamics)
