@@ -10,6 +10,7 @@ from odp.Plots.plotting_utilities import plot_2d, plot_isosurface
 # Solver core
 from odp.solver import HJSolver, computeSpatDerivArray
 import math
+import os, psutil
 
 """ USER INTERFACES
 - Define grid
@@ -21,10 +22,14 @@ import math
 
 ##################################################### EXAMPLE 5 2v1AttackerDefender ####################################
 
-grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 6, np.array([10, 10, 10, 10, 10, 10])) # original 45, on mars-14 20 is the upper bound
-for i, element in enumerate(grids.vs):
-    grids.vs[i] = np.float32(element)
-print(grids.vs[0].dtype)
+grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 6, np.array([30, 30, 30, 30, 30, 30])) # original 45, on mars-14 20 is the upper bound
+# for i, element in enumerate(grids.vs):
+#     grids.vs[i] = np.float32(element)
+# print(grids.vs[0].dtype)
+
+# check the used RAM 
+process = psutil.Process(os.getpid())
+print("Gigabytes consumed {}".format(process.memory_info().rss/1e9))  # in bytes
 
 # Define my object dynamics
 agents_2v1 = AttackerDefender2v1(uMode="min", dMode="max")  # 2v1 (6 dim dynamics)
@@ -62,7 +67,12 @@ po = PlotOptions(do_plot=False, plot_type="2d_plot", plotDims=[0, 1], slicesCut=
 
 # In this example, we compute a Reach-Avoid Tube
 compMethods = {"TargetSetMode": "minVWithVTarget", "ObstacleSetMode": "maxVWithObstacle"} # original one
-result = HJSolver(agents_2v1, grids, [reach_set, avoid_set], tau, compMethods, po, saveAllTimeSteps=True) # original one
+
+# check the used RAM 
+process = psutil.Process(os.getpid())
+print("Gigabytes consumed {}".format(process.memory_info().rss/1e9))  # in bytes
+
+result = HJSolver(agents_2v1, grids, [reach_set, avoid_set], tau, compMethods, po, saveAllTimeSteps=False) # original one
 
 print(f'The shape of the value function is {result.shape} \n')
 # save the value function

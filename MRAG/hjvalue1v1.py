@@ -73,7 +73,7 @@ po = PlotOptions(do_plot=False, plot_type="2d_plot", plotDims=[0, 1], slicesCut=
 # In this example, we compute a Reach-Avoid Tube
 compMethods = {"TargetSetMode": "minVWithVTarget", "ObstacleSetMode": "maxVWithObstacle"} # original one
 # compMethods = {"TargetSetMode": "minVWithVTarget"}
-result = HJSolver(agents_1v1, grids, [reach_set, avoid_set], tau, compMethods, po, saveAllTimeSteps=True) # original one
+result = HJSolver(agents_1v1, grids, [reach_set, avoid_set], tau, compMethods, po, saveAllTimeSteps=False) # original one
 # result = HJSolver(my_2agents, g, avoid_set, tau, compMethods, po, saveAllTimeSteps=True)
 
 print(f'The shape of the value function is {result.shape} \n')
