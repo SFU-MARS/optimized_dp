@@ -17,8 +17,8 @@ y_d = 0.5
 x_defender, y_defender = loca2slices(x_location=x_d, y_location=y_d, slices=45)
 x1, y1 = loca2slices(x_location=0, y_location=0, slices=45)
 print(f'The defender is at the location [{x_d}, {y_d}] \n')
-V_2D = value_function[:, :, x_defender, y_defender, 0]  # 0 is reachable set, -1 is target set
-print(f'The value function of the attacker at the location (0, 0) is {value_function[x1, y1, x_defender, y_defender, 0]}. \n')
+V_2D = value_function[:, :, x_defender, y_defender]  # , 0] if the saveAllTimeSteps=True. 0 is reachable set, -1 is target set
+print(f'The value function of the attacker at the location (0, 0) is {value_function[x1, y1, x_defender, y_defender]}. \n')
 print(f'The shape of the V_2D is {V_2D.shape}. \n')
 plot_2d(grids, V_2D=V_2D)
 
