@@ -72,12 +72,31 @@ for j in range(num_defender):
 model.objective = maximize(xsum(e[i][j] for j in range(num_defender) for i in range(num_attacker)))
 
 # mip solve
-model.optimize()
+# model.optimize()
 
 # check results
-selected = []
-for i in range(num_attacker):
-    for j in range(num_defender):
-        if e[i][j].x >= 0.5:
-            selected.append((i, j))
-print(selected)
+# selected = []
+# for i in range(num_attacker):
+#     for j in range(num_defender):
+#         if e[i][j].x >= 0.5:
+#             selected.append((i, j))
+# print(selected)
+
+
+model.max_gap = 0.05
+
+status = model.optimize(max_seconds=300)
+if status == OptimizationStatus.OPTIMAL:
+    print('optimal solution cost {} found'.format(model.objective_value))
+elif status == OptimizationStatus.FEASIBLE:
+    print('sol.cost {} found, best possible: {} '.format(model.objective_value, model.objective_bound))
+elif status == OptimizationStatus.NO_SOLUTION_FOUND:
+    print('no feasible solution found, lower bound is: {} '.format(model.objective_bound))
+if status == OptimizationStatus.OPTIMAL or status == OptimizationStatus.FEASIBLE:
+    print('Solution:')
+    selected = []
+    for i in range(num_attacker):
+        for j in range(num_defender):
+            if e[i][j].x >= 0.9:
+                selected.append((i, j))
+    print(selected)
