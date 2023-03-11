@@ -1,5 +1,4 @@
 from mip import *
-from sys import stdout as out
 
 # information of the reach-avoid game
 num_attacker = 3
@@ -72,19 +71,7 @@ for j in range(num_defender):
 model.objective = maximize(xsum(e[i][j] for j in range(num_defender) for i in range(num_attacker)))
 
 # mip solve
-# model.optimize()
-
-# check results
-# selected = []
-# for i in range(num_attacker):
-#     for j in range(num_defender):
-#         if e[i][j].x >= 0.5:
-#             selected.append((i, j))
-# print(selected)
-
-
 model.max_gap = 0.05
-
 status = model.optimize(max_seconds=300)
 if status == OptimizationStatus.OPTIMAL:
     print('optimal solution cost {} found'.format(model.objective_value))
