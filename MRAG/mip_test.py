@@ -12,6 +12,7 @@ P, Pc, Pas = [], [], []
 for j in range(num_defender):
     P.append([])
 # print(P)
+# add constraints, this step is replaced by checking value function in the future
 P[0].append((0, 1))
 P[0].append((0, 2))
 P[1].append((0, 2))
@@ -29,6 +30,7 @@ for j in range(num_defender):
 I, Ias, Ic = [], [], []
 for j in range(num_defender):
     I.append([])
+# add constraints, this step is replaced by checking value function in the future
 I[0].append(0)
 I[0].append(1)
 I[0].append(2)
