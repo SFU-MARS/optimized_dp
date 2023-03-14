@@ -10,6 +10,7 @@ from odp.TimeToReach import TTR_3D, TTR_4D, TTR_5D
 
 # Value Iteration library
 from odp.valueIteration import value_iteration_3D, value_iteration_4D, value_iteration_5D, value_iteration_6D
+import os, psutil
 
 def solveValueIteration(MDP_obj):
     print("Welcome to optimized_dp \n")
@@ -114,9 +115,15 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
 
         init_value = np.maximum(target, -constraint_i)
 
+    process = psutil.Process(os.getpid())
+    print("Gigabytes consumed {}".format(process.memory_info().rss/1e9))  # in bytes
+
     # Tensors input to our computation graph
     V_0 = hcl.asarray(init_value)
     V_1 = hcl.asarray(np.zeros(tuple(grid.pts_each_dim)))
+
+    process = psutil.Process(os.getpid())
+    print("Gigabytes consumed {}".format(process.memory_info().rss/1e9))  # in bytes
 
     # Check which target set or initial value set
     if compMethod["TargetSetMode"] != "minVWithVTarget" and compMethod["TargetSetMode"] != "maxVWithVTarget":
@@ -124,8 +131,13 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
     else:
         l0 = hcl.asarray(target)
 
+    del init_value
     # For debugging purposes
-    probe = hcl.asarray(np.zeros(tuple(grid.pts_each_dim)))
+    if grid.dims == 4:
+        probe = hcl.asarray(np.zeros(tuple(grid.pts_each_dim)))
+
+    process = psutil.Process(os.getpid())
+    print("Gigabytes consumed {}".format(process.memory_info().rss/1e9))  # in bytes
 
     # Array for each state values
     list_x1 = np.reshape(grid.vs[0], grid.pts_each_dim[0])
@@ -177,6 +189,9 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
     tNow = tau[0]
     print("Started running\n")
 
+    process = psutil.Process(os.getpid())
+    print("Gigabytes consumed {}".format(process.memory_info().rss/1e9))  # in bytes
+
     # Backward reachable set/tube will be computed over the specified time horizon
     # Or until convergent ( which ever happens first )
     for i in range (1, len(tau)):
@@ -204,6 +219,8 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
                 solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6, t_minh, l0)
 
             tNow = t_minh.asnumpy()[0]
+            process = psutil.Process(os.getpid())
+            print("Gigabytes consumed {}".format(process.memory_info().rss/1e9))  # in bytes
 
             # Calculate computation time
             execution_time += time.time() - start
@@ -214,6 +231,7 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
                     tmp_val = np.maximum(V_0.asnumpy(), -constraint_i)
                 elif compMethod["ObstacleSetMode"] == "minVWithObstacle":
                     tmp_val = np.minimum(V_0.asnumpy(), -constraint_i)
+
                 # Update final result
                 V_1 = hcl.asarray(tmp_val)
                 # Update input for next iteration
@@ -222,6 +240,8 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
             # Some information printin
             print(t_minh)
             print("Computational time to integrate (s): {:.5f}".format(time.time() - start))
+            process = psutil.Process(os.getpid())
+            print("Gigabytes consumed {}".format(process.memory_info().rss/1e9))  # in bytes
 
             if untilConvergent is True:
                 # Compare difference between V_{t-1} and V_{t} and choose the max changes
