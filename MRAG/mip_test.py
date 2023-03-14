@@ -20,7 +20,6 @@ for i in range(num_attacker):
     for j in range(i+1, num_attacker):
         Pas.append((i, j))
 # print(Pas)
-Pc = []
 for j in range(num_defender):
     Pc.append(list(set(Pas).difference(set(P[j]))))
 # print(Pc)
@@ -82,8 +81,9 @@ elif status == OptimizationStatus.NO_SOLUTION_FOUND:
 if status == OptimizationStatus.OPTIMAL or status == OptimizationStatus.FEASIBLE:
     print('Solution:')
     selected = []
-    for i in range(num_attacker):
-        for j in range(num_defender):
-            if e[i][j].x >= 0.9:
-                selected.append((i, j))
+    for j in range(num_defender):
+            selected.append([])
+            for i in range(num_attacker):
+                if e[i][j].x >= 0.9:
+                    selected[j].append((i, j))
     print(selected)

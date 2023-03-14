@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from odp.Plots.plotting_utilities import plot_2d, plot_2d_with_avoid
 from odp.Grid import Grid
-from utilities import loca2slices, check
+from utilities import lo2slice1v1, check1v1
 from odp.solver import HJSolver, computeSpatDerivArray
 import math
 
@@ -14,8 +14,8 @@ print(f'The shape of the value function is {value_function.shape} \n')
 # define the locations of the defender
 x_d = -0.3
 y_d = 0.5
-x_defender, y_defender = loca2slices(x_location=x_d, y_location=y_d, slices=45)
-x1, y1 = loca2slices(x_location=0, y_location=0, slices=45)
+x_defender, y_defender = lo2slice1v1(x_location=x_d, y_location=y_d, slices=45)
+x1, y1 = lo2slice1v1(x_location=0, y_location=0, slices=45)
 print(f'The defender is at the location [{x_d}, {y_d}] \n')
 V_2D = value_function[:, :, x_defender, y_defender]  # , 0] if the saveAllTimeSteps=True. 0 is reachable set, -1 is target set
 print(f'The value function of the attacker at the location (0, 0) is {value_function[x1, y1, x_defender, y_defender]}. \n')
