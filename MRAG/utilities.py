@@ -146,3 +146,5 @@ def mip_solver(num_attacker, num_defender, Pc, Ic):
                 if e[i][j].x >= 0.9:
                     selected[j].append((i, j))
         print(selected)
+    return selected
+        # todo: how to tell the capture is used by 2v1 or 1v1?
