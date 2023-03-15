@@ -13,7 +13,7 @@ def state_value(V, x1, y1, x2, y2, slices=45):
     # (x1, y1) and (x2, y2) are locations
     x1_slice, y1_slice = lo2slice1v1(x1, y1, slices)
     x2_slice, y2_slice = lo2slice1v1(x2, y2, slices)
-    value = V[x1_slice, y1_slice, x2_slice, y2_slice, 0]  # 0 means the final tube
+    value = V[x1_slice, y1_slice, x2_slice, y2_slice]  # 0 means the final tube
     return value
 
 
@@ -59,25 +59,18 @@ def capture_pair(attackers, defenders, value2v1):
     # defenders is a list which contains positions of all defenders in the form of set: [(d1x, d1y),... (dNx, dNy)]
     # return is the capture pairs list P = [[(ai, ak)], ..., [()]]
     num_attacker, num_defender = len(attackers), len(defenders)
-    P, Pc, Pas = [], [], []
-    # generate P
+    Pc = []
+    # generate Pc
     for j in range(num_defender):
-        P.append([])
+        Pc.append([])
         djx, djy = defenders[j]
         for i in range(num_attacker):
             for k in range(i+1, num_attacker):
                 aix, aiy = attackers[i]
                 akx, aky = attackers[k]
                 joint_states = (aix, aiy, akx, aky, djx, djy)
-                if check2v1(value2v1, joint_states):
-                    P[j].append((i, k))
-    # generata Pas
-    for i in range(num_attacker):
-        for j in range(i+1, num_attacker):
-            Pas.append((i, j))
-    # generate Pc
-    for j in range(num_defender):
-        Pc.append(list(set(Pas).difference(set(P[j]))))
+                if not check2v1(value2v1, joint_states):
+                    Pc[j].append((i, k))
     return Pc
 
 # generate the capture individual list I and the capture individual complement list Ic
@@ -86,22 +79,16 @@ def capture_individual(attackers, defenders, value1v1):
     # defenders is a list which contains positions of all defenders in the form of set: [(d1x, d1y),... (dNx, dNy)]
     # return is the capture individuals list I = [[a1, ai], ..., []]
     num_attacker, num_defender = len(attackers), len(defenders)
-    I, Ic, Ias = [], [], []
+    Ic = []
     # generate I
     for j in range(num_defender):
-        I.append([])
+        Ic.append([])
         djx, djy = defenders[j]
         for i in range(num_attacker):
             aix, aiy = attackers[i]
             joint_states = (aix, aiy, djx, djy)
-            if check1v1(value1v1, joint_states):
-                I[j].append(i)
-    # generate Ias
-    for i in range(num_attacker):
-        Ias.append(i)
-    # generate Ic
-    for j in range(num_defender):
-        Ic.append(list(set(Ias).difference(set(I[j]))))
+            if not check1v1(value1v1, joint_states):
+                Ic[j].append(i)
     return Ic
 
 # set up and solve the mixed integer programming question
@@ -147,4 +134,3 @@ def mip_solver(num_attacker, num_defender, Pc, Ic):
                     selected[j].append((i, j))
         print(selected)
     return selected
-        # todo: how to tell the capture is used by 2v1 or 1v1?
