@@ -1,45 +1,67 @@
 import numpy as np
+import math
 from mip import *
 
 # locations 2 slices
-def lo2slice1v1(x_location, y_location, slices=45):
-    x_slice = np.round((1 + x_location) * (slices - 1) / 2)
-    y_slice = np.round((1 + y_location) * (slices - 1) / 2)
-    return int(x_slice), int(y_slice)
+# def lo2slice1v1(x_location, y_location, slices=45):
+#     x_slice = np.round((1 + x_location) * (slices - 1) / 2)
+#     y_slice = np.round((1 + y_location) * (slices - 1) / 2)
+#     return int(x_slice), int(y_slice)
 
+def lo2slice1v1(joint_states1v1, slices=45):
+    """ Returns a tuple of the closest index of each state in the grid
 
-# calculate the value function of the current state
-def state_value(V, x1, y1, x2, y2, slices=45):
-    # (x1, y1) and (x2, y2) are locations
-    x1_slice, y1_slice = lo2slice1v1(x1, y1, slices)
-    x2_slice, y2_slice = lo2slice1v1(x2, y2, slices)
-    value = V[x1_slice, y1_slice, x2_slice, y2_slice]  # 0 means the final tube
-    return value
-
+    Args:
+        joint_states2v1 (tuple): state of (a1x, a1y, a2x, a2y, d1x, d1y)
+        slices (int): number of grids, default 30
+    """
+    index = []
+    grid_points = np.linspace(-1, +1, num=slices)
+    for i, s in enumerate(joint_states1v1):
+        idx = np.searchsorted(grid_points, s)
+        if idx > 0 and (
+            idx == len(grid_points)
+            or math.fabs(s - grid_points[idx - 1])
+            < math.fabs(s - grid_points[idx])
+        ):
+            index.append(idx - 1)
+        else:
+            index.append(idx)
+    return tuple(index)
 
 # check in the current state, the attacker is captured by the defender or not
 def check1v1(value1v1, joint_states1v1):
     # inputs:
     # value1v1: the calculated HJ value function of the 1v1 game
-    # joint_states1v1: a set contains (a1, d1)
-    a1x, a1y, d1x, d1y = joint_states1v1
-    flag = state_value(value1v1, a1x, a1y, d1x, d1y)
+    # joint_states1v1: a tuple contains (a1, d1)
+    a1x_slice, a1y_slice, d1x_slice, d1y_slice = lo2slice1v1(joint_states1v1, slices=45)
+    flag = value1v1[a1x_slice, a1y_slice, d1x_slice, d1y_slice]
     if flag > 0:
-        return 1 # d1 could capture a1
+        return 1  # d1 could capture (a1, a2)
     else:
         return 0
 
 # localizations to silces in 2v1 game
 def lo2slice2v1(joint_states2v1, slices=30):
-    # the input of the joint_states2v1 should be a set (a1x, a1y, a2x, a2y, d1x, d1y)
-    a1x, a1y, a2x, a2y, d1x, d1y = joint_states2v1
-    a1x_slice = int(np.round((1 + a1x) * (slices - 1) / 2)) 
-    a1y_slice = int(np.round((1 + a1y) * (slices - 1) / 2)) 
-    a2x_slice = int(np.round((1 + a2x) * (slices - 1) / 2))
-    a2y_slice = int(np.round((1 + a2y) * (slices - 1) / 2))
-    d1x_slice = int(np.round((1 + d1x) * (slices - 1) / 2))
-    d1y_slice = int(np.round((1 + d1y) * (slices - 1) / 2))
-    return a1x_slice, a1y_slice, a2x_slice, a2y_slice, d1x_slice, d1y_slice
+    """ Returns a tuple of the closest index of each state in the grid
+
+    Args:
+        joint_states2v1 (tuple): state of (a1x, a1y, a2x, a2y, d1x, d1y)
+        slices (int): number of grids, default 30
+    """
+    index = []
+    grid_points = np.linspace(-1, +1, num=slices)
+    for i, s in enumerate(joint_states2v1):
+        idx = np.searchsorted(grid_points, s)
+        if idx > 0 and (
+            idx == len(grid_points)
+            or math.fabs(s - grid_points[idx - 1])
+            < math.fabs(s - grid_points[idx])
+        ):
+            index.append(idx - 1)
+        else:
+            index.append(idx)
+    return tuple(index)
 
 # check the capture relationship in 2v1 game
 def check2v1(value2v1, joint_states2v1):

@@ -127,3 +127,44 @@ def plot_2d_with_avoid(grid, V_2D):
     # print(f'The shape of y after flatten is {mg_Y.flatten().shape}')
     # print(f'The shape of z after flatten is {V_2D.flatten().shape}')
     print("Please check the plot on your browser.")
+
+def plot_game(grid, V_2D, attackers, defenders):
+    # based on the plot_2d, add the attacker and the defender 
+    dims_plot = [0, 1]
+    dim1, dim2 = dims_plot[0], dims_plot[1]
+    complex_x = complex(0, grid.pts_each_dim[dim1])
+    complex_y = complex(0, grid.pts_each_dim[dim2])
+    mg_X, mg_Y = np.mgrid[grid.min[dim1]:grid.max[dim1]: complex_x, grid.min[dim2]:grid.max[dim2]: complex_y]
+    x_attackers = [a[0] for a in attackers]
+    y_attackers = [a[1] for a in attackers]
+    x_defenders = [d[0] for d in defenders]
+    y_defenders = [d[1] for d in defenders]
+    print("Plotting beautiful 2D plots. Please wait\n")
+    fig = go.Figure(data=go.Contour(
+        x=mg_X.flatten(),
+        y=mg_Y.flatten(),
+        z=V_2D.flatten(),
+        zmin=0.0,
+        ncontours=1,
+        contours_coloring = 'lines',
+        line_width = 1.5,
+        line_color = 'Red',
+        zmax=0.0,
+    ), layout=Layout(plot_bgcolor='rgba(0,0,0,0)')) #,paper_bgcolor='rgba(0,0,0,0)'
+    # plot attackers
+    fig.add_trace(go.Scatter(x=x_attackers, y=y_attackers, mode="markers", name='attacker', marker=dict(symbol="triangle-up", size=10)))
+    # plot defenders
+    fig.add_trace(go.Scatter(x=x_defenders, y=y_defenders, mode="markers", name='defender', marker=dict(symbol="square", size=10, color='blue')))
+    # plot obstacles
+    fig.add_shape(type='rect', x0=-0.1, y0=0.3, x1=0.1, y1=0.6, line=dict(color='black', width=2.0))
+    fig.add_shape(type='line', x0=-0.1, y0=-1.0, x1=-0.1, y1=-0.3, line=dict(color='black', width=2.0))
+    fig.add_shape(type='line', x0=0.1, y0=-1.0, x1=0.1, y1=-0.3, line=dict(color='black', width=2.0))
+    fig.add_shape(type='line', x0=-0.1, y0=-0.3, x1=0.1, y1=-0.3, line=dict(color='black', width=2.0))
+    # plot target
+    fig.add_shape(type='rect', x0=0.6, y0=0.1, x1=0.8, y1=0.3, line=dict(color='purple', width=2.0))
+    # figure settings
+    fig.update_layout(autosize=False, width=500, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), paper_bgcolor="White") # LightSteelBlue
+    fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 1.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
+    fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 1.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
+    fig.show()
+    print("Please check the plot on your browser.")
