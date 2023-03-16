@@ -34,8 +34,8 @@ print(f'The shape of the value function is {value2v1.shape} \n')
 # define the joint states of (a1x, a1y, a2x, a2y, d1x, d1y)
 a1x = 0
 a1y = 0
-a2x = -0.3
-a2y = -0.5
+a2x = 0.7
+a2y = 0.2
 d1x = -0.3
 d1y = 0.5
 jointstates2v1 = (a1x, a1y, a2x, a2y, d1x, d1y)
