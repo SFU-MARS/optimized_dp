@@ -1,18 +1,13 @@
 import numpy as np
 import math
 from mip import *
-
-# locations 2 slices
-# def lo2slice1v1(x_location, y_location, slices=45):
-#     x_slice = np.round((1 + x_location) * (slices - 1) / 2)
-#     y_slice = np.round((1 + y_location) * (slices - 1) / 2)
-#     return int(x_slice), int(y_slice)
+from odp.solver import computeSpatDerivArray
 
 def lo2slice1v1(joint_states1v1, slices=45):
     """ Returns a tuple of the closest index of each state in the grid
 
     Args:
-        joint_states2v1 (tuple): state of (a1x, a1y, a2x, a2y, d1x, d1y)
+        joint_states1v1 (tuple): state of (a1x, a1y, d1x, d1y)
         slices (int): number of grids, default 30
     """
     index = []
@@ -31,9 +26,12 @@ def lo2slice1v1(joint_states1v1, slices=45):
 
 # check in the current state, the attacker is captured by the defender or not
 def check1v1(value1v1, joint_states1v1):
-    # inputs:
-    # value1v1: the calculated HJ value function of the 1v1 game
-    # joint_states1v1: a tuple contains (a1, d1)
+    """ Returns a binary value, 1 means the defender could capture the attacker
+
+    Args:
+        value1v1 (ndarray): 1v1 HJ value function
+        joint_states1v1 (tuple): state of (a1x, a1y, d1x, d1y)
+    """
     a1x_slice, a1y_slice, d1x_slice, d1y_slice = lo2slice1v1(joint_states1v1, slices=45)
     flag = value1v1[a1x_slice, a1y_slice, d1x_slice, d1y_slice]
     if flag > 0:
@@ -65,9 +63,12 @@ def lo2slice2v1(joint_states2v1, slices=30):
 
 # check the capture relationship in 2v1 game
 def check2v1(value2v1, joint_states2v1):
-    # inputs:
-    # value2v1: the calculated HJ value function of the 2v1 game
-    # joint_states2v1: a set contains all locations within the range of the game
+    """ Returns a binary value, 1 means the defender could capture two attackers
+
+    Args:
+        value2v1 (ndarray): 2v1 HJ value function
+        joint_states2v1 (tuple): state of (a1x, a1y, a2x, a2y, d1x, d1y)
+    """
     a1x_slice, a1y_slice, a2x_slice, a2y_slice, d1x_slice, d1y_slice = lo2slice2v1(joint_states2v1)
     flag = value2v1[a1x_slice, a1y_slice, a2x_slice, a2y_slice, d1x_slice, d1y_slice]
     if flag > 0:
@@ -77,9 +78,13 @@ def check2v1(value2v1, joint_states2v1):
 
 # generate the capture pair list P and the capture pair complement list Pc
 def capture_pair(attackers, defenders, value2v1):
-    # attackers is a list which contains positions of all attackers in the form of set: [(a1x, a1y),... (aMx, aMy)]
-    # defenders is a list which contains positions of all defenders in the form of set: [(d1x, d1y),... (dNx, dNy)]
-    # return is the capture pairs list P = [[(ai, ak)], ..., [()]]
+    """ Returns a list Pc that contains all pairs of attackers that the defender couldn't capture, [[(a1, a2), (a2, a3)], ...]
+
+    Args:
+        attackers (list): positions (set) of all attackers, [(a1x, a1y), ...]
+        defenders (list): positions (set) of all defenders, [(d1x, d1y), ...]
+        value2v1 (ndarray): 2v1 HJ value function
+    """
     num_attacker, num_defender = len(attackers), len(defenders)
     Pc = []
     # generate Pc
@@ -97,9 +102,13 @@ def capture_pair(attackers, defenders, value2v1):
 
 # generate the capture individual list I and the capture individual complement list Ic
 def capture_individual(attackers, defenders, value1v1):
-    # attackers is a list which contains positions of all attackers in the form of set: [(a1x, a1y),... (aMx, aMy)]
-    # defenders is a list which contains positions of all defenders in the form of set: [(d1x, d1y),... (dNx, dNy)]
-    # return is the capture individuals list I = [[a1, ai], ..., []]
+    """ Returns a list Ic that contains all attackers that the defender couldn't capture, [[a1, a3], ...]
+
+    Args:
+        attackers (list): positions (set) of all attackers, [(a1x, a1y), ...]
+        defenders (list): positions (set) of all defenders, [(d1x, d1y), ...]
+        value2v1 (ndarray): 1v1 HJ value function
+    """
     num_attacker, num_defender = len(attackers), len(defenders)
     Ic = []
     # generate I
@@ -115,6 +124,14 @@ def capture_individual(attackers, defenders, value1v1):
 
 # set up and solve the mixed integer programming question
 def mip_solver(num_attacker, num_defender, Pc, Ic):
+    """ Returns a list selected that contains all allocated attackers that the defender could capture, [[a1, a3], ...]
+
+    Args:
+        num_attackers (int): the number of attackers
+        num_defenders (int): the number of defenders
+        Pc (list): constraint pairs of attackers of every defender
+        Ic (list): constraint individual attacker of every defender
+    """
     # initialize the solver
     model = Model(solver_name=CBC) # use GRB for Gurobi, CBC default
     e = [[model.add_var(var_type=BINARY) for j in range(num_defender)] for i in range(num_attacker)] # e[attacker index][defender index]
@@ -153,6 +170,20 @@ def mip_solver(num_attacker, num_defender, Pc, Ic):
             selected.append([])
             for i in range(num_attacker):
                 if e[i][j].x >= 0.9:
-                    selected[j].append((i, j))
+                    selected[j].append(i)
         print(selected)
     return selected
+
+def spatial_derivatives(grids, value_function, accuracy="low"):
+    """ Returns a tuple of derivatives that contain derivatives of all dimensions
+
+    Args:
+        grids (class): the initial set up of the HJ problem
+        value_function (ndarray): the calculated HJ value function
+        accuracy (string): the calculation accuracy, default "low"
+    """
+    dim = len(grids.grid_points)
+    derivatives = []
+    for i in range(1, dim+1):
+        derivatives.append(computeSpatDerivArray(grids, value_function, deriv_dim=i, accuracy=accuracy))
+    return tuple(derivatives)
