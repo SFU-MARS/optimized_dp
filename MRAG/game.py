@@ -24,4 +24,4 @@ value2v1 = np.load('MRAG/2v1AttackDefend.npy')
 Pc = capture_pair(attackers0, defenders0, value2v1)
 print(Pc)
 
-selected = mip_solver(num_attacker=4, num_defender=2, Pc=Pc, Ic=Ic)
+selected = mip_solver(num_attacker, num_defender, Pc, Ic)
