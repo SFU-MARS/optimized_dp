@@ -1,8 +1,8 @@
 from mip import *
 
 # information of the reach-avoid game
-num_attacker = 3
-num_defender = 2
+# num_attacker = 3
+# num_defender = 2
 
 # # establish P, Pas and Pc
 # # pay attention to the order of initialization
@@ -91,3 +91,24 @@ num_defender = 2
 # current_attackers = [[(0.0, 0.0)], [(0.0, 0.8)], [(-0.5, 0.0)], [(0.5, -0.5)]]
 # print(current_attackers[1][0])
 # print(len(current_attackers))
+
+attackers_initials = [(0.0, 0.0), (0.0, 0.8), (-0.5, 0.0), (0.5, -0.5)]
+defenders_initials = [(0.3, 0.5), (-0.3, 0.5)]
+num_attacker = len(attackers_initials)
+num_defender = len(defenders_initials)
+attackers_trajectory  = [[] for _ in range(num_attacker)]
+defenders_trajectory = [[] for _ in range(num_defender)]
+capture_decisions = []
+
+# simulation begins
+current_attackers = attackers_initials
+current_defenders = defenders_initials
+
+newa_positions = [(10, 10), (10, 10), (10, 10), (10, 10)]
+
+for i in range(num_attacker):
+    attackers_trajectory[i].append(newa_positions[i])
+current_attackers = newa_positions
+
+print(current_attackers)
+print(attackers_trajectory)

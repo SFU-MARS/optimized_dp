@@ -187,3 +187,35 @@ def spatial_derivatives(grids, value_function, accuracy="low"):
     for i in range(1, dim+1):
         derivatives.append(computeSpatDerivArray(grids, value_function, deriv_dim=i, accuracy=accuracy))
     return tuple(derivatives)
+
+def add_trajectory(trajectories, next_positions):
+    """Return a updated trajectories (list) that contain trajectories of agents (attackers or defenders)
+
+    Args: 
+        trajectories (list): [[(a1x1, a1y1), ...], ...]
+        next_positions (list): [(a1xi, a1yi), ...]
+    """
+    pass
+
+def next_positions(current_positions, controls):
+    """Return the next positions (list) of attackers or defenders
+
+    Arg:
+    current_positions (list): [(), (),...]
+    controls (list): [(), (),...]
+    """
+    temp = []
+    num = len(controls)
+    for i in range(num):
+        temp.append((current_positions[i][0]+controls[i][0], current_positions[i][1]+controls[i][1]))
+    return temp
+
+def compute_control(grids, value_function, joint_states):
+    """Return a tuple of 2-dimensional control inputs of the attacker or defender based on the value function
+
+    Args:
+    grids (class): the corresponding Grid instance
+    value_function (ndarray): 1v1 or 2v1 HJ reachability value function
+    joint_states (tuple): the corresponding needed positions of the defender and the attacker(s), (a1x, a1y, (a2x, a2y,) d1x, d1y)
+    """
+    pass
