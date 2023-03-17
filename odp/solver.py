@@ -349,6 +349,9 @@ def computeSpatDerivArray(grid, V, deriv_dim, accuracy="low"):
     if grid.dims == 5:
         compute_SpatDeriv = graph_5D(None, grid, "None", accuracy,
                                      generate_SpatDeriv=True, deriv_dim=deriv_dim)
+    if grid.dims == 6:
+        compute_SpatDeriv = graph_6D(None, grid, "None", accuracy,
+                                     generate_SpatDeriv=True, deriv_dim=deriv_dim)
 
     compute_SpatDeriv(V_0, spatial_deriv)
     return spatial_deriv.asnumpy()

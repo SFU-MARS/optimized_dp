@@ -146,9 +146,10 @@ def plot_game(grid, V_2D, attackers, defenders):
         z=V_2D.flatten(),
         zmin=0.0,
         ncontours=1,
-        contours_coloring = 'lines',
+        contours_coloring = 'none', # former: lines 
+        name= "reachable set", # zero level
         line_width = 1.5,
-        line_color = 'Red',
+        line_color = 'magenta',
         zmax=0.0,
     ), layout=Layout(plot_bgcolor='rgba(0,0,0,0)')) #,paper_bgcolor='rgba(0,0,0,0)'
     # plot attackers
@@ -166,5 +167,23 @@ def plot_game(grid, V_2D, attackers, defenders):
     fig.update_layout(autosize=False, width=500, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), paper_bgcolor="White") # LightSteelBlue
     fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 1.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
     fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 1.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
+    fig.show()
+    print("Please check the plot on your browser.")
+
+def plot_original(grid, V_2D):
+    dims_plot = [0, 1]
+    dim1, dim2 = dims_plot[0], dims_plot[1]
+    complex_x = complex(0, grid.pts_each_dim[dim1])
+    complex_y = complex(0, grid.pts_each_dim[dim2])
+    mg_X, mg_Y = np.mgrid[grid.min[dim1]:grid.max[dim1]: complex_x, grid.min[dim2]:grid.max[dim2]: complex_y]
+    print("Plotting beautiful 2D plots. Please wait\n")
+    fig = go.Figure(data=go.Contour(
+        x=mg_X.flatten(),
+        y=mg_Y.flatten(),
+        z=V_2D.flatten(),
+        zmin=0.0,
+        ncontours=1,
+        zmax=0.0,
+    ))
     fig.show()
     print("Please check the plot on your browser.")

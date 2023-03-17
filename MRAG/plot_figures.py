@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from odp.Plots.plotting_utilities import plot_2d, plot_game
+from odp.Plots.plotting_utilities import plot_2d, plot_game, plot_original
 from odp.Grid import Grid
 from utilities import lo2slice1v1, lo2slice2v1
 from odp.solver import HJSolver, computeSpatDerivArray
@@ -46,5 +46,5 @@ a1x_slice, a1y_slice, a2x_slice, a2y_slice, d1x_slice, d1y_slice = lo2slice2v1(j
 value_function2v1 = value2v1[:, :, a2x_slice, a2y_slice, d1x_slice, d1y_slice] 
 print("Min value of the array {}".format(np.min(value_function2v1)))
 print(f'The shape of the 2v1 value function is {value_function2v1.shape}. \n')
-plot_2d(grid2v1, value_function2v1)
+# plot_2d(grid2v1, value_function2v1)
 plot_game(grid2v1, value_function2v1, attackers, defenders)
