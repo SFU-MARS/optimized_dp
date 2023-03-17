@@ -8,7 +8,7 @@ defenders0 = [(0.3, 0.5), (-0.3, 0.5)]
 num_attacker = len(attackers0)
 num_defender = len(defenders0)
 
-attackers = [AttackerDefender1v1() for _ in range(num_attacker)]
+# attackers = [AttackerDefender1v1() for _ in range(num_attacker)]
 
 
 # test: 1v1
