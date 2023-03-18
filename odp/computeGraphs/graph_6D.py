@@ -6,7 +6,7 @@ from odp.spatialDerivatives.second_orderENO6D import *
 ########################## 6D graph definition ########################
 
 # Note that t has 2 elements t1, t2
-def graph_6D(my_object, g, compMethod, accuracy):
+def graph_6D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv_dim=1):
     V_f = hcl.placeholder(tuple(g.pts_each_dim), name="V_f", dtype=hcl.Float())
     V_init = hcl.placeholder(tuple(g.pts_each_dim), name="V_init", dtype=hcl.Float())
     l0 = hcl.placeholder(tuple(g.pts_each_dim), name="l0", dtype=hcl.Float())
@@ -426,19 +426,61 @@ def graph_6D(my_object, g, compMethod, accuracy):
         # Copy V_new to V_init
         hcl.update(V_init, lambda i, j, k, l, m, n: V_new[i, j, k, l, m, n])
         return result
+    
+    def returnDerivative(V_array, Deriv_array):
+        with hcl.Stage("ComputeDeriv"):
+            with hcl.for_(0, V_array.shape[0], name="i") as i:
+                with hcl.for_(0, V_array.shape[1], name="j") as j:
+                    with hcl.for_(0, V_array.shape[2], name="k") as k:
+                        with hcl.for_(0, V_array.shape[3], name="l") as l:
+                            with hcl.for_(0, V_array.shape[4], name="m") as m:
+                                with hcl.for_(0, V_array.shape[5], name="n") as n:
+                                    dV_dx_L = hcl.scalar(0, "dV_dx_L")
+                                    dV_dx_R = hcl.scalar(0, "dV_dx_R")
+                                    if accuracy == "low":
+                                        if deriv_dim == 1:
+                                            dV_dx_L[0], dV_dx_R[0] = spa_derivX1_6d(i, j, k, l, m, n, V_init, g)
+                                        if deriv_dim == 2:
+                                            dV_dx_L[0], dV_dx_R[0] = spa_derivX2_6d(i, j, k, l, m, n, V_init, g)
+                                        if deriv_dim == 3:
+                                            dV_dx_L[0], dV_dx_R[0] = spa_derivX3_6d(i, j, k, l, m, n, V_init, g)
+                                        if deriv_dim == 4:
+                                            dV_dx_L[0], dV_dx_R[0] = spa_derivX4_6d(i, j, k, l, m, n, V_init, g)
+                                        if deriv_dim == 5:
+                                            dV_dx_L[0], dV_dx_R[0] = spa_derivX5_6d(i, j, k, l, m, n, V_init, g)
+                                        if deriv_dim == 6:
+                                            dV_dx_L[0], dV_dx_R[0] = spa_derivX6_6d(i, j, k, l, m, n, V_init, g)
+                                    if accuracy == "medium":
+                                        if deriv_dim == 1:
+                                            dV_dx_L[0], dV_dx_R[0] = secondOrderX1_6d(i, j, k, l, m, n, V_init, g)
+                                        if deriv_dim == 2:
+                                            dV_dx_L[0], dV_dx_R[0] = secondOrderX2_6d(i, j, k, l, m, n, V_init, g)
+                                        if deriv_dim == 3:
+                                            dV_dx_L[0], dV_dx_R[0] = secondOrderX3_6d(i, j, k, l, m, n, V_init, g)
+                                        if deriv_dim == 4:
+                                            dV_dx_L[0], dV_dx_R[0] = secondOrderX4_6d(i, j, k, l, m, n, V_init, g)
+                                        if deriv_dim == 5:
+                                            dV_dx_L[0], dV_dx_R[0] = secondOrderX5_6d(i, j, k, l, m, n, V_init, g)
+                                        if deriv_dim == 6:
+                                            dV_dx_L[0], dV_dx_R[0] = secondOrderX6_6d(i, j, k, l, m, n, V_init, g)
 
+                                    Deriv_array[i, j, k, l, m, n] = (dV_dx_L[0] + dV_dx_R[0]) / 2
 
-    s = hcl.create_schedule([V_f, V_init, x1, x2, x3, x4, x5, x6, t, l0], graph_create)
-    ##################### CODE OPTIMIZATION HERE ###########################
-    print("Optimizing\n")
+    if generate_SpatDeriv == False:
+        s = hcl.create_schedule([V_f, V_init, x1, x2, x3, x4, x5, x6, t, l0], graph_create)
+        ##################### CODE OPTIMIZATION HERE ###########################
+        print("Optimizing\n")
 
-    # Accessing the hamiltonian and dissipation stage
-    s_H = graph_create.Hamiltonian
-    s_D = graph_create.Dissipation
+        # Accessing the hamiltonian and dissipation stage
+        s_H = graph_create.Hamiltonian
+        s_D = graph_create.Dissipation
 
-    # Thread parallelize hamiltonian and dissipation
-    s[s_H].parallel(s_H.i)
-    s[s_D].parallel(s_D.i)
+        # Thread parallelize hamiltonian and dissipation
+        s[s_H].parallel(s_H.i)
+        s[s_D].parallel(s_D.i)
+    else:
+        print("I'm here\n")
+        s = hcl.create_schedule([V_init, V_f], returnDerivative)
 
     # Inspect IR
     # if args.llvm:

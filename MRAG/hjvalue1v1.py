@@ -57,7 +57,7 @@ reach_set = np.minimum(np.maximum(goal1_destination, goal2_escape), np.minimum(o
 # reach_set = goal1_destination 
 
 # Look-back length and time step
-lookback_length = 1.5  # the same as 2014Mo 
+lookback_length = 4.5  # the same as 2014Mo 
 t_step = 0.025
 
 # Actual calculation process, needs to add new plot function to draw a 2D figure

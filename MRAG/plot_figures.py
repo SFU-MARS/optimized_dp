@@ -13,8 +13,8 @@ print(f'The shape of the value function is {value1v1.shape} \n')
 # define the joint states of (a1x, a1y, d1x, d1y)
 a1x = 0
 a1y = 0
-d1x = -0.3
-d1y = 0.5
+d1x = -1.0
+d1y = -1.0
 jointstates1v1 = (a1x, a1y, d1x, d1y)
 a1x_slice, a1y_slice, d1x_slice, d1y_slice = lo2slice1v1(jointstates1v1, slices=45)
 print(f'The attacker is at the location [{a1x}, {a1y}] and the defender is at the location [{d1x}, {d1y}] \n')
@@ -47,4 +47,4 @@ value_function2v1 = value2v1[:, :, a2x_slice, a2y_slice, d1x_slice, d1y_slice]
 print("Min value of the array {}".format(np.min(value_function2v1)))
 print(f'The shape of the 2v1 value function is {value_function2v1.shape}. \n')
 # plot_2d(grid2v1, value_function2v1)
-plot_game(grid2v1, value_function2v1, attackers, defenders)
+# plot_game(grid2v1, value_function2v1, attackers, defenders)

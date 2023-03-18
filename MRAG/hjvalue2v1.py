@@ -141,7 +141,7 @@ process = psutil.Process(os.getpid())
 print("13. Gigabytes consumed {}".format(process.memory_info().rss/1e9))  # in bytes
 
 # Look-back length and time step
-lookback_length = 1.5  # try 1.5, 2.0, 2.5, 3.0, 5.0, 6.0, 8.0
+lookback_length = 6.0  # try 1.5, 2.0, 2.5, 3.0, 5.0, 6.0, 8.0
 t_step = 0.025
 
 # Actual calculation process, needs to add new plot function to draw a 2D figure
@@ -153,8 +153,8 @@ po = PlotOptions(do_plot=False, plot_type="2d_plot", plotDims=[0, 1], slicesCut=
 
 # In this example, we compute a Reach-Avoid Tube
 compMethods = {"TargetSetMode": "minVWithVTarget", "ObstacleSetMode": "maxVWithObstacle"} # original one
-# result = HJSolver(agents_2v1, grids, [reach_set, avoid_set], tau, compMethods, po, saveAllTimeSteps=False) # original one
+result = HJSolver(agents_2v1, grids, [reach_set, avoid_set], tau, compMethods, po, saveAllTimeSteps=False) # original one
 
-# print(f'The shape of the value function is {result.shape} \n')
+print(f'The shape of the value function is {result.shape} \n')
 # save the value function
-# np.save('/localhome/hha160/optimized_dp/MRAG/2v1AttackDefend.npy', result)
+np.save('/localhome/hha160/optimized_dp/MRAG/2v1AttackDefend.npy', result)
