@@ -141,7 +141,7 @@ process = psutil.Process(os.getpid())
 print("13. Gigabytes consumed {}".format(process.memory_info().rss/1e9))  # in bytes
 
 # Look-back length and time step
-lookback_length = 6.0  # try 1.5, 2.0, 2.5, 3.0, 5.0, 6.0, 8.0
+lookback_length = 1.5  # try 1.5, 2.0, 2.5, 3.0, 5.0, 6.0, 8.0
 t_step = 0.025
 
 # Actual calculation process, needs to add new plot function to draw a 2D figure
@@ -157,4 +157,5 @@ result = HJSolver(agents_2v1, grids, [reach_set, avoid_set], tau, compMethods, p
 
 print(f'The shape of the value function is {result.shape} \n')
 # save the value function
+print("The calculation is done! \n")
 np.save('/localhome/hha160/optimized_dp/MRAG/2v1AttackDefend.npy', result)
