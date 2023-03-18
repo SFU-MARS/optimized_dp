@@ -46,5 +46,6 @@ a1x_slice, a1y_slice, a2x_slice, a2y_slice, d1x_slice, d1y_slice = lo2slice2v1(j
 value_function2v1 = value2v1[:, :, a2x_slice, a2y_slice, d1x_slice, d1y_slice] 
 print("Min value of the array {}".format(np.min(value_function2v1)))
 print(f'The shape of the 2v1 value function is {value_function2v1.shape}. \n')
+print(f'The HJ value of the current position {(a1x, a1y, a2x, a2y, d1x, d1y)} is {value2v1[a1x_slice, a1y_slice, a2x_slice, a2y_slice, d1x_slice, d1y_slice]}. \n')
 # plot_2d(grid2v1, value_function2v1)
 plot_game(grid2v1, value_function2v1, attackers, defenders)
