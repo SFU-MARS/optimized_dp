@@ -99,7 +99,7 @@ print("Hello Gigabytes consumed {}".format(process.memory_info().rss/1e9))  # in
 # Reach set, run and see what it is!
 goal1_destination = ShapeRectangle(grids, [0.6, 0.1, 0.6, 0.1, -1000, -1000],
                                    [0.8, 0.3, 0.8, 0.3, 1000, 1000])  # a1 and a2 both arrive the goal
-np.save('goal1_destination.npy', goal1_destination)
+# np.save('goal1_destination.npy', goal1_destination)
 
 # goal1_destination = ShapeRectangle(grids, [0.6, 0.1, -1000, -1000, -1000, -1000],
 #                                    [0.8, 0.3, 1000, 1000, 1000, 1000])  # a1 and a2 both arrive the goal
