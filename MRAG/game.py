@@ -60,8 +60,8 @@ for j in range(num_defender):
         pass  # todo: depends on the relative distance?
 
 # calculate the current controls of attackers
-
-control_attackers = []  # todo: how to generate the controls of attackers?
+control_attackers = attackers_control(grid1v0, value1v0, current_attackers)  # todo: how to generate the controls of attackers?
+# print(f'The control of attackers are {control_attackers} \n')
 
 # update the next postions of defenders
 newd_positions = next_positions(current_defenders, control_defenders)

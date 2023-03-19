@@ -2,6 +2,7 @@ import numpy as np
 import math
 from mip import *
 from odp.solver import computeSpatDerivArray
+from MRAG.AttackerDefender1v0 import AttackerDefender1v0
 
 
 # localizations to silces in 1v0 game
@@ -233,15 +234,23 @@ def next_positions(current_positions, controls):
         temp.append((current_positions[i][0]+controls[i][0], current_positions[i][1]+controls[i][1]))
     return temp
 
-def compute_control(grids, value_function, joint_slices):
-    """Return a tuple of 2-dimensional control inputs of the attacker or defender based on the value function
+def attackers_control(grids, value_function, current_positions):
+    """Return a list of 2-dimensional control inputs of all attackers based on the value function
 
     Args:
     grids (class): the corresponding Grid instance
     value_function (ndarray): 1v0 or 1v1 or 2v1 HJ reachability value function
-    joint_states (tuple): the corresponding needed positions of the defender and the attacker(s), (a1x, a1y, ((a2x, a2y,) d1x, d1y))
+    current_positions (list): the attacker(s), [(), (),...]
     """
-    nums = int(len(joint_slices)/2)
-    dims = len(joint_slices)
+    control_attackers = []
+    agents_1v0 = AttackerDefender1v0(uMode="min", dMode="max")
+    x1_derivative = computeSpatDerivArray(grids, value_function, deriv_dim=1, accuracy='low')
+    x2_derivative = computeSpatDerivArray(grids, value_function, deriv_dim=2, accuracy='low')
+    for position in current_positions:
+        x1, x2 = lo2slice1v0(position)
+        spat_deriv_vector = (x1_derivative[x1][x2], x2_derivative[x1][x2])
+        control_attackers.append(agents_1v0.optCtrl_inPython(spat_deriv_vector))
+    return control_attackers
 
+def compute_control(grids, value_function, current_positions):
     pass
