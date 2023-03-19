@@ -295,5 +295,32 @@ def defender_control1(grid1v1, value1v1, agents_1v1, joint_states1v1):
     opt_d1, opt_d2 = agents_1v1.optDstb_inPython(spat_deriv_vector)
     return (opt_d1, opt_d2)
 
+def distance(attacker, defender):
+    """Return the 2-norm distance between the attacker and the defender
 
+    Args:
+    attacker (tuple): the position of the attacker
+    defender (tuple): the position of the defender
+    """
+    d = np.sqrt((attacker[0]-defender[0])**2 + (attacker[1]-defender[1])**2)
+    return d
+
+def select_attacker(d1x, d1y, current_attackers):
+    """Return the nearest attacker index
+
+    Args:
+    d1x (float): the x position of the current defender
+    d1y (float): the y position of the current defender
+    current_attackers (list): the positions of all attackers, [(), (),...]
+    """
+    num = len(current_attackers)
+    index = 0
+    d = distance(current_attackers[index], (d1x, d1y))
+    for i in range(1, num):
+        temp = distance(current_attackers[i], (d1x, d1y))
+        if temp <= d:
+            index = i
+    return index
+
+    
 

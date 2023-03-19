@@ -3,6 +3,7 @@ from odp.Grid import Grid
 from odp.solver import HJSolver, computeSpatDerivArray
 from MRAG.AttackerDefender1v1 import AttackerDefender1v1 
 from MRAG.AttackerDefender2v1 import AttackerDefender2v1
+from utilities import *
 
 # information of the reach-avoid game
 # num_attacker = 3
@@ -106,14 +107,14 @@ agents_1v1 = AttackerDefender1v1(uMode="min", dMode="max")  # 1v1 (4 dims dynami
 agents_2v1 = AttackerDefender2v1(uMode="min", dMode="max")  # 2v1 (6 dim dynamics)
 
 
-# Compute spatial derivatives at every state
-a1x_derivative = computeSpatDerivArray(grid1v1, value1v1, deriv_dim=1, accuracy="low")
-a1y_derivative = computeSpatDerivArray(grid1v1, value1v1, deriv_dim=2, accuracy="low")
-d1x_derivative = computeSpatDerivArray(grid1v1, value1v1, deriv_dim=3, accuracy="low")
-d2y_derivative = computeSpatDerivArray(grid1v1, value1v1, deriv_dim=4, accuracy="low")
+# # Compute spatial derivatives at every state
+# a1x_derivative = computeSpatDerivArray(grid1v1, value1v1, deriv_dim=1, accuracy="low")
+# a1y_derivative = computeSpatDerivArray(grid1v1, value1v1, deriv_dim=2, accuracy="low")
+# d1x_derivative = computeSpatDerivArray(grid1v1, value1v1, deriv_dim=3, accuracy="low")
+# d2y_derivative = computeSpatDerivArray(grid1v1, value1v1, deriv_dim=4, accuracy="low")
 
-spat_deriv_vector = (a1x_derivative[10,20,15,15], a1y_derivative[10,20,15,15],
-                     d1x_derivative[10,20,15,15], d2y_derivative[10,20,15,15])
+# spat_deriv_vector = (a1x_derivative[10,20,15,15], a1y_derivative[10,20,15,15],
+#                      d1x_derivative[10,20,15,15], d2y_derivative[10,20,15,15])
 
 
 # # Compute spatial derivatives at every state
@@ -129,7 +130,26 @@ spat_deriv_vector = (a1x_derivative[10,20,15,15], a1y_derivative[10,20,15,15],
 #                      a2x_derivative[10,20,15,15,15,15], a2y_derivative[10,20,15,15,15,15],
 #                      d1x_derivative[10,20,15,15,15,15], d2y_derivative[10,20,15,15,15,15])
 
-# Compute the optimal control
-opt_d1, opt_d2 = agents_1v1.optDstb_inPython(spat_deriv_vector)
-print("Optimal accel is {}\n".format(opt_d1))
-print("Optimal rotation is {}\n".format(opt_d2))
+# # Compute the optimal control
+# opt_d1, opt_d2 = agents_1v1.optDstb_inPython(spat_deriv_vector)
+# print("Optimal accel is {}\n".format(opt_d1))
+# print("Optimal rotation is {}\n".format(opt_d2))
+
+# initialize positions of attackers and defenders
+attackers_initials = [(0.0, 0.0), (3.0, 0.0), (-5.0, 0.0), (6.0, 0.0)]
+defenders_initials = [(0.3, 0.5), (-0.3, 0.5)]
+num_attacker = len(attackers_initials)
+num_defender = len(defenders_initials)
+attackers_trajectory  = [[] for _ in range(num_attacker)]
+defenders_trajectory = [[] for _ in range(num_defender)]
+capture_decisions = []
+
+# simulation begins
+current_attackers = attackers_initials
+current_defenders = defenders_initials
+
+d1x = 1.0
+d1y = 0.0
+
+index = select_attacker(d1x, d1y, current_attackers)
+print(index)

@@ -64,7 +64,10 @@ for j in range(num_defender):
         joint_states1v1 = (a1x, a1y, d1x, d1y)
         control_defenders.append(defender_control1(grid1v1, value1v1, agents_1v1, joint_states1v1))
     else:  # defender j could not capture any of attackers
-        pass  # todo: depends on the relative distance?
+        attacker_index = select_attacker(d1x, d1y, current_attackers)  # choose the nearest attacker
+        a1x, a1y = current_attackers[attacker_index]
+        joint_states1v1 = (a1x, a1y, d1x, d1y)
+        control_defenders.append(defender_control1(grid1v1, value1v1, agents_1v1, joint_states1v1))
 
 # calculate the current controls of attackers
 control_attackers = attackers_control(grid1v0, value1v0, agents_1v0, current_attackers)
