@@ -93,7 +93,7 @@ class AttackerDefender1v0:
                 opt_a1[0] = deriv1[0] / ctrl_len
                 opt_a2[0] = deriv2[0] / ctrl_len
         # return 3, 4 even if you don't use them
-        return opt_a1[0], opt_a2[0], in3[0], in4[0]
+        return opt_a1[0], opt_a2[0]
 
     def opt_dstb(self, t, state, spat_deriv):
         """
@@ -108,27 +108,27 @@ class AttackerDefender1v0:
         d4 = hcl.scalar(0, "d4")
         # the same procedure in opt_ctrl
         deriv1 = hcl.scalar(0, "deriv1")
-        deriv2 = hcl.scalar(0, "deriv2")
-        deriv1[0] = spat_deriv[2]
-        deriv2[0] = spat_deriv[3]
-        dstb_len = hcl.sqrt(deriv1[0] * deriv1[0] + deriv2[0] * deriv2[0])
+        # deriv2 = hcl.scalar(0, "deriv2")
+        # deriv1[0] = spat_deriv[2]
+        # deriv2[0] = spat_deriv[3]
+        dstb_len = hcl.sqrt(deriv1[0] * deriv1[0])
         # with hcl.if_(self.dMode == "max"):
         if self.dMode == 'max':
             with hcl.if_(dstb_len == 0):
                 d1[0] = 0.0
                 d2[0] = 0.0
             with hcl.else_():
-                d1[0] = deriv1[0] / dstb_len
-                d2[0] = deriv2[0] / dstb_len
+                d1[0] = 0.0
+                d2[0] = 0.0
         else:
             with hcl.if_(dstb_len == 0):
                 d1[0] = 0.0
                 d2[0] = 0.0
             with hcl.else_():
-                d1[0] = -1 * deriv1[0]/ dstb_len
-                d2[0] = -1 * deriv2[0] / dstb_len
+                d1[0] = 0.0
+                d2[0] = 0.0
 
-        return d1[0], d2[0], d3[0], d4[0]
+        return d1[0], d2[0]
 
         # The below function can have whatever form or parameters users want
         # These functions are not used in HeteroCL program, hence is pure Python code and
@@ -177,23 +177,13 @@ class AttackerDefender1v0:
                 opt_d1 = 0.0
                 opt_d2 = 0.0
             else:
-                opt_d1 = self.speed_d * deriv3 / dstb_len
-                opt_d2 = self.speed_d * deriv4 / dstb_len
+                opt_d1 = 0.0
+                opt_d2 = 0.0
         else:
             if dstb_len == 0:
                 opt_d1 = 0.0
                 opt_d2 = 0.0
             else:
-                opt_d1 = - self.speed_d * deriv3 / dstb_len
-                opt_d2 = - self.speed_d * deriv4 / dstb_len
+                opt_d1 = 0.0
+                opt_d2 = 0.0
         return (opt_d1, opt_d2)
-
-    # def capture_set(self, grid, capture_radius, mode):
-    #     # using meshgrid
-    #     xa, ya, xd, yd = np.meshgrid(grid.grid_points[0], grid.grid_points[1],
-    #                                  grid.grid_points[2], grid.grid_points[3], indexing='ij')
-    #     data = np.power(xa - xd, 2) + np.power(ya - yd, 2)
-    #     if mode == "capture":
-    #         return np.sqrt(data) - capture_radius
-    #     if mode == "escape":
-    #         return capture_radius - np.sqrt(data)
