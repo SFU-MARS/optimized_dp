@@ -118,6 +118,6 @@ spat_deriv_vector = (a1x_derivative[10,20,15,15,15,15], a1y_derivative[10,20,15,
                      d1x_derivative[10,20,15,15,15,15], d2y_derivative[10,20,15,15,15,15])
 
 # Compute the optimal control
-opt_a1, opt_a2, opt_a3, opt_a4 = agents_2v1.optCtrl_inPython(spat_deriv_vector)
-print("Optimal accel is {}\n".format(opt_a1))
-print("Optimal rotation is {}\n".format(opt_a2))
+opt_d1, opt_d2 = agents_2v1.optDstb_inPython(spat_deriv_vector)
+print("Optimal accel is {}\n".format(opt_d1))
+print("Optimal rotation is {}\n".format(opt_d2))
