@@ -1,7 +1,8 @@
 from mip import *
 from odp.Grid import Grid
 from odp.solver import HJSolver, computeSpatDerivArray
-from AttackerDefender2v1 import *
+from MRAG.AttackerDefender1v1 import AttackerDefender1v1 
+from MRAG.AttackerDefender2v1 import AttackerDefender2v1
 
 # information of the reach-avoid game
 # num_attacker = 3
@@ -101,23 +102,34 @@ value2v1 = np.load('MRAG/2v1AttackDefend.npy')
 grid1v1 = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([45, 45, 45, 45])) # original 45
 grid2v1 = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 6, np.array([30, 30, 30, 30, 30, 30]))
 
+agents_1v1 = AttackerDefender1v1(uMode="min", dMode="max")  # 1v1 (4 dims dynamics)
 agents_2v1 = AttackerDefender2v1(uMode="min", dMode="max")  # 2v1 (6 dim dynamics)
 
 
 # Compute spatial derivatives at every state
-a1x_derivative = computeSpatDerivArray(grid2v1, value2v1, deriv_dim=1, accuracy="low")
-a1y_derivative = computeSpatDerivArray(grid2v1, value2v1, deriv_dim=2, accuracy="low")
-a2x_derivative = computeSpatDerivArray(grid2v1, value2v1, deriv_dim=3, accuracy="low")
-a2y_derivative = computeSpatDerivArray(grid2v1, value2v1, deriv_dim=4, accuracy="low")
-d1x_derivative = computeSpatDerivArray(grid2v1, value2v1, deriv_dim=5, accuracy="low")
-d2y_derivative = computeSpatDerivArray(grid2v1, value2v1, deriv_dim=6, accuracy="low")
+a1x_derivative = computeSpatDerivArray(grid1v1, value1v1, deriv_dim=1, accuracy="low")
+a1y_derivative = computeSpatDerivArray(grid1v1, value1v1, deriv_dim=2, accuracy="low")
+d1x_derivative = computeSpatDerivArray(grid1v1, value1v1, deriv_dim=3, accuracy="low")
+d2y_derivative = computeSpatDerivArray(grid1v1, value1v1, deriv_dim=4, accuracy="low")
 
-# Let's compute optimal control at some random idices
-spat_deriv_vector = (a1x_derivative[10,20,15,15,15,15], a1y_derivative[10,20,15,15,15,15],
-                     a2x_derivative[10,20,15,15,15,15], a2y_derivative[10,20,15,15,15,15],
-                     d1x_derivative[10,20,15,15,15,15], d2y_derivative[10,20,15,15,15,15])
+spat_deriv_vector = (a1x_derivative[10,20,15,15], a1y_derivative[10,20,15,15],
+                     d1x_derivative[10,20,15,15], d2y_derivative[10,20,15,15])
+
+
+# # Compute spatial derivatives at every state
+# a1x_derivative = computeSpatDerivArray(grid2v1, value2v1, deriv_dim=1, accuracy="low")
+# a1y_derivative = computeSpatDerivArray(grid2v1, value2v1, deriv_dim=2, accuracy="low")
+# a2x_derivative = computeSpatDerivArray(grid2v1, value2v1, deriv_dim=3, accuracy="low")
+# a2y_derivative = computeSpatDerivArray(grid2v1, value2v1, deriv_dim=4, accuracy="low")
+# d1x_derivative = computeSpatDerivArray(grid2v1, value2v1, deriv_dim=5, accuracy="low")
+# d2y_derivative = computeSpatDerivArray(grid2v1, value2v1, deriv_dim=6, accuracy="low")
+
+# # Let's compute optimal control at some random idices
+# spat_deriv_vector = (a1x_derivative[10,20,15,15,15,15], a1y_derivative[10,20,15,15,15,15],
+#                      a2x_derivative[10,20,15,15,15,15], a2y_derivative[10,20,15,15,15,15],
+#                      d1x_derivative[10,20,15,15,15,15], d2y_derivative[10,20,15,15,15,15])
 
 # Compute the optimal control
-opt_d1, opt_d2 = agents_2v1.optDstb_inPython(spat_deriv_vector)
+opt_d1, opt_d2 = agents_1v1.optDstb_inPython(spat_deriv_vector)
 print("Optimal accel is {}\n".format(opt_d1))
 print("Optimal rotation is {}\n".format(opt_d2))

@@ -237,7 +237,8 @@ def attackers_control(grids, value_function, agents_1v0, current_positions):
 
     Args:
     grids (class): the corresponding Grid instance
-    value_function (ndarray): 1v0 or 1v1 or 2v1 HJ reachability value function
+    value_function (ndarray): 1v0 HJ reachability value function
+    agents_1v0 (class): the corresponding AttackerDefender instance
     current_positions (list): the attacker(s), [(), (),...]
     """
     control_attackers = []
@@ -249,21 +250,50 @@ def attackers_control(grids, value_function, agents_1v0, current_positions):
         control_attackers.append(agents_1v0.optCtrl_inPython(spat_deriv_vector))
     return control_attackers
 
-def defender_control2(grid2v1, value2v1, agents_2v1, joint_states):
+def defender_control2(grid2v1, value2v1, agents_2v1, joint_states2v1):
     """Return a list of 2-dimensional control inputs of one defender based on the value function
+    
+    Args:
+    grid2v1 (class): the corresponding Grid instance
+    value2v1 (ndarray): 2v1 HJ reachability value function  
+    agents_2v1 (class): the corresponding AttackerDefender instance
+    joint_states2v1 (tuple): the corresponding positions of (A1, A2, D1)
     """
-    a1x, a1y, a2x, a2y, d1x, d1y = joint_states
+    a1x, a1y, a2x, a2y, d1x, d1y = lo2slice2v1(joint_states2v1)
     a1x_derivative = computeSpatDerivArray(grid2v1, value2v1, deriv_dim=1, accuracy="low")
     a1y_derivative = computeSpatDerivArray(grid2v1, value2v1, deriv_dim=2, accuracy="low")
     a2x_derivative = computeSpatDerivArray(grid2v1, value2v1, deriv_dim=3, accuracy="low")
     a2y_derivative = computeSpatDerivArray(grid2v1, value2v1, deriv_dim=4, accuracy="low")
     d1x_derivative = computeSpatDerivArray(grid2v1, value2v1, deriv_dim=5, accuracy="low")
     d2y_derivative = computeSpatDerivArray(grid2v1, value2v1, deriv_dim=6, accuracy="low")
+
     spat_deriv_vector = (a1x_derivative[a1x, a1y, a2x, a2y, d1x, d1y], a1y_derivative[a1x, a1y, a2x, a2y, d1x, d1y],
                      a2x_derivative[a1x, a1y, a2x, a2y, d1x, d1y], a2y_derivative[a1x, a1y, a2x, a2y, d1x, d1y],
                      d1x_derivative[a1x, a1y, a2x, a2y, d1x, d1y], d2y_derivative[a1x, a1y, a2x, a2y, d1x, d1y])
+    
     opt_d1, opt_d2 = agents_2v1.optDstb_inPython(spat_deriv_vector)
     return (opt_d1, opt_d2)
 
-def defender_control1(grid1v1, value1v1, agent1v1, joint_states):
-    pass
+def defender_control1(grid1v1, value1v1, agents_1v1, joint_states1v1):
+    """Return a list of 2-dimensional control inputs of one defender based on the value function
+    
+    Args:
+    grid1v1 (class): the corresponding Grid instance
+    value1v1 (ndarray): 1v1 HJ reachability value function  
+    agents_1v1 (class): the corresponding AttackerDefender instance
+    joint_states1v1 (tuple): the corresponding positions of (A1, D1)
+    """
+    a1x, a1y, d1x, d2y = lo2slice1v1(joint_states1v1)
+    a1x_derivative = computeSpatDerivArray(grid1v1, value1v1, deriv_dim=1, accuracy="low")
+    a1y_derivative = computeSpatDerivArray(grid1v1, value1v1, deriv_dim=2, accuracy="low")
+    d1x_derivative = computeSpatDerivArray(grid1v1, value1v1, deriv_dim=3, accuracy="low")
+    d2y_derivative = computeSpatDerivArray(grid1v1, value1v1, deriv_dim=4, accuracy="low")
+
+    spat_deriv_vector = (a1x_derivative[a1x, a1y, d1x, d2y], a1y_derivative[a1x, a1y, d1x, d2y],
+                     d1x_derivative[a1x, a1y, d1x, d2y], d2y_derivative[a1x, a1y, d1x, d2y])
+
+    opt_d1, opt_d2 = agents_1v1.optDstb_inPython(spat_deriv_vector)
+    return (opt_d1, opt_d2)
+
+
+

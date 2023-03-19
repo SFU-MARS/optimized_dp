@@ -57,12 +57,12 @@ for j in range(num_defender):
     if len(selected[j]) == 2:  # defender j capture the attacker selected[j][0] and selected[j][1]
         a1x, a1y = current_attackers[selected[j][0]]
         a2x, a2y = current_attackers[selected[j][1]]
-        joint_states = (a1x, a1y, a2x, a2y, d1x, d1y)
-        control_defenders.append(defender_control2(grid2v1, value2v1, agents_2v1, joint_states))
+        joint_states2v1 = (a1x, a1y, a2x, a2y, d1x, d1y)
+        control_defenders.append(defender_control2(grid2v1, value2v1, agents_2v1, joint_states2v1))
     elif len(selected[j]) == 1: # defender j capture the attacker selected[j][0]
         a1x, a1y = current_attackers[selected[j][0]]
-        joint_states = (a1x, a1y, d1x, d1y)
-        control_defenders.append(defender_control1(grid1v1, value1v1, joint_states))
+        joint_states1v1 = (a1x, a1y, d1x, d1y)
+        control_defenders.append(defender_control1(grid1v1, value1v1, agents_1v1, joint_states1v1))
     else:  # defender j could not capture any of attackers
         pass  # todo: depends on the relative distance?
 
