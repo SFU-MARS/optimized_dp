@@ -5,7 +5,6 @@ from MRAG.AttackerDefender1v0 import AttackerDefender1v0
 from MRAG.AttackerDefender1v1 import AttackerDefender1v1 
 from MRAG.AttackerDefender2v1 import AttackerDefender2v1
 
-
 # simulation 1: 4 attackers with 2 defenders
 # preparations
 T = 0.6 # total simulation time
