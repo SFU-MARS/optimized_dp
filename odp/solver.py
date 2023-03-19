@@ -347,6 +347,9 @@ def computeSpatDerivArray(grid, V, deriv_dim, accuracy="low"):
     spatial_deriv = hcl.asarray(np.zeros(tuple(grid.pts_each_dim)))
 
     # Get executable, obstacle check intial value function
+    if grid.dims == 2:
+        compute_SpatDeriv = graph_2D(None, grid, "None", accuracy,
+                                     generate_SpatDeriv=True, deriv_dim=deriv_dim)
     if grid.dims == 3:
         compute_SpatDeriv = graph_3D(None, grid, "None", accuracy,
                                      generate_SpatDeriv=True, deriv_dim=deriv_dim)

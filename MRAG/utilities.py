@@ -3,6 +3,29 @@ import math
 from mip import *
 from odp.solver import computeSpatDerivArray
 
+
+# localizations to silces in 1v0 game
+def lo2slice1v0(joint_states1v0, slices=45):
+    """ Returns a tuple of the closest index of each state in the grid
+
+    Args:
+        joint_states1v0 (tuple): state of (a1x, a1y)
+        slices (int): number of grids, default 45
+    """
+    index = []
+    grid_points = np.linspace(-1, +1, num=slices)
+    for i, s in enumerate(joint_states1v0):
+        idx = np.searchsorted(grid_points, s)
+        if idx > 0 and (
+            idx == len(grid_points)
+            or math.fabs(s - grid_points[idx - 1])
+            < math.fabs(s - grid_points[idx])
+        ):
+            index.append(idx - 1)
+        else:
+            index.append(idx)
+    return tuple(index)
+
 def lo2slice1v1(joint_states1v1, slices=45):
     """ Returns a tuple of the closest index of each state in the grid
 

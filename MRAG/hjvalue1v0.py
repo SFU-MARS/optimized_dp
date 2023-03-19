@@ -63,19 +63,14 @@ print(f'The shape of the value function is {result.shape} \n')
 # save the value function
 np.save('/localhome/hha160/optimized_dp/MRAG/1v0AttackDefend.npy', result)
 
+# compute spatial derivatives at every state
+x_derivative = computeSpatDerivArray(grids, result, deriv_dim=1, accuracy="low")
+y_derivative = computeSpatDerivArray(grids, result, deriv_dim=2, accuracy="low")
 
-# # Compute spatial derivatives at every state
-# last_time_step_result = result[..., 0]
-# x_derivative = computeSpatDerivArray(g, last_time_step_result, deriv_dim=1, accuracy="low")
-# y_derivative = computeSpatDerivArray(g, last_time_step_result, deriv_dim=2, accuracy="low")
-# v_derivative = computeSpatDerivArray(g, last_time_step_result, deriv_dim=3, accuracy="low")
-# T_derivative = computeSpatDerivArray(g, last_time_step_result, deriv_dim=4, accuracy="low")
-#
-# # Let's compute optimal control at some random idices
-# spat_deriv_vector = (x_derivative[10,20,15,15], y_derivative[10,20,15,15],
-#                      v_derivative[10,20,15,15], T_derivative[10,20,15,15])
-#
+# Let's compute optimal control at some random idices
+spat_deriv_vector = (x_derivative[10,20], y_derivative[10,20])
+
 # # Compute the optimal control
-# opt_a, opt_w = my_2agents.optCtrl_inPython(spat_deriv_vector)
-# print("Optimal accel is {}\n".format(opt_a))
-# print("Optimal rotation is {}\n".format(opt_w))
+# opt_a1, opt_a2 = agents_1v0.optCtrl_inPython(spat_deriv_vector)
+# print("Optimal accel is {}\n".format(opt_a1))
+# print("Optimal rotation is {}\n".format(opt_a2))
