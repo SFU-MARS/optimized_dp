@@ -1,13 +1,18 @@
 from utilities import *
 from odp.Grid import Grid
-from AttackerDefender1v1 import AttackerDefender1v1
+from odp.solver import HJSolver, computeSpatDerivArray
+
 
 # simulation 1: 4 attackers with 2 defenders
 # preparations
 T = 0.6 # total simulation time
 deltat = 0.005 # calculation time interval
+
+# load all value functions and grids
+value1v0 = np.load('MRAG/1v0AttackDefend.npy')
 value1v1 = np.load('MRAG/1v1AttackDefend.npy')
 value2v1 = np.load('MRAG/2v1AttackDefend.npy')
+grid1v0 = Grid(np.array([-1.0, -1.0]), np.array([1.0, 1.0]), 2, np.array([45, 45])) # original 45
 grid1v1 = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([45, 45, 45, 45])) # original 45
 grid2v1 = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 6, np.array([30, 30, 30, 30, 30, 30]))
 
@@ -55,6 +60,7 @@ for j in range(num_defender):
         pass  # todo: depends on the relative distance?
 
 # calculate the current controls of attackers
+
 control_attackers = []  # todo: how to generate the controls of attackers?
 
 # update the next postions of defenders

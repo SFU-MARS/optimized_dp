@@ -233,12 +233,15 @@ def next_positions(current_positions, controls):
         temp.append((current_positions[i][0]+controls[i][0], current_positions[i][1]+controls[i][1]))
     return temp
 
-def compute_control(grids, value_function, joint_states):
+def compute_control(grids, value_function, joint_slices):
     """Return a tuple of 2-dimensional control inputs of the attacker or defender based on the value function
 
     Args:
     grids (class): the corresponding Grid instance
-    value_function (ndarray): 1v1 or 2v1 HJ reachability value function
-    joint_states (tuple): the corresponding needed positions of the defender and the attacker(s), (a1x, a1y, (a2x, a2y,) d1x, d1y)
+    value_function (ndarray): 1v0 or 1v1 or 2v1 HJ reachability value function
+    joint_states (tuple): the corresponding needed positions of the defender and the attacker(s), (a1x, a1y, ((a2x, a2y,) d1x, d1y))
     """
+    nums = int(len(joint_slices)/2)
+    dims = len(joint_slices)
+
     pass
