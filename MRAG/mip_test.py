@@ -164,33 +164,45 @@ agents_2v1 = AttackerDefender2v1(uMode="min", dMode="max")  # 2v1 (6 dim dynamic
 
 # plot_simulation()
 
-# initialize positions of attackers and defenders
-attackers_initials = [(0.0, 0.0), (0.0, 0.8), (-0.5, 0.0), (0.5, -0.5)]
-defenders_initials = [(0.3, 0.5), (-0.3, 0.5)]
-num_attacker = len(attackers_initials)
-num_defender = len(defenders_initials)
-attackers_trajectory  = [[] for _ in range(num_attacker)]
-defenders_trajectory = [[] for _ in range(num_defender)]
-# for plotting
-attackers_x = [[] for _ in range(num_attacker)]
-attackers_y = [[] for _ in range(num_attacker)]
-defenders_x = [[] for _ in range(num_defender)]
-defenders_y = [[] for _ in range(num_defender)]
-capture_decisions = []
+# # initialize positions of attackers and defenders
+# attackers_initials = [(0.0, 0.0), (0.0, 0.8), (-0.5, 0.0), (0.5, -0.5)]
+# defenders_initials = [(0.3, 0.5), (-0.3, 0.5)]
+# num_attacker = len(attackers_initials)
+# num_defender = len(defenders_initials)
+# attackers_trajectory  = [[] for _ in range(num_attacker)]
+# defenders_trajectory = [[] for _ in range(num_defender)]
+# # for plotting
+# attackers_x = [[] for _ in range(num_attacker)]
+# attackers_y = [[] for _ in range(num_attacker)]
+# defenders_x = [[] for _ in range(num_defender)]
+# defenders_y = [[] for _ in range(num_defender)]
+# capture_decisions = []
 
-current_attackers = attackers_initials
-current_defenders = defenders_initials
+# current_attackers = attackers_initials
+# current_defenders = defenders_initials
 
-print(attackers_x)
-# document the initial positions of attackers and defenders
-for i in range(num_attacker):
-    attackers_trajectory[i].append(current_attackers[i])
-    attackers_x[i].append(current_attackers[i][0])
-    attackers_y[i].append(current_attackers[i][1])
+# print(attackers_x)
+# # document the initial positions of attackers and defenders
+# for i in range(num_attacker):
+#     attackers_trajectory[i].append(current_attackers[i])
+#     attackers_x[i].append(current_attackers[i][0])
+#     attackers_y[i].append(current_attackers[i][1])
 
-for j in range(num_defender):
-    defenders_trajectory[j].append(current_defenders[j])
-    defenders_x[j].append(current_defenders[j][0])
-    defenders_y[j].append(current_defenders[j][1])
+# for j in range(num_defender):
+#     defenders_trajectory[j].append(current_defenders[j])
+#     defenders_x[j].append(current_defenders[j][0])
+#     defenders_y[j].append(current_defenders[j][1])
 
-print(attackers_x)
+# print(attackers_x)
+
+
+bpGraph0 = np.array([[1, 1], 
+                    [0, 0], 
+                    [0, 0],
+                    [1, 0]])
+print(bpGraph0.shape[0])
+print(bpGraph0.shape[1])
+
+bpGraph1 = [[1, 1], [0, 0], [0, 0], [1, 0]]
+print(len(bpGraph1))
+print(len(bpGraph1[0]))

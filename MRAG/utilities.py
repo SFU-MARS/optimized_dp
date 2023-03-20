@@ -297,4 +297,19 @@ def select_attacker(d1x, d1y, current_attackers):
     return index
 
     
+def bi_graph(value1v1, current_attackers, current_defenders):
+    num_attacker = len(current_attackers)
+    num_defender = len(current_defenders)
+    bigraph = [[] for _ in range(num_attacker)]
+    # generate a bipartite graph with num_attacker lines and num_defender columns
+    for i in range(num_attacker):
+        a1x, a1y = current_attackers[i]
+        for j in range(num_defender):
+            d1x, d1y = current_defenders[j]
+            jointstate1v1 = (a1x, a1y, d1x, d1y)
+            if check1v1(value1v1, jointstate1v1):  # the defender could capture the attacker
+                bigraph[i].append(1)
+            else:
+                bigraph[i].append(0)
+    return bigraph
 
