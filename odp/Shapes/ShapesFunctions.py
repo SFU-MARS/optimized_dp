@@ -46,8 +46,8 @@ def ShapeRectangle(grid, target_min, target_max):
         data = np.maximum(data,  grid.vs[i] - target_max[i])
         data = np.maximum(data, -grid.vs[i] + target_min[i])
 
-    data = np.float32(data) # in the hjvalue2v1, the cache is too much with np.float32, don't forget
-    # print(data.dtype)
+    # data = np.float32(data) # in the hjvalue2v1, the cache is too much with np.float32, don't forget
+    # print(f'In shape is {data.dtype}')
     return data
 
 def ShapeRectangle1(grid, target_min, target_max, ignore_dims):

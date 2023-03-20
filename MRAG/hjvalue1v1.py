@@ -57,7 +57,7 @@ reach_set = np.minimum(np.maximum(goal1_destination, goal2_escape), np.minimum(o
 # reach_set = goal1_destination 
 
 # Look-back length and time step
-lookback_length = 1.5  # the same as 2014Mo 
+lookback_length = 4.5  # the same as 2014Mo 
 t_step = 0.025
 
 # Actual calculation process, needs to add new plot function to draw a 2D figure
@@ -73,7 +73,7 @@ po = PlotOptions(do_plot=False, plot_type="2d_plot", plotDims=[0, 1], slicesCut=
 # In this example, we compute a Reach-Avoid Tube
 compMethods = {"TargetSetMode": "minVWithVTarget", "ObstacleSetMode": "maxVWithObstacle"} # original one
 # compMethods = {"TargetSetMode": "minVWithVTarget"}
-result = HJSolver(agents_1v1, grids, [reach_set, avoid_set], tau, compMethods, po, saveAllTimeSteps=True) # original one
+result = HJSolver(agents_1v1, grids, [reach_set, avoid_set], tau, compMethods, po, saveAllTimeSteps=False) # original one
 # result = HJSolver(my_2agents, g, avoid_set, tau, compMethods, po, saveAllTimeSteps=True)
 
 print(f'The shape of the value function is {result.shape} \n')

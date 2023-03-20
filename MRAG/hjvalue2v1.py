@@ -97,11 +97,21 @@ print("Hello Gigabytes consumed {}".format(process.memory_info().rss/1e9))  # in
 
 
 # Reach set, run and see what it is!
-goal1_destination = ShapeRectangle(grids, [0.6, 0.1, 0.6, 0.1, -1000, -1000], [0.8, 0.3, 0.8, 0.3, 1000, 1000])  # a1 and a2 both arrive the goal
+goal1_destination = ShapeRectangle(grids, [0.6, 0.1, 0.6, 0.1, -1000, -1000],
+                                   [0.8, 0.3, 0.8, 0.3, 1000, 1000])  # a1 and a2 both arrive the goal
+# np.save('goal1_destination.npy', goal1_destination)
+
+# goal1_destination = ShapeRectangle(grids, [0.6, 0.1, -1000, -1000, -1000, -1000],
+#                                    [0.8, 0.3, 1000, 1000, 1000, 1000])  # a1 and a2 both arrive the goal
+# np.save('goal1_destination.npy', goal1_destination)
+
 escape_a1 = agents_2v1.capture_set1(grids, 0.1, "escape")  # a1 escape
 escape_a2 = agents_2v1.capture_set2(grids, 0.1, "escape")  # a2 escape
-obs1_defend = ShapeRectangle(grids, [-1000, -1000, -1000, -1000, -0.1, -1000], [1000, 1000, 1000, 1000, 0.1, -0.3])  # defender stuck in obs1
-obs2_defend = ShapeRectangle(grids, [-1000, -1000, -1000, -1000, -0.1, 0.30], [1000, 1000, 1000, 1000, 0.1, 0.60])  # defender stuck in obs2
+
+obs1_defend = ShapeRectangle(grids, [-1000, -1000, -1000, -1000, -0.1, -1.0],
+                             [1000, 1000, 1000, 1000, 0.1, -0.3])  # defender stuck in obs1
+obs2_defend = ShapeRectangle(grids, [-1000, -1000, -1000, -1000, -0.1, 0.30],
+                             [1000, 1000, 1000, 1000, 0.1, 0.60])  # defender stuck in obs2
 
 process = psutil.Process(os.getpid())
 print("12. Gigabytes consumed {}".format(process.memory_info().rss/1e9))  # in bytes
@@ -113,11 +123,11 @@ del escape_a2
 del goal1_destination
 gc.collect()
 
-another_tmp3 =  np.maximum(another_tmp1, another_tmp2)
+
+another_tmp3 = np.maximum(another_tmp1, another_tmp2)
 del another_tmp2
 del another_tmp1
 gc.collect()
-
 
 another_tmp4 = np.minimum(obs1_defend, obs2_defend)
 del obs2_defend
@@ -128,7 +138,6 @@ reach_set = np.minimum(another_tmp3, another_tmp4)
 del another_tmp3
 del another_tmp4
 gc.collect()
-
 
 process = psutil.Process(os.getpid())
 print("13. Gigabytes consumed {}".format(process.memory_info().rss/1e9))  # in bytes
@@ -150,4 +159,7 @@ result = HJSolver(agents_2v1, grids, [reach_set, avoid_set], tau, compMethods, p
 
 print(f'The shape of the value function is {result.shape} \n')
 # save the value function
-np.save('2v1AttackDefend.npy', result)
+
+# np.save('2v1AttackDefend.npy', result)
+print("The calculation is done! \n")
+np.save('/localhome/hha160/optimized_dp/MRAG/2v1AttackDefend.npy', result)

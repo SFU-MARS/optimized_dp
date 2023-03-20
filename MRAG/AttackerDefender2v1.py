@@ -162,32 +162,69 @@ class AttackerDefender2v1:
 
     def optCtrl_inPython(self, spat_deriv):
         """
-        :param t: time t
-        :param state: tuple of coordinates
         :param spat_deriv: tuple of spatial derivative in all dimensions
-        :return:
+        :return: a tuple of optimal control of two attackers
         """
-        # System dynamics
-        # xA1_dot = vA * u1
-        # xA2_dot = vA * u2
-        # xD1_dot = vD * d1
-        # xD2_dot = vD * d2
-        opt_a = self.uMax[0]
-        opt_w = self.uMax[1]
-
+        opt_a1 = self.uMax
+        opt_a2 = self.uMax
+        opt_a3 = self.uMax
+        opt_a4 = self.uMax
+        deriv1 = spat_deriv[0]
+        deriv2 = spat_deriv[1]
+        deriv3 = spat_deriv[2]
+        deriv4 = spat_deriv[3]
+        ctrl_len = np.sqrt(deriv1*deriv1 + deriv2*deriv2 + deriv3*deriv3 + deriv4*deriv4)
         # The initialized control only change sign in the following cases
         if self.uMode == "min":
-            if spat_deriv[2] > 0:
-                opt_a = self.uMin[0]
-            if spat_deriv[3] > 0:
-                opt_w = self.uMin[1]
+            if ctrl_len == 0:
+                opt_a1 = 0.0
+                opt_a2 = 0.0
+                opt_a3 = 0.0 
+                opt_a4 = 0.0
+            else:
+                opt_a1 = - self.speed_a * deriv1 / ctrl_len
+                opt_a2 = - self.speed_a * deriv2 / ctrl_len
+                opt_a3 = - self.speed_a * deriv3 / ctrl_len
+                opt_a4 = - self.speed_a * deriv4 / ctrl_len
         else:
-            if spat_deriv[2] < 0:
-                opt_a = self.uMin[0]
-            if spat_deriv[3] < 0:
-                opt_w = self.uMin[1]
-
-        return opt_a, opt_w
+            if ctrl_len == 0:
+                opt_a1 = 0.0
+                opt_a2 = 0.0
+                opt_a3 = 0.0 
+                opt_a4 = 0.0
+            else:
+                opt_a1 = self.speed_a * deriv1 / ctrl_len
+                opt_a2 = self.speed_a * deriv2 / ctrl_len
+                opt_a3 = self.speed_a * deriv3 / ctrl_len
+                opt_a4 = self.speed_a * deriv4 / ctrl_len
+        return (opt_a1, opt_a2, opt_a3, opt_a4)
+    
+    def optDstb_inPython(self, spat_deriv):
+        """
+        :param spat_deriv: tuple of spatial derivative in all dimensions
+        :return: a tuple of optimal control of the defender (disturbances)
+        """
+        opt_d1 = self.dMax
+        opt_d2 = self.dMax
+        deriv5 = spat_deriv[4]
+        deriv6 = spat_deriv[5]
+        dstb_len = np.sqrt(deriv5*deriv5 + deriv6*deriv6)
+        # The initialized control only change sign in the following cases
+        if self.dMode == "max":
+            if dstb_len == 0:
+                opt_d1 = 0.0
+                opt_d2 = 0.0
+            else:
+                opt_d1 = self.speed_d * deriv5 / dstb_len
+                opt_d2 = self.speed_d * deriv6 / dstb_len
+        else:
+            if dstb_len == 0:
+                opt_d1 = 0.0
+                opt_d2 = 0.0
+            else:
+                opt_d1 = - self.speed_d * deriv5 / dstb_len
+                opt_d2 = - self.speed_d * deriv6 / dstb_len
+        return (opt_d1, opt_d2)
 
     def capture_set1(self, grid, capture_radius, mode):
         ## todo: not sure whether this works or not
