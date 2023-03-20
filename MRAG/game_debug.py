@@ -10,7 +10,7 @@ from odp.Plots.plotting_utilities import plot_simulation
 # simulation 1: 4 attackers with 2 defenders
 # preparations
 print("Preparing for the simulaiton... \n")
-T = 0.6 # total simulation time
+T = 2.0 # total simulation time
 deltat = 0.005 # calculation time interval
 times = int(T/deltat)
 
@@ -58,6 +58,8 @@ capture_decisions = []
 current_attackers = attackers_initials
 current_defenders = defenders_initials
 
+controls_attacker = [[] for _ in range(num_attacker)]
+
 # document the initial positions of attackers and defenders
 for i in range(num_attacker):
     attackers_trajectory[i].append(current_attackers[i])
@@ -72,41 +74,43 @@ for j in range(num_defender):
 print("The simulation starts: \n")
 # simulation starts
 for _ in range(0, times):
-    print(f"The attackers in the {_} step are at {current_attackers} \n")
-    print(f"The defenders in the {_} step are at {current_defenders} \n")
+    # print(f"The attackers in the {_} step are at {current_attackers} \n")
+    # print(f"The defenders in the {_} step are at {current_defenders} \n")
 
-    Ic = capture_individual(current_attackers, current_defenders, value1v1)
-    Pc = capture_pair(current_attackers, current_defenders, value2v1)
-    selected = mip_solver(num_attacker, num_defender, Pc, Ic)
+    # Ic = capture_individual(current_attackers, current_defenders, value1v1)
+    # Pc = capture_pair(current_attackers, current_defenders, value2v1)
+    # selected = mip_solver(num_attacker, num_defender, Pc, Ic)
 
-    capture_decisions.append(selected)  # document the capture results
+    # capture_decisions.append(selected)  # document the capture results
 
-    # calculate the current controls of defenders
-    control_defenders = []  # current controls of defenders, [(d1xc, d1yc), (d2xc, d2yc)]
-    for j in range(num_defender):
-        d1x, d1y = current_defenders[j]
-        if len(selected[j]) == 2:  # defender j capture the attacker selected[j][0] and selected[j][1]
-            a1x, a1y = current_attackers[selected[j][0]]
-            a2x, a2y = current_attackers[selected[j][1]]
-            joint_states2v1 = (a1x, a1y, a2x, a2y, d1x, d1y)
-            control_defenders.append(defender_control2(agents_2v1, joint_states2v1, a1x_2v1, a1y_2v1, a2x_2v1, a2y_2v1, d1x_2v1, d1y_2v1))
-        elif len(selected[j]) == 1: # defender j capture the attacker selected[j][0]
-            a1x, a1y = current_attackers[selected[j][0]]
-            joint_states1v1 = (a1x, a1y, d1x, d1y)
-            control_defenders.append(defender_control1(agents_1v1, joint_states1v1, a1x_1v1, a1y_1v1, d1x_1v1, d1y_1v1))
-        else:  # defender j could not capture any of attackers
-            attacker_index = select_attacker(d1x, d1y, current_attackers)  # choose the nearest attacker
-            a1x, a1y = current_attackers[attacker_index]
-            joint_states1v1 = (a1x, a1y, d1x, d1y)
-            control_defenders.append(defender_control1(agents_1v1, joint_states1v1, a1x_1v1, a1y_1v1, d1x_1v1, d1y_1v1))
+    # # calculate the current controls of defenders
+    # control_defenders = []  # current controls of defenders, [(d1xc, d1yc), (d2xc, d2yc)]
+    # for j in range(num_defender):
+    #     d1x, d1y = current_defenders[j]
+    #     if len(selected[j]) == 2:  # defender j capture the attacker selected[j][0] and selected[j][1]
+    #         a1x, a1y = current_attackers[selected[j][0]]
+    #         a2x, a2y = current_attackers[selected[j][1]]
+    #         joint_states2v1 = (a1x, a1y, a2x, a2y, d1x, d1y)
+    #         control_defenders.append(defender_control2(agents_2v1, joint_states2v1, a1x_2v1, a1y_2v1, a2x_2v1, a2y_2v1, d1x_2v1, d1y_2v1))
+    #     elif len(selected[j]) == 1: # defender j capture the attacker selected[j][0]
+    #         a1x, a1y = current_attackers[selected[j][0]]
+    #         joint_states1v1 = (a1x, a1y, d1x, d1y)
+    #         control_defenders.append(defender_control1(agents_1v1, joint_states1v1, a1x_1v1, a1y_1v1, d1x_1v1, d1y_1v1))
+    #     else:  # defender j could not capture any of attackers
+    #         attacker_index = select_attacker(d1x, d1y, current_attackers)  # choose the nearest attacker
+    #         a1x, a1y = current_attackers[attacker_index]
+    #         joint_states1v1 = (a1x, a1y, d1x, d1y)
+    #         control_defenders.append(defender_control1(agents_1v1, joint_states1v1, a1x_1v1, a1y_1v1, d1x_1v1, d1y_1v1))
 
-    print(f'The control in the {_} step of defenders are {control_defenders} \n')
-    # update the next postions of defenders
-    newd_positions = next_positions(current_defenders, control_defenders, deltat)
-    current_defenders = newd_positions
+    # print(f'The control in the {_} step of defenders are {control_defenders} \n')
+    # # update the next postions of defenders
+    # newd_positions = next_positions(current_defenders, control_defenders, deltat)
+    # current_defenders = newd_positions
     
     # calculate the current controls of attackers
     control_attackers = attackers_control(agents_1v0, current_attackers, x1_1v0, x2_1v0)
+    for i in range(num_attacker):
+        controls_attacker[i].append(control_attackers[i])
     print(f'The control in the {_} step of attackers are {control_attackers} \n')
 
     # update the next postions of attackers
@@ -119,22 +123,26 @@ for _ in range(0, times):
         attackers_x[i].append(current_attackers[i][0])
         attackers_y[i].append(current_attackers[i][1])
 
-    for j in range(num_defender):
-        defenders_trajectory[j].append(current_defenders[j])
-        defenders_x[j].append(current_defenders[j][0])
-        defenders_y[j].append(current_defenders[j][1])
+    # for j in range(num_defender):
+    #     defenders_trajectory[j].append(current_defenders[j])
+    #     defenders_x[j].append(current_defenders[j][0])
+    #     defenders_y[j].append(current_defenders[j][1])
 
 print("The game is over.")
 
 # show the trajectories
-plot_simulation(attackers_x, attackers_y, defenders_x, defenders_y)
+plot_simulation(attackers_x, attackers_y, [], [])
 
-# print(f"The length of the attackers_x is {len(attackers_x[0])}. \n")
-# print(f"The length of the attacker 1 trajectory is {len(attackers_trajectory[0])}. \n")
+print(f"The length of the attackers_x is {len(attackers_x[0])}. \n")
+print(f"The length of the attacker 1 trajectory is {len(attackers_trajectory[0])}. \n")
+
 # print(f"The length of the defenders_x is {len(defenders_x[0])}. \n")
 # print(f"The length of the defender 1 trajectory is {len(defenders_trajectory[0])}. \n")
 
-# print(f"The last 50 positions of the attacker 1 is {attackers_trajectory[0][-50:]}")
-# print(f"The last 50 positions of the attacker 2 is {attackers_trajectory[1][-50:]}")
-# print(f"The last 50 positions of the attacker 3 is {attackers_trajectory[2][-50:]}")
-# print(f"The last 50 positions of the attacker 4 is {attackers_trajectory[3][-50:]}")
+print(f"The last 50 positions of the attacker 1 is {attackers_trajectory[0][-50:]} \n")
+print(f"The last 50 positions of the attacker 2 is {attackers_trajectory[1][-50:]} \n")
+print(f"The last 50 positions of the attacker 3 is {attackers_trajectory[2][-50:]} \n")
+print(f"The last 50 positions of the attacker 4 is {attackers_trajectory[3][-50:]} \n")
+
+print(f"All controls of attackers are {controls_attacker}. \n")
+

@@ -21,7 +21,7 @@ import math
 
 ##################################################### EXAMPLE 6 1v0AttackerDefender ####################################
 
-grids = Grid(np.array([-1.0, -1.0]), np.array([1.0, 1.0]), 2, np.array([45, 45])) # original 45
+grids = Grid(np.array([-1.0, -1.0]), np.array([1.0, 1.0]), 2, np.array([100, 100])) # original 45
 
 # Define my object dynamics
 agents_1v0 = AttackerDefender1v0(uMode="min", dMode="max")  # 1v1 (4 dims dynamics)
@@ -56,7 +56,7 @@ po = PlotOptions(do_plot=False, plot_type="2d_plot", plotDims=[0, 1], slicesCut=
 # In this example, we compute a Reach-Avoid Tube
 compMethods = {"TargetSetMode": "minVWithVTarget", "ObstacleSetMode": "maxVWithObstacle"} # original one
 # compMethods = {"TargetSetMode": "minVWithVTarget"}
-result = HJSolver(agents_1v0, grids, [reach_set, avoid_set], tau, compMethods, po, saveAllTimeSteps=False) # original one
+result = HJSolver(agents_1v0, grids, [reach_set, avoid_set], tau, compMethods, po, saveAllTimeSteps=True) # original one
 # result = HJSolver(my_2agents, g, avoid_set, tau, compMethods, po, saveAllTimeSteps=True)
 
 print(f'The shape of the value function is {result.shape} \n')

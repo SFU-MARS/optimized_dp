@@ -67,3 +67,4 @@ print(f'The shape of the 1v1 value function is {value_function1v0.shape}. \n')
 # if want to add the positons of attackers and defenders
 attackers = [(a1x, a1y)]
 plot_game(grids1v0, value_function1v0, attackers, defenders)
+# plot_original(grids1v0, value_function1v0)
