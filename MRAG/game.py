@@ -53,7 +53,7 @@ current_defenders = defenders_initials
 
 print("The simulation starts: \n")
 # simulation starts
-for _ in range(0, int(T/deltat)):
+for _ in range(0, times):
     print(f"The attackers in the {_} step are at {current_attackers} \n")
     print(f"The defenders in the {_} step are at {current_defenders} \n")
 
