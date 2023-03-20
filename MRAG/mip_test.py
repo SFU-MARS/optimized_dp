@@ -135,21 +135,25 @@ agents_2v1 = AttackerDefender2v1(uMode="min", dMode="max")  # 2v1 (6 dim dynamic
 # print("Optimal accel is {}\n".format(opt_d1))
 # print("Optimal rotation is {}\n".format(opt_d2))
 
-# initialize positions of attackers and defenders
-attackers_initials = [(0.0, 0.0), (3.0, 0.0), (-5.0, 0.0), (6.0, 0.0)]
-defenders_initials = [(0.3, 0.5), (-0.3, 0.5)]
-num_attacker = len(attackers_initials)
-num_defender = len(defenders_initials)
-attackers_trajectory  = [[] for _ in range(num_attacker)]
-defenders_trajectory = [[] for _ in range(num_defender)]
-capture_decisions = []
+# # initialize positions of attackers and defenders
+# attackers_initials = [(0.0, 0.0), (3.0, 0.0), (-5.0, 0.0), (6.0, 0.0)]
+# defenders_initials = [(0.3, 0.5), (-0.3, 0.5)]
+# num_attacker = len(attackers_initials)
+# num_defender = len(defenders_initials)
+# attackers_trajectory  = [[] for _ in range(num_attacker)]
+# defenders_trajectory = [[] for _ in range(num_defender)]
+# capture_decisions = []
 
-# simulation begins
-current_attackers = attackers_initials
-current_defenders = defenders_initials
+# # simulation begins
+# current_attackers = attackers_initials
+# current_defenders = defenders_initials
 
-d1x = 1.0
-d1y = 0.0
+# d1x = 1.0
+# d1y = 0.0
 
-index = select_attacker(d1x, d1y, current_attackers)
-print(index)
+# index = select_attacker(d1x, d1y, current_attackers)
+# print(index)
+
+T = 0.6 # total simulation time
+deltat = 0.01 # calculation time interval
+times = int(T/deltat)
