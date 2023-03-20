@@ -110,4 +110,5 @@ for _ in range(0, times):
     for j in range(num_defender):
         defenders_trajectory[j].append(current_defenders[j])
 
+
 print("The game is over.")
