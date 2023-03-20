@@ -4,12 +4,14 @@ from odp.solver import HJSolver, computeSpatDerivArray
 from MRAG.AttackerDefender1v0 import AttackerDefender1v0
 from MRAG.AttackerDefender1v1 import AttackerDefender1v1 
 from MRAG.AttackerDefender2v1 import AttackerDefender2v1
+from odp.Plots.plotting_utilities import plot_simulation
+
 
 # simulation 1: 4 attackers with 2 defenders
 # preparations
 print("Preparing for the simulaiton... \n")
 T = 0.6 # total simulation time
-deltat = 0.01 # calculation time interval
+deltat = 0.005 # calculation time interval
 times = int(T/deltat)
 
 # load all value functions, grids and spatial derivative array
@@ -46,10 +48,26 @@ num_attacker = len(attackers_initials)
 num_defender = len(defenders_initials)
 attackers_trajectory  = [[] for _ in range(num_attacker)]
 defenders_trajectory = [[] for _ in range(num_defender)]
+# for plotting
+attackers_x = [[] for _ in range(num_attacker)]
+attackers_y = [[] for _ in range(num_attacker)]
+defenders_x = [[] for _ in range(num_defender)]
+defenders_y = [[] for _ in range(num_defender)]
 capture_decisions = []
 
 current_attackers = attackers_initials
 current_defenders = defenders_initials
+
+# document the initial positions of attackers and defenders
+for i in range(num_attacker):
+    attackers_trajectory[i].append(current_attackers[i])
+    attackers_x[i].append(current_attackers[i][0])
+    attackers_y[i].append(current_attackers[i][1])
+
+for j in range(num_defender):
+    defenders_trajectory[j].append(current_defenders[j])
+    defenders_x[j].append(current_defenders[j][0])
+    defenders_y[j].append(current_defenders[j][1])
 
 print("The simulation starts: \n")
 # simulation starts
@@ -57,14 +75,6 @@ for _ in range(0, times):
     print(f"The attackers in the {_} step are at {current_attackers} \n")
     print(f"The defenders in the {_} step are at {current_defenders} \n")
 
-    # document the initial positions of attackers and defenders
-    for i in range(num_attacker):
-        attackers_trajectory[i].append(current_attackers[i])
-
-    for j in range(num_defender):
-        defenders_trajectory[j].append(current_defenders[j])
-
-    # for _ in range(0, 2, 1): in every time step
     Ic = capture_individual(current_attackers, current_defenders, value1v1)
     Pc = capture_pair(current_attackers, current_defenders, value2v1)
     selected = mip_solver(num_attacker, num_defender, Pc, Ic)
@@ -106,9 +116,15 @@ for _ in range(0, times):
     # document the new current positions of attackers and defenders
     for i in range(num_attacker):
         attackers_trajectory[i].append(current_attackers[i])
+        attackers_x[i].append(current_attackers[i][0])
+        attackers_y[i].append(current_attackers[i][1])
 
     for j in range(num_defender):
         defenders_trajectory[j].append(current_defenders[j])
-
+        defenders_x[j].append(current_defenders[j][0])
+        defenders_y[j].append(current_defenders[j][1])
 
 print("The game is over.")
+
+# show the trajectories
+plot_simulation(attackers_x, attackers_y, defenders_x, defenders_y)

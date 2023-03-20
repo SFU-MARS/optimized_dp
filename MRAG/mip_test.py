@@ -4,6 +4,9 @@ from odp.solver import HJSolver, computeSpatDerivArray
 from MRAG.AttackerDefender1v1 import AttackerDefender1v1 
 from MRAG.AttackerDefender2v1 import AttackerDefender2v1
 from utilities import *
+import plotly.graph_objects as go
+from plotly.graph_objects import Layout
+import numpy as np
 
 # information of the reach-avoid game
 # num_attacker = 3
@@ -154,6 +157,40 @@ agents_2v1 = AttackerDefender2v1(uMode="min", dMode="max")  # 2v1 (6 dim dynamic
 # index = select_attacker(d1x, d1y, current_attackers)
 # print(index)
 
-T = 0.6 # total simulation time
-deltat = 0.01 # calculation time interval
-times = int(T/deltat)
+# T = 0.6 # total simulation time
+# deltat = 0.01 # calculation time interval
+# times = int(T/deltat)
+
+
+# plot_simulation()
+
+# initialize positions of attackers and defenders
+attackers_initials = [(0.0, 0.0), (0.0, 0.8), (-0.5, 0.0), (0.5, -0.5)]
+defenders_initials = [(0.3, 0.5), (-0.3, 0.5)]
+num_attacker = len(attackers_initials)
+num_defender = len(defenders_initials)
+attackers_trajectory  = [[] for _ in range(num_attacker)]
+defenders_trajectory = [[] for _ in range(num_defender)]
+# for plotting
+attackers_x = [[] for _ in range(num_attacker)]
+attackers_y = [[] for _ in range(num_attacker)]
+defenders_x = [[] for _ in range(num_defender)]
+defenders_y = [[] for _ in range(num_defender)]
+capture_decisions = []
+
+current_attackers = attackers_initials
+current_defenders = defenders_initials
+
+print(attackers_x)
+# document the initial positions of attackers and defenders
+for i in range(num_attacker):
+    attackers_trajectory[i].append(current_attackers[i])
+    attackers_x[i].append(current_attackers[i][0])
+    attackers_y[i].append(current_attackers[i][1])
+
+for j in range(num_defender):
+    defenders_trajectory[j].append(current_defenders[j])
+    defenders_x[j].append(current_defenders[j][0])
+    defenders_y[j].append(current_defenders[j][1])
+
+print(attackers_x)
