@@ -129,7 +129,7 @@ for _ in range(0, times):
         attacker_index = select_attacker(d1x, d1y, current_attackers)  # choose the nearest attacker
         a1x, a1y = current_attackers[attacker_index]
         joint_states1v1 = (a1x, a1y, d1x, d1y)
-        control_defenders.append(defender_control12(agents_1v1, grid1v1, value1v1, tau1v1, joint_states1v1))
+        control_defenders.append(defender_control1v1(agents_1v1, grid1v1, value1v1, tau1v1, joint_states1v1))
     print(f'The control in the {_} step of defenders are {control_defenders} \n')
     # update the next postions of defenders
     newd_positions = next_positions(current_defenders, control_defenders, deltat)
@@ -137,7 +137,7 @@ for _ in range(0, times):
     
     # calculate the current controls of attackers
 
-    control_attackers = attackers_control2(agents_1v0, grid1v0, value1v0, tau1v0, current_attackers)
+    control_attackers = attackers_control(agents_1v0, grid1v0, value1v0, tau1v0, current_attackers)
     # print(f"The calculated controls are {controls}. \n")
     # neg2pos, pos2neg = find_sign_change1v0(grid1v0, value1v0, current_attackers[0])
     # print(neg2pos)

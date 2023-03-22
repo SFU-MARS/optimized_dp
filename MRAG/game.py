@@ -89,16 +89,16 @@ for _ in range(0, times):
             a1x, a1y = current_attackers[selected[j][0]]
             a2x, a2y = current_attackers[selected[j][1]]
             joint_states2v1 = (a1x, a1y, a2x, a2y, d1x, d1y)
-            control_defenders.append(defender_control2(agents_2v1, joint_states2v1, a1x_2v1, a1y_2v1, a2x_2v1, a2y_2v1, d1x_2v1, d1y_2v1))
+            control_defenders.append(defender_control2v1_v0(agents_2v1, joint_states2v1, a1x_2v1, a1y_2v1, a2x_2v1, a2y_2v1, d1x_2v1, d1y_2v1))
         elif len(selected[j]) == 1: # defender j capture the attacker selected[j][0]
             a1x, a1y = current_attackers[selected[j][0]]
             joint_states1v1 = (a1x, a1y, d1x, d1y)
-            control_defenders.append(defender_control1(agents_1v1, joint_states1v1, a1x_1v1, a1y_1v1, d1x_1v1, d1y_1v1))
+            control_defenders.append(defender_control1v1_v0(agents_1v1, joint_states1v1, a1x_1v1, a1y_1v1, d1x_1v1, d1y_1v1))
         else:  # defender j could not capture any of attackers
             attacker_index = select_attacker(d1x, d1y, current_attackers)  # choose the nearest attacker
             a1x, a1y = current_attackers[attacker_index]
             joint_states1v1 = (a1x, a1y, d1x, d1y)
-            control_defenders.append(defender_control1(agents_1v1, joint_states1v1, a1x_1v1, a1y_1v1, d1x_1v1, d1y_1v1))
+            control_defenders.append(defender_control1v1_v0(agents_1v1, joint_states1v1, a1x_1v1, a1y_1v1, d1x_1v1, d1y_1v1))
 
     print(f'The control in the {_} step of defenders are {control_defenders} \n')
     # update the next postions of defenders
@@ -106,7 +106,7 @@ for _ in range(0, times):
     current_defenders = newd_positions
     
     # calculate the current controls of attackers
-    control_attackers = attackers_control(agents_1v0, current_attackers, x1_1v0, x2_1v0)
+    control_attackers = attackers_control_v0(agents_1v0, current_attackers, x1_1v0, x2_1v0)
     print(f'The control in the {_} step of attackers are {control_attackers} \n')
 
     # update the next postions of attackers
