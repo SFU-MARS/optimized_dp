@@ -1,5 +1,7 @@
 import numpy as np
 import math
+import datetime
+from first_order_generic import spa_deriv
 from mip import *
 from odp.solver import computeSpatDerivArray
 
@@ -406,3 +408,42 @@ def defender_control1(agents_1v1, grid1v1, value1v1, tau1v1, jointstate1v1, a1x_
     else:
         opt_d1, opt_d2 = 0.0, 0.0
     return (opt_d1, opt_d2)
+
+def compute_control1v02(agents_1v0, grid1v0, value1v0, tau1v0, position, neg2pos):
+    # try to calculate the spatial derivative vector in the game
+    assert value1v0.shape[-1] == len(tau1v0)  # check the shape of value function
+    # dt = (tau[1] - tau[0]) # integral time step
+    x1_slice, x2_slice = grid1v0.get_index(position)
+
+    # check the current state is in the reach-avoid set
+    current_value = grid1v0.get_value(value1v0[..., 0], list(position))
+    if current_value > 0:
+        value1v0 = value1v0 - current_value
+
+    # find the current postision's corrsponding value function boundary
+    # neg2pos, pos2neg = find_sign_change1v0(grid1v0, value1v0, current_state)
+    
+    # calculate the derivatives
+    v = value1v0[..., neg2pos] # Minh: v = value1v0[..., neg2pos[0]]
+    print(f"The shape of list(v.shape) is {list(v.shape)}. \n")
+    # print(f"The list(grid1v0.pts_each_dim) is {list(grid1v0.pts_each_dim)}. \n")
+    start_time = datetime.datetime.now()
+    # x1_1v0 = computeSpatDerivArray(grid1v0, v, deriv_dim=1, accuracy='low')
+    # x2_1v0 = computeSpatDerivArray(grid1v0, v, deriv_dim=2, accuracy='low')
+    # spat_deriv_vector = (x1_1v0[x1_slice, x2_slice], x2_1v0[x1_slice, x2_slice])
+    spat_deriv_vector = spa_deriv(grid1v0.get_index(position), v, grid1v0)
+    end_time = datetime.datetime.now()
+    print(f"The calculation of 2D spatial derivative vector is {end_time-start_time}. \n")
+    return agents_1v0.optCtrl_inPython(spat_deriv_vector)
+
+def attackers_control2(agents_1v0, grid1v0, value1v0, tau1v0, current_attackers):
+    # try to calculate the spatial derivative vector in the game
+    control_attackers = []
+    for position in current_attackers:
+        neg2pos, pos2neg = find_sign_change1v0(grid1v0, value1v0, position)
+        # print(f"The neg2pos is {neg2pos}.\n")
+        if len(neg2pos):
+            control_attackers.append(compute_control1v02(agents_1v0, grid1v0, value1v0, tau1v0, position, neg2pos))
+        else:
+            control_attackers.append((0.0, 0.0))
+    return control_attackers

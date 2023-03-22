@@ -6,10 +6,10 @@ def spa_deriv(index, V, g, periodic_dims=[]):
     Calculates the spatial derivatives of V at an index for each dimension
 
     Args:
-        index:
-        V:
-        g:
-        periodic_dims:
+        index: (a1x, a1y)
+        V: [..., 1]
+        g: grids
+        periodic_dims: []
 
     Returns:
         List of left and right spatial derivatives for each dimension
@@ -58,6 +58,6 @@ def spa_deriv(index, V, g, periodic_dims=[]):
             left_deriv = (V[index] - V[prev_index]) / g.dx[dim]
             right_deriv = (V[next_index] - V[index]) / g.dx[dim]
 
-        spa_derivatives.append((left_deriv + right_deriv) / 2)
+        spa_derivatives.append(((left_deriv + right_deriv) / 2)[0])
 
-    return np.array(spa_derivatives)
+    return spa_derivatives
