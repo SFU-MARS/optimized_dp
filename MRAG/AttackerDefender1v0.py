@@ -104,29 +104,29 @@ class AttackerDefender1v0:
         d1 = hcl.scalar(0, "d1")
         d2 = hcl.scalar(0, "d2")
         # Just create and pass back, even though they're not used
-        d3 = hcl.scalar(0, "d3")
-        d4 = hcl.scalar(0, "d4")
-        # the same procedure in opt_ctrl
-        deriv1 = hcl.scalar(0, "deriv1")
-        # deriv2 = hcl.scalar(0, "deriv2")
-        # deriv1[0] = spat_deriv[2]
-        # deriv2[0] = spat_deriv[3]
-        dstb_len = hcl.sqrt(deriv1[0] * deriv1[0])
-        # with hcl.if_(self.dMode == "max"):
-        if self.dMode == 'max':
-            with hcl.if_(dstb_len == 0):
-                d1[0] = 0.0
-                d2[0] = 0.0
-            with hcl.else_():
-                d1[0] = 0.0
-                d2[0] = 0.0
-        else:
-            with hcl.if_(dstb_len == 0):
-                d1[0] = 0.0
-                d2[0] = 0.0
-            with hcl.else_():
-                d1[0] = 0.0
-                d2[0] = 0.0
+        # d3 = hcl.scalar(0, "d3")
+        # d4 = hcl.scalar(0, "d4")
+        # # the same procedure in opt_ctrl
+        # deriv1 = hcl.scalar(0, "deriv1")
+        # # deriv2 = hcl.scalar(0, "deriv2")
+        # # deriv1[0] = spat_deriv[2]
+        # # deriv2[0] = spat_deriv[3]
+        # dstb_len = hcl.sqrt(deriv1[0] * deriv1[0])
+        # # with hcl.if_(self.dMode == "max"):
+        # if self.dMode == 'max':
+        #     with hcl.if_(dstb_len == 0):
+        #         d1[0] = 0.0
+        #         d2[0] = 0.0
+        #     with hcl.else_():
+        #         d1[0] = 0.0
+        #         d2[0] = 0.0
+        # else:
+        #     with hcl.if_(dstb_len == 0):
+        #         d1[0] = 0.0
+        #         d2[0] = 0.0
+        #     with hcl.else_():
+        #         d1[0] = 0.0
+        #         d2[0] = 0.0
 
         return d1[0], d2[0]
 
@@ -166,24 +166,34 @@ class AttackerDefender1v0:
         :param spat_deriv: tuple of spatial derivative in all dimensions
         :return: a tuple of optimal control of the defender (disturbances)
         """
-        opt_d1 = self.dMax
-        opt_d2 = self.dMax
-        deriv3 = spat_deriv[2]
-        deriv4 = spat_deriv[3]
-        dstb_len = np.sqrt(deriv3*deriv3 + deriv4*deriv4)
-        # The initialized control only change sign in the following cases
-        if self.dMode == "max":
-            if dstb_len == 0:
-                opt_d1 = 0.0
-                opt_d2 = 0.0
-            else:
-                opt_d1 = 0.0
-                opt_d2 = 0.0
-        else:
-            if dstb_len == 0:
-                opt_d1 = 0.0
-                opt_d2 = 0.0
-            else:
-                opt_d1 = 0.0
-                opt_d2 = 0.0
-        return (opt_d1, opt_d2)
+        # opt_d1 = self.dMax
+        # opt_d2 = self.dMax
+        # deriv3 = spat_deriv[2]
+        # deriv4 = spat_deriv[3]
+        # dstb_len = np.sqrt(deriv3*deriv3 + deriv4*deriv4)
+        # # The initialized control only change sign in the following cases
+        # if self.dMode == "max":
+        #     if dstb_len == 0:
+        #         opt_d1 = 0.0
+        #         opt_d2 = 0.0
+        #     else:
+        #         opt_d1 = 0.0
+        #         opt_d2 = 0.0
+        # else:
+        #     if dstb_len == 0:
+        #         opt_d1 = 0.0
+        #         opt_d2 = 0.0
+        #     else:
+        #         opt_d1 = 0.0
+        #         opt_d2 = 0.0
+        # return (opt_d1, opt_d2)
+        return 0, 0
+    def dynamics_Python(self, t, x, uOpt1, uOpt2, dOpt1, dOpt2):
+        # maximum velocity
+        # vA = hcl.scalar(1.0, "vA")
+        # vD = hcl.scalar(1.0, "vD")
+
+        xA1_dot = self.speed_a * uOpt1
+        xA2_dot = self.speed_a * uOpt2
+
+        return (xA1_dot, xA2_dot)

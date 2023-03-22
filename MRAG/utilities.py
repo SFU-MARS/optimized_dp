@@ -218,22 +218,6 @@ def next_positions(current_positions, controls, tstep):
         temp.append((current_positions[i][0]+controls[i][0]*tstep, current_positions[i][1]+controls[i][1]*tstep))
     return temp
 
-def attackers_control(agents_1v0, current_positions, x1_1v0, x2_1v0):
-    """Return a list of 2-dimensional control inputs of all attackers based on the value function
-
-    Args:
-    grid1v0 (class): the corresponding Grid instance
-    value1v0 (ndarray): 1v0 HJ reachability value function
-    agents_1v0 (class): the corresponding AttackerDefender instance
-    current_positions (list): the attacker(s), [(), (),...]
-    """
-    control_attackers = []
-    for position in current_positions:
-        x1, x2 = lo2slice1v0(position)
-        spat_deriv_vector = (x1_1v0[x1][x2], x2_1v0[x1][x2])
-        control_attackers.append(agents_1v0.optCtrl_inPython(spat_deriv_vector))
-    return control_attackers
-
 def defender_control2(agents_2v1, joint_states2v1, a1x_2v1, a1y_2v1, a2x_2v1, a2y_2v1, d1x_2v1, d1y_2v1):
     """Return a list of 2-dimensional control inputs of one defender based on the value function
     
@@ -252,22 +236,6 @@ def defender_control2(agents_2v1, joint_states2v1, a1x_2v1, a1y_2v1, a2x_2v1, a2
     opt_d1, opt_d2 = agents_2v1.optDstb_inPython(spat_deriv_vector)
     return (opt_d1, opt_d2)
 
-def defender_control1(agents_1v1, joint_states1v1, a1x_1v1, a1y_1v1, d1x_1v1, d1y_1v1):
-    """Return a list of 2-dimensional control inputs of one defender based on the value function
-    
-    Args:
-    grid1v1 (class): the corresponding Grid instance
-    value1v1 (ndarray): 1v1 HJ reachability value function  
-    agents_1v1 (class): the corresponding AttackerDefender instance
-    joint_states1v1 (tuple): the corresponding positions of (A1, D1)
-    """
-    a1x, a1y, d1x, d2y = lo2slice1v1(joint_states1v1)
-
-    spat_deriv_vector = (a1x_1v1[a1x, a1y, d1x, d2y], a1y_1v1[a1x, a1y, d1x, d2y],
-                     d1x_1v1[a1x, a1y, d1x, d2y], d1y_1v1[a1x, a1y, d1x, d2y])
-
-    opt_d1, opt_d2 = agents_1v1.optDstb_inPython(spat_deriv_vector)
-    return (opt_d1, opt_d2)
 
 def distance(attacker, defender):
     """Return the 2-norm distance between the attacker and the defender
@@ -313,3 +281,128 @@ def bi_graph(value1v1, current_attackers, current_defenders):
                 bigraph[i].append(0)
     return bigraph
 
+def find_sign_change1v0(grid1v0, value1v0, current_state):
+    """Return two positions (neg2pos, pos2neg) of the value function
+
+    Args:
+    grid1v0 (class): the instance of grid
+    value1v0 (ndarray): including all the time slices, shape = [100, 100, len(tau)]
+    current_state (tuple): the current state of the attacker
+    """
+    current_slices = grid1v0.get_index(current_state)
+    current_value = value1v0[current_slices[0], current_slices[1], :]  # current value in all time slices
+    neg_values = (current_value<=0).astype(int)  # turn all negative values to 1, and all positive values to 0
+    checklist = neg_values - np.append(neg_values[1:], neg_values[-1])
+    # neg(True) - pos(False) = 1 --> neg to pos
+    # pos(False) - neg(True) = -1 --> pos to neg
+    return np.where(checklist==1)[0], np.where(checklist==-1)[0]
+
+def compute_control1v0(agents_1v0, grid1v0, value1v0, tau1v0, current_state, x1_1v0, x2_1v0):
+    """Return the optimal controls (tuple) of the attacker
+
+    Args:
+    agents_1v0 (class): the instance of 1v0 attacker defender
+    grid1v0 (class): the instance of grid
+    value1v0 (ndarray): 1v0 HJ reachability value function with all time slices
+    tau1v0 (ndarray): all time indices
+    current_state (tuple): the current state of the attacker
+    x1_1v0 (ndarray): spatial derivative array of the first dimension
+    x2_1v0 (ndarray): spatial derivative array of the second dimension
+    """
+    assert value1v0.shape[-1] == len(tau1v0)  # check the shape of value function
+    # dt = (tau[1] - tau[0]) # integral time step
+    x1_slice, x2_slice = grid1v0.get_index(current_state)
+
+    # check the current state is in the reach-avoid set
+    current_value = grid1v0.get_value(value1v0[..., 0], list(current_state))
+    if current_value > 0:
+        value1v0 = value1v0 - current_value
+
+    # find the current postision's corrsponding value function boundary
+    # neg2pos, pos2neg = find_sign_change1v0(grid1v0, value1v0, current_state)
+    
+    # calculate the derivatives
+    spat_deriv_vector = (x1_1v0[x1_slice, x2_slice], x2_1v0[x1_slice, x2_slice])
+    return agents_1v0.optCtrl_inPython(spat_deriv_vector)
+
+def attackers_control(agents_1v0, grid1v0, value1v0, tau1v0, current_positions, x1_1v0, x2_1v0):
+    """Return a list of 2-dimensional control inputs of all attackers based on the value function
+
+    Args:
+    agents_1v0 (class): the instance of 1v0 attacker defender
+    grid1v0 (class): the corresponding Grid instance
+    value1v0 (ndarray): 1v0 HJ reachability value function with all time slices
+    tau1v0 (ndarray): all time indices
+    agents_1v0 (class): the corresponding AttackerDefender instance
+    current_positions (list): the attacker(s), [(), (),...]
+    x1_1v0 (ndarray): spatial derivative array of the first dimension
+    x2_1v0 (ndarray): spatial derivative array of the second dimension
+    """
+    control_attackers = []
+    for position in current_positions:
+        neg2pos, pos2neg = find_sign_change1v0(grid1v0, value1v0, position)
+        print(f"The neg2pos is {neg2pos}.\n")
+        if len(neg2pos):
+            control_attackers.append(compute_control1v0(agents_1v0, grid1v0, value1v0, tau1v0, position, x1_1v0[..., neg2pos[0]], x2_1v0[..., neg2pos[0]]))
+        else:
+            control_attackers.append((0.0, 0.0))
+    return control_attackers
+
+def find_sign_change1v1(grid1v1, value1v1, jointstate1v1):
+    """Return two positions (neg2pos, pos2neg) of the value function
+
+    Args:
+    grid1v1 (class): the instance of grid
+    value1v1 (ndarray): including all the time slices, shape = [45, 45, 45, 45, len(tau)]
+    jointstate1v1 (tuple): the current joint state of (a1x, a1y, d1x, d1y)
+    """
+    current_slices = grid1v1.get_index(jointstate1v1)
+    current_value = value1v1[current_slices[0], current_slices[1], current_slices[2], current_slices[3], :]  # current value in all time slices
+    neg_values = (current_value<=0).astype(int)  # turn all negative values to 1, and all positive values to 0
+    checklist = neg_values - np.append(neg_values[1:], neg_values[-1])
+    # neg(True) - pos(False) = 1 --> neg to pos
+    # pos(False) - neg(True) = -1 --> pos to neg
+    return np.where(checklist==1)[0], np.where(checklist==-1)[0]
+
+def compute_control1v1(agents_1v1, grid1v1, value1v1, tau1v1, jointstate1v1, a1x_1v1, a1y_1v1, d1x_1v1, d1y_1v1):
+    """Return the optimal controls (tuple) of the defender in 1v1 reach-avoid game
+
+    Args:
+    agents_1v1 (class): the instance of 1v1 attacker defender
+    grid1v1 (class): the instance of grid
+    value1v1 (ndarray): 1v1 HJ reachability value function with all time slices
+    tau1v1 (ndarray): all time indices
+    jointstate1v1 (tuple): the current joint state of the attacker and the defender
+    """
+    assert value1v1.shape[-1] == len(tau1v1)  # check the shape of value function
+    # dt = (tau[1] - tau[0]) # integral time step
+    a1x_slice, a1y_slice, d1x_slice, d1y_slice = grid1v1.get_index(jointstate1v1)
+
+    # check the current state is in the reach-avoid set
+    current_value = grid1v1.get_value(value1v1[..., 0], list(jointstate1v1))
+    if current_value > 0:
+        value1v0 = value1v0 - current_value
+
+    # find the current postision's corrsponding value function boundary
+    # neg2pos, pos2neg = find_sign_change1v0(grid1v0, value1v0, current_state)
+    
+    # calculate the derivatives
+    spat_deriv_vector = (a1x_1v1[a1x_slice, a1y_slice, d1x_slice, d1y_slice], a1y_1v1[a1x_slice, a1y_slice, d1x_slice, d1y_slice], 
+                         d1x_1v1[a1x_slice, a1y_slice, d1x_slice, d1y_slice], d1y_1v1[a1x_slice, a1y_slice, d1x_slice, d1y_slice])
+    return agents_1v1.optCtrl_inPython(spat_deriv_vector)
+
+def defender_control1(agents_1v1, grid1v1, value1v1, tau1v1, jointstate1v1, a1x_1v1, a1y_1v1, d1x_1v1, d1y_1v1):
+    """Return a list of 2-dimensional control inputs of one defender based on the value function
+    
+    Args:
+    grid1v1 (class): the corresponding Grid instance
+    value1v1 (ndarray): 1v1 HJ reachability value function  
+    agents_1v1 (class): the corresponding AttackerDefender instance
+    joint_states1v1 (tuple): the corresponding positions of (A1, D1)
+    """
+    neg2pos, pos2neg = find_sign_change1v1(grid1v1, value1v1, jointstate1v1)
+    if len(neg2pos):
+        opt_d1, opt_d2 = compute_control1v1(agents_1v1, grid1v1, value1v1, tau1v1, jointstate1v1, a1x_1v1[..., neg2pos[0]], a1y_1v1[..., neg2pos[0]], d1x_1v1[..., neg2pos[0]], d1y_1v1[..., neg2pos[0]])
+    else:
+        opt_d1, opt_d2 = 0.0, 0.0
+    return (opt_d1, opt_d2)

@@ -6,7 +6,7 @@ from odp.Shapes import *
 from MRAG.AttackerDefender1v0 import AttackerDefender1v0
 # Plot options
 from odp.Plots import PlotOptions
-from odp.Plots.plotting_utilities import plot_2d, plot_isosurface
+from odp.Plots.plotting_utilities import plot_2d, plot_isosurface, plot_original
 # Solver core
 from odp.solver import HJSolver, computeSpatDerivArray
 import math
@@ -38,9 +38,10 @@ goal1_destination = ShapeRectangle(grids, [0.6, 0.1], [0.8, 0.3])  # attacker ar
 # obs1_defend = ShapeRectangle(grids, [-1000, -1000, -0.1, -1000], [1000, 1000, 0.1, -0.3])  # defender stuck in obs1
 # obs2_defend = ShapeRectangle(grids, [-1000, -1000, -0.1, 0.30], [1000, 1000, 0.1, 0.60])  # defender stuck in obs2
 reach_set = goal1_destination
+# plot_original(grids, reach_set)
 
 # Look-back length and time step
-lookback_length = 4.5  # the same as 2014Mo 
+lookback_length = 2.5  # the same as 2014Mo 
 t_step = 0.025
 
 # Actual calculation process, needs to add new plot function to draw a 2D figure
@@ -55,20 +56,20 @@ po = PlotOptions(do_plot=False, plot_type="2d_plot", plotDims=[0, 1], slicesCut=
 
 # In this example, we compute a Reach-Avoid Tube
 compMethods = {"TargetSetMode": "minVWithVTarget", "ObstacleSetMode": "maxVWithObstacle"} # original one
-# compMethods = {"TargetSetMode": "minVWithVTarget"}
+# compMethods = {"TargetSetMode": None}
 result = HJSolver(agents_1v0, grids, [reach_set, avoid_set], tau, compMethods, po, saveAllTimeSteps=True) # original one
-# result = HJSolver(my_2agents, g, avoid_set, tau, compMethods, po, saveAllTimeSteps=True)
+# result = HJSolver(agents_1v0, grids, reach_set, tau, compMethods, po, saveAllTimeSteps=True)
 
 print(f'The shape of the value function is {result.shape} \n')
 # save the value function
 np.save('/localhome/hha160/optimized_dp/MRAG/1v0AttackDefend.npy', result)
 
-# compute spatial derivatives at every state
-x_derivative = computeSpatDerivArray(grids, result, deriv_dim=1, accuracy="low")
-y_derivative = computeSpatDerivArray(grids, result, deriv_dim=2, accuracy="low")
+# # compute spatial derivatives at every state
+# x_derivative = computeSpatDerivArray(grids, result, deriv_dim=1, accuracy="low")
+# y_derivative = computeSpatDerivArray(grids, result, deriv_dim=2, accuracy="low")
 
-# Let's compute optimal control at some random idices
-spat_deriv_vector = (x_derivative[10,20], y_derivative[10,20])
+# # Let's compute optimal control at some random idices
+# spat_deriv_vector = (x_derivative[10,20], y_derivative[10,20])
 
 # # Compute the optimal control
 # opt_a1, opt_a2 = agents_1v0.optCtrl_inPython(spat_deriv_vector)

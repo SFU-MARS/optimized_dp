@@ -1,6 +1,7 @@
 from mip import *
 from odp.Grid import Grid
 from odp.solver import HJSolver, computeSpatDerivArray
+from MRAG.AttackerDefender1v0 import AttackerDefender1v0
 from MRAG.AttackerDefender1v1 import AttackerDefender1v1 
 from MRAG.AttackerDefender2v1 import AttackerDefender2v1
 from utilities import *
@@ -100,14 +101,31 @@ import numpy as np
 # print(current_attackers[1][0])
 # print(len(current_attackers))
 
-
+# load all value functions, grids and spatial derivative array
+value1v0 = np.load('MRAG/1v0AttackDefend.npy')  # value1v0.shape = [100, 100, len(tau)]
 value1v1 = np.load('MRAG/1v1AttackDefend.npy')
 value2v1 = np.load('MRAG/2v1AttackDefend.npy')
+grid1v0 = Grid(np.array([-1.0, -1.0]), np.array([1.0, 1.0]), 2, np.array([100, 100])) # original 45
 grid1v1 = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([45, 45, 45, 45])) # original 45
 grid2v1 = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 6, np.array([30, 30, 30, 30, 30, 30]))
-
+agents_1v0 = AttackerDefender1v0(uMode="min", dMode="max")
 agents_1v1 = AttackerDefender1v1(uMode="min", dMode="max")  # 1v1 (4 dims dynamics)
 agents_2v1 = AttackerDefender2v1(uMode="min", dMode="max")  # 2v1 (6 dim dynamics)
+tau1v0 = np.arange(start=0, stop=2.5 + 1e-5, step=0.025)
+tau1v1 = np.arange(start=0, stop=4.5 + 1e-5, step=0.025)
+# print(f"The shape of the value1v0 is {value1v0.shape}")
+# print(f"The value1v0 at time 0 value is {value1v0[0, 0, 0]}")
+# print(f"The value1v0 at time -1 value is {value1v0[0, 0, -1]}")
+
+# flip_value1v0 = np.flip(value1v0, grid1v0.dims)
+# print(f"The inversed value1v0 value at time=0 (former -1)is {flip_value1v0[0, 0, 0]}")
+# print(f"The inversed value1v0 value at time=-1 (former 0)is {flip_value1v0[0, 0, -1]}")
+# print(flip_value1v0[(0, 0)])
+
+# v = np.array([-1, -1, -1, -1, 0, 2, 32, 4, 5, 6])
+# new_v = (v<=0).astype(int)
+# print(new_v)
+
 
 
 # # Compute spatial derivatives at every state
@@ -196,13 +214,35 @@ agents_2v1 = AttackerDefender2v1(uMode="min", dMode="max")  # 2v1 (6 dim dynamic
 # print(attackers_x)
 
 
-bpGraph0 = np.array([[1, 1], 
-                    [0, 0], 
-                    [0, 0],
-                    [1, 0]])
-print(bpGraph0.shape[0])
-print(bpGraph0.shape[1])
+# bpGraph0 = np.array([[1, 1], 
+#                     [0, 0], 
+#                     [0, 0],
+#                     [1, 0]])
+# print(bpGraph0.shape[0])
+# print(bpGraph0.shape[1])
 
-bpGraph1 = [[1, 1], [0, 0], [0, 0], [1, 0]]
-print(len(bpGraph1))
-print(len(bpGraph1[0]))
+# bpGraph1 = [[1, 1], [0, 0], [0, 0], [1, 0]]
+# print(len(bpGraph1))
+# print(len(bpGraph1[0]))
+
+
+# x1_1v0 = computeSpatDerivArray(grid1v0, value1v0, deriv_dim=1, accuracy='low')
+# x2_1v0 = computeSpatDerivArray(grid1v0, value1v0, deriv_dim=2, accuracy='low')
+# 1v1 
+# a1x_1v1 = np.zeros([45, 45, 45, 45, len(tau1v1)])
+# a1y_1v1 = np.zeros([45, 45, 45, 45, len(tau1v1)])
+# d1x_1v1 = np.zeros([45, 45, 45, 45, len(tau1v1)])
+# d1y_1v1 = np.zeros([45, 45, 45, 45, len(tau1v1)])
+# for t in range(len(tau1v1)):
+#     print(f"The list(value1v1[..., t].shape) is {list(value1v1[..., t].shape)}. \n")
+#     print(f"The list(grid.pts_each_dim) is like {list(grid1v1.pts_each_dim)}")
+#     a1x_1v1[..., t] = computeSpatDerivArray(grid1v1, value1v1[..., t], deriv_dim=1, accuracy="low")
+#     # a1y_1v1[..., t] = computeSpatDerivArray(grid1v1, value1v1[..., t], deriv_dim=2, accuracy="low")
+#     # d1x_1v1[..., t] = computeSpatDerivArray(grid1v1, value1v1[..., t], deriv_dim=3, accuracy="low")
+#     # d1y_1v1[..., t] = computeSpatDerivArray(grid1v1, value1v1[..., t], deriv_dim=4, accuracy="low")
+
+a = np.arange(32).reshape([2, 2, 2, 4])
+print(a[0, 0, 0, :].shape)
+
+
+
