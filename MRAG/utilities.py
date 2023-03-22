@@ -389,7 +389,7 @@ def compute_control1v1(agents_1v1, grid1v1, value1v1, tau1v1, jointstate1v1, a1x
     # calculate the derivatives
     spat_deriv_vector = (a1x_1v1[a1x_slice, a1y_slice, d1x_slice, d1y_slice], a1y_1v1[a1x_slice, a1y_slice, d1x_slice, d1y_slice], 
                          d1x_1v1[a1x_slice, a1y_slice, d1x_slice, d1y_slice], d1y_1v1[a1x_slice, a1y_slice, d1x_slice, d1y_slice])
-    return agents_1v1.optCtrl_inPython(spat_deriv_vector)
+    return agents_1v1.optDstb_inPython(spat_deriv_vector)
 
 def defender_control1(agents_1v1, grid1v1, value1v1, tau1v1, jointstate1v1, a1x_1v1, a1y_1v1, d1x_1v1, d1y_1v1):
     """Return a list of 2-dimensional control inputs of one defender based on the value function
