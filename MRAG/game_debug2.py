@@ -90,10 +90,10 @@ for i in range(num_attacker):
     attackers_x[i].append(current_attackers[i][0])
     attackers_y[i].append(current_attackers[i][1])
 
-# for j in range(num_defender):
-#     defenders_trajectory[j].append(current_defenders[j])
-#     defenders_x[j].append(current_defenders[j][0])
-#     defenders_y[j].append(current_defenders[j][1])
+for j in range(num_defender):
+    defenders_trajectory[j].append(current_defenders[j])
+    defenders_x[j].append(current_defenders[j][0])
+    defenders_y[j].append(current_defenders[j][1])
 
 print("The simulation starts: \n")
 # simulation starts
@@ -108,7 +108,7 @@ for _ in range(0, times):
     # capture_decisions.append(selected)  # document the capture results
 
     # # calculate the current controls of defenders
-    # control_defenders = []  # current controls of defenders, [(d1xc, d1yc), (d2xc, d2yc)]
+    control_defenders = []  # current controls of defenders, [(d1xc, d1yc), (d2xc, d2yc)]
     for j in range(num_defender):
         d1x, d1y = current_defenders[j]
     #     if len(selected[j]) == 2:  # defender j capture the attacker selected[j][0] and selected[j][1]
@@ -126,14 +126,14 @@ for _ in range(0, times):
     #         joint_states1v1 = (a1x, a1y, d1x, d1y)
     #         control_defenders.append(defender_control1(agents_1v1, joint_states1v1, a1x_1v1, a1y_1v1, d1x_1v1, d1y_1v1))
 
-    #     attacker_index = select_attacker(d1x, d1y, current_attackers)  # choose the nearest attacker
-    #     a1x, a1y = current_attackers[attacker_index]
-    #     joint_states1v1 = (a1x, a1y, d1x, d1y)
-    #     control_defenders.append(defender_control1(agents_1v1, grid1v1, value1v1, tau1v1, joint_states1v1, a1x_1v1, a1y_1v1, d1x_1v1, d1y_1v1))
-    # print(f'The control in the {_} step of defenders are {control_defenders} \n')
-    # # update the next postions of defenders
-    # newd_positions = next_positions(current_defenders, control_defenders, deltat)
-    # current_defenders = newd_positions
+        attacker_index = select_attacker(d1x, d1y, current_attackers)  # choose the nearest attacker
+        a1x, a1y = current_attackers[attacker_index]
+        joint_states1v1 = (a1x, a1y, d1x, d1y)
+        control_defenders.append(defender_control12(agents_1v1, grid1v1, value1v1, tau1v1, joint_states1v1))
+    print(f'The control in the {_} step of defenders are {control_defenders} \n')
+    # update the next postions of defenders
+    newd_positions = next_positions(current_defenders, control_defenders, deltat)
+    current_defenders = newd_positions
     
     # calculate the current controls of attackers
 
@@ -158,18 +158,18 @@ for _ in range(0, times):
         attackers_x[i].append(current_attackers[i][0])
         attackers_y[i].append(current_attackers[i][1])
 
-    # for j in range(num_defender):
-    #     defenders_trajectory[j].append(current_defenders[j])
-    #     defenders_x[j].append(current_defenders[j][0])
-    #     defenders_y[j].append(current_defenders[j][1])
+    for j in range(num_defender):
+        defenders_trajectory[j].append(current_defenders[j])
+        defenders_x[j].append(current_defenders[j][0])
+        defenders_y[j].append(current_defenders[j][1])
 
 # traj, _, _, _ = compute_opt_traj1v0(grid1v0, value1v0, tau, agents_1v0, x1_1v0, x2_1v0)
 # print(f"The trajectory of the attacker is {traj}. \n")
 # print("The game is over.")
 
 # show the trajectories
-plot_simulation(attackers_x, attackers_y, [], [])
-# plot_simulation(attackers_x, attackers_y, defenders_x, defenders_y)
+# plot_simulation(attackers_x, attackers_y, [], [])
+plot_simulation(attackers_x, attackers_y, defenders_x, defenders_y)
 
 # print(f"The length of the attackers_x is {len(attackers_x[0])}. \n")
 # print(f"The length of the attacker 1 trajectory is {len(attackers_trajectory[0])}. \n")

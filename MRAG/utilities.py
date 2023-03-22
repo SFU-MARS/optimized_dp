@@ -383,7 +383,7 @@ def compute_control1v1(agents_1v1, grid1v1, value1v1, tau1v1, jointstate1v1, a1x
     # check the current state is in the reach-avoid set
     current_value = grid1v1.get_value(value1v1[..., 0], list(jointstate1v1))
     if current_value > 0:
-        value1v0 = value1v0 - current_value
+        value1v1 = value1v1 - current_value
 
     # find the current postision's corrsponding value function boundary
     # neg2pos, pos2neg = find_sign_change1v0(grid1v0, value1v0, current_state)
@@ -433,7 +433,7 @@ def compute_control1v02(agents_1v0, grid1v0, value1v0, tau1v0, position, neg2pos
     # spat_deriv_vector = (x1_1v0[x1_slice, x2_slice], x2_1v0[x1_slice, x2_slice])
     spat_deriv_vector = spa_deriv(grid1v0.get_index(position), v, grid1v0)
     end_time = datetime.datetime.now()
-    print(f"The calculation of 2D spatial derivative vector is {end_time-start_time}. \n")
+    # print(f"The calculation of 2D spatial derivative vector is {end_time-start_time}. \n")
     return agents_1v0.optCtrl_inPython(spat_deriv_vector)
 
 def attackers_control2(agents_1v0, grid1v0, value1v0, tau1v0, current_attackers):
@@ -447,3 +447,54 @@ def attackers_control2(agents_1v0, grid1v0, value1v0, tau1v0, current_attackers)
         else:
             control_attackers.append((0.0, 0.0))
     return control_attackers
+
+def compute_control1v12(agents_1v1, grid1v1, value1v1, tau1v1, jointstate1v1, neg2pos):
+    # try to calculate the spatial derivative vector in the game
+    """Return the optimal controls (tuple) of the defender in 1v1 reach-avoid game
+
+    Args:
+    agents_1v1 (class): the instance of 1v1 attacker defender
+    grid1v1 (class): the instance of grid
+    value1v1 (ndarray): 1v1 HJ reachability value function with all time slices
+    tau1v1 (ndarray): all time indices
+    jointstate1v1 (tuple): the current joint state of the attacker and the defender
+    """
+    assert value1v1.shape[-1] == len(tau1v1)  # check the shape of value function
+    # dt = (tau[1] - tau[0]) # integral time step
+    a1x_slice, a1y_slice, d1x_slice, d1y_slice = grid1v1.get_index(jointstate1v1)
+
+    # check the current state is in the reach-avoid set
+    current_value = grid1v1.get_value(value1v1[..., 0], list(jointstate1v1))
+    if current_value > 0:
+        value1v1 = value1v1 - current_value
+
+    # find the current postision's corrsponding value function boundary
+    # neg2pos, pos2neg = find_sign_change1v0(grid1v0, value1v0, current_state)
+    
+    # calculate the derivatives
+    v = value1v1[..., neg2pos] # Minh: v = value1v0[..., neg2pos[0]]
+    # print(f"The shape of list(v.shape) is {list(v.shape)}. \n")
+    # print(f"The list(grid1v0.pts_each_dim) is {list(grid1v0.pts_each_dim)}. \n")
+    start_time = datetime.datetime.now()
+    spat_deriv_vector = spa_deriv(grid1v1.get_index(jointstate1v1), v, grid1v1)
+    end_time = datetime.datetime.now()
+    print(f"The calculation of 2D spatial derivative vector is {end_time-start_time}. \n")
+    # spat_deriv_vector = (a1x_1v1[a1x_slice, a1y_slice, d1x_slice, d1y_slice], a1y_1v1[a1x_slice, a1y_slice, d1x_slice, d1y_slice], 
+    #                      d1x_1v1[a1x_slice, a1y_slice, d1x_slice, d1y_slice], d1y_1v1[a1x_slice, a1y_slice, d1x_slice, d1y_slice])
+    return agents_1v1.optDstb_inPython(spat_deriv_vector)
+
+def defender_control12(agents_1v1, grid1v1, value1v1, tau1v1, jointstate1v1):
+    """Return a list of 2-dimensional control inputs of one defender based on the value function
+    
+    Args:
+    grid1v1 (class): the corresponding Grid instance
+    value1v1 (ndarray): 1v1 HJ reachability value function  
+    agents_1v1 (class): the corresponding AttackerDefender instance
+    joint_states1v1 (tuple): the corresponding positions of (A1, D1)
+    """
+    neg2pos, pos2neg = find_sign_change1v1(grid1v1, value1v1, jointstate1v1)
+    if len(neg2pos):
+        opt_d1, opt_d2 = compute_control1v12(agents_1v1, grid1v1, value1v1, tau1v1, jointstate1v1, neg2pos)
+    else:
+        opt_d1, opt_d2 = 0.0, 0.0
+    return (opt_d1, opt_d2)
