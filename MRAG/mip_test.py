@@ -241,8 +241,22 @@ tau1v1 = np.arange(start=0, stop=4.5 + 1e-5, step=0.025)
 #     # d1x_1v1[..., t] = computeSpatDerivArray(grid1v1, value1v1[..., t], deriv_dim=3, accuracy="low")
 #     # d1y_1v1[..., t] = computeSpatDerivArray(grid1v1, value1v1[..., t], deriv_dim=4, accuracy="low")
 
-print(f"The shape of the value1v1 is {value1v1.shape}. \n")
-v = value1v1[..., np.newaxis]
-print(f"The shape of the v is {v.shape}. \n")
+# print(f"The shape of the value1v1 is {value1v1.shape}. \n")
+# v = value1v1[..., np.newaxis]
+# print(f"The shape of the v is {v.shape}. \n")
+
+# a = [[0, 5], [], [1, 3]]
+# for i in range(len(a)):
+#     if a[i]:
+#         print(a[i])
 
 
+captured = [0 for _ in range(3)]
+# print(captured)
+
+attackers_initials = [(0.0, 0.0), (0.0, 0.8)]
+defenders_initials = [(0.3, 0.5)]
+captured_lists = []
+current_captured = [0 for _ in range(len(attackers_initials))]
+captured_lists.append(current_captured)
+print(captured_lists)

@@ -219,6 +219,24 @@ def next_positions(current_positions, controls, tstep):
         temp.append((current_positions[i][0]+controls[i][0]*tstep, current_positions[i][1]+controls[i][1]*tstep))
     return temp
 
+def next_positions_a(current_positions, controls, tstep, captured):
+    """Return the next positions (list) of attackers considering the current captured results
+
+    Arg:
+    current_positions (list): [(), (),...]
+    controls (list): [(), (),...]
+    tstep (float): time step
+    captured (list): the captured attackers
+    """
+    temp = []
+    num = len(controls)
+    for i in range(num):
+        if not captured[i]:  # the attacker i has not been captured
+            temp.append((current_positions[i][0]+controls[i][0]*tstep, current_positions[i][1]+controls[i][1]*tstep))
+        else:
+            temp.append((current_positions[i][0], current_positions[i][1]))
+    return temp
+
 def distance(attacker, defender):
     """Return the 2-norm distance between the attacker and the defender
 
@@ -435,7 +453,7 @@ def compute_control1v0(agents_1v0, grid1v0, value1v0, tau1v0, position, neg2pos)
     
     # calculate the derivatives
     v = value1v0[..., neg2pos] # Minh: v = value1v0[..., neg2pos[0]]
-    print(f"The shape of the input value function v of attacker is {v.shape}. \n")
+    # print(f"The shape of the input value function v of attacker is {v.shape}. \n")
     start_time = datetime.datetime.now()
     spat_deriv_vector = spa_deriv(grid1v0.get_index(position), v, grid1v0)
     end_time = datetime.datetime.now()
@@ -583,5 +601,24 @@ def defender_control2v1_1slice(agents_2v1, grid2v1, value2v1, tau2v1, jointstate
     spat_deriv_vector = spa_deriv(grid2v1.get_index(jointstate2v1), value2v1, grid2v1)
     opt_d1, opt_d2 = agents_2v1.optDstb_inPython(spat_deriv_vector)
     end_time = datetime.datetime.now()
-    print(f"The calculation of 6D spatial derivative vector is {end_time-start_time}. \n")
+    # print(f"The calculation of 6D spatial derivative vector is {end_time-start_time}. \n")
     return (opt_d1, opt_d2)
+
+def capture_check(current_attackers, current_defenders, selected, last_captured):
+    """
+    Return a list that contains 0 or 1, 1 means this attacker is captured
+
+    Args:
+    current_attackers (list): the current states of all attackers
+    current_defenders (list): the current states of all defenders
+    selected (list): the capture relationship
+    last_captured (list): the captured result of last time step
+    """
+    captured = last_captured
+    for j in range(len(current_defenders)):
+        if len(selected[j]):
+            for i in selected[j]:
+                if distance(current_defenders[j], current_attackers[i]) <= 0.1:
+                    captured[i] = 1
+    return captured
+
