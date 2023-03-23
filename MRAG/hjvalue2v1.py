@@ -2,18 +2,15 @@ import numpy as np
 # Utility functions to initialize the problem
 from odp.Grid import Grid
 from odp.Shapes import *
-# Specify the  file that includes dynamic systems
-# from MRAG.AttackerDefender2v1 import AttackerDefender2v1
-from AttackerDefender2v1 import *
+# Specify the  file that includes dynamic systems, AttackerDefender4D
+from MRAG.AttackerDefender1v1 import AttackerDefender1v1 
 # Plot options
 from odp.Plots import PlotOptions
 from odp.Plots.plotting_utilities import plot_2d, plot_isosurface
 # Solver core
 from odp.solver import HJSolver, computeSpatDerivArray
 import math
-import gc
-import os, psutil
-
+import time
 
 """ USER INTERFACES
 - Define grid
@@ -23,128 +20,38 @@ import os, psutil
 - Call HJSolver function
 """
 
-##################################################### EXAMPLE 5 2v1AttackerDefender ####################################
-
-grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 6, np.array([30, 30, 30, 30, 30, 30])) # original 45, on mars-14 20 is the upper bound
-process = psutil.Process(os.getpid())
-print("1. Gigabytes consumed {}".format(process.memory_info().rss/1e9))  # in bytes
+##################################################### EXAMPLE 4 1v1AttackerDefender ####################################
+#
+grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([30, 30, 30, 30])) # original 45
 
 # Define my object dynamics
-agents_2v1 = AttackerDefender2v1(uMode="min", dMode="max")  # 2v1 (6 dim dynamics)
+agents_1v1 = AttackerDefender1v1(uMode="min", dMode="max")  # 1v1 (4 dims dynamics)
+
 # Avoid set, no constraint means inf
-obs1_a1 = ShapeRectangle(grids, [-0.1, -1.0, -1000, -1000, -1000, -1000], [0.1, -0.3, 1000, 1000, 1000, 1000])  # a1 get stuck in the obs1
-
-process = psutil.Process(os.getpid())
-print("2. Gigabytes consumed {}".format(process.memory_info().rss/1e9))  # in bytes
-
-obs2_a1 = ShapeRectangle(grids, [-0.1, 0.30, -1000, -1000, -1000, -1000], [0.1, 0.60, 1000, 1000, 1000, 1000])  # a1 get stuck in the obs2
-process = psutil.Process(os.getpid())
-print("3. Gigabytes consumed {}".format(process.memory_info().rss/1e9))  # in bytes
-
-tmp2 = np.minimum(obs1_a1, obs2_a1)
-del obs1_a1
-del obs2_a1
-gc.collect()
-
-obs1_a2 = ShapeRectangle(grids, [-1000, -1000, -0.1, -1.0, -1000, -1000], [1000, 1000, 0.1, -0.3, 1000, 1000])  # a2 get stuck in the obs1
-process = psutil.Process(os.getpid())
-print("4. Gigabytes consumed {}".format(process.memory_info().rss/1e9))  # in bytes
-
-obs2_a2 = ShapeRectangle(grids, [-1000, -1000, -0.1, 0.30, -1000, -1000], [1000, 1000, 0.1, 0.60, 1000, 1000])  # a2 get stuck in the obs2
-process = psutil.Process(os.getpid())
-print("5. Gigabytes consumed {}".format(process.memory_info().rss/1e9))  # in bytes
-
-tmp1 = np.minimum(obs1_a2, obs2_a2)
-del obs1_a2
-del obs2_a2
-gc.collect()
-
-process = psutil.Process(os.getpid())
-print("6. Gigabytes consumed {}".format(process.memory_info().rss/1e9))  # in bytes
-
-tmp3 = np.minimum(tmp1, tmp2)
-del tmp1
-del tmp2
-gc.collect()
-
-process = psutil.Process(os.getpid())
-print("7. Gigabytes consumed {}".format(process.memory_info().rss/1e9))  # in bytes
-
-capture_a1 = agents_2v1.capture_set1(grids, 0.1, "capture")  # a1 is captured
-process = psutil.Process(os.getpid())
-print("8. Gigabytes consumed {}".format(process.memory_info().rss/1e9))  # in bytes
-
-capture_a2 = agents_2v1.capture_set2(grids, 0.1, "capture")  # a2 is captured
-process = psutil.Process(os.getpid())
-print("10. Gigabytes consumed {}".format(process.memory_info().rss/1e9))  # in bytes
-tmp4 = np.minimum(capture_a1, capture_a2)
-del capture_a1
-del capture_a2
-gc.collect()
-
-avoid_set = np.minimum(tmp3, tmp4) # is order necessary?
-process = psutil.Process(os.getpid())
-print("11. Gigabytes consumed {}".format(process.memory_info().rss/1e9))  # in bytes
-# Save memory by getting rid of the intial array
-
-del tmp3
-del tmp4
-gc.collect()
-
-process = psutil.Process(os.getpid())
-print("Hello Gigabytes consumed {}".format(process.memory_info().rss/1e9))  # in bytes
-
-
+obs1_attack = ShapeRectangle(grids, [-0.1, -1.0, -1000, -1000], [0.1, -0.3, 1000, 1000])  # attacker stuck in obs1
+obs2_attack = ShapeRectangle(grids, [-0.1, 0.30, -1000, -1000], [0.1, 0.60, 1000, 1000])  # attacker stuck in obs2
+obs3_capture = agents_1v1.capture_set(grids, 0.1, "capture")  # attacker being captured by defender, try different radius
+avoid_set = np.minimum(obs3_capture, np.minimum(obs1_attack, obs2_attack)) # original
+# debugging
+# avoid_set = np.minimum(obs3_capture, obs2_attack) # debug1
+# obs_circle = CylinderShape(g, [2, 3], np.array([0.0, 0.5, 0.0, 0.0]), 0.3) # debug2 + debug4
+# avoid_set = np.minimum(obs3_capture, obs_circle) # debug2 + debug5
+# avoid_set = obs2_attack  # debug3
+# avoid_set = obs_circle # debug6
 
 # Reach set, run and see what it is!
-goal1_destination = ShapeRectangle(grids, [0.6, 0.1, 0.6, 0.1, -1000, -1000],
-                                   [0.8, 0.3, 0.8, 0.3, 1000, 1000])  # a1 and a2 both arrive the goal
-# np.save('goal1_destination.npy', goal1_destination)
+goal1_destination = ShapeRectangle(grids, [0.6, 0.1, -1000, -1000], [0.8, 0.3, 1000, 1000])  # attacker arrives target
+goal2_escape = agents_1v1.capture_set(grids, 0.1, "escape")  # attacker escape from defender
+obs1_defend = ShapeRectangle(grids, [-1000, -1000, -0.1, -1000], [1000, 1000, 0.1, -0.3])  # defender stuck in obs1
+obs2_defend = ShapeRectangle(grids, [-1000, -1000, -0.1, 0.30], [1000, 1000, 0.1, 0.60])  # defender stuck in obs2
+reach_set = np.minimum(np.maximum(goal1_destination, goal2_escape), np.minimum(obs1_defend, obs2_defend)) # original
 
-# goal1_destination = ShapeRectangle(grids, [0.6, 0.1, -1000, -1000, -1000, -1000],
-#                                    [0.8, 0.3, 1000, 1000, 1000, 1000])  # a1 and a2 both arrive the goal
-# np.save('goal1_destination.npy', goal1_destination)
-
-escape_a1 = agents_2v1.capture_set1(grids, 0.1, "escape")  # a1 escape
-escape_a2 = agents_2v1.capture_set2(grids, 0.1, "escape")  # a2 escape
-
-obs1_defend = ShapeRectangle(grids, [-1000, -1000, -1000, -1000, -0.1, -1.0],
-                             [1000, 1000, 1000, 1000, 0.1, -0.3])  # defender stuck in obs1
-obs2_defend = ShapeRectangle(grids, [-1000, -1000, -1000, -1000, -0.1, 0.30],
-                             [1000, 1000, 1000, 1000, 0.1, 0.60])  # defender stuck in obs2
-
-process = psutil.Process(os.getpid())
-print("12. Gigabytes consumed {}".format(process.memory_info().rss/1e9))  # in bytes
-
-another_tmp1 = np.maximum(goal1_destination, escape_a1)
-another_tmp2 = np.maximum(goal1_destination, escape_a2)
-del escape_a1
-del escape_a2
-del goal1_destination
-gc.collect()
-
-
-another_tmp3 = np.maximum(another_tmp1, another_tmp2)
-del another_tmp2
-del another_tmp1
-gc.collect()
-
-another_tmp4 = np.minimum(obs1_defend, obs2_defend)
-del obs2_defend
-del obs1_defend
-gc.collect()
-
-reach_set = np.minimum(another_tmp3, another_tmp4)
-del another_tmp3
-del another_tmp4
-gc.collect()
-
-process = psutil.Process(os.getpid())
-print("13. Gigabytes consumed {}".format(process.memory_info().rss/1e9))  # in bytes
 
 # Look-back length and time step
-lookback_length = 1.5  # try 1.5, 2.0, 2.5, 3.0, 5.0, 6.0, 8.0
-t_step = 0.025
+lookback_length = 4.5  # the same as 2014Mo
+# t_step = 0.025
+t_step = 0.05
+
 
 # Actual calculation process, needs to add new plot function to draw a 2D figure
 small_number = 1e-5
@@ -152,14 +59,33 @@ tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)
 
 # while plotting make sure the len(slicesCut) + len(plotDims) = grid.dims
 po = PlotOptions(do_plot=False, plot_type="2d_plot", plotDims=[0, 1], slicesCut=[22, 22])
+# plot the 2 obs
+# plot_isosurface(g, np.minimum(obs1_attack, obs2_attack), po)
+# plot_isosurface(g, obs3_capture, po)
 
 # In this example, we compute a Reach-Avoid Tube
 compMethods = {"TargetSetMode": "minVWithVTarget", "ObstacleSetMode": "maxVWithObstacle"} # original one
-result = HJSolver(agents_2v1, grids, [reach_set, avoid_set], tau, compMethods, po, saveAllTimeSteps=False) # original one
+# compMethods = {"TargetSetMode": "minVWithVTarget"}
+result = HJSolver(agents_1v1, grids, [reach_set, avoid_set], tau, compMethods, po, saveAllTimeSteps=True) # original one
+# result = HJSolver(my_2agents, g, avoid_set, tau, compMethods, po, saveAllTimeSteps=True)
 
-print(f'The shape of the value function is {result.shape} \n')
-# save the value function
+# We just have to project this value function to 6D case
 
-# np.save('2v1AttackDefend.npy', result)
-print("The calculation is done! \n")
-np.save('/localhome/hha160/optimized_dp/MRAG/2v1AttackDefend.npy', result)
+# case1: calculate all time slices
+# for i in range(len(tau)):
+#     attacker1_wins_2v1 = np.zeros((30, 30, 30, 30, 30 ,30)) + np.expand_dims(result[..., i], axis=(2,3))
+#     print("array type {}".format(attacker1_wins_2v1.dtype))
+#     attacker1_wins_2v1 = np.array(attacker1_wins_2v1, dtype='float32')
+
+#     attacker2_wins_2v1 = np.zeros((30, 30, 30, 30, 30 ,30)) + np.expand_dims(result[..., i], axis=(0,1))
+#     attacker2_wins_2v1 = np.array(attacker2_wins_2v1, dtype='float32')
+#     at_least_one_win_2v1 = np.minimum(attacker2_wins_2v1, attacker1_wins_2v1)
+#     print("Saving time step {}".format(i))
+#     np.save('/localhome/hha160/optimized_dp/MRAG/2v1AttackDefend_new_step{}.npy'.format(i), at_least_one_win_2v1)
+
+# case2: calculate only the final time slice
+attacker1_wins_2v1 = np.zeros((30, 30, 30, 30, 30, 30)) + np.expand_dims(result[..., 0], axis = (2, 3))
+attacker2_wins_2v1 = np.zeros((30, 30, 30, 30, 30, 30)) + np.expand_dims(result[..., 0], axis = (0, 1))
+at_least_one_win_2v1 = np.minimum(attacker1_wins_2v1, attacker2_wins_2v1)
+print(f"The shape of the at_least_one_win_2v1 is {at_least_one_win_2v1.shape}. \n ")
+np.save('/localhome/hha160/optimized_dp/MRAG/2v1AttackDefend.npy', at_least_one_win_2v1)

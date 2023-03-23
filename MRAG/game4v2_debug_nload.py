@@ -19,7 +19,7 @@ times = int(T/deltat)
 value1v0 = np.load('MRAG/1v0AttackDefend.npy')  # value1v0.shape = [100, 100, len(tau)]
 value1v1 = np.load('MRAG/1v1AttackDefend.npy')
 value1v1 = value1v1[..., np.newaxis]  # value1v1.shape = [45, 45, 45, 45, 1]
-value2v1 = np.load('MRAG/2v1AttackDefend_new.npy')
+value2v1 = np.load('MRAG/2v1AttackDefend.npy')
 value2v1 = value2v1[..., np.newaxis]  # value2v1.shape = [30, 30, 30, 30, 30, 30, 1]
 grid1v0 = Grid(np.array([-1.0, -1.0]), np.array([1.0, 1.0]), 2, np.array([100, 100])) # original 45
 grid1v1 = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([45, 45, 45, 45])) # original 45
