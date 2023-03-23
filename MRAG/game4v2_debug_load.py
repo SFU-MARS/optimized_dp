@@ -127,6 +127,5 @@ for _ in range(0, times):
 
 print("The game is over.")
 
-# show the trajectories
 # plot_simulation(attackers_x, attackers_y, [], [])
 plot_simulation(attackers_x, attackers_y, defenders_x, defenders_y)

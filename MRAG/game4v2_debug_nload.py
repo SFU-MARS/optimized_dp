@@ -121,8 +121,7 @@ for _ in range(0, times):
         defenders_y[j].append(current_defenders[j][1])
 
 
-# print("The game is over.")
+print("The game is over.")
 
-# show the trajectories
 # plot_simulation(attackers_x, attackers_y, [], [])
 plot_simulation(attackers_x, attackers_y, defenders_x, defenders_y)
