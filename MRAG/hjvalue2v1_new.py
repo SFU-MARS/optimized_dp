@@ -10,6 +10,7 @@ from odp.Plots.plotting_utilities import plot_2d, plot_isosurface
 # Solver core
 from odp.solver import HJSolver, computeSpatDerivArray
 import math
+import time
 
 """ USER INTERFACES
 - Define grid
@@ -48,7 +49,9 @@ reach_set = np.minimum(np.maximum(goal1_destination, goal2_escape), np.minimum(o
 
 # Look-back length and time step
 lookback_length = 4.5  # the same as 2014Mo
-t_step = 0.025
+# t_step = 0.025
+t_step = 0.05
+
 
 # Actual calculation process, needs to add new plot function to draw a 2D figure
 small_number = 1e-5
@@ -66,29 +69,15 @@ compMethods = {"TargetSetMode": "minVWithVTarget", "ObstacleSetMode": "maxVWithO
 result = HJSolver(agents_1v1, grids, [reach_set, avoid_set], tau, compMethods, po, saveAllTimeSteps=True) # original one
 # result = HJSolver(my_2agents, g, avoid_set, tau, compMethods, po, saveAllTimeSteps=True)
 
-# We just expand this value function to 6D case
+# We just have to project this value function to 6D case
 
-attacker1_wins_2v1 = np.zeros((30, 30, 30, 30, 30 ,30)) + np.expand_dims(result[..., 0], axis=(2,3))
-attacker2_wins_2v1 = np.zeros((30, 30, 30, 30, 30 ,30)) + np.expand_dims(result[..., 0], axis=(0,1))
-at_least_one_win_2v1 = np.minimum(attacker2_wins_2v1, attacker1_wins_2v1)
+for i in range(len(tau)):
+    attacker1_wins_2v1 = np.zeros((30, 30, 30, 30, 30 ,30)) + np.expand_dims(result[..., i], axis=(2,3))
+    print("array type {}".format(attacker1_wins_2v1.dtype))
+    attacker1_wins_2v1 = np.array(attacker1_wins_2v1, dtype='float32')
 
-np.save('2v1AttackDefend_new.npy', at_least_one_win_2v1)
-# save the value function
-# np.save('/localhome/hha160/optimized_dp/MRAG/1v1AttackDefend.npy', result)
-
-
-# # Compute spatial derivatives at every state
-# last_time_step_result = result[..., 0]
-# x_derivative = computeSpatDerivArray(g, last_time_step_result, deriv_dim=1, accuracy="low")
-# y_derivative = computeSpatDerivArray(g, last_time_step_result, deriv_dim=2, accuracy="low")
-# v_derivative = computeSpatDerivArray(g, last_time_step_result, deriv_dim=3, accuracy="low")
-# T_derivative = computeSpatDerivArray(g, last_time_step_result, deriv_dim=4, accuracy="low")
-#
-# # Let's compute optimal control at some random idices
-# spat_deriv_vector = (x_derivative[10,20,15,15], y_derivative[10,20,15,15],
-#                      v_derivative[10,20,15,15], T_derivative[10,20,15,15])
-#
-# # Compute the optimal control
-# opt_a, opt_w = my_2agents.optCtrl_inPython(spat_deriv_vector)
-# print("Optimal accel is {}\n".format(opt_a))
-# print("Optimal rotation is {}\n".format(opt_w))
+    attacker2_wins_2v1 = np.zeros((30, 30, 30, 30, 30 ,30)) + np.expand_dims(result[..., i], axis=(0,1))
+    attacker2_wins_2v1 = np.array(attacker2_wins_2v1, dtype='float32')
+    at_least_one_win_2v1 = np.minimum(attacker2_wins_2v1, attacker1_wins_2v1)
+    print("Saving time step {}".format(i))
+    np.save('2v1AttackDefend_new_step{}.npy'.format(i), at_least_one_win_2v1)
