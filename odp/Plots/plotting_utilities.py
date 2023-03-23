@@ -170,9 +170,9 @@ def plot_game(grid, V_2D, attackers, defenders):
     fig.add_trace(go.Scatter(x=x_defenders, y=y_defenders, mode="markers", name='Defender', marker=dict(symbol="square", size=10, color='blue')))
    
     # figure settings
-    fig.update_layout(autosize=False, width=500, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), paper_bgcolor="White") # LightSteelBlue
-    fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 1.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
-    fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 1.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
+    fig.update_layout(autosize=False, width=650, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), paper_bgcolor="White", font=dict(size=25)) # LightSteelBlue
+    fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
+    fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
     fig.show()
     print("Please check the plot on your browser.")
 
@@ -218,9 +218,9 @@ def plot_game0(grid, V_2D, attackers, defenders):
    
     # figure settings
     fig.update_layout(showlegend=False)
-    fig.update_layout(autosize=False, width=408, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), paper_bgcolor="White") # LightSteelBlue
-    fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 1.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
-    fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 1.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
+    fig.update_layout(autosize=False, width=457.5, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), paper_bgcolor="White", font=dict(size=25)) # LightSteelBlue
+    fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
+    fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
     fig.show()
     print("Please check the plot on your browser.")
 

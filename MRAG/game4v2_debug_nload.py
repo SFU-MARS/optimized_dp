@@ -33,7 +33,7 @@ tau2v1 = np.arange(start=0, stop=4.5 + 1e-5, step=0.025)
 
 # initialize positions of attackers and defenders
 attackers_initials = [(0.0, 0.0), (0.0, 0.8), (-0.5, 0.0), (0.5, -0.5)]
-defenders_initials = [(0.3, 0.5), (-0.3, 0.5)]
+defenders_initials = [(0.3, 0.5), (-0.3, -0.5)]
 num_attacker = len(attackers_initials)
 num_defender = len(defenders_initials)
 attackers_trajectory  = [[] for _ in range(num_attacker)]

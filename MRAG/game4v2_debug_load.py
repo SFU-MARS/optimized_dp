@@ -45,7 +45,7 @@ d1y_1v1 = computeSpatDerivArray(grid1v1, value1v1, deriv_dim=4, accuracy="low")
 
 # initialize positions of attackers and defenders
 attackers_initials = [(0.0, 0.0), (0.0, 0.8), (-0.5, 0.0), (0.5, -0.5)]
-defenders_initials = [(0.3, 0.5), (-0.3, 0.5)]
+defenders_initials = [(0.3, 0.5), (-0.3, -0.5)]
 num_attacker = len(attackers_initials)
 num_defender = len(defenders_initials)
 attackers_trajectory  = [[] for _ in range(num_attacker)]
