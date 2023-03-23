@@ -435,6 +435,7 @@ def compute_control1v0(agents_1v0, grid1v0, value1v0, tau1v0, position, neg2pos)
     
     # calculate the derivatives
     v = value1v0[..., neg2pos] # Minh: v = value1v0[..., neg2pos[0]]
+    print(f"The shape of the input value function v of attacker is {v.shape}. \n")
     start_time = datetime.datetime.now()
     spat_deriv_vector = spa_deriv(grid1v0.get_index(position), v, grid1v0)
     end_time = datetime.datetime.now()
@@ -545,4 +546,42 @@ def defender_control2v1(agents_2v1, grid2v1, value2v1, tau2v1, jointstate2v1):
         opt_d1, opt_d2 = compute_control1v1(agents_2v1, grid2v1, value2v1, tau2v1, jointstate2v1, neg2pos)
     else:
         opt_d1, opt_d2 = 0.0, 0.0
+    return (opt_d1, opt_d2)
+
+
+def defender_control1v1_1slice(agents_1v1, grid1v1, value1v1, tau1v1, jointstate1v1):
+    """Return a list of 2-dimensional control inputs of one defender based on the value function
+    
+    Args:
+    grid1v1 (class): the corresponding Grid instance
+    value1v1 (ndarray): 1v1 HJ reachability value function with only final slice
+    agents_1v1 (class): the corresponding AttackerDefender instance
+    joint_states1v1 (tuple): the corresponding positions of (A1, D1)
+    """
+    # calculate the derivatives
+    # v = value1v1[...] # Minh: v = value1v0[..., neg2pos[0]]
+    start_time = datetime.datetime.now()
+    print(f"The shape of the input value1v1 of defender is {value1v1.shape}. \n")
+    spat_deriv_vector = spa_deriv(grid1v1.get_index(jointstate1v1), value1v1, grid1v1)
+    opt_d1, opt_d2 = agents_1v1.optDstb_inPython(spat_deriv_vector)
+    end_time = datetime.datetime.now()
+    # print(f"The calculation of 4D spatial derivative vector is {end_time-start_time}. \n")
+    return (opt_d1, opt_d2)
+
+def defender_control2v1_1slice(agents_2v1, grid2v1, value2v1, tau2v1, jointstate2v1):
+    """Return a list of 2-dimensional control inputs of one defender based on the value function
+    
+    Args:
+    grid2v1 (class): the corresponding Grid instance
+    value2v1 (ndarray): 1v1 HJ reachability value function with only final slice
+    agents_2v1 (class): the corresponding AttackerDefender instance
+    joint_states2v1 (tuple): the corresponding positions of (A1, D1)
+    """
+    # calculate the derivatives
+    start_time = datetime.datetime.now()
+    print(f"The shape of the input value2v1 of defender is {value2v1.shape}. \n")
+    spat_deriv_vector = spa_deriv(grid2v1.get_index(jointstate2v1), value2v1, grid2v1)
+    opt_d1, opt_d2 = agents_2v1.optDstb_inPython(spat_deriv_vector)
+    end_time = datetime.datetime.now()
+    print(f"The calculation of 6D spatial derivative vector is {end_time-start_time}. \n")
     return (opt_d1, opt_d2)
