@@ -148,27 +148,77 @@ def plot_game(grid, V_2D, attackers, defenders):
         ncontours=1,
         contours_coloring = 'none', # former: lines 
         name= "Reachable Set", # zero level
-        line_width = 1.5,
+        line_width = 1.0,
         line_color = 'magenta',
         zmax=0.0,
     ), layout=Layout(plot_bgcolor='rgba(0,0,0,0)')) #,paper_bgcolor='rgba(0,0,0,0)'
     # plot target
-    fig.add_shape(type='rect', x0=0.6, y0=0.1, x1=0.8, y1=0.3, line=dict(color='purple', width=2.0), name="Target")
+    fig.add_shape(type='rect', x0=0.6, y0=0.1, x1=0.8, y1=0.3, line=dict(color='purple', width=2.5), name="Target")
     fig.add_trace(go.Scatter(x=[0.6, 0.8], y=[0.1, 0.1], mode='lines', name='Target', line=dict(color='purple')))
     # plot obstacles
-    fig.add_shape(type='rect', x0=-0.1, y0=0.3, x1=0.1, y1=0.6, line=dict(color='black', width=2.0))
-    fig.add_shape(type='rect', x0=-0.1, y0=-1.0, x1=0.1, y1=-0.3, line=dict(color='black', width=2.0))
+    fig.add_shape(type='rect', x0=-0.1, y0=0.3, x1=0.1, y1=0.6, line=dict(color='black', width=2.5))
+    fig.add_shape(type='rect', x0=-0.1, y0=-1.0, x1=0.1, y1=-0.3, line=dict(color='black', width=2.5))
     fig.add_trace(go.Scatter(x=[-0.1, 0.1], y=[0.3, 0.3], mode='lines', name='Obstacle', line=dict(color='black')))
     # fig.add_shape(type='line', x0=-0.1, y0=-1.0, x1=-0.1, y1=-0.3, line=dict(color='black', width=2.0))
     # fig.add_shape(type='line', x0=0.1, y0=-1.0, x1=0.1, y1=-0.3, line=dict(color='black', width=2.0))
     # fig.add_shape(type='line', x0=-0.1, y0=-0.3, x1=0.1, y1=-0.3, line=dict(color='black', width=2.0))
     # plot attackers
     fig.add_trace(go.Scatter(x=x_attackers, y=y_attackers, mode="markers", name='Attacker', marker=dict(symbol="triangle-up", size=10, color='red')))
+    # for i in range(len(x_attackers)):
+    #     fig.add_trace(go.Scatter(x=[x_attackers[i]], y=[y_attackers[i]], mode="markers", name=f'Attacker{i+1}', marker=dict(symbol="triangle-up", size=10, color='red')))
     # plot defenders
     fig.add_trace(go.Scatter(x=x_defenders, y=y_defenders, mode="markers", name='Defender', marker=dict(symbol="square", size=10, color='blue')))
    
     # figure settings
     fig.update_layout(autosize=False, width=500, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), paper_bgcolor="White") # LightSteelBlue
+    fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 1.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
+    fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 1.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
+    fig.show()
+    print("Please check the plot on your browser.")
+
+def plot_game0(grid, V_2D, attackers, defenders):
+    # based on the plot_game but not showing legends 
+    dims_plot = [0, 1]
+    dim1, dim2 = dims_plot[0], dims_plot[1]
+    complex_x = complex(0, grid.pts_each_dim[dim1])
+    complex_y = complex(0, grid.pts_each_dim[dim2])
+    mg_X, mg_Y = np.mgrid[grid.min[dim1]:grid.max[dim1]: complex_x, grid.min[dim2]:grid.max[dim2]: complex_y]
+    x_attackers = [a[0] for a in attackers]
+    y_attackers = [a[1] for a in attackers]
+    x_defenders = [d[0] for d in defenders]
+    y_defenders = [d[1] for d in defenders]
+    print("Plotting beautiful 2D plots. Please wait\n")
+    fig = go.Figure(data=go.Contour(
+        x=mg_X.flatten(),
+        y=mg_Y.flatten(),
+        z=V_2D.flatten(),
+        zmin=0.0,
+        ncontours=1,
+        contours_coloring = 'none', # former: lines 
+        line_width = 1.0,
+        line_color = 'magenta',
+        zmax=0.0,
+    ), layout=Layout(plot_bgcolor='rgba(0,0,0,0)')) #,paper_bgcolor='rgba(0,0,0,0)'
+    # plot target
+    fig.add_shape(type='rect', x0=0.6, y0=0.1, x1=0.8, y1=0.3, line=dict(color='purple', width=2.5))
+    fig.add_trace(go.Scatter(x=[0.6, 0.8], y=[0.1, 0.1], mode='lines', line=dict(color='purple')))
+    # plot obstacles
+    fig.add_shape(type='rect', x0=-0.1, y0=0.3, x1=0.1, y1=0.6, line=dict(color='black', width=2.5))
+    fig.add_shape(type='rect', x0=-0.1, y0=-1.0, x1=0.1, y1=-0.3, line=dict(color='black', width=2.5))
+    fig.add_trace(go.Scatter(x=[-0.1, 0.1], y=[0.3, 0.3], mode='lines', line=dict(color='black')))
+    # fig.add_shape(type='line', x0=-0.1, y0=-1.0, x1=-0.1, y1=-0.3, line=dict(color='black', width=2.0))
+    # fig.add_shape(type='line', x0=0.1, y0=-1.0, x1=0.1, y1=-0.3, line=dict(color='black', width=2.0))
+    # fig.add_shape(type='line', x0=-0.1, y0=-0.3, x1=0.1, y1=-0.3, line=dict(color='black', width=2.0))
+    # plot attackers
+    fig.add_trace(go.Scatter(x=x_attackers, y=y_attackers, mode="markers", marker=dict(symbol="triangle-up", size=10, color='red')))
+    # for i in range(len(x_attackers)):
+    #     fig.add_trace(go.Scatter(x=[x_attackers[i]], y=[y_attackers[i]], mode="markers", name=f'Attacker{i+1}', marker=dict(symbol="triangle-up", size=10, color='red')))
+    # plot defenders
+    fig.add_trace(go.Scatter(x=x_defenders, y=y_defenders, mode="markers", marker=dict(symbol="square", size=10, color='blue')))
+   
+    # figure settings
+    fig.update_layout(showlegend=False)
+    fig.update_layout(autosize=False, width=408, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), paper_bgcolor="White") # LightSteelBlue
     fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 1.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
     fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 1.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
     fig.show()
@@ -199,11 +249,11 @@ def plot_simulation(attackers_x, attackers_y, defenders_x, defenders_y):
     fig = go.Figure(data = go.Scatter(x=[0.6, 0.8], y=[0.1, 0.1], mode='lines', name='Target', line=dict(color='purple')), 
                     layout=Layout(plot_bgcolor='rgba(0,0,0,0)')) # for the legend
     # plot target
-    fig.add_shape(type='rect', x0=0.6, y0=0.1, x1=0.8, y1=0.3, line=dict(color='purple', width=2.0), name="Target")
+    fig.add_shape(type='rect', x0=0.6, y0=0.1, x1=0.8, y1=0.3, line=dict(color='purple', width=2.5), name="Target")
 
     # plot obstacles
-    fig.add_shape(type='rect', x0=-0.1, y0=0.3, x1=0.1, y1=0.6, line=dict(color='black', width=2.0), name="Obstacle")
-    fig.add_shape(type='rect', x0=-0.1, y0=-1.0, x1=0.1, y1=-0.3, line=dict(color='black', width=2.0))
+    fig.add_shape(type='rect', x0=-0.1, y0=0.3, x1=0.1, y1=0.6, line=dict(color='black', width=2.5), name="Obstacle")
+    fig.add_shape(type='rect', x0=-0.1, y0=-1.0, x1=0.1, y1=-0.3, line=dict(color='black', width=2.5))
     fig.add_trace(go.Scatter(x=[-0.1, 0.1], y=[0.3, 0.3], mode='lines', name='Obstacle', line=dict(color='black')))
     
     # plot attackers

@@ -241,8 +241,11 @@ tau1v1 = np.arange(start=0, stop=4.5 + 1e-5, step=0.025)
 #     # d1x_1v1[..., t] = computeSpatDerivArray(grid1v1, value1v1[..., t], deriv_dim=3, accuracy="low")
 #     # d1y_1v1[..., t] = computeSpatDerivArray(grid1v1, value1v1[..., t], deriv_dim=4, accuracy="low")
 
-a = np.arange(32).reshape([2, 2, 2, 4])
-print(a[0, 0, 0, :].shape)
+attackers = [(0.0, 0.0), (0.0, 0.8), (-0.5, 0.0), (0.5, -0.5)]
+defenders = [(-0.3, -0.5), (-0.3, 0.5)] # 
 
+x_attackers = [a[0] for a in attackers]
+
+print(x_attackers)
 
 
