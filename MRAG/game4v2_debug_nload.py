@@ -126,4 +126,3 @@ for _ in range(0, times):
 # show the trajectories
 # plot_simulation(attackers_x, attackers_y, [], [])
 plot_simulation(attackers_x, attackers_y, defenders_x, defenders_y)
-
