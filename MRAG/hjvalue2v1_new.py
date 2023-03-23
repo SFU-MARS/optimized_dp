@@ -71,13 +71,21 @@ result = HJSolver(agents_1v1, grids, [reach_set, avoid_set], tau, compMethods, p
 
 # We just have to project this value function to 6D case
 
-for i in range(len(tau)):
-    attacker1_wins_2v1 = np.zeros((30, 30, 30, 30, 30 ,30)) + np.expand_dims(result[..., i], axis=(2,3))
-    print("array type {}".format(attacker1_wins_2v1.dtype))
-    attacker1_wins_2v1 = np.array(attacker1_wins_2v1, dtype='float32')
+# case1: calculate all time slices
+# for i in range(len(tau)):
+#     attacker1_wins_2v1 = np.zeros((30, 30, 30, 30, 30 ,30)) + np.expand_dims(result[..., i], axis=(2,3))
+#     print("array type {}".format(attacker1_wins_2v1.dtype))
+#     attacker1_wins_2v1 = np.array(attacker1_wins_2v1, dtype='float32')
 
-    attacker2_wins_2v1 = np.zeros((30, 30, 30, 30, 30 ,30)) + np.expand_dims(result[..., i], axis=(0,1))
-    attacker2_wins_2v1 = np.array(attacker2_wins_2v1, dtype='float32')
-    at_least_one_win_2v1 = np.minimum(attacker2_wins_2v1, attacker1_wins_2v1)
-    print("Saving time step {}".format(i))
-    np.save('2v1AttackDefend_new_step{}.npy'.format(i), at_least_one_win_2v1)
+#     attacker2_wins_2v1 = np.zeros((30, 30, 30, 30, 30 ,30)) + np.expand_dims(result[..., i], axis=(0,1))
+#     attacker2_wins_2v1 = np.array(attacker2_wins_2v1, dtype='float32')
+#     at_least_one_win_2v1 = np.minimum(attacker2_wins_2v1, attacker1_wins_2v1)
+#     print("Saving time step {}".format(i))
+#     np.save('/localhome/hha160/optimized_dp/MRAG/2v1AttackDefend_new_step{}.npy'.format(i), at_least_one_win_2v1)
+
+# case2: calculate only the final time slice
+attacker1_wins_2v1 = np.zeros((30, 30, 30, 30, 30, 30)) + np.expand_dims(result[..., 0], axis = (2, 3))
+attacker2_wins_2v1 = np.zeros((30, 30, 30, 30, 30, 30)) + np.expand_dims(result[..., 0], axis = (0, 1))
+at_least_one_win_2v1 = np.minimum(attacker1_wins_2v1, attacker2_wins_2v1)
+print(f"The shape of the at_least_one_win_2v1 is {at_least_one_win_2v1.shape}. \n ")
+np.save('/localhome/hha160/optimized_dp/MRAG/2v1AttackDefend_new.npy', at_least_one_win_2v1)

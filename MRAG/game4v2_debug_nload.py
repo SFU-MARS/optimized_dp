@@ -7,7 +7,7 @@ from MRAG.AttackerDefender1v1 import AttackerDefender1v1
 from MRAG.AttackerDefender2v1 import AttackerDefender2v1
 from odp.Plots.plotting_utilities import plot_simulation
 
-
+# This debug for not loading spatial derivatives array before the game
 # simulation 1: 4 attackers with 2 defenders
 # preparations
 print("Preparing for the simulaiton... \n")
@@ -42,25 +42,25 @@ tau1v1 = np.arange(start=0, stop=4.5 + 1e-5, step=0.025)
 # d1x_1v1 = computeSpatDerivArray(grid1v1, value1v1, deriv_dim=3, accuracy="low")
 # d1y_1v1 = computeSpatDerivArray(grid1v1, value1v1, deriv_dim=4, accuracy="low")
 
-# 1v0
-x1_1v0 = np.zeros([100,100, len(tau1v0)])
-x2_1v0 = np.zeros([100,100, len(tau1v0)])
-for i in range(len(tau1v0)):
-    x1_1v0[:, :, i] = computeSpatDerivArray(grid1v0, value1v0[:, :, i], deriv_dim=1, accuracy='low')
-    x2_1v0[:, :, i] = computeSpatDerivArray(grid1v0, value1v0[:, :, i], deriv_dim=2, accuracy='low')
+# # 1v0
+# x1_1v0 = np.zeros([100,100, len(tau1v0)])
+# x2_1v0 = np.zeros([100,100, len(tau1v0)])
+# for i in range(len(tau1v0)):
+#     x1_1v0[:, :, i] = computeSpatDerivArray(grid1v0, value1v0[:, :, i], deriv_dim=1, accuracy='low')
+#     x2_1v0[:, :, i] = computeSpatDerivArray(grid1v0, value1v0[:, :, i], deriv_dim=2, accuracy='low')
 
-# x1_1v0 = computeSpatDerivArray(grid1v0, value1v0, deriv_dim=1, accuracy='low')
-# x2_1v0 = computeSpatDerivArray(grid1v0, value1v0, deriv_dim=2, accuracy='low')
-# 1v1 
-a1x_1v1 = np.zeros([45, 45, 45, 45, len(tau1v1)])
-a1y_1v1 = np.zeros([45, 45, 45, 45, len(tau1v1)])
-d1x_1v1 = np.zeros([45, 45, 45, 45, len(tau1v1)])
-d1y_1v1 = np.zeros([45, 45, 45, 45, len(tau1v1)])
-for t in range(len(tau1v1)):
-    a1x_1v1[..., t] = computeSpatDerivArray(grid1v1, value1v1[..., t], deriv_dim=1, accuracy="low")
-    a1y_1v1[..., t] = computeSpatDerivArray(grid1v1, value1v1[..., t], deriv_dim=2, accuracy="low")
-    d1x_1v1[..., t] = computeSpatDerivArray(grid1v1, value1v1[..., t], deriv_dim=3, accuracy="low")
-    d1y_1v1[..., t] = computeSpatDerivArray(grid1v1, value1v1[..., t], deriv_dim=4, accuracy="low")
+# # x1_1v0 = computeSpatDerivArray(grid1v0, value1v0, deriv_dim=1, accuracy='low')
+# # x2_1v0 = computeSpatDerivArray(grid1v0, value1v0, deriv_dim=2, accuracy='low')
+# # 1v1 
+# a1x_1v1 = np.zeros([45, 45, 45, 45, len(tau1v1)])
+# a1y_1v1 = np.zeros([45, 45, 45, 45, len(tau1v1)])
+# d1x_1v1 = np.zeros([45, 45, 45, 45, len(tau1v1)])
+# d1y_1v1 = np.zeros([45, 45, 45, 45, len(tau1v1)])
+# for t in range(len(tau1v1)):
+#     a1x_1v1[..., t] = computeSpatDerivArray(grid1v1, value1v1[..., t], deriv_dim=1, accuracy="low")
+#     a1y_1v1[..., t] = computeSpatDerivArray(grid1v1, value1v1[..., t], deriv_dim=2, accuracy="low")
+#     d1x_1v1[..., t] = computeSpatDerivArray(grid1v1, value1v1[..., t], deriv_dim=3, accuracy="low")
+#     d1y_1v1[..., t] = computeSpatDerivArray(grid1v1, value1v1[..., t], deriv_dim=4, accuracy="low")
 
 # 2v1
 
@@ -90,16 +90,16 @@ for i in range(num_attacker):
     attackers_x[i].append(current_attackers[i][0])
     attackers_y[i].append(current_attackers[i][1])
 
-for j in range(num_defender):
-    defenders_trajectory[j].append(current_defenders[j])
-    defenders_x[j].append(current_defenders[j][0])
-    defenders_y[j].append(current_defenders[j][1])
+# for j in range(num_defender):
+#     defenders_trajectory[j].append(current_defenders[j])
+#     defenders_x[j].append(current_defenders[j][0])
+#     defenders_y[j].append(current_defenders[j][1])
 
 print("The simulation starts: \n")
 # simulation starts
 for _ in range(0, times):
-    print(f"The attackers in the {_} step are at {current_attackers} \n")
-    print(f"The defenders in the {_} step are at {current_defenders} \n")
+    # print(f"The attackers in the {_} step are at {current_attackers} \n")
+    # print(f"The defenders in the {_} step are at {current_defenders} \n")
 
     # Ic = capture_individual(current_attackers, current_defenders, value1v1)
     # Pc = capture_pair(current_attackers, current_defenders, value2v1)
@@ -108,7 +108,7 @@ for _ in range(0, times):
     # capture_decisions.append(selected)  # document the capture results
 
     # # calculate the current controls of defenders
-    control_defenders = []  # current controls of defenders, [(d1xc, d1yc), (d2xc, d2yc)]
+    # control_defenders = []  # current controls of defenders, [(d1xc, d1yc), (d2xc, d2yc)]
     for j in range(num_defender):
         d1x, d1y = current_defenders[j]
     #     if len(selected[j]) == 2:  # defender j capture the attacker selected[j][0] and selected[j][1]
@@ -126,17 +126,18 @@ for _ in range(0, times):
     #         joint_states1v1 = (a1x, a1y, d1x, d1y)
     #         control_defenders.append(defender_control1(agents_1v1, joint_states1v1, a1x_1v1, a1y_1v1, d1x_1v1, d1y_1v1))
 
-        attacker_index = select_attacker(d1x, d1y, current_attackers)  # choose the nearest attacker
-        a1x, a1y = current_attackers[attacker_index]
-        joint_states1v1 = (a1x, a1y, d1x, d1y)
-        control_defenders.append(defender_control1v1_v0(agents_1v1, grid1v1, value1v1, tau1v1, joint_states1v1, a1x_1v1, a1y_1v1, d1x_1v1, d1y_1v1))
-    print(f'The control in the {_} step of defenders are {control_defenders} \n')
-    # update the next postions of defenders
-    newd_positions = next_positions(current_defenders, control_defenders, deltat)
-    current_defenders = newd_positions
+    #     attacker_index = select_attacker(d1x, d1y, current_attackers)  # choose the nearest attacker
+    #     a1x, a1y = current_attackers[attacker_index]
+    #     joint_states1v1 = (a1x, a1y, d1x, d1y)
+    #     control_defenders.append(defender_control1(agents_1v1, grid1v1, value1v1, tau1v1, joint_states1v1, a1x_1v1, a1y_1v1, d1x_1v1, d1y_1v1))
+    # print(f'The control in the {_} step of defenders are {control_defenders} \n')
+    # # update the next postions of defenders
+    # newd_positions = next_positions(current_defenders, control_defenders, deltat)
+    # current_defenders = newd_positions
     
     # calculate the current controls of attackers
-    control_attackers = attackers_control_v0(agents_1v0, grid1v0, value1v0, tau1v0, current_attackers, x1_1v0, x2_1v0)
+
+    control_attackers = attackers_control2(agents_1v0, grid1v0, value1v0, tau1v0, current_attackers)
     # print(f"The calculated controls are {controls}. \n")
     # neg2pos, pos2neg = find_sign_change1v0(grid1v0, value1v0, current_attackers[0])
     # print(neg2pos)
@@ -157,17 +158,18 @@ for _ in range(0, times):
         attackers_x[i].append(current_attackers[i][0])
         attackers_y[i].append(current_attackers[i][1])
 
-    for j in range(num_defender):
-        defenders_trajectory[j].append(current_defenders[j])
-        defenders_x[j].append(current_defenders[j][0])
-        defenders_y[j].append(current_defenders[j][1])
+    # for j in range(num_defender):
+    #     defenders_trajectory[j].append(current_defenders[j])
+    #     defenders_x[j].append(current_defenders[j][0])
+    #     defenders_y[j].append(current_defenders[j][1])
 
 # traj, _, _, _ = compute_opt_traj1v0(grid1v0, value1v0, tau, agents_1v0, x1_1v0, x2_1v0)
 # print(f"The trajectory of the attacker is {traj}. \n")
 # print("The game is over.")
 
 # show the trajectories
-plot_simulation(attackers_x, attackers_y, defenders_x, defenders_y)
+plot_simulation(attackers_x, attackers_y, [], [])
+# plot_simulation(attackers_x, attackers_y, defenders_x, defenders_y)
 
 # print(f"The length of the attackers_x is {len(attackers_x[0])}. \n")
 # print(f"The length of the attacker 1 trajectory is {len(attackers_trajectory[0])}. \n")
@@ -181,4 +183,3 @@ plot_simulation(attackers_x, attackers_y, defenders_x, defenders_y)
 # print(f"The last 50 positions of the attacker 4 is {attackers_trajectory[3][-50:]} \n")
 
 # print(f"All controls of attackers are {controls_attacker}. \n")
-
