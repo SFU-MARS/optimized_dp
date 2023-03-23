@@ -219,6 +219,31 @@ def next_positions(current_positions, controls, tstep):
         temp.append((current_positions[i][0]+controls[i][0]*tstep, current_positions[i][1]+controls[i][1]*tstep))
     return temp
 
+def next_positions_d(current_positions, controls, tstep, selected, captured):
+    """Return the next positions (list) of attackers or defenders
+
+    Arg:
+    current_positions (list): [(), (),...]
+    controls (list): [(), (),...]
+    """
+    temp = []
+    num = len(controls)
+    for j in range(num):
+        num_attacker = len(selected[j])
+        if num_attacker == 1:
+            if captured[selected[j][0]] == 1:
+                temp.append((current_positions[j][0], current_positions[j][1]))
+            else:
+                temp.append((current_positions[j][0]+controls[j][0]*tstep, current_positions[j][1]+controls[j][1]*tstep))
+        elif num_attacker == 2:
+            if captured[selected[j][0]] == 1 and captured[selected[j][1]] == 1:
+                temp.append((current_positions[j][0], current_positions[j][1]))
+            else:
+                temp.append((current_positions[j][0]+controls[j][0]*tstep, current_positions[j][1]+controls[j][1]*tstep))
+        else:
+            temp.append((current_positions[j][0]+controls[j][0]*tstep, current_positions[j][1]+controls[j][1]*tstep))
+    return temp
+
 def next_positions_a(current_positions, controls, tstep, captured):
     """Return the next positions (list) of attackers considering the current captured results
 

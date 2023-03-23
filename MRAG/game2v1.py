@@ -11,7 +11,7 @@ from odp.Plots.plotting_utilities import plot_simulation
 # simulation 1: 4 attackers with 2 defenders
 # preparations
 print("Preparing for the simulaiton... \n")
-T = 1.0 # total simulation time
+T = 1.3  # total simulation time
 deltat = 0.005 # calculation time interval
 times = int(T/deltat)
 
@@ -105,7 +105,7 @@ for _ in range(0, times):
 
     # print(f'The control in the {_} step of defenders are {control_defenders} \n')
     # update the next postions of defenders
-    newd_positions = next_positions(current_defenders, control_defenders, deltat)
+    newd_positions = next_positions_d(current_defenders, control_defenders, deltat, selected, current_captured)
     current_defenders = newd_positions
     
     # calculate the current controls of attackers
@@ -132,5 +132,7 @@ print("The game is over.")
 
 print(f"The captured_lists is {captured_lists}. \n")
 
-# plot_simulation(attackers_x, attackers_y, defenders_x, defenders_y)
+plot_simulation(attackers_x, attackers_y, defenders_x, defenders_y)
 print(f"The final positions of attackers are {attackers_trajectory[0][-1]} and {attackers_trajectory[1][-1]}. \n")
+print(f"The distance between the defender and the attacker1 is {distance(defenders_trajectory[0][-1], attackers_trajectory[0][-1])}. \n")
+print(f"The distance between the defender and the attacker2 is {distance(defenders_trajectory[0][-1], attackers_trajectory[1][-1])}. \n")

@@ -42,8 +42,8 @@ a1x = attackers[2][0]
 a1y = attackers[2][1]
 a2x = attackers[0][0]
 a2y = attackers[0][1]
-d1x = defenders[0][0]
-d1y = defenders[0][1]
+d1x = defenders[1][0]
+d1y = defenders[1][1]
 jointstates2v1 = (a1x, a1y, a2x, a2y, d1x, d1y)
 # attackers = [(a1x, a1y), (a2x, a2y)]
 a1x_slice, a1y_slice, a2x_slice, a2y_slice, d1x_slice, d1y_slice = lo2slice2v1(jointstates2v1, slices=30)

@@ -259,4 +259,5 @@ defenders_initials = [(0.3, 0.5)]
 captured_lists = []
 current_captured = [0 for _ in range(len(attackers_initials))]
 captured_lists.append(current_captured)
+current_captured = [1, 1]
 print(captured_lists)
