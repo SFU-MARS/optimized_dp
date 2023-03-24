@@ -8,10 +8,10 @@ from MRAG.AttackerDefender2v1 import AttackerDefender2v1
 from odp.Plots.plotting_utilities import plot_simulation
 
 # This debug for not loading spatial derivatives array before the game
-# simulation 1: 4 attackers with 2 defenders
+# simulation 1: 2 attackers with 1 defenders
 # preparations
 print("Preparing for the simulaiton... \n")
-T = 1.3  # total simulation time
+T = 0.5  # total simulation time
 deltat = 0.005 # calculation time interval
 times = int(T/deltat)
 
@@ -81,6 +81,8 @@ for _ in range(0, times):
 
     # check the capture relationship
     current_captured = capture_check(current_attackers, current_defenders, selected, current_captured)
+    print("current_capture {}".format(current_captured))
+    print("captured_list {}".format(captured_lists))
     captured_lists.append(current_captured)
     # print(f"The current captured attackers are {captured}. \n")
 
@@ -102,7 +104,6 @@ for _ in range(0, times):
             a1x, a1y = current_attackers[attacker_index]
             joint_states1v1 = (a1x, a1y, d1x, d1y)
             control_defenders.append(defender_control1v1_1slice(agents_1v1, grid1v1, value1v1, tau1v1, joint_states1v1))
-
     # print(f'The control in the {_} step of defenders are {control_defenders} \n')
     # update the next postions of defenders
     newd_positions = next_positions_d(current_defenders, control_defenders, deltat, selected, current_captured)
@@ -111,7 +112,6 @@ for _ in range(0, times):
     # calculate the current controls of attackers
     control_attackers = attackers_control(agents_1v0, grid1v0, value1v0, tau1v0, current_attackers)
     # print(f'The control in the {_} step of attackers are {control_attackers} \n')
-
     # update the next postions of attackers
     newa_positions = next_positions_a(current_attackers, control_attackers, deltat, current_captured)
     current_attackers = newa_positions
@@ -126,7 +126,6 @@ for _ in range(0, times):
         defenders_trajectory[j].append(current_defenders[j])
         defenders_x[j].append(current_defenders[j][0])
         defenders_y[j].append(current_defenders[j][1])
-
 
 print("The game is over.")
 

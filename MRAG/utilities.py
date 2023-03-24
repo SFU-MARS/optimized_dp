@@ -197,14 +197,14 @@ def mip_solver(num_attacker, num_defender, Pc, Ic):
         print(selected)
     return selected
 
-def add_trajectory(trajectories, next_positions):
-    """Return a updated trajectories (list) that contain trajectories of agents (attackers or defenders)
+# def add_trajectory(trajectories, next_positions):
+#     """Return a updated trajectories (list) that contain trajectories of agents (attackers or defenders)
 
-    Args: 
-        trajectories (list): [[(a1x1, a1y1), ...], ...]
-        next_positions (list): [(a1xi, a1yi), ...]
-    """
-    pass
+#     Args: 
+#         trajectories (list): [[(a1x1, a1y1), ...], ...]
+#         next_positions (list): [(a1xi, a1yi), ...]
+#     """
+#     pass
 
 def next_positions(current_positions, controls, tstep):
     """Return the next positions (list) of attackers or defenders
