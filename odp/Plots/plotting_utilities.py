@@ -260,10 +260,10 @@ def plot_simulation(attackers_x, attackers_y, defenders_x, defenders_y):
     # fig.add_trace(go.Scatter(x=attackers_x[0], y=attackers_y[0], mode="lines+markers", name="Attacker", marker=dict(symbol="triangle-up", size=10, color='red')))
 
     for i in range(len(attackers_x)):
-        fig.add_trace(go.Scatter(x=attackers_x[i], y=attackers_y[i], mode="markers", name=f"Attacker{i+1}", marker=dict(symbol="triangle-up", size=3, color='red'))) # symbol="cross"
+        fig.add_trace(go.Scatter(x=attackers_x[i], y=attackers_y[i], mode="markers", name=f"Attacker{i}", marker=dict(symbol="triangle-up", size=3, color='red'))) # symbol="cross"
     # plot defenders
     for j in range(len(defenders_x)):
-        fig.add_trace(go.Scatter(x=defenders_x[j], y=defenders_y[j], mode="markers", name=f'Defender{j+1}', marker=dict(symbol="square", size=3, color='blue'))) # symbol="star"
+        fig.add_trace(go.Scatter(x=defenders_x[j], y=defenders_y[j], mode="markers", name=f'Defender{j}', marker=dict(symbol="square", size=3, color='blue'))) # symbol="star"
 
     # figure settings
     fig.update_layout(autosize=False, width=500, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1]) # LightSteelBlue
