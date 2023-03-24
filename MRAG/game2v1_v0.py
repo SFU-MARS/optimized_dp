@@ -11,7 +11,7 @@ from odp.Plots.plotting_utilities import plot_simulation
 # simulation 1: 2 attackers with 1 defenders
 # preparations
 print("Preparing for the simulaiton... \n")
-T = 0.5  # total simulation time
+T = 1.0  # total simulation time
 deltat = 0.005 # calculation time interval
 times = int(T/deltat)
 
@@ -32,8 +32,8 @@ tau1v1 = np.arange(start=0, stop=4.5 + 1e-5, step=0.025)
 tau2v1 = np.arange(start=0, stop=4.5 + 1e-5, step=0.025)
 
 # initialize positions of attackers and defenders
-attackers_initials = [(0.0, 0.0), (0.0, 0.8)]
-defenders_initials = [(0.3, 0.5)]
+attackers_initials = [(-0.5, -0.5), (-0.5, 0.8)]  # [(0.0, 0.0), (0.0, 0.8)]
+defenders_initials = [(0.3, 0.0)]
 num_attacker = len(attackers_initials)
 num_defender = len(defenders_initials)
 attackers_trajectory  = [[] for _ in range(num_attacker)]
@@ -69,20 +69,21 @@ captured_lists.append(current_captured)
 print("The simulation starts: \n")
 # simulation starts
 for _ in range(0, times):
-    print(f"The attackers in the {_} step are at {current_attackers} \n")
-    print(f"The defenders in the {_} step are at {current_defenders} \n")
+    # print(f"The attackers in the {_} step are at {current_attackers} \n")
+    # print(f"The defenders in the {_} step are at {current_defenders} \n")
 
     # mip
     Ic = capture_individual(current_attackers, current_defenders, value1v1)
     Pc = capture_pair(current_attackers, current_defenders, value2v1)
     selected = mip_solver(num_attacker, num_defender, Pc, Ic)
+    print(f"The result of the MIP in the step {_} is {selected}. \n")
 
     capture_decisions.append(selected)  # document the capture results
 
     # check the capture relationship
     current_captured = capture_check(current_attackers, current_defenders, selected, current_captured)
-    print("current_capture {}".format(current_captured))
-    print("captured_list {}".format(captured_lists))
+    # print("current_capture {}".format(current_captured))
+    # print("captured_list {}".format(captured_lists))
     captured_lists.append(current_captured)
     # print(f"The current captured attackers are {captured}. \n")
 
@@ -106,14 +107,14 @@ for _ in range(0, times):
             control_defenders.append(defender_control1v1_1slice(agents_1v1, grid1v1, value1v1, tau1v1, joint_states1v1))
     # print(f'The control in the {_} step of defenders are {control_defenders} \n')
     # update the next postions of defenders
-    newd_positions = next_positions_d(current_defenders, control_defenders, deltat, selected, current_captured)
+    newd_positions = next_positions(current_defenders, control_defenders, deltat)  # , selected, current_captured
     current_defenders = newd_positions
     
     # calculate the current controls of attackers
     control_attackers = attackers_control(agents_1v0, grid1v0, value1v0, tau1v0, current_attackers)
     # print(f'The control in the {_} step of attackers are {control_attackers} \n')
     # update the next postions of attackers
-    newa_positions = next_positions_a(current_attackers, control_attackers, deltat, current_captured)
+    newa_positions = next_positions(current_attackers, control_attackers, deltat)  # , current_captured
     current_attackers = newa_positions
 
     # document the new current positions of attackers and defenders
@@ -129,9 +130,10 @@ for _ in range(0, times):
 
 print("The game is over.")
 
-print(f"The captured_lists is {captured_lists}. \n")
+print(f"The results of the selected is {capture_decisions}. \n")
 
 plot_simulation(attackers_x, attackers_y, defenders_x, defenders_y)
-print(f"The final positions of attackers are {attackers_trajectory[0][-1]} and {attackers_trajectory[1][-1]}. \n")
-print(f"The distance between the defender and the attacker1 is {distance(defenders_trajectory[0][-1], attackers_trajectory[0][-1])}. \n")
-print(f"The distance between the defender and the attacker2 is {distance(defenders_trajectory[0][-1], attackers_trajectory[1][-1])}. \n")
+print(f"The final captured_status of all attackers is {current_captured}. \n")
+# print(f"The final positions of attackers are {attackers_trajectory[0][-1]} and {attackers_trajectory[1][-1]}. \n")
+# print(f"The distance between the defender and the attacker1 is {distance(defenders_trajectory[0][-1], attackers_trajectory[0][-1])}. \n")
+# print(f"The distance between the defender and the attacker2 is {distance(defenders_trajectory[0][-1], attackers_trajectory[1][-1])}. \n")

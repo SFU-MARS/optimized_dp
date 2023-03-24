@@ -123,6 +123,37 @@ def capture_pair(attackers, defenders, value2v1):
                     Pc[j].append((i, k))
     return Pc
 
+def capture_pair2(attackers, defenders, value2v1, stops):
+    """ Returns a list Pc that contains all pairs of attackers that the defender couldn't capture, [[(a1, a2), (a2, a3)], ...]
+
+    Args:
+        attackers (list): positions (set) of all attackers, [(a1x, a1y), ...]
+        defenders (list): positions (set) of all defenders, [(d1x, d1y), ...]
+        value2v1 (ndarray): 2v1 HJ value function
+        stops (list): the captured attackers index
+    """
+    num_attacker, num_defender = len(attackers), len(defenders)
+    Pc = []
+    # generate Pc
+    for j in range(num_defender):
+        Pc.append([])
+        djx, djy = defenders[j]
+        for i in range(num_attacker):
+            if i in stops:
+                for k in range(i+1, num_attacker):
+                    Pc[j].append((i, k))
+            else:
+                for k in range(i+1, num_attacker):
+                    if k in stops:
+                        Pc[j].append((i, k))
+                    else:
+                        aix, aiy = attackers[i]
+                        akx, aky = attackers[k]
+                        joint_states = (aix, aiy, akx, aky, djx, djy)
+                        if not check2v1(value2v1, joint_states):
+                            Pc[j].append((i, k))
+    return Pc
+
 # generate the capture individual list I and the capture individual complement list Ic
 def capture_individual(attackers, defenders, value1v1):
     """ Returns a list Ic that contains all attackers that the defender couldn't capture, [[a1, a3], ...]
@@ -143,6 +174,31 @@ def capture_individual(attackers, defenders, value1v1):
             joint_states = (aix, aiy, djx, djy)
             if not check1v1(value1v1, joint_states):
                 Ic[j].append(i)
+    return Ic
+
+def capture_individual2(attackers, defenders, value1v1, stops):
+    """ Returns a list Ic that contains all attackers that the defender couldn't capture, [[a1, a3], ...]
+
+    Args:
+        attackers (list): positions (set) of all attackers, [(a1x, a1y), ...]
+        defenders (list): positions (set) of all defenders, [(d1x, d1y), ...]
+        value2v1 (ndarray): 1v1 HJ value function
+        stops (list): the captured attackers index
+    """
+    num_attacker, num_defender = len(attackers), len(defenders)
+    Ic = []
+    # generate I
+    for j in range(num_defender):
+        Ic.append([])
+        djx, djy = defenders[j]
+        for i in range(num_attacker):
+            if i in stops:  # ignore captured attackers
+                Ic[j].append(i)
+            else:
+                aix, aiy = attackers[i]
+                joint_states = (aix, aiy, djx, djy)
+                if not check1v1(value1v1, joint_states):
+                    Ic[j].append(i)
     return Ic
 
 # set up and solve the mixed integer programming question
@@ -255,11 +311,33 @@ def next_positions_a(current_positions, controls, tstep, captured):
     """
     temp = []
     num = len(controls)
-    for i in range(num):
-        if not captured[i]:  # the attacker i has not been captured
+    if len(captured) == 0:
+        for i in range(num):
             temp.append((current_positions[i][0]+controls[i][0]*tstep, current_positions[i][1]+controls[i][1]*tstep))
-        else:
+    else:
+        for i in range(num):
+            if not captured[i]:  # the attacker i has not been captured
+                temp.append((current_positions[i][0]+controls[i][0]*tstep, current_positions[i][1]+controls[i][1]*tstep))
+            else:
+                temp.append((current_positions[i][0], current_positions[i][1]))
+    return temp
+
+def next_positions_a2(current_positions, controls, tstep, stops):
+    """Return the next positions (list) of attackers considering the current captured results
+
+    Arg:
+    current_positions (list): [(), (),...]
+    controls (list): [(), (),...]
+    tstep (float): time step
+    stops (list): the captured attackers
+    """
+    temp = []
+    num = len(controls)
+    for i in range(num):
+        if i in stops:
             temp.append((current_positions[i][0], current_positions[i][1]))
+        else:
+            temp.append((current_positions[i][0]+controls[i][0]*tstep, current_positions[i][1]+controls[i][1]*tstep))
     return temp
 
 def distance(attacker, defender):
@@ -622,7 +700,7 @@ def defender_control2v1_1slice(agents_2v1, grid2v1, value2v1, tau2v1, jointstate
     """
     # calculate the derivatives
     start_time = datetime.datetime.now()
-    print(f"The shape of the input value2v1 of defender is {value2v1.shape}. \n")
+    # print(f"The shape of the input value2v1 of defender is {value2v1.shape}. \n")
     spat_deriv_vector = spa_deriv(grid2v1.get_index(jointstate2v1), value2v1, grid2v1)
     opt_d1, opt_d2 = agents_2v1.optDstb_inPython(spat_deriv_vector)
     end_time = datetime.datetime.now()
@@ -647,3 +725,36 @@ def capture_check(current_attackers, current_defenders, selected, last_captured)
                     captured[i] = 1
     return captured
 
+def capture_check1(current_attackers, current_defenders, selected):
+    """
+    Return a list that contains 0 or 1, 1 means this attacker is captured
+
+    Args:
+    current_attackers (list): the current states of all attackers
+    current_defenders (list): the current states of all defenders
+    selected (list): the capture relationship
+    """
+    captured_status = [0 for _ in range(len(current_attackers))]
+    for j in range(len(current_defenders)):
+        if len(selected[j]):
+            for i in selected[j]:
+                if distance(current_defenders[j], current_attackers[i]) <= 0.1:
+                    captured_status[i] = 1
+    return captured_status
+
+def check_status(old_captured, new_captured):
+    changed = 0  # 
+    num_attacker = len(old_captured)
+    for i in range(num_attacker):
+        if old_captured[i] == new_captured[i]:
+            continue
+        else:
+            changed = 1
+    return changed
+
+def captured_attackers(new_captured):
+    index = []
+    for i, capture in enumerate(new_captured):
+        if capture:
+            index.append(i)
+    return index

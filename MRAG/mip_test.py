@@ -251,13 +251,46 @@ tau1v1 = np.arange(start=0, stop=4.5 + 1e-5, step=0.025)
 #         print(a[i])
 
 
-captured = [0 for _ in range(3)]
-# print(captured)
+# captured = [0 for _ in range(3)]
+# # print(captured)
 
-attackers_initials = [(0.0, 0.0), (0.0, 0.8)]
-defenders_initials = [(0.3, 0.5)]
-captured_lists = []
-current_captured = [0 for _ in range(len(attackers_initials))]
-captured_lists.append(current_captured)
-current_captured = [1, 1]
-print(captured_lists)
+# attackers_initials = [(0.0, 0.0), (0.0, 0.8)]
+# defenders_initials = [(0.3, 0.5)]
+# captured_lists = []
+# current_captured = [0 for _ in range(len(attackers_initials))]
+# captured_lists.append(current_captured)
+# current_captured = [1, 1]
+# print(captured_lists)
+
+a = [0, 0, 0, 0]
+b = [0, 1, 0, 1]
+
+def check_status(old_captured, new_captured):
+    changed = 0  # 
+    num_attacker = len(old_captured)
+    for i in range(num_attacker):
+        if old_captured[i] == new_captured[i]:
+            continue
+        else:
+            changed = 1
+    return changed
+
+print(check_status(a, b))
+
+def captured_attackers(new_captured):
+    index = []
+    for i, capture in enumerate(new_captured):
+        if capture:
+            index.append(i)
+    return index
+
+stops = captured_attackers(b)
+print(stops)
+
+for i in range(5):
+    if i in stops:
+        continue
+    else:
+        print(i)
+
+print(len([]))
