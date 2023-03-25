@@ -226,12 +226,12 @@ def mip_solver(num_attacker, num_defender, Pc, Ic):
     # add constraints 12d
     for i in range(num_attacker):
         model += xsum(e[i][j] for j in range(num_defender)) <= 1
-    # add constraints 12c
+    # add constraints 12c Pc
     for j in range(num_defender):
         for pairs in (Pc[j]):
             # print(pairs)
             model += e[pairs[0]][j] + e[pairs[1]][j] <= 1
-    # add constraints 12f
+    # add constraints 12f Ic
     for j in range(num_defender):
         for indiv in (Ic[j]):
             # print(indiv)
@@ -363,6 +363,7 @@ def select_attacker(d1x, d1y, current_attackers):
     d1x (float): the x position of the current defender
     d1y (float): the y position of the current defender
     current_attackers (list): the positions of all attackers, [(), (),...]
+    stops_index (list): contains the indexes of attackers that has been captured
     """
     num = len(current_attackers)
     index = 0
@@ -371,6 +372,27 @@ def select_attacker(d1x, d1y, current_attackers):
         temp = distance(current_attackers[i], (d1x, d1y))
         if temp <= d:
             index = i
+    return index
+
+def select_attacker2(d1x, d1y, current_attackers, stops_index):
+    """Return the nearest attacker index
+
+    Args:
+    d1x (float): the x position of the current defender
+    d1y (float): the y position of the current defender
+    current_attackers (list): the positions of all attackers, [(), (),...]
+    stops_index (list): contains the indexes of attackers that has been captured
+    """
+    num = len(current_attackers)
+    for index in range(num):
+        if index not in stops_index:
+            break
+    d = distance(current_attackers[index], (d1x, d1y))
+    for i in range(index, num):
+        if i not in stops_index:
+            temp = distance(current_attackers[i], (d1x, d1y))
+            if temp <= d:
+                index = i
     return index
 
 def defender_control1v1_v0(agents_1v1, joint_states1v1, a1x_1v1, a1y_1v1, d1x_1v1, d1y_1v1):
@@ -724,6 +746,7 @@ def capture_check(current_attackers, current_defenders, selected, last_captured)
     last_captured (list): the captured result of last time step
     """
     captured = last_captured
+    # check the attacker in selected is captured by the defender or not
     for j in range(len(current_defenders)):
         if len(selected[j]):
             for i in selected[j]:
@@ -758,9 +781,23 @@ def check_status(old_captured, new_captured):
             changed = 1
     return changed
 
-def captured_attackers(new_captured):
+def stoped_check(attackers_status, attackers_arrived):
     index = []
-    for i, capture in enumerate(new_captured):
+    for i, capture in enumerate(attackers_status):
         if capture:
             index.append(i)
-    return index
+    for j, arrived in enumerate(attackers_arrived):
+        if arrived:
+            index.append(j)
+    return sorted(index)
+
+def arrived_check(current_attackers):
+    num = len(current_attackers)
+    arrived = [0 for _ in range(num)]
+    # check the attacker has arrived at the target set or not
+    for i in range(num):
+        if (0.6<=current_attackers[i][0]) and (current_attackers[i][0]<=0.8):
+            if (0.1<=current_attackers[i][1]) and (current_attackers[i][1]<=0.3):
+                arrived[i] = 1
+                print(f"The attacker{i} has arrived at the target set! \n")
+    return arrived

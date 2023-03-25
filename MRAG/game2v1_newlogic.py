@@ -85,7 +85,7 @@ for _ in range(0, times):
     captured_lists.append(new_captured)
 
     if check_status(current_captured, new_captured):
-        stops = captured_attackers(new_captured)
+        stops = stoped_check(new_captured)
         # mip
         Ic = capture_individual2(current_attackers, current_defenders, value1v1, stops)
         Pc = capture_pair2(current_attackers, current_defenders, value2v1, stops)
