@@ -3,7 +3,7 @@ from utilities import *
 from MaximumMatching import MaxMatching
 
 # This debug for not loading spatial derivatives array before the game
-# Simulation 1: 2 attackers with 1 defenders
+# Simulation 1 baseline: 2 attackers with 1 defenders
 # preparations
 print("Preparing for the simulaiton... \n")
 T = 1.0  # total simulation time
