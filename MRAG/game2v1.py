@@ -5,13 +5,13 @@ from odp.solver import HJSolver, computeSpatDerivArray
 from MRAG.AttackerDefender1v0 import AttackerDefender1v0
 from MRAG.AttackerDefender1v1 import AttackerDefender1v1 
 from MRAG.AttackerDefender2v1 import AttackerDefender2v1
-from odp.Plots.plotting_utilities import plot_simulation
+from odp.Plots.plotting_utilities import *
 
 # This debug for not loading spatial derivatives array before the game
 # Simulation 1: 2 attackers with 1 defenders
 # preparations
 print("Preparing for the simulaiton... \n")
-T = 0.3  # attackers_stop_times = [0.865, 0.735 (0.750 for plotting)]
+T = 1.0 # attackers_stop_times = [0.865, 0.735 for plotting)]
 deltat = 0.005 # calculation time interval
 times = int(T/deltat)
 
@@ -135,9 +135,7 @@ print("The game is over. \n")
 print(f"The results of the selected is {capture_decisions}. \n")
 print(f"The final captured_status of all attackers is {attackers_status_logs[-1]}. \n")
 
-# plot the trajectories
-plot_simulation(attackers_x, attackers_y, defenders_x, defenders_y)
-# print(f"The final positions of attackers are {attackers_trajectory[0][-1]} and {attackers_trajectory[1][-1]}. \n")
-
-# print(f"The distance between the defender and the attacker1 is {distance(defenders_trajectory[0][-1], attackers_trajectory[0][-1])}. \n")
-# print(f"The distance between the defender and the attacker2 is {distance(defenders_trajectory[0][-1], attackers_trajectory[1][-1])}. \n")
+# plot the trajectories seperately
+# plot_simulation2v1_1(attackers_x, attackers_y, defenders_x, defenders_y)  # T = 0.4, 0.735 before the attacker1 is captured
+# print(f"The length of the current trajectory is {len(attackers_x[0])}. \n")
+plot_simulation2v1_2(attackers_x, attackers_y, defenders_x, defenders_y)  # T >= 0.865, after the attacker1 is captured
