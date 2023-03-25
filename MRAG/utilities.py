@@ -752,6 +752,8 @@ def capture_check(current_attackers, current_defenders, selected, last_captured)
             for i in selected[j]:
                 if distance(current_defenders[j], current_attackers[i]) <= 0.1:
                     captured[i] = 1
+                    print(f"The attacker{i} has been captured by the defender{j}! \n")
+
     return captured
 
 def capture_check1(current_attackers, current_defenders, selected):

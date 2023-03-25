@@ -11,7 +11,7 @@ from odp.Plots.plotting_utilities import plot_simulation
 # simulation 2: 6 attackers with 2 defenders
 # preparations
 print("Preparing for the simulaiton... \n")
-T = 1.5 # total simulation time
+T = 0.3 # total simulation time
 deltat = 0.005 # calculation time interval
 times = int(T/deltat)
 
@@ -128,7 +128,7 @@ for _ in range(0, times):
     attackers_status_logs.append(attackers_status)
     attackers_arrived = arrived_check(current_attackers)
     stops_index = stoped_check(attackers_status, attackers_arrived)
-    print(f"The current status at iteration{_} of attackers is {attackers_status} + {stops_index}. \n")
+    print(f"The current status at iteration{_} of attackers is arrived:{attackers_arrived} + been captured:{attackers_status}. \n")
 
     if len(stops_index) == num_attacker:
         print(f"All attackers have arrived or been captured at the time t={(_+1)*deltat}. \n")

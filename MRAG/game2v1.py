@@ -126,8 +126,7 @@ for _ in range(0, times):
     attackers_status_logs.append(attackers_status)
     attackers_arrived = arrived_check(current_attackers)
     stops_index = stoped_check(attackers_status, attackers_arrived)
-    print(f"The current status of attackers is {attackers_status} + {stops_index}. \n")
-
+    print(f"The current status at iteration{_} of attackers is arrived:{attackers_arrived} + been captured:{attackers_status}. \n")
 
     if len(stops_index) == num_attacker:
         print(f"All attackers have arrived or been captured at the time t={(_+1)*deltat}. \n")
