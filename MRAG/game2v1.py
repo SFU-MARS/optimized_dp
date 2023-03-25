@@ -11,7 +11,7 @@ from odp.Plots.plotting_utilities import plot_simulation
 # Simulation 1: 2 attackers with 1 defenders
 # preparations
 print("Preparing for the simulaiton... \n")
-T = 1.0  # total simulation time
+T = 0.3  # attackers_stop_times = [0.865, 0.735 (0.750 for plotting)]
 deltat = 0.005 # calculation time interval
 times = int(T/deltat)
 
@@ -32,9 +32,8 @@ tau1v1 = np.arange(start=0, stop=4.5 + 1e-5, step=0.025)
 tau2v1 = np.arange(start=0, stop=12.0 + 1e-5, step=0.025)
 
 # initialize positions of attackers and defenders
-attackers_initials = [(0.0, 0.0), (0.0, 0.8)]  # [(0.0, 0.0), (0.0, 0.8)]  (-0.5, 0.0), (-0.5, -0.3)
-# defenders_initials = [(0.3, 0.5)]
-defenders_initials = [(0.3, 0.5)]
+attackers_initials = [(-0.5, 0.0), (0.0, 0.8)]  # [(0.0, 0.0), (0.0, 0.8)], [(-0.5, 0.0), (0.0, 0.8)],  [(-0.5, 0.5), (-0.3, -0.8)]
+defenders_initials = [(0.3, -0.3)]
 
 num_attacker = len(attackers_initials)
 num_defender = len(defenders_initials)

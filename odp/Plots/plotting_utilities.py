@@ -260,14 +260,49 @@ def plot_simulation(attackers_x, attackers_y, defenders_x, defenders_y):
     # fig.add_trace(go.Scatter(x=attackers_x[0], y=attackers_y[0], mode="lines+markers", name="Attacker", marker=dict(symbol="triangle-up", size=10, color='red')))
 
     for i in range(len(attackers_x)):
-        fig.add_trace(go.Scatter(x=attackers_x[i], y=attackers_y[i], mode="markers", name=f"Attacker{i}", marker=dict(symbol="triangle-up", size=3, color='red'))) # symbol="cross"
+        sparsex = attackers_x[i][::10]
+        sparsey = attackers_y[i][::10]
+        fig.add_trace(go.Scatter(x=sparsex, y=sparsey, mode="markers", name=f"Attacker{i}", marker=dict(symbol="triangle-up", size=3, color='red'))) # symbol="cross"
     # plot defenders
     for j in range(len(defenders_x)):
-        fig.add_trace(go.Scatter(x=defenders_x[j], y=defenders_y[j], mode="markers", name=f'Defender{j}', marker=dict(symbol="square", size=3, color='blue'))) # symbol="star"
+        dsparsex = defenders_x[j][::10]
+        dsparsey = defenders_y[j][::10]
+        fig.add_trace(go.Scatter(x=dsparsex, y=dsparsey, mode="markers", name=f'Defender{j}', marker=dict(symbol="square", size=3, color='blue'))) # symbol="star"
 
     # figure settings
-    fig.update_layout(autosize=False, width=500, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1]) # LightSteelBlue
-    fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 1.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
-    fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 1.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
+    fig.update_layout(autosize=False, width=602.5, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=25)) # LightSteelBlue
+    fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
+    fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
     fig.show()
     print("Please check the plot on your browser.")
+
+
+# def plot_simulation0(attackers_x, attackers_y, defenders_x, defenders_y):
+
+#     print("Plotting beautiful 2D plots. Please wait\n")
+
+#     fig = go.Figure(data = go.Scatter(x=[0.6, 0.8], y=[0.1, 0.1], mode='lines', name='Target', line=dict(color='purple')), 
+#                     layout=Layout(plot_bgcolor='rgba(0,0,0,0)')) # for the legend
+#     # plot target
+#     fig.add_shape(type='rect', x0=0.6, y0=0.1, x1=0.8, y1=0.3, line=dict(color='purple', width=2.5), name="Target")
+
+#     # plot obstacles
+#     fig.add_shape(type='rect', x0=-0.1, y0=0.3, x1=0.1, y1=0.6, line=dict(color='black', width=2.5), name="Obstacle")
+#     fig.add_shape(type='rect', x0=-0.1, y0=-1.0, x1=0.1, y1=-0.3, line=dict(color='black', width=2.5))
+#     fig.add_trace(go.Scatter(x=[-0.1, 0.1], y=[0.3, 0.3], mode='lines', name='Obstacle', line=dict(color='black')))
+    
+#     # plot attackers
+#     # fig.add_trace(go.Scatter(x=attackers_x[0], y=attackers_y[0], mode="lines+markers", name="Attacker", marker=dict(symbol="triangle-up", size=10, color='red')))
+
+#     for i in range(len(attackers_x)):
+#         fig.add_trace(go.Scatter(x=attackers_x[i], y=attackers_y[i], mode="markers", name=f"Attacker{i}", marker=dict(symbol="triangle-up", size=3, color='red'))) # symbol="cross"
+#     # plot defenders
+#     for j in range(len(defenders_x)):
+#         fig.add_trace(go.Scatter(x=defenders_x[j], y=defenders_y[j], mode="markers", name=f'Defender{j}', marker=dict(symbol="square", size=3, color='blue'))) # symbol="star"
+
+#     # figure settings
+#     fig.update_layout(autosize=False, width=602.5, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=25)) # LightSteelBlue
+#     fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
+#     fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
+#     fig.show()
+#     print("Please check the plot on your browser.")
