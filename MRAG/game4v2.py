@@ -8,10 +8,10 @@ from MRAG.AttackerDefender2v1 import AttackerDefender2v1
 from odp.Plots.plotting_utilities import plot_simulation
 
 # This debug for not loading spatial derivatives array before the game
-# simulation 1: 4 attackers with 2 defenders
+# Simulation 2: 4 attackers with 2 defenders
 # preparations
 print("Preparing for the simulaiton... \n")
-T = 1.0 # total simulation time
+T = 1.5 # total simulation time
 deltat = 0.005 # calculation time interval
 times = int(T/deltat)
 
