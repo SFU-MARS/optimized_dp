@@ -22,7 +22,7 @@ import time
 
 ##################################################### EXAMPLE 4 1v1AttackerDefender ####################################
 #
-grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([30, 30, 30, 30])) # original 45
+grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([36, 36, 36, 36])) # original 30
 
 # Define my object dynamics
 agents_1v1 = AttackerDefender1v1(uMode="min", dMode="max")  # 1v1 (4 dims dynamics)
@@ -48,7 +48,7 @@ reach_set = np.minimum(np.maximum(goal1_destination, goal2_escape), np.minimum(o
 
 
 # Look-back length and time step
-lookback_length = 4.5  # the same as 2014Mo
+lookback_length = 12.0  # the same as 2014Mo
 # t_step = 0.025
 t_step = 0.05
 
@@ -84,8 +84,12 @@ result = HJSolver(agents_1v1, grids, [reach_set, avoid_set], tau, compMethods, p
 #     np.save('/localhome/hha160/optimized_dp/MRAG/2v1AttackDefend_new_step{}.npy'.format(i), at_least_one_win_2v1)
 
 # case2: calculate only the final time slice
-attacker1_wins_2v1 = np.zeros((30, 30, 30, 30, 30, 30)) + np.expand_dims(result[..., 0], axis = (2, 3))
-attacker2_wins_2v1 = np.zeros((30, 30, 30, 30, 30, 30)) + np.expand_dims(result[..., 0], axis = (0, 1))
+attacker1_wins_2v1 = np.zeros((36, 36, 36, 36, 36, 36)) + np.expand_dims(result[..., 0], axis = (2, 3))
+attacker1_wins_2v1 = np.array(attacker1_wins_2v1, dtype='float32')
+
+attacker2_wins_2v1 = np.zeros((36, 36, 36, 36, 36, 36)) + np.expand_dims(result[..., 0], axis = (0, 1))
+attacker2_wins_2v1 = np.array(attacker2_wins_2v1, dtype='float32')
+
 at_least_one_win_2v1 = np.minimum(attacker1_wins_2v1, attacker2_wins_2v1)
 print(f"The shape of the at_least_one_win_2v1 is {at_least_one_win_2v1.shape}. \n ")
 np.save('/localhome/hha160/optimized_dp/MRAG/2v1AttackDefend.npy', at_least_one_win_2v1)

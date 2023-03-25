@@ -63,7 +63,7 @@ def check1v1(value1v1, joint_states1v1):
         return 0
 
 # localizations to silces in 2v1 game
-def lo2slice2v1(joint_states2v1, slices=30):
+def lo2slice2v1(joint_states2v1, slices=36):
     """ Returns a tuple of the closest index of each state in the grid
 
     Args:
@@ -94,10 +94,11 @@ def check2v1(value2v1, joint_states2v1):
     """
     a1x_slice, a1y_slice, a2x_slice, a2y_slice, d1x_slice, d1y_slice = lo2slice2v1(joint_states2v1)
     flag = value2v1[a1x_slice, a1y_slice, a2x_slice, a2y_slice, d1x_slice, d1y_slice]
+    # print("2v1 value is {}".format(flag))
     if flag > 0:
-        return 1  # d1 could capture (a1, a2)
+        return 1, flag  # d1 could capture (a1, a2)
     else:
-        return 0
+        return 0, flag
 
 # generate the capture pair list P and the capture pair complement list Pc
 def capture_pair(attackers, defenders, value2v1):
@@ -106,22 +107,26 @@ def capture_pair(attackers, defenders, value2v1):
     Args:
         attackers (list): positions (set) of all attackers, [(a1x, a1y), ...]
         defenders (list): positions (set) of all defenders, [(d1x, d1y), ...]
-        value2v1 (ndarray): 2v1 HJ value function
+        value2v1 (ndarray): 2v1 HJ value function [, , , , ,]
     """
     num_attacker, num_defender = len(attackers), len(defenders)
     Pc = []
+    values = []
     # generate Pc
     for j in range(num_defender):
         Pc.append([])
+        values.append([])
         djx, djy = defenders[j]
         for i in range(num_attacker):
             for k in range(i+1, num_attacker):
                 aix, aiy = attackers[i]
                 akx, aky = attackers[k]
                 joint_states = (aix, aiy, akx, aky, djx, djy)
-                if not check2v1(value2v1, joint_states):
+                flag, val = check2v1(value2v1, joint_states)
+                if not flag:
                     Pc[j].append((i, k))
-    return Pc
+                values[j].append(val)
+    return Pc, values
 
 def capture_pair2(attackers, defenders, value2v1, stops):
     """ Returns a list Pc that contains all pairs of attackers that the defender couldn't capture, [[(a1, a2), (a2, a3)], ...]
@@ -235,6 +240,7 @@ def mip_solver(num_attacker, num_defender, Pc, Ic):
     model.objective = maximize(xsum(e[i][j] for j in range(num_defender) for i in range(num_attacker)))
     # problem solving
     model.max_gap = 0.05
+    # log_status = []
     status = model.optimize(max_seconds=300)
     if status == OptimizationStatus.OPTIMAL:
         print('optimal solution cost {} found'.format(model.objective_value))

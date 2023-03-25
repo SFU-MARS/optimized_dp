@@ -11,7 +11,7 @@ from odp.Plots.plotting_utilities import plot_simulation
 # simulation 1: 2 attackers with 1 defenders
 # preparations
 print("Preparing for the simulaiton... \n")
-T = 1.0  # total simulation time
+T = 1.4  # total simulation time
 deltat = 0.005 # calculation time interval
 times = int(T/deltat)
 
@@ -19,11 +19,11 @@ times = int(T/deltat)
 value1v0 = np.load('MRAG/1v0AttackDefend.npy')  # value1v0.shape = [100, 100, len(tau)]
 value1v1 = np.load('MRAG/1v1AttackDefend.npy')
 value1v1 = value1v1[..., np.newaxis]  # value1v1.shape = [45, 45, 45, 45, 1]
-value2v1 = np.load('MRAG/2v1AttackDefend.npy')
-value2v1 = value2v1[..., np.newaxis]  # value2v1.shape = [30, 30, 30, 30, 30, 30, 1]
+V = np.load('MRAG/2v1AttackDefend.npy')
+value2v1 = V[..., np.newaxis]  # value2v1.shape = [30, 30, 30, 30, 30, 30, 1]
 grid1v0 = Grid(np.array([-1.0, -1.0]), np.array([1.0, 1.0]), 2, np.array([100, 100])) # original 45
 grid1v1 = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([45, 45, 45, 45])) # original 45
-grid2v1 = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 6, np.array([30, 30, 30, 30, 30, 30]))
+grid2v1 = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 6, np.array([36, 36, 36, 36, 36, 36]))
 agents_1v0 = AttackerDefender1v0(uMode="min", dMode="max")
 agents_1v1 = AttackerDefender1v1(uMode="min", dMode="max")  # 1v1 (4 dims dynamics)
 agents_2v1 = AttackerDefender2v1(uMode="min", dMode="max")  # 2v1 (6 dim dynamics)
@@ -32,8 +32,10 @@ tau1v1 = np.arange(start=0, stop=4.5 + 1e-5, step=0.025)
 tau2v1 = np.arange(start=0, stop=4.5 + 1e-5, step=0.025)
 
 # initialize positions of attackers and defenders
-attackers_initials = [(-0.5, -0.5), (-0.5, 0.8)]  # [(0.0, 0.0), (0.0, 0.8)]
-defenders_initials = [(0.3, 0.0)]
+attackers_initials = [(-0.5, 0.5), (0.5, -0.6)]  # [(0.0, 0.0), (0.0, 0.8)]  (-0.5, 0.0), (-0.5, -0.3)
+# defenders_initials = [(0.3, 0.5)]
+defenders_initials = [(0.5, 0.)]
+
 num_attacker = len(attackers_initials)
 num_defender = len(defenders_initials)
 attackers_trajectory  = [[] for _ in range(num_attacker)]
@@ -74,9 +76,14 @@ for _ in range(0, times):
 
     # mip
     Ic = capture_individual(current_attackers, current_defenders, value1v1)
-    Pc = capture_pair(current_attackers, current_defenders, value2v1)
+    Pc, value_list = capture_pair(current_attackers, current_defenders, value2v1)
     selected = mip_solver(num_attacker, num_defender, Pc, Ic)
-    print(f"The result of the MIP in the step {_} is {selected}. \n")
+
+    # # Debug zone
+    # print("Pc is {}".format(Pc[1]))
+    print("value list is {}".format(value_list))
+
+    # print(f"The result of the MIP in the step {_} is {selected}. \n")
 
     capture_decisions.append(selected)  # document the capture results
 
@@ -135,5 +142,18 @@ print(f"The results of the selected is {capture_decisions}. \n")
 plot_simulation(attackers_x, attackers_y, defenders_x, defenders_y)
 print(f"The final captured_status of all attackers is {current_captured}. \n")
 # print(f"The final positions of attackers are {attackers_trajectory[0][-1]} and {attackers_trajectory[1][-1]}. \n")
-# print(f"The distance between the defender and the attacker1 is {distance(defenders_trajectory[0][-1], attackers_trajectory[0][-1])}. \n")
-# print(f"The distance between the defender and the attacker2 is {distance(defenders_trajectory[0][-1], attackers_trajectory[1][-1])}. \n")
+print(f"The distance between the defender and the attacker1 is {distance(defenders_trajectory[0][-1], attackers_trajectory[0][-1])}. \n")
+print(f"The distance between the defender and the attacker2 is {distance(defenders_trajectory[0][-1], attackers_trajectory[1][-1])}. \n")
+# v2v1 = []
+# for i in range(len(attackers_trajectory[0])):
+#     a1x, a1y = attackers_trajectory[0][i]
+#     a2x, a2y = attackers_trajectory[1][i]
+#     d1x, d1y = defenders_trajectory[0][i]
+#     jointstates2v1 = [a1x, a1y, a2x, a2y, d1x, d1y]
+#     print("joint state is {}".format(jointstates2v1))
+#     a1x_slice, a1y_slice, a2x_slice, a2y_slice, d1x_slice, d1y_slice = lo2slice2v1(joint_states2v1)
+#     crap = [a1x_slice, a1y_slice, a2x_slice, a2y_slice, d1x_slice, d1y_slice]
+#     print("joint index is {}".format(crap))
+#     print("hey yo {}".format(V[a1x_slice, a1y_slice, a2x_slice, a2y_slice, d1x_slice, d1y_slice]))
+#     v2v1.append(V[a1x_slice, a1y_slice, a2x_slice, a2y_slice, d1x_slice, d1y_slice])
+# print(f"The 2v1 value function of the whole trajectory is {v2v1}. \n")
