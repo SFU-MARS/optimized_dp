@@ -71,7 +71,8 @@ for _ in range(0, times):
     # print(f"The defenders in the {_} step are at {current_defenders} \n")
 
     # Maximum Matching
-    bigraph = bi_graph(v1v1, current_attackers, current_defenders)
+    bigraph = bi_graph(v1v1, current_attackers, current_defenders, stops_index)
+    print(f"The bigraph in the step{_} is {bigraph}. \n")
     MaxMatch = MaxMatching(bigraph)
     num, selected = MaxMatch.maximum_match()
     print(f"The maximum matching pair number is {num} \n")

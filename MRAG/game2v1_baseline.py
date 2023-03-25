@@ -5,14 +5,14 @@ from compute_opt_traj import compute_opt_traj1v0
 from odp.solver import HJSolver, computeSpatDerivArray
 from MRAG.AttackerDefender1v0 import AttackerDefender1v0
 from MRAG.AttackerDefender1v1 import AttackerDefender1v1 
-from odp.Plots.plotting_utilities import plot_simulation
+from odp.Plots.plotting_utilities import *
 from MaximumMatching import MaxMatching
 
 # This debug for not loading spatial derivatives array before the game
 # Simulation 1 baseline: 2 attackers with 1 defenders
 # preparations
 print("Preparing for the simulaiton... \n")
-T = 1.0  # total simulation time
+T = 0.62 # total simulation time T = 0.405(a0 is captured), 0.62 (a1 is captured)
 deltat = 0.005 # calculation time interval
 times = int(T/deltat)
 
@@ -72,7 +72,8 @@ for _ in range(0, times):
     # print(f"The defenders in the {_} step are at {current_defenders} \n")
 
     # Maximum Matching
-    bigraph = bi_graph(v1v1, current_attackers, current_defenders)
+    bigraph = bi_graph(v1v1, current_attackers, current_defenders, stops_index)
+    print(f"The bigraph in the step{_} is {bigraph}. \n")
     MaxMatch = MaxMatching(bigraph)
     num, selected = MaxMatch.maximum_match()
     print(f"The maximum matching pair number is {num} \n")
@@ -131,4 +132,4 @@ print(f"The results of the selected is {capture_decisions}. \n")
 print(f"The final captured_status of all attackers is {attackers_status_logs[-1]}. \n")
 
 # plot the trajectories
-plot_simulation(attackers_x, attackers_y, defenders_x, defenders_y)
+plot_simulation2v1_b1(attackers_x, attackers_y, defenders_x, defenders_y)

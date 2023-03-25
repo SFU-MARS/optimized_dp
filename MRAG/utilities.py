@@ -430,7 +430,7 @@ def defender_control2v1_v0(agents_2v1, joint_states2v1, a1x_2v1, a1y_2v1, a2x_2v
     opt_d1, opt_d2 = agents_2v1.optDstb_inPython(spat_deriv_vector)
     return (opt_d1, opt_d2)
     
-def bi_graph(value1v1, current_attackers, current_defenders):
+def bi_graph(value1v1, current_attackers, current_defenders, stops_index):
     """
     Return a bipartite graph (list: num_attackers x num_defenders) that contains the relationship between every pair of attackers and defenders
 
@@ -445,13 +445,19 @@ def bi_graph(value1v1, current_attackers, current_defenders):
     # generate a bipartite graph with num_attacker lines and num_defender columns
     for i in range(num_attacker):
         a1x, a1y = current_attackers[i]
-        for j in range(num_defender):
-            d1x, d1y = current_defenders[j]
-            jointstate1v1 = (a1x, a1y, d1x, d1y)
-            if check1v1(value1v1, jointstate1v1):  # the defender could capture the attacker
-                bigraph[i].append(1)
-            else:
+        if i in stops_index:
+            for j in range(num_defender):
+                d1x, d1y = current_defenders[j]
+                jointstate1v1 = (a1x, a1y, d1x, d1y)
                 bigraph[i].append(0)
+        else:
+            for j in range(num_defender):
+                d1x, d1y = current_defenders[j]
+                jointstate1v1 = (a1x, a1y, d1x, d1y)
+                if check1v1(value1v1, jointstate1v1):  # the defender could capture the attacker
+                    bigraph[i].append(1)
+                else:
+                    bigraph[i].append(0)
     return bigraph
 
 def spa_deriv(index, V, g, periodic_dims=[]):
@@ -803,3 +809,15 @@ def arrived_check(current_attackers):
                 arrived[i] = 1
                 print(f"The attacker{i} has arrived at the target set! \n")
     return arrived
+
+def matching_check(selected, stops_index):
+    # return the checked selected list and the actual number of maximum matching
+    for j in range(len(selected)):
+        if len(selected[j]): # not empty
+            for attacker in selected[j]:
+                if attacker in stops_index:
+                    selected[j].remove(attacker)
+    num = 0
+    for j in range(len(selected)):
+        num += len(selected[j])
+    return selected, num
