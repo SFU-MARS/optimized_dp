@@ -96,8 +96,8 @@ for _ in range(0, times):
         else:  # defender j could not capture any of attackers
             attacker_index = select_attacker2(d1x, d1y, current_attackers, stops_index)  # choose the nearest attacker
             a1x, a1y = current_attackers[attacker_index]
-            joint_states1v1 = (a1x, a1y, d1x, d1y)
-            control_defenders.append(defender_control1v1_1slice(agents_1v1, grid1v1, value1v1, tau1v1, joint_states1v1))
+            joint_states1v1 = (a1x, a1y, d1x, d1y) 
+            control_defenders.append((0.0, 0.0))  # defender_control1v1_1slice(agents_1v1, grid1v1, value1v1, tau1v1, joint_states1v1)
     # print(f'The control in the {_} step of defenders are {control_defenders} \n')
     # update the next postions of defenders
     newd_positions = next_positions(current_defenders, control_defenders, deltat)  # , selected, current_captured
