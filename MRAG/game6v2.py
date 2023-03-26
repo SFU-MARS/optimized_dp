@@ -5,13 +5,13 @@ from odp.solver import HJSolver, computeSpatDerivArray
 from MRAG.AttackerDefender1v0 import AttackerDefender1v0
 from MRAG.AttackerDefender1v1 import AttackerDefender1v1 
 from MRAG.AttackerDefender2v1 import AttackerDefender2v1
-from odp.Plots.plotting_utilities import plot_simulation
+from odp.Plots.plotting_utilities import *
 
 # This debug for not loading spatial derivatives array before the game
 # Simulation 3: 6 attackers with 2 defenders
 # preparations
 print("Preparing for the simulaiton... \n")
-T = 1.2 # total simulation time
+T = 1.03 # total simulation time t = [44(A4 0.220s), 68(A0 0.340), 111(A3 0.555), 149(A1 0.745), 206(A2 1.03), t=1.035 end]
 deltat = 0.005 # calculation time interval
 times = int(T/deltat)
 
@@ -139,4 +139,20 @@ print(f"The results of the selected is {capture_decisions}. \n")
 print(f"The final captured_status of all attackers is {attackers_status_logs[-1]}. \n")
 
 # plot the trajectories
-plot_simulation(attackers_x, attackers_y, defenders_x, defenders_y)
+t_slice = [0, 44, 68, 111, 149, 206, 206]
+mips = [[[0, 1], [2, 4]], [[0, 1], [2]], [[1, 3], [2]], [[1, 2], []], [[2], []]]
+# total simulation time t = 
+
+# plot the trajectories seperately  T= [44(A4 0.220s), 68(A0 0.340), 111(A3 0.555), 149(A1 0.745), 206(A2 1.03), t=1.035 end]
+if T == 0.220:  
+    plot_simulation6v2_1(attackers_x, attackers_y, defenders_x, defenders_y)
+elif T == 0.340: 
+    plot_simulation6v2_2(attackers_x, attackers_y, defenders_x, defenders_y)
+elif T == 0.555:
+    plot_simulation6v2_3(attackers_x, attackers_y, defenders_x, defenders_y)
+elif T == 0.745:
+    plot_simulation6v2_4(attackers_x, attackers_y, defenders_x, defenders_y)
+elif T == 1.03:
+    plot_simulation6v2_5(attackers_x, attackers_y, defenders_x, defenders_y)
+else:
+    plot_simulation(attackers_x, attackers_y, defenders_x, defenders_y)

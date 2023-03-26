@@ -35,13 +35,16 @@ It seems that the bug is caused by the dynamics. The control (both attacker and 
 1. Config1
 attackers_initials = [(0.0, 0.0), (0.0, 0.8)] 
 defenders_initials = [(0.3, 0.5)]
+T = []
 result:
 The current status at iteration118 of attackers is arrived:[0, 0] + been captured:[1, 1]. 
 All attackers have arrived or been captured at the time t=0.595. 
 
 2. Config2
+Ours:
 attackers_initials = [(-0.5, 0.0), (0.0, 0.8)] 
 defenders_initials = [(0.3, -0.3)]
+attackers_stop_times = [0.735(a1), 0.865(a0)]
 result:
 The current status at iteration172 of attackers is arrived:[0, 0] + been captured:[1, 1]. 
 All attackers have arrived or been captured at the time t=0.865. 
@@ -52,3 +55,5 @@ defenders_initials = [(0.0, 0.0)]
 result:
 The current status at iteration211 of attackers is arrived:[0, 0] + been captured:[1, 1]. 
 All attackers have arrived or been captured at the time t=1.06. 
+
+#### 4v1

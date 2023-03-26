@@ -5,14 +5,14 @@ from compute_opt_traj import compute_opt_traj1v0
 from odp.solver import HJSolver, computeSpatDerivArray
 from MRAG.AttackerDefender1v0 import AttackerDefender1v0
 from MRAG.AttackerDefender1v1 import AttackerDefender1v1 
-from odp.Plots.plotting_utilities import plot_simulation
+from odp.Plots.plotting_utilities import *
 from MaximumMatching import MaxMatching
 
 # This debug for not loading spatial derivatives array before the game
 # Simulation 3 baseline: 6 attackers with 2 defenders
 # preparations
 print("Preparing for the simulaiton... \n")
-T = 1.5  # total simulation time
+T = 0.81  # total simulation time T= [0.2s (40 A0 by D0), 0.58s (116 A2 by D1) , 0.625s (125 A1,A3,A5 arrive), 0.81s (162 A4 BY d0)]
 deltat = 0.005 # calculation time interval
 times = int(T/deltat)
 
@@ -29,7 +29,7 @@ tau1v1 = np.arange(start=0, stop=4.5 + 1e-5, step=0.025)
 
 
 # initialize positions of attackers and defenders
-attackers_initials = [(0.0, 0.0), (0.0, 0.8), (-0.8, 0.0), (0.5, -0.5), (-0.5, -0.3), (0.8, -0.5)]
+attackers_initials = [(0.0, 0.8), (0.0, 0.0), (-0.8, 0.0), (0.5, -0.5), (-0.5, -0.3), (0.8, -0.5)]
 defenders_initials = [(0.3, 0.5), (-0.3, -0.5)]  # , (0.3, -0.5)
 
 num_attacker = len(attackers_initials)
@@ -131,4 +131,14 @@ print(f"The results of the selected is {capture_decisions}. \n")
 print(f"The final captured_status of all attackers is {attackers_status_logs[-1]}. \n")
 
 # plot the trajectories
-plot_simulation(attackers_x, attackers_y, defenders_x, defenders_y)
+# plot_simulation(attackers_x, attackers_y, defenders_x, defenders_y)
+
+# plot the trajectories seperately  T= [0.2s (40 A0 by D0), 0.58s (116 A2 by D1) , 0.625s (125 A1,A3,A5 arrive), 0.81s (162 A4 BY d0)]
+if T == 0.2:  
+    plot_simulation6v2_b1(attackers_x, attackers_y, defenders_x, defenders_y)
+elif T == 0.58: 
+    plot_simulation6v2_b2(attackers_x, attackers_y, defenders_x, defenders_y)
+elif T == 0.81:
+    plot_simulation6v2_b3(attackers_x, attackers_y, defenders_x, defenders_y)
+else:
+    plot_simulation(attackers_x, attackers_y, defenders_x, defenders_y)

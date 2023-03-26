@@ -11,7 +11,7 @@ from odp.Plots.plotting_utilities import *
 # Simulation 1: 2 attackers with 1 defenders
 # preparations
 print("Preparing for the simulaiton... \n")
-T = 0.8 # attackers_stop_times = [0.865, 0.735 for plotting)]
+T = 0.865 # attackers_stop_times = [0.735s (149 A1 is captured), 0.865s (173 A0 is captured)]
 deltat = 0.005 # calculation time interval
 times = int(T/deltat)
 
@@ -136,6 +136,9 @@ print(f"The results of the selected is {capture_decisions}. \n")
 print(f"The final captured_status of all attackers is {attackers_status_logs[-1]}. \n")
 
 # plot the trajectories seperately
-plot_simulation2v1_1(attackers_x, attackers_y, defenders_x, defenders_y)  # T = 0.4, 0.735 before the attacker1 is captured
-# print(f"The length of the current trajectory is {len(attackers_x[0])}. \n")
-# plot_simulation2v1_2(attackers_x, attackers_y, defenders_x, defenders_y)  # T >= 0.865, after the attacker1 is captured
+if T == 0.735:
+    plot_simulation2v1_1(attackers_x, attackers_y, defenders_x, defenders_y)  # T = 0.3, 0.735 before the attacker1 is captured
+elif T == 0.865: ## slice 149
+    plot_simulation2v1_2(attackers_x, attackers_y, defenders_x, defenders_y)  # T >= 0.865, after the attacker1 is captured
+else:
+    plot_simulation2v1_2(attackers_x, attackers_y, defenders_x, defenders_y)  # T >= 0.865, after the attacker1 is captured
