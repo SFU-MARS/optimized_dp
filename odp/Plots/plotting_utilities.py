@@ -1068,8 +1068,8 @@ def plot_simulation6v2_b2(attackers_x, attackers_y, defenders_x, defenders_y):
     fig.add_trace(go.Scatter(x=[-0.1, 0.1], y=[0.3, 0.3], mode='lines', name='Obstacle', line=dict(color='black')))
     
     # plot attackers
-    fig.add_trace(go.Scatter(x=[attackers_x[4][-1], defenders_x[0][-1]], y=[attackers_y[4][-1], defenders_y[0][-1]], mode="lines+markers", name="Assigned D1", marker=dict(symbol="cross", size=5, color='magenta')))
-    fig.add_trace(go.Scatter(x=[attackers_x[2][-1], defenders_x[1][-1]], y=[attackers_y[2][-1], defenders_y[1][-1]], mode="lines+markers", name="Assigned D2", marker=dict(symbol="cross", size=5, color='magenta')))
+    fig.add_trace(go.Scatter(x=[attackers_x[3][-1], defenders_x[0][-1]], y=[attackers_y[3][-1], defenders_y[0][-1]], mode="lines+markers", name="Assigned D1", marker=dict(symbol="cross", size=5, color='magenta')))
+    # fig.add_trace(go.Scatter(x=[attackers_x[2][-1], defenders_x[1][-1]], y=[attackers_y[2][-1], defenders_y[1][-1]], mode="lines+markers", name="Assigned D2", marker=dict(symbol="cross", size=5, color='magenta')))
 
     for i in range(len(attackers_x)):
         sparsex = attackers_x[i][0:-1:5]
@@ -1116,7 +1116,7 @@ def plot_simulation6v2_b3(attackers_x, attackers_y, defenders_x, defenders_y):
     fig.add_trace(go.Scatter(x=[-0.1, 0.1], y=[0.3, 0.3], mode='lines', name='Obstacle', line=dict(color='black')))
     
     # plot Maximum Matched
-    fig.add_trace(go.Scatter(x=[attackers_x[4][-1], defenders_x[0][-1]], y=[attackers_y[4][-1], defenders_y[0][-1]], mode="lines+markers", name="Assigned D1", marker=dict(symbol="cross", size=5, color='magenta')))
+    fig.add_trace(go.Scatter(x=[attackers_x[3][-1], defenders_x[0][-1]], y=[attackers_y[3][-1], defenders_y[0][-1]], mode="lines+markers", name="Assigned D1", marker=dict(symbol="cross", size=5, color='magenta')))
     # fig.add_trace(go.Scatter(x=[attackers_x[2][-1], defenders_x[1][-1]], y=[attackers_y[2][-1], defenders_y[1][-1]], mode="lines+markers", name="Assigned D2", marker=dict(symbol="cross", size=5, color='magenta')))
 
     for i in range(len(attackers_x)):
@@ -1136,8 +1136,8 @@ def plot_simulation6v2_b3(attackers_x, attackers_y, defenders_x, defenders_y):
     d1sparsey.append(defenders_y[0][-1])
     fig.add_trace(go.Scatter(x=d1sparsex, y=d1sparsey, mode="markers", name='D1 traj', marker=dict(symbol="square", size=4, color='blue'))) # symbol="star"
 
-    d2sparsex = defenders_x[1][116:-1:8]
-    d2sparsey = defenders_y[1][116:-1:8]
+    d2sparsex = defenders_x[1][0:-1:8]
+    d2sparsey = defenders_y[1][0:-1:8]
     d2sparsex.append(defenders_x[1][-1])
     d2sparsey.append(defenders_y[1][-1])
     fig.add_trace(go.Scatter(x=d2sparsex, y=d2sparsey, mode="markers", name='D2 traj', marker=dict(symbol="square", size=4, color='blue'))) # symbol="star"
