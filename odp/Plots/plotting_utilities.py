@@ -455,7 +455,7 @@ def plot_simulation2v1_b2(attackers_x, attackers_y, defenders_x, defenders_y):
     sparsey2 = attackers_y[1][0:-1:5]
     sparsex2.append(attackers_x[1][-1])
     sparsey2.append(attackers_y[1][-1])
-    fig.add_trace(go.Scatter(x=sparsex2, y=sparsey2, mode="markers", name=f"A{2} traj", marker=dict(symbol="triangle-up", size=4, color='red'))) # trajectory
+    fig.add_trace(go.Scatter(x=sparsex2, y=sparsey2, mode="markers", name=f"A{2} arrived", marker=dict(symbol="triangle-up", size=4, color='red'))) # trajectory
 
     # plot defenders
     for j in range(len(defenders_x)):
@@ -467,7 +467,7 @@ def plot_simulation2v1_b2(attackers_x, attackers_y, defenders_x, defenders_y):
 
     # figure settings
     fig.update_layout(autosize=False, width=560, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
-                      title={'text': "t=0.785s", 'y':0.85, 'x':0.4, 'xanchor': 'center','yanchor': 'top', 'font_size': 15}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=20)) # LightSteelBlue
+                      title={'text': "<b>t=0.785s<b>", 'y':0.85, 'x':0.4, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=20)) # LightSteelBlue
     fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
     fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
     fig.show()
