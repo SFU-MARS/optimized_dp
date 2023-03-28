@@ -85,7 +85,9 @@ result = HJSolver(agents_1v1, grids, [reach_set, avoid_set], tau, compMethods, p
 
 # case2: calculate only the final time slice
 attacker1_wins_2v1 = np.zeros((30, 30, 30, 30, 30, 30)) + np.expand_dims(result[..., 0], axis = (2, 3))
+attacker1_wins_2v1 = np.array(attacker1_wins_2v1, dtype='float32')
 attacker2_wins_2v1 = np.zeros((30, 30, 30, 30, 30, 30)) + np.expand_dims(result[..., 0], axis = (0, 1))
 at_least_one_win_2v1 = np.minimum(attacker1_wins_2v1, attacker2_wins_2v1)
 print(f"The shape of the at_least_one_win_2v1 is {at_least_one_win_2v1.shape}. \n ")
-np.save('/localhome/hha160/optimized_dp/MRAG/2v1AttackDefend.npy', at_least_one_win_2v1)
+# np.save('/localhome/hha160/optimized_dp/MRAG/2v1AttackDefend.npy', at_least_one_win_2v1)
+np.save('2v1AttackDefend.npy', at_least_one_win_2v1)
