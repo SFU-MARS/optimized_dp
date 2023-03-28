@@ -31,4 +31,29 @@ plot_2d(g, V_2D=V_2D)
 It seems that the bug is caused by the dynamics. The control (both attacker and defender) could be zero sometimes. Adding the zero-judgement logic, the problem seems solved.
 
 ### 2. Records of the simulation
-#### $v_A = v_D = 1.0$
+#### 2v1 reach-avod game
+1. Config1
+attackers_initials = [(0.0, 0.0), (0.0, 0.8)] 
+defenders_initials = [(0.3, 0.5)]
+T = []
+result:
+The current status at iteration118 of attackers is arrived:[0, 0] + been captured:[1, 1]. 
+All attackers have arrived or been captured at the time t=0.595. 
+
+2. Config2
+Ours:
+attackers_initials = [(-0.5, 0.0), (0.0, 0.8)] 
+defenders_initials = [(0.3, -0.3)]
+attackers_stop_times = [0.735(a1), 0.865(a0)]
+result:
+The current status at iteration172 of attackers is arrived:[0, 0] + been captured:[1, 1]. 
+All attackers have arrived or been captured at the time t=0.865. 
+
+3. Config3
+attackers_initials = [(-0.5, 0.5), (-0.3, -0.8)] 
+defenders_initials = [(0.0, 0.0)]
+result:
+The current status at iteration211 of attackers is arrived:[0, 0] + been captured:[1, 1]. 
+All attackers have arrived or been captured at the time t=1.06. 
+
+#### 4v1

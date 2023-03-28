@@ -420,11 +420,11 @@ def graph_6D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
 
         # Accessing the hamiltonian and dissipation stage
         s_H = graph_create.Hamiltonian
-        s_D = graph_create.Dissipation
+        # s_D = graph_create.Dissipation
 
         # Thread parallelize hamiltonian and dissipation
         s[s_H].parallel(s_H.i)
-        s[s_D].parallel(s_D.i)
+        # s[s_D].parallel(s_D.i)
     else:
         print("I'm here\n")
         s = hcl.create_schedule([V_init, V_f], returnDerivative)

@@ -63,7 +63,7 @@ def check1v1(value1v1, joint_states1v1):
         return 0
 
 # localizations to silces in 2v1 game
-def lo2slice2v1(joint_states2v1, slices=30):
+def lo2slice2v1(joint_states2v1, slices=36):
     """ Returns a tuple of the closest index of each state in the grid
 
     Args:
@@ -94,10 +94,11 @@ def check2v1(value2v1, joint_states2v1):
     """
     a1x_slice, a1y_slice, a2x_slice, a2y_slice, d1x_slice, d1y_slice = lo2slice2v1(joint_states2v1)
     flag = value2v1[a1x_slice, a1y_slice, a2x_slice, a2y_slice, d1x_slice, d1y_slice]
+    # print("2v1 value is {}".format(flag))
     if flag > 0:
-        return 1  # d1 could capture (a1, a2)
+        return 1, flag  # d1 could capture (a1, a2)
     else:
-        return 0
+        return 0, flag
 
 # generate the capture pair list P and the capture pair complement list Pc
 def capture_pair(attackers, defenders, value2v1):
@@ -106,22 +107,26 @@ def capture_pair(attackers, defenders, value2v1):
     Args:
         attackers (list): positions (set) of all attackers, [(a1x, a1y), ...]
         defenders (list): positions (set) of all defenders, [(d1x, d1y), ...]
-        value2v1 (ndarray): 2v1 HJ value function
+        value2v1 (ndarray): 2v1 HJ value function [, , , , ,]
     """
     num_attacker, num_defender = len(attackers), len(defenders)
     Pc = []
+    values = []
     # generate Pc
     for j in range(num_defender):
         Pc.append([])
+        values.append([])
         djx, djy = defenders[j]
         for i in range(num_attacker):
             for k in range(i+1, num_attacker):
                 aix, aiy = attackers[i]
                 akx, aky = attackers[k]
                 joint_states = (aix, aiy, akx, aky, djx, djy)
-                if not check2v1(value2v1, joint_states):
+                flag, val = check2v1(value2v1, joint_states)
+                if not flag:
                     Pc[j].append((i, k))
-    return Pc
+                values[j].append(val)
+    return Pc, values
 
 def capture_pair2(attackers, defenders, value2v1, stops):
     """ Returns a list Pc that contains all pairs of attackers that the defender couldn't capture, [[(a1, a2), (a2, a3)], ...]
@@ -221,12 +226,12 @@ def mip_solver(num_attacker, num_defender, Pc, Ic):
     # add constraints 12d
     for i in range(num_attacker):
         model += xsum(e[i][j] for j in range(num_defender)) <= 1
-    # add constraints 12c
+    # add constraints 12c Pc
     for j in range(num_defender):
         for pairs in (Pc[j]):
             # print(pairs)
             model += e[pairs[0]][j] + e[pairs[1]][j] <= 1
-    # add constraints 12f
+    # add constraints 12f Ic
     for j in range(num_defender):
         for indiv in (Ic[j]):
             # print(indiv)
@@ -235,6 +240,7 @@ def mip_solver(num_attacker, num_defender, Pc, Ic):
     model.objective = maximize(xsum(e[i][j] for j in range(num_defender) for i in range(num_attacker)))
     # problem solving
     model.max_gap = 0.05
+    # log_status = []
     status = model.optimize(max_seconds=300)
     if status == OptimizationStatus.OPTIMAL:
         print('optimal solution cost {} found'.format(model.objective_value))
@@ -357,6 +363,7 @@ def select_attacker(d1x, d1y, current_attackers):
     d1x (float): the x position of the current defender
     d1y (float): the y position of the current defender
     current_attackers (list): the positions of all attackers, [(), (),...]
+    stops_index (list): contains the indexes of attackers that has been captured
     """
     num = len(current_attackers)
     index = 0
@@ -365,6 +372,27 @@ def select_attacker(d1x, d1y, current_attackers):
         temp = distance(current_attackers[i], (d1x, d1y))
         if temp <= d:
             index = i
+    return index
+
+def select_attacker2(d1x, d1y, current_attackers, stops_index):
+    """Return the nearest attacker index
+
+    Args:
+    d1x (float): the x position of the current defender
+    d1y (float): the y position of the current defender
+    current_attackers (list): the positions of all attackers, [(), (),...]
+    stops_index (list): contains the indexes of attackers that has been captured
+    """
+    num = len(current_attackers)
+    for index in range(num):
+        if index not in stops_index:
+            break
+    d = distance(current_attackers[index], (d1x, d1y))
+    for i in range(index, num):
+        if i not in stops_index:
+            temp = distance(current_attackers[i], (d1x, d1y))
+            if temp <= d:
+                index = i
     return index
 
 def defender_control1v1_v0(agents_1v1, joint_states1v1, a1x_1v1, a1y_1v1, d1x_1v1, d1y_1v1):
@@ -402,7 +430,7 @@ def defender_control2v1_v0(agents_2v1, joint_states2v1, a1x_2v1, a1y_2v1, a2x_2v
     opt_d1, opt_d2 = agents_2v1.optDstb_inPython(spat_deriv_vector)
     return (opt_d1, opt_d2)
     
-def bi_graph(value1v1, current_attackers, current_defenders):
+def bi_graph(value1v1, current_attackers, current_defenders, stops_index):
     """
     Return a bipartite graph (list: num_attackers x num_defenders) that contains the relationship between every pair of attackers and defenders
 
@@ -417,13 +445,19 @@ def bi_graph(value1v1, current_attackers, current_defenders):
     # generate a bipartite graph with num_attacker lines and num_defender columns
     for i in range(num_attacker):
         a1x, a1y = current_attackers[i]
-        for j in range(num_defender):
-            d1x, d1y = current_defenders[j]
-            jointstate1v1 = (a1x, a1y, d1x, d1y)
-            if check1v1(value1v1, jointstate1v1):  # the defender could capture the attacker
-                bigraph[i].append(1)
-            else:
+        if i in stops_index:
+            for j in range(num_defender):
+                d1x, d1y = current_defenders[j]
+                jointstate1v1 = (a1x, a1y, d1x, d1y)
                 bigraph[i].append(0)
+        else:
+            for j in range(num_defender):
+                d1x, d1y = current_defenders[j]
+                jointstate1v1 = (a1x, a1y, d1x, d1y)
+                if check1v1(value1v1, jointstate1v1):  # the defender could capture the attacker
+                    bigraph[i].append(1)
+                else:
+                    bigraph[i].append(0)
     return bigraph
 
 def spa_deriv(index, V, g, periodic_dims=[]):
@@ -718,11 +752,14 @@ def capture_check(current_attackers, current_defenders, selected, last_captured)
     last_captured (list): the captured result of last time step
     """
     captured = last_captured
+    # check the attacker in selected is captured by the defender or not
     for j in range(len(current_defenders)):
         if len(selected[j]):
             for i in selected[j]:
                 if distance(current_defenders[j], current_attackers[i]) <= 0.1:
                     captured[i] = 1
+                    print(f"The attacker{i} has been captured by the defender{j}! \n")
+
     return captured
 
 def capture_check1(current_attackers, current_defenders, selected):
@@ -752,9 +789,35 @@ def check_status(old_captured, new_captured):
             changed = 1
     return changed
 
-def captured_attackers(new_captured):
+def stoped_check(attackers_status, attackers_arrived):
     index = []
-    for i, capture in enumerate(new_captured):
+    for i, capture in enumerate(attackers_status):
         if capture:
             index.append(i)
-    return index
+    for j, arrived in enumerate(attackers_arrived):
+        if arrived:
+            index.append(j)
+    return sorted(index)
+
+def arrived_check(current_attackers):
+    num = len(current_attackers)
+    arrived = [0 for _ in range(num)]
+    # check the attacker has arrived at the target set or not
+    for i in range(num):
+        if (0.6<=current_attackers[i][0]) and (current_attackers[i][0]<=0.8):
+            if (0.1<=current_attackers[i][1]) and (current_attackers[i][1]<=0.3):
+                arrived[i] = 1
+                print(f"The attacker{i} has arrived at the target set! \n")
+    return arrived
+
+def matching_check(selected, stops_index):
+    # return the checked selected list and the actual number of maximum matching
+    for j in range(len(selected)):
+        if len(selected[j]): # not empty
+            for attacker in selected[j]:
+                if attacker in stops_index:
+                    selected[j].remove(attacker)
+    num = 0
+    for j in range(len(selected)):
+        num += len(selected[j])
+    return selected, num

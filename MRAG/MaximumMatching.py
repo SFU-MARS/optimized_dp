@@ -3,7 +3,7 @@
 class MaxMatching:
     def __init__(self, bp):
         """inputs
-        bp: attackers and defenders, if attacker_i is defended by defender_j, then graph[i][j]=1
+        bipartite graph: attackers and defenders, if attacker_i is defended by defender_j, then graph[i][j]=1
         """
         self.graph = bp
         self.num_attackers = len(bp)  # the number of attackers
@@ -33,7 +33,7 @@ class MaxMatching:
         for i in range(self.num_attackers):
             checked = [False] * self.num_defenders
             if self.match(i, matched, checked):
-                print(f"The checked list is {checked}")
+                # print(f"The checked list is {checked}")
                 result += 1
         selected = [[] for _ in range(self.num_defenders)] # [[a1], [a2], ...]
         for j in range(self.num_defenders):
@@ -62,4 +62,5 @@ bpGraph = [[1, 1],
 
 mm = MaxMatching(bpGraph)
 number, selected = mm.maximum_match()
-# print(selected)
+print(number)
+print(selected)

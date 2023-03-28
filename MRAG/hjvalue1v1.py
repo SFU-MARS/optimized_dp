@@ -21,7 +21,7 @@ import math
 
 ##################################################### EXAMPLE 4 1v1AttackerDefender ####################################
 
-grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([45, 45, 45, 45])) # original 45
+grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([30, 30, 30, 30])) # original 45
 
 # Define my object dynamics
 agents_1v1 = AttackerDefender1v1(uMode="min", dMode="max")  # 1v1 (4 dims dynamics)
@@ -57,7 +57,7 @@ reach_set = np.minimum(np.maximum(goal1_destination, goal2_escape), np.minimum(o
 # reach_set = goal1_destination 
 
 # Look-back length and time step
-lookback_length = 4.5  # the same as 2014Mo 
+lookback_length = 10  # the same as 2014Mo
 t_step = 0.025
 
 # Actual calculation process, needs to add new plot function to draw a 2D figure
@@ -78,8 +78,8 @@ result = HJSolver(agents_1v1, grids, [reach_set, avoid_set], tau, compMethods, p
 
 print(f'The shape of the value function is {result.shape} \n')
 # save the value function
-np.save('/localhome/hha160/optimized_dp/MRAG/1v1AttackDefend.npy', result)
-
+# np.save('/localhome/hha160/optimized_dp/MRAG/1v1AttackDefend.npy', result)
+np.save('1v1AttackDefend.npy', result)
 
 # # Compute spatial derivatives at every state
 # last_time_step_result = result[..., 0]

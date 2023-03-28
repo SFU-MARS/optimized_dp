@@ -9,7 +9,7 @@ import plotly.graph_objects as go
 from plotly.graph_objects import Layout
 import numpy as np
 
-# information of the reach-avoid game
+# # information of the reach-avoid game
 # num_attacker = 3
 # num_defender = 2
 
@@ -47,7 +47,7 @@ import numpy as np
 # # print(Ias)  
 # for j in range(num_defender):
 #     Ic.append(list(set(Ias).difference(set(I[j]))))
-# # print(Ic)
+# print(Ic)
 
 
 # # establish the MIP problem
@@ -101,19 +101,19 @@ import numpy as np
 # print(current_attackers[1][0])
 # print(len(current_attackers))
 
-# load all value functions, grids and spatial derivative array
-value1v0 = np.load('MRAG/1v0AttackDefend.npy')  # value1v0.shape = [100, 100, len(tau)]
-value1v1 = np.load('MRAG/1v1AttackDefend.npy')
-value2v1 = np.load('MRAG/2v1AttackDefend.npy')
-grid1v0 = Grid(np.array([-1.0, -1.0]), np.array([1.0, 1.0]), 2, np.array([100, 100])) # original 45
-grid1v1 = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([45, 45, 45, 45])) # original 45
-grid2v1 = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 6, np.array([30, 30, 30, 30, 30, 30]))
-agents_1v0 = AttackerDefender1v0(uMode="min", dMode="max")
-agents_1v1 = AttackerDefender1v1(uMode="min", dMode="max")  # 1v1 (4 dims dynamics)
-agents_2v1 = AttackerDefender2v1(uMode="min", dMode="max")  # 2v1 (6 dim dynamics)
-tau1v0 = np.arange(start=0, stop=2.5 + 1e-5, step=0.025)
-tau1v1 = np.arange(start=0, stop=4.5 + 1e-5, step=0.025)
-# print(f"The shape of the value1v0 is {value1v0.shape}")
+# # load all value functions, grids and spatial derivative array
+# value1v0 = np.load('MRAG/1v0AttackDefend.npy')  # value1v0.shape = [100, 100, len(tau)]
+# value1v1 = np.load('MRAG/1v1AttackDefend.npy')
+# value2v1 = np.load('MRAG/2v1AttackDefend.npy')
+# grid1v0 = Grid(np.array([-1.0, -1.0]), np.array([1.0, 1.0]), 2, np.array([100, 100])) # original 45
+# grid1v1 = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([45, 45, 45, 45])) # original 45
+# grid2v1 = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 6, np.array([30, 30, 30, 30, 30, 30]))
+# agents_1v0 = AttackerDefender1v0(uMode="min", dMode="max")
+# agents_1v1 = AttackerDefender1v1(uMode="min", dMode="max")  # 1v1 (4 dims dynamics)
+# agents_2v1 = AttackerDefender2v1(uMode="min", dMode="max")  # 2v1 (6 dim dynamics)
+# tau1v0 = np.arange(start=0, stop=2.5 + 1e-5, step=0.025)
+# tau1v1 = np.arange(start=0, stop=4.5 + 1e-5, step=0.025)
+# # print(f"The shape of the value1v0 is {value1v0.shape}")
 # print(f"The value1v0 at time 0 value is {value1v0[0, 0, 0]}")
 # print(f"The value1v0 at time -1 value is {value1v0[0, 0, -1]}")
 
@@ -262,35 +262,51 @@ tau1v1 = np.arange(start=0, stop=4.5 + 1e-5, step=0.025)
 # current_captured = [1, 1]
 # print(captured_lists)
 
-a = [0, 0, 0, 0]
-b = [0, 1, 0, 1]
+# a = [0, 0, 0, 0]
+# b = [0, 1, 0, 1]
 
-def check_status(old_captured, new_captured):
-    changed = 0  # 
-    num_attacker = len(old_captured)
-    for i in range(num_attacker):
-        if old_captured[i] == new_captured[i]:
-            continue
-        else:
-            changed = 1
-    return changed
+# def check_status(old_captured, new_captured):
+#     changed = 0  # 
+#     num_attacker = len(old_captured)
+#     for i in range(num_attacker):
+#         if old_captured[i] == new_captured[i]:
+#             continue
+#         else:
+#             changed = 1
+#     return changed
 
-print(check_status(a, b))
+# print(check_status(a, b))
 
-def captured_attackers(new_captured):
-    index = []
-    for i, capture in enumerate(new_captured):
-        if capture:
-            index.append(i)
-    return index
+# def captured_attackers(new_captured):
+#     index = []
+#     for i, capture in enumerate(new_captured):
+#         if capture:
+#             index.append(i)
+#     return index
 
-stops = captured_attackers(b)
-print(stops)
+# stops = captured_attackers(b)
+# print(stops)
 
-for i in range(5):
-    if i in stops:
-        continue
-    else:
-        print(i)
+# for i in range(5):
+#     if i in stops:
+#         continue
+#     else:
+#         print(i)
 
-print(len([]))
+# print(len([]))
+
+
+# 
+# attackers = [(0.7, 0.2), (0.6, 0.1), (0.7, 0.05), (0.5, 0.7)]
+# stops = [0 for _ in range(4)]
+# for i in range(4):
+#     if  (0.6 <= attackers[i][0]) and (attackers[i][0]<=0.8):
+#         if (0.1 <= attackers[i][1]) and (attackers[i][1]<=0.3):
+#             stops[i] = 1
+# print(stops)
+
+a = [[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8]]
+b = a[0][::2]
+c = a[0][-1]
+print(b)
+print(c)

@@ -114,6 +114,7 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
             constraint_i = constraint
 
         init_value = np.maximum(target, -constraint_i)
+        init_value = np.array(init_value, dtype='float32')
 
     process = psutil.Process(os.getpid())
     print("Gigabytes consumed {}".format(process.memory_info().rss/1e9))  # in bytes
