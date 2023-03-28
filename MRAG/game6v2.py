@@ -11,7 +11,7 @@ from odp.Plots.plotting_utilities import *
 # Simulation 3: 6 attackers with 2 defenders
 # preparations
 print("Preparing for the simulaiton... \n")
-T = 1.03 # total simulation time t = [44(A4 0.220s), 68(A0 0.340), 111(A3 0.555), 149(A1 0.745), 206(A2 1.03), t=1.035 end]
+T = 0.340 # total simulation time t = [44(A4 0.220s), 68(A0 0.340), 111(A3 0.555), 149(A1 0.745), 206(A2 1.03), t=1.035 end]
 deltat = 0.005 # calculation time interval
 times = int(T/deltat)
 
