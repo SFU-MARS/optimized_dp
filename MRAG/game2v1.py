@@ -11,7 +11,7 @@ from odp.Plots.plotting_utilities import *
 # Simulation 1: 2 attackers with 1 defenders
 # preparations
 print("Preparing for the simulaiton... \n")
-T = 0.735 # attackers_stop_times = [0.735s (149 A1 is captured), 0.865s (173 A0 is captured)]
+T = 0.5 # attackers_stop_times = [0.735s (149 A1 is captured), 0.865s (173 A0 is captured)]
 deltat = 0.005 # calculation time interval
 times = int(T/deltat)
 
@@ -19,17 +19,19 @@ times = int(T/deltat)
 value1v0 = np.load('MRAG/1v0AttackDefend.npy')  # value1v0.shape = [100, 100, len(tau)]
 v1v1 = np.load('MRAG/1v1AttackDefend.npy')
 value1v1 = v1v1[..., np.newaxis]  # value1v1.shape = [45, 45, 45, 45, 1]
-v2v1 = np.load('MRAG/2v1AttackDefend.npy')
+# v2v1 = np.load('MRAG/2v1AttackDefend.npy')
+v2v1 = np.load('2v1AttackDefend.npy')
+print(f"The shape of the 2v1 value function is {v2v1.shape}. \n")
 value2v1 = v2v1[..., np.newaxis]  # value2v1.shape = [30, 30, 30, 30, 30, 30, 1]
 grid1v0 = Grid(np.array([-1.0, -1.0]), np.array([1.0, 1.0]), 2, np.array([100, 100])) # original 45
 grid1v1 = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([45, 45, 45, 45])) # original 45
-grid2v1 = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 6, np.array([36, 36, 36, 36, 36, 36]))
+grid2v1 = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 6, np.array([30, 30, 30, 30, 30, 30])) # [36, 36, 36, 36, 36, 36] [30, 30, 30, 30, 30, 30]
 agents_1v0 = AttackerDefender1v0(uMode="min", dMode="max")
 agents_1v1 = AttackerDefender1v1(uMode="min", dMode="max")  # 1v1 (4 dims dynamics)
 agents_2v1 = AttackerDefender2v1(uMode="min", dMode="max")  # 2v1 (6 dim dynamics)
 tau1v0 = np.arange(start=0, stop=2.5 + 1e-5, step=0.025)
 tau1v1 = np.arange(start=0, stop=4.5 + 1e-5, step=0.025)
-tau2v1 = np.arange(start=0, stop=12.0 + 1e-5, step=0.025)
+tau2v1 = np.arange(start=0, stop=4.5 + 1e-5, step=0.025)
 
 # initialize positions of attackers and defenders
 attackers_initials = [(-0.5, 0.0), (0.0, 0.8)]  # [(0.0, 0.0), (0.0, 0.8)], [(-0.5, 0.0), (0.0, 0.8)],  [(-0.5, 0.5), (-0.3, -0.8)]
@@ -141,4 +143,5 @@ if T == 0.735:
 elif T == 0.865: ## slice 149
     plot_simulation2v1_2(attackers_x, attackers_y, defenders_x, defenders_y)  # T >= 0.865, after the attacker1 is captured
 else:
-    plot_simulation2v1_2(attackers_x, attackers_y, defenders_x, defenders_y)  # T >= 0.865, after the attacker1 is captured
+    plot_simulation(attackers_x, attackers_y, defenders_x, defenders_y)
+    # plot_simulation2v1_2(attackers_x, attackers_y, defenders_x, defenders_y)  # T >= 0.865, after the attacker1 is captured

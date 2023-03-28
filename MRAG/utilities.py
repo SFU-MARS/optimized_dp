@@ -63,7 +63,7 @@ def check1v1(value1v1, joint_states1v1):
         return 0
 
 # localizations to silces in 2v1 game
-def lo2slice2v1(joint_states2v1, slices=36):
+def lo2slice2v1(joint_states2v1, slices=30):
     """ Returns a tuple of the closest index of each state in the grid
 
     Args:

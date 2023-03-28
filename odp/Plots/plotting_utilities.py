@@ -129,7 +129,7 @@ def plot_2d_with_avoid(grid, V_2D):
     # print(f'The shape of z after flatten is {V_2D.flatten().shape}')
     print("Please check the plot on your browser.")
 
-def plot_game(grid, V_2D, attackers, defenders):
+def plot_game(grid, V_2D, attackers, defenders, name):
     # based on the plot_2d, add the attacker and the defender 
     dims_plot = [0, 1]
     dim1, dim2 = dims_plot[0], dims_plot[1]
@@ -172,13 +172,13 @@ def plot_game(grid, V_2D, attackers, defenders):
    
     # figure settings
     fig.update_layout(autosize=False, width=580, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
-                      title={'text': "$\mathcal{RA}^{11}_{\infty}$", 'y':0.85, 'x':0.4, 'xanchor': 'center','yanchor': 'top', 'font_size': 15}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=20)) # $\mathcal{R} \mathcal{A}_{\infty}^{21}$
+                      title={'text': f"{name}", 'y':0.85, 'x':0.4, 'xanchor': 'center','yanchor': 'top', 'font_size': 15}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=20)) # $\mathcal{R} \mathcal{A}_{\infty}^{21}$
     fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
     fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
     fig.show()
     print("Please check the plot on your browser.")
 
-def plot_game0(grid, V_2D, attackers, defenders):
+def plot_game0(grid, V_2D, attackers, defenders, name):
     # based on the plot_game but not showing legends 
     dims_plot = [0, 1]
     dim1, dim2 = dims_plot[0], dims_plot[1]
@@ -221,7 +221,7 @@ def plot_game0(grid, V_2D, attackers, defenders):
     # figure settings
     fig.update_layout(showlegend=False)
     fig.update_layout(autosize=False, width=425, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
-                      title={'text': "$\mathcal{R} \mathcal{A}_{\infty}^{21}$", 'y':0.85, 'x':0.5, 'xanchor': 'center','yanchor': 'top', 'font_size': 15}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=20)) # $\mathcal{R} \mathcal{A}_{\infty}^{21}$
+                      title={'text': f"{name}", 'y':0.85, 'x':0.5, 'xanchor': 'center','yanchor': 'top', 'font_size': 15}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=20)) # $\mathcal{R} \mathcal{A}_{\infty}^{21}$
     # fig.update_layout(autosize=False, width=457.5, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=20)) # LightSteelBlue
     fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
     fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
