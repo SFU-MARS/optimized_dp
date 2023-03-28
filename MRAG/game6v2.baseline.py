@@ -12,7 +12,7 @@ from MaximumMatching import MaxMatching
 # Simulation 3 baseline: 6 attackers with 2 defenders
 # preparations
 print("Preparing for the simulaiton... \n")
-T = 0.91  # total simulation time T= [0.2s (40 A0 by D0, A2 by D1) , 0.615s (123 A1,A3,A5 arrive), 0.91s (182 A3 BY D0)]
+T = 0.615  # total simulation time T= [0.2s (40 A0 by D0, A2 by D1) , 0.615s (123 A1,A3,A5 arrive), 0.91s (182 A3 BY D0)]
 deltat = 0.005 # calculation time interval
 times = int(T/deltat)
 
