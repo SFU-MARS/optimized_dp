@@ -89,8 +89,8 @@ class AttackerDefender1v1:
                 opt_a1[0] = 0.0
                 opt_a2[0] = 0.0
             with hcl.else_():
-                opt_a1[0] = -1.0 * deriv1[0] / ctrl_len
-                opt_a2[0] = -1.0 * deriv2[0] / ctrl_len
+                opt_a1[0] = -deriv1[0] / ctrl_len
+                opt_a2[0] = -deriv2[0] / ctrl_len
         else:
             with hcl.if_(ctrl_len == 0):
                 opt_a1[0] = 0.0
@@ -131,8 +131,8 @@ class AttackerDefender1v1:
                 d1[0] = 0.0
                 d2[0] = 0.0
             with hcl.else_():
-                d1[0] = -1 * deriv1[0]/ dstb_len
-                d2[0] = -1 * deriv2[0] / dstb_len
+                d1[0] = deriv1[0]/ dstb_len
+                d2[0] = deriv2[0] / dstb_len
 
         return d1[0], d2[0], d3[0], d4[0]
 
@@ -156,15 +156,15 @@ class AttackerDefender1v1:
                 opt_a1 = 0.0
                 opt_a2 = 0.0
             else:
-                opt_a1 = - self.speed_a * deriv1 / ctrl_len
-                opt_a2 = - self.speed_a * deriv2 / ctrl_len
+                opt_a1 = -deriv1 / ctrl_len
+                opt_a2 = -deriv2 / ctrl_len
         else:
             if ctrl_len == 0:
                 opt_a1 = 0.0
                 opt_a2 = 0.0
             else:
-                opt_a1 = self.speed_a * deriv1 / ctrl_len
-                opt_a2 = self.speed_a * deriv2 / ctrl_len
+                opt_a1 = deriv1 / ctrl_len
+                opt_a2 = deriv2 / ctrl_len
         return (opt_a1, opt_a2)
     
     def optDstb_inPython(self, spat_deriv):
@@ -183,15 +183,15 @@ class AttackerDefender1v1:
                 opt_d1 = 0.0
                 opt_d2 = 0.0
             else:
-                opt_d1 = self.speed_d * deriv3 / dstb_len
-                opt_d2 = self.speed_d * deriv4 / dstb_len
+                opt_d1 = deriv3 / dstb_len
+                opt_d2 = deriv4 / dstb_len
         else:
             if dstb_len == 0:
                 opt_d1 = 0.0
                 opt_d2 = 0.0
             else:
-                opt_d1 = - self.speed_d * deriv3 / dstb_len
-                opt_d2 = - self.speed_d * deriv4 / dstb_len
+                opt_d1 = -deriv3 / dstb_len
+                opt_d2 = -deriv4 / dstb_len
         return (opt_d1, opt_d2)
 
     def capture_set(self, grid, capture_radius, mode):

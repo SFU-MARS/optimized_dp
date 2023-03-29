@@ -150,15 +150,15 @@ class AttackerDefender1v0:
                 opt_a1 = 0.0
                 opt_a2 = 0.0
             else:
-                opt_a1 = - self.speed_a * deriv1 / ctrl_len
-                opt_a2 = - self.speed_a * deriv2 / ctrl_len
+                opt_a1 = - deriv1 / ctrl_len
+                opt_a2 = - deriv2 / ctrl_len
         else:
             if ctrl_len == 0:
                 opt_a1 = 0.0
                 opt_a2 = 0.0
             else:
-                opt_a1 = self.speed_a * deriv1 / ctrl_len
-                opt_a2 = self.speed_a * deriv2 / ctrl_len
+                opt_a1 = deriv1 / ctrl_len
+                opt_a2 = deriv2 / ctrl_len
         return (opt_a1, opt_a2)
     
     def optDstb_inPython(self, spat_deriv):

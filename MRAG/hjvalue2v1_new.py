@@ -186,4 +186,4 @@ print(f'The shape of the value function is {result.shape} \n')
 # np.save('2v1AttackDefend.npy', result)
 print("The calculation is done! \n")
 
-np.save('2v1AttackDefend.npy', result)
+np.save('2v1AttackDefend_speed2.npy', result)

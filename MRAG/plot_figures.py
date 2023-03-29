@@ -6,9 +6,10 @@ from utilities import lo2slice1v1, lo2slice2v1, lo2slice1v0
 from odp.solver import HJSolver, computeSpatDerivArray
 
 # load reach-avoid sets 
-value1v1 = np.load('MRAG/1v1AttackDefend.npy')
+# value1v1 = np.load('MRAG/1v1AttackDefend.npy')
+value1v1 = np.load('MRAG/1v1AttackDefend_speed2.npy')
 # value2v1 = np.load('MRAG/2v1AttackDefend.npy')
-value2v1 = np.load('2v1AttackDefend.npy')
+value2v1 = np.load('2v1AttackDefend_speed2.npy')
 grids1v1 = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([45, 45, 45, 45]))
 grid2v1 = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 6, np.array([30, 30, 30, 30, 30, 30]))  # [30, 30, 30, 30, 30, 30][36, 36, 36, 36, 36, 36]
 print(f'The shape of the 1v1 value function is {value1v1.shape} \n')
@@ -17,8 +18,8 @@ print(f'The shape of the 2v1 value function is {value2v1.shape} \n')
 
 # 2v1 simulation
 # initial positions
-attackers = [(-0.01026, 0.07432), (0.3827, 0.4783)]  # [(-0.5, 0.0), (0.0, 0.8)], [(-0.5, 0.5), (-0.3, -0.8)]
-defenders = [(0.08876, 0.07432)] # [(0.3, -0.3)], [(0.0, 0.0)]
+attackers = [(0.3, 0.5), (-0.01, 0.0)]  # [(-0.5, 0.0), (0.0, 0.8)], [(-0.5, 0.5), (-0.3, -0.8)]
+defenders = [(-0.01, 0.0)] # [(0.3, -0.3)], [(0.0, 0.0)]
 a1x = attackers[0][0]
 a1y = attackers[0][1]
 a2x = attackers[1][0]
@@ -35,7 +36,7 @@ value_function1v1 = value1v1[:, :, d1x_slice, d1y_slice]  # , 0] if the saveAllT
 # plotting players
 attackers_plot1 = [(a1x, a1y), (a2x, a2y)]  # (a2x, a2y)
 defenders_plot1 = [(d1x, d1y)]
-# plot_game(grids1v1, value_function1v1, attackers_plot1, defenders_plot1, name="$\mathcal{RA}^{11}_{\infty}$")
+plot_game(grids1v1, value_function1v1, attackers_plot1, defenders_plot1, name="$\mathcal{RA}^{11}_{\infty}$")
 # plot_game0(grids1v1, value_function1v1, attackers_plot1, defenders_plot1, name="$\mathcal{RA}^{21}_{\infty}$")
 
 # plot 2v1 reach-avoid set
@@ -47,7 +48,7 @@ value_function2v1 = value2v1[:, :, a2x_slice, a2y_slice, d1x_slice, d1y_slice]
 # plotting players
 attackers_plot2 = [(a1x, a1y), (a2x, a2y)]
 defenders_plot2 = [(d1x, d1y)]
-plot_game(grid2v1, value_function2v1, attackers_plot2, defenders_plot2, name="$\mathcal{RA}^{21}_{\infty}$")
+# plot_game(grid2v1, value_function2v1, attackers_plot2, defenders_plot2, name="$\mathcal{RA}^{21}_{\infty}$")
 # plot_game0(grid2v1, value_function2v1, attackers_plot2, defenders_plot2, name="$\mathcal{RA}^{21}_{\infty}$")
 
 
