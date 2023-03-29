@@ -14,7 +14,7 @@ import numpy as np
 
 class AttackerDefender2v1:
     def __init__(self, x=[0, 0, 0, 0, 0, 0], uMin=-1, uMax=1, dMin=-1,
-                 dMax=1, uMode="min", dMode="max", speed_a=1.0, speed_d=1.0):
+                 dMax=1, uMode="min", dMode="max", speed_a=1.0, speed_d=2.0):
         """Creates 2 Attackers and 1 Defender with the following states:
            X1 position, Y1 position, X2 position, Y2 position
            The controls are the control inputs of the Attackers.
@@ -95,29 +95,34 @@ class AttackerDefender2v1:
         deriv2[0] = spat_deriv[1]
         deriv3[0] = spat_deriv[2]
         deriv4[0] = spat_deriv[3]
-        ctrl_len = hcl.sqrt(deriv1[0] * deriv1[0] + deriv2[0] * deriv2[0] + deriv3[0] * deriv3[0] + deriv4[0] * deriv4[0])        
+        ctrl_len1 = hcl.sqrt(deriv1[0] * deriv1[0] + deriv2[0] * deriv2[0])     
+        ctrl_len2 = hcl.sqrt(deriv3[0] * deriv3[0] + deriv4[0] * deriv4[0])
         if self.uMode == "min":
-            with hcl.if_(ctrl_len == 0):
+            with hcl.if_(ctrl_len1 == 0):
                 opt_a1[0] = 0.0
                 opt_a2[0] = 0.0
+            with hcl.else_():
+                opt_a1[0] = -deriv1[0] / ctrl_len1
+                opt_a2[0] = -deriv2[0] / ctrl_len1
+            with hcl.if_(ctrl_len2 == 0):
                 opt_a3[0] = 0.0
                 opt_a4[0] = 0.0
             with hcl.else_():
-                opt_a1[0] = -1.0 * deriv1[0] / ctrl_len
-                opt_a2[0] = -1.0 * deriv2[0] / ctrl_len
-                opt_a3[0] = -1.0 * deriv3[0] / ctrl_len
-                opt_a4[0] = -1.0 * deriv4[0] / ctrl_len
+                opt_a3[0] = -deriv3[0] / ctrl_len2
+                opt_a4[0] = -deriv4[0] / ctrl_len2
         else:
-            with hcl.if_(ctrl_len == 0):
+            with hcl.if_(ctrl_len1 == 0):
                 opt_a1[0] = 0.0
                 opt_a2[0] = 0.0
+            with hcl.else_():
+                opt_a1[0] = deriv1[0] / ctrl_len1
+                opt_a2[0] = deriv2[0] / ctrl_len1
+            with hcl.if_(ctrl_len2 == 0):
                 opt_a3[0] = 0.0
                 opt_a4[0] = 0.0
             with hcl.else_():
-                opt_a1[0] = deriv1[0] / ctrl_len
-                opt_a2[0] = deriv2[0] / ctrl_len
-                opt_a3[0] = deriv3[0] / ctrl_len
-                opt_a4[0] = deriv4[0] / ctrl_len
+                opt_a3[0] = deriv3[0] / ctrl_len2
+                opt_a4[0] = deriv4[0] / ctrl_len2
         # return 3, 4 even if you don't use them
         return opt_a1[0], opt_a2[0], opt_a3[0], opt_a4[0]
 
@@ -135,8 +140,8 @@ class AttackerDefender2v1:
         # the same procedure in opt_ctrl
         deriv1 = hcl.scalar(0, "deriv1")
         deriv2 = hcl.scalar(0, "deriv2")
-        deriv1[0] = spat_deriv[2]
-        deriv2[0] = spat_deriv[3]
+        deriv1[0] = spat_deriv[4]
+        deriv2[0] = spat_deriv[5]
         dstb_len = hcl.sqrt(deriv1[0] * deriv1[0] + deriv2[0] * deriv2[0])
         # with hcl.if_(self.dMode == "max"):
         if self.dMode == 'max':
@@ -151,8 +156,8 @@ class AttackerDefender2v1:
                 d1[0] = 0.0
                 d2[0] = 0.0
             with hcl.else_():
-                d1[0] = -1 * deriv1[0]/ dstb_len
-                d2[0] = -1 * deriv2[0] / dstb_len
+                d1[0] = -deriv1[0]/ dstb_len
+                d2[0] = -deriv2[0] / dstb_len
 
         return d1[0], d2[0], d3[0], d4[0]
 
@@ -173,30 +178,35 @@ class AttackerDefender2v1:
         deriv2 = spat_deriv[1]
         deriv3 = spat_deriv[2]
         deriv4 = spat_deriv[3]
-        ctrl_len = np.sqrt(deriv1*deriv1 + deriv2*deriv2 + deriv3*deriv3 + deriv4*deriv4)
+        ctrl_len1 = np.sqrt(deriv1*deriv1 + deriv2*deriv2)
+        ctrl_len2 = np.sqrt(deriv3*deriv3 + deriv4*deriv4)
         # The initialized control only change sign in the following cases
         if self.uMode == "min":
-            if ctrl_len == 0:
+            if ctrl_len1 == 0:
                 opt_a1 = 0.0
                 opt_a2 = 0.0
+            else:
+                opt_a1 = -deriv1 / ctrl_len1
+                opt_a2 = -deriv2 / ctrl_len1
+            if ctrl_len2 == 0:
                 opt_a3 = 0.0 
                 opt_a4 = 0.0
             else:
-                opt_a1 = - self.speed_a * deriv1 / ctrl_len
-                opt_a2 = - self.speed_a * deriv2 / ctrl_len
-                opt_a3 = - self.speed_a * deriv3 / ctrl_len
-                opt_a4 = - self.speed_a * deriv4 / ctrl_len
+                opt_a3 = -deriv3 / ctrl_len2
+                opt_a4 = -deriv4 / ctrl_len2
         else:
-            if ctrl_len == 0:
+            if ctrl_len1 == 0:
                 opt_a1 = 0.0
                 opt_a2 = 0.0
+            else:
+                opt_a1 = deriv1 / ctrl_len1
+                opt_a2 = deriv2 / ctrl_len1
+            if ctrl_len2 == 0:
                 opt_a3 = 0.0 
                 opt_a4 = 0.0
             else:
-                opt_a1 = self.speed_a * deriv1 / ctrl_len
-                opt_a2 = self.speed_a * deriv2 / ctrl_len
-                opt_a3 = self.speed_a * deriv3 / ctrl_len
-                opt_a4 = self.speed_a * deriv4 / ctrl_len
+                opt_a3 = deriv3 / ctrl_len2
+                opt_a4 = deriv4 / ctrl_len2
         return (opt_a1, opt_a2, opt_a3, opt_a4)
     
     def optDstb_inPython(self, spat_deriv):
@@ -215,15 +225,15 @@ class AttackerDefender2v1:
                 opt_d1 = 0.0
                 opt_d2 = 0.0
             else:
-                opt_d1 = self.speed_d * deriv5 / dstb_len
-                opt_d2 = self.speed_d * deriv6 / dstb_len
+                opt_d1 = deriv5 / dstb_len
+                opt_d2 = deriv6 / dstb_len
         else:
             if dstb_len == 0:
                 opt_d1 = 0.0
                 opt_d2 = 0.0
             else:
-                opt_d1 = - self.speed_d * deriv5 / dstb_len
-                opt_d2 = - self.speed_d * deriv6 / dstb_len
+                opt_d1 = -deriv5 / dstb_len
+                opt_d2 = -deriv6 / dstb_len
         return (opt_d1, opt_d2)
 
     def capture_set1(self, grid, capture_radius, mode):
