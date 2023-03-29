@@ -18,8 +18,8 @@ print(f'The shape of the 2v1 value function is {value2v1.shape} \n')
 
 # 2v1 simulation
 # initial positions
-attackers = [(-0.5, 0.0), (0.0, 0.8)]  # [(-0.5, 0.0), (0.0, 0.8)], [(-0.5, 0.5), (-0.3, -0.8)]
-defenders = [(0.3, -0.3)] # [(0.3, -0.3)], [(0.0, 0.0)]
+attackers = [(0.0, 0.8), (0.2, 0.5)]  # [(-0.5, 0.0), (0.0, 0.8)], [(-0.5, 0.5), (-0.3, -0.8)], [(-0.5, -0.3), (0.8, -0.5)]
+defenders = [(-1.0, -1.0)] # [(0.3, -0.3)], [(0.0, 0.0)], [(0.3, 0.5)]
 a1x = attackers[0][0]
 a1y = attackers[0][1]
 a2x = attackers[1][0]

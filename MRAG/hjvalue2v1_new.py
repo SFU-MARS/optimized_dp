@@ -31,7 +31,7 @@ process = psutil.Process(os.getpid())
 print("1. Gigabytes consumed {}".format(process.memory_info().rss/1e9))  # in bytes
 
 # First load the 4D reach-avoid set
-RA_1V1 = np.load("1v1AttackDefend_g30_speed2.npy")
+RA_1V1 = np.load("1v1AttackDefend_g30_speed15.npy")
 
 # Define my object dynamics
 agents_2v1 = AttackerDefender2v1(uMode="min", dMode="max")  # 2v1 (6 dim dynamics)
@@ -186,4 +186,4 @@ print(f'The shape of the value function is {result.shape} \n')
 # np.save('2v1AttackDefend.npy', result)
 print("The calculation is done! \n")
 
-np.save('2v1AttackDefend_speed2.npy', result)
+np.save('2v1AttackDefend_speed15.npy', result)

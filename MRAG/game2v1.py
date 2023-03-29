@@ -34,8 +34,8 @@ tau1v1 = np.arange(start=0, stop=4.5 + 1e-5, step=0.025)
 tau2v1 = np.arange(start=0, stop=4.5 + 1e-5, step=0.025)
 
 # initialize positions of attackers and defenders
-attackers_initials = [(-0.5, 0.0), (0.0, 0.8)]  # [(0.0, 0.0), (0.0, 0.8)], [(-0.5, 0.0), (0.0, 0.8)],  [(-0.5, 0.5), (-0.3, -0.8)]
-defenders_initials = [(0.3, -0.3)]
+attackers_initials = [(-0.5, -0.3), (0.8, -0.5)]  # [(0.0, 0.0), (0.0, 0.8)], [(-0.5, 0.0), (0.0, 0.8)],  [(-0.5, 0.5), (-0.3, -0.8)] [(-0.5, -0.3), (0.8, -0.5)]
+defenders_initials = [(0.3, -0.3)]  # [(0.3, -0.3)], [(0.3, 0.5)]
 
 num_attacker = len(attackers_initials)
 num_defender = len(defenders_initials)
@@ -145,3 +145,22 @@ elif T == 0.865: ## slice 149
 else:
     plot_simulation(attackers_x, attackers_y, defenders_x, defenders_y)
     # plot_simulation2v1_2(attackers_x, attackers_y, defenders_x, defenders_y)  # T >= 0.865, after the attacker1 is captured
+
+# check the smallest distance
+# D and A1
+distances_d0a1 = []
+print(f"The shape of defenders_traj is {len(defenders_trajectory[0])}")
+print(f"The shape of attacker1_traj is {len(attackers_trajectory[1])}")
+
+
+for po in range(len(attackers_trajectory[1])):
+    a1 = attackers_trajectory[1][po]
+    d0 = defenders_trajectory[0][po]
+    print(f"A1 is at {a1}")
+    print(f"D0 is at {d0}")
+    distance = np.sqrt((a1[0] - d0[0])**2 + (a1[1] - d0[1])**2)
+    distances_d0a1.append(distance)
+
+minimum_distance = np.min(distances_d0a1)
+print(f"The smallest distance between D0 and A1 is {minimum_distance}.\n")
+
