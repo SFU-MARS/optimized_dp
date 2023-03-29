@@ -126,13 +126,13 @@ print("9. Gigabytes consumed {}".format(process.memory_info().rss/1e9))  # in by
 # np.save('goal1_destination.npy', goal1_destination)
 
 a1_goal = ShapeRectangle(grids, [0.6, 0.1, -1000, -1000, -1000, -1000],
-                                   [0.8, 0.3, 1000, 1000, 1000, 1000])  # a1 is at goal
+                                [0.8, 0.3,  1000,  1000,  1000,  1000])  # a1 is at goal
 a1_is_safe = agents_2v1.capture_set1(grids, 0.1, "escape")  # a1 is 0.1 away from defender
 a1_wins = np.maximum(a1_goal, a1_is_safe)
 a1_wins = np.array(a1_wins, dtype='float32')
 
 a2_goal = ShapeRectangle(grids, [-1000, -1000, 0.6, 0.1, -1000, -1000],
-                         [1000, 1000, 1000, 0.8, 0.3, 1000])  # a2 is at goal
+                                [1000,   1000, 0.8, 0.3 , 1000,  1000])  # a2 is at goal
 a2_is_safe = agents_2v1.capture_set2(grids, 0.1, "escape")  # a2 escape
 a2_wins = np.maximum(a2_goal, a2_is_safe)
 a2_wins = np.array(a2_wins, dtype='float32')
@@ -144,9 +144,9 @@ a1_or_a2_wins = np.array(a1_or_a2_wins, dtype='float32')
 gc.collect()
 
 obs1_defend = ShapeRectangle(grids, [-1000, -1000, -1000, -1000, -0.1, -1.0],
-                             [1000, 1000, 1000, 1000, 0.1, -0.3])  # defender stuck in obs1
+                                    [1000, 1000, 1000, 1000, 0.1, -0.3])  # defender stuck in obs1
 obs2_defend = ShapeRectangle(grids, [-1000, -1000, -1000, -1000, -0.1, 0.30],
-                             [1000, 1000, 1000, 1000, 0.1, 0.60])  # defender stuck in obs2
+                                    [1000, 1000, 1000, 1000, 0.1, 0.60])  # defender stuck in obs2
 
 d_lose = np.minimum(obs1_defend, obs2_defend)
 d_lose = np.array(d_lose, dtype='float32')

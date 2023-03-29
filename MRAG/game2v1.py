@@ -17,10 +17,10 @@ times = int(T/deltat)
 
 # load all value functions, grids and spatial derivative array
 value1v0 = np.load('MRAG/1v0AttackDefend.npy')  # value1v0.shape = [100, 100, len(tau)]
-v1v1 = np.load('MRAG/1v1AttackDefend_speed2.npy')
+v1v1 = np.load('MRAG/1v1AttackDefend_speed15.npy')
 value1v1 = v1v1[..., np.newaxis]  # value1v1.shape = [45, 45, 45, 45, 1]
 # v2v1 = np.load('MRAG/2v1AttackDefend.npy')
-v2v1 = np.load('2v1AttackDefend_speed2.npy') # grid = 30
+v2v1 = np.load('2v1AttackDefend_speed15.npy') # grid = 30
 print(f"The shape of the 2v1 value function is {v2v1.shape}. \n")
 value2v1 = v2v1[..., np.newaxis]  # value2v1.shape = [30, 30, 30, 30, 30, 30, 1]
 grid1v0 = Grid(np.array([-1.0, -1.0]), np.array([1.0, 1.0]), 2, np.array([100, 100])) # original 45
@@ -35,7 +35,7 @@ tau2v1 = np.arange(start=0, stop=4.5 + 1e-5, step=0.025)
 
 # initialize positions of attackers and defenders
 attackers_initials = [(-0.5, -0.3), (0.8, -0.5)]  # [(0.0, 0.0), (0.0, 0.8)], [(-0.5, 0.0), (0.0, 0.8)],  [(-0.5, 0.5), (-0.3, -0.8)] [(-0.5, -0.3), (0.8, -0.5)]
-defenders_initials = [(0.3, -0.3)]  # [(0.3, -0.3)], [(0.3, 0.5)]
+defenders_initials = [(0.3, -0.3)] # [(0.3, -0.3)], [(0.3, 0.5)], [(0.0, 0.0)]
 
 num_attacker = len(attackers_initials)
 num_defender = len(defenders_initials)
@@ -146,21 +146,19 @@ else:
     plot_simulation(attackers_x, attackers_y, defenders_x, defenders_y)
     # plot_simulation2v1_2(attackers_x, attackers_y, defenders_x, defenders_y)  # T >= 0.865, after the attacker1 is captured
 
-# check the smallest distance
-# D and A1
-distances_d0a1 = []
-print(f"The shape of defenders_traj is {len(defenders_trajectory[0])}")
-print(f"The shape of attacker1_traj is {len(attackers_trajectory[1])}")
+# # check the smallest distance
+# # D and A1
+# distances_d0a1 = []
+# # print(f"The shape of defenders_traj is {len(defenders_trajectory[0])}")
+# # print(f"The shape of attacker1_traj is {len(attackers_trajectory[1])}")
 
+# for po in range(len(attackers_trajectory[1])):
+#     a1 = attackers_trajectory[1][po]
+#     d0 = defenders_trajectory[0][po]
+#     print(f"A1 is at {a1}")
+#     print(f"D0 is at {d0}")
+#     distance = np.sqrt((a1[0] - d0[0])**2 + (a1[1] - d0[1])**2)
+#     distances_d0a1.append(distance)
 
-for po in range(len(attackers_trajectory[1])):
-    a1 = attackers_trajectory[1][po]
-    d0 = defenders_trajectory[0][po]
-    print(f"A1 is at {a1}")
-    print(f"D0 is at {d0}")
-    distance = np.sqrt((a1[0] - d0[0])**2 + (a1[1] - d0[1])**2)
-    distances_d0a1.append(distance)
-
-minimum_distance = np.min(distances_d0a1)
-print(f"The smallest distance between D0 and A1 is {minimum_distance}.\n")
-
+# minimum_distance = np.min(distances_d0a1)
+# print(f"The smallest distance between D0 and A1 is {minimum_distance}.\n")

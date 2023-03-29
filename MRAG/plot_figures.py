@@ -7,9 +7,9 @@ from odp.solver import HJSolver, computeSpatDerivArray
 
 # load reach-avoid sets 
 # value1v1 = np.load('MRAG/1v1AttackDefend.npy')
-value1v1 = np.load('MRAG/1v1AttackDefend_speed2.npy')  # grid = 45
+value1v1 = np.load('MRAG/1v1AttackDefend_speed15.npy')  # grid = 45
 # value2v1 = np.load('MRAG/2v1AttackDefend.npy')
-value2v1 = np.load('2v1AttackDefend_speed2.npy')
+value2v1 = np.load('2v1AttackDefend_speed15.npy')
 grids1v1 = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([45, 45, 45, 45]))
 grid2v1 = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 6, np.array([30, 30, 30, 30, 30, 30]))  # [30, 30, 30, 30, 30, 30][36, 36, 36, 36, 36, 36]
 print(f'The shape of the 1v1 value function is {value1v1.shape} \n')
@@ -18,8 +18,11 @@ print(f'The shape of the 2v1 value function is {value2v1.shape} \n')
 
 # 2v1 simulation
 # initial positions
-attackers = [(0.0, 0.8), (0.2, 0.5)]  # [(-0.5, 0.0), (0.0, 0.8)], [(-0.5, 0.5), (-0.3, -0.8)], [(-0.5, -0.3), (0.8, -0.5)]
-defenders = [(-1.0, -1.0)] # [(0.3, -0.3)], [(0.0, 0.0)], [(0.3, 0.5)]
+#attackers = [(0.0, 0.8), (0.2, 0.5)]  # [(-0.5, 0.0), (0.0, 0.8)], [(-0.5, 0.5), (-0.3, -0.8)], [(-0.5, -0.3), (0.8, -0.5)]
+#defenders = [(-0.3, -0.3)] # [(0.3, -0.3)], [(0.0, 0.0)], [(0.3, 0.5)]
+attackers = [(-0.5, -0.3), (0.8, -0.5)]
+defenders = [(0.3, -0.3)]
+
 a1x = attackers[0][0]
 a1y = attackers[0][1]
 a2x = attackers[1][0]

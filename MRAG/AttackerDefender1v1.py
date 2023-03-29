@@ -183,15 +183,15 @@ class AttackerDefender1v1:
                 opt_d1 = 0.0
                 opt_d2 = 0.0
             else:
-                opt_d1 = deriv3 / dstb_len
-                opt_d2 = deriv4 / dstb_len
+                opt_d1 = self.speed_d*deriv3 / dstb_len
+                opt_d2 = self.speed_d*deriv4 / dstb_len
         else:
             if dstb_len == 0:
                 opt_d1 = 0.0
                 opt_d2 = 0.0
             else:
-                opt_d1 = -deriv3 / dstb_len
-                opt_d2 = -deriv4 / dstb_len
+                opt_d1 = -self.speed_d*deriv3 / dstb_len
+                opt_d2 = -self.speed_d*deriv4 / dstb_len
         return (opt_d1, opt_d2)
 
     def capture_set(self, grid, capture_radius, mode):
