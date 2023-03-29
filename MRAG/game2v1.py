@@ -11,13 +11,13 @@ from odp.Plots.plotting_utilities import *
 # Simulation 1: 2 attackers with 1 defenders
 # preparations
 print("Preparing for the simulaiton... \n")
-T = 0.5 # attackers_stop_times = [0.735s (149 A1 is captured), 0.865s (173 A0 is captured)]
+T = 1.4 # attackers_stop_times = [0.735s (149 A1 is captured), 0.865s (173 A0 is captured)]
 deltat = 0.005 # calculation time interval
 times = int(T/deltat)
 
 # load all value functions, grids and spatial derivative array
 value1v0 = np.load('MRAG/1v0AttackDefend.npy')  # value1v0.shape = [100, 100, len(tau)]
-v1v1 = np.load('MRAG/1v1AttackDefend.npy')
+v1v1 = np.load('MRAG/1v1AttackDefend_speed2.npy')
 value1v1 = v1v1[..., np.newaxis]  # value1v1.shape = [45, 45, 45, 45, 1]
 # v2v1 = np.load('MRAG/2v1AttackDefend.npy')
 v2v1 = np.load('2v1AttackDefend_speed2.npy') # grid = 30

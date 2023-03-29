@@ -12,13 +12,14 @@ from MaximumMatching import MaxMatching
 # Simulation 3 baseline: 6 attackers with 2 defenders
 # preparations
 print("Preparing for the simulaiton... \n")
-T = 0.615  # total simulation time T= [0.2s (40 A0 by D0, A2 by D1) , 0.615s (123 A1,A3,A5 arrive), 0.91s (182 A3 BY D0)]
+T = 1.2  # total simulation time T= [0.2s (40 A0 by D0, A2 by D1) , 0.615s (123 A1,A3,A5 arrive), 0.91s (182 A3 BY D0)]
 deltat = 0.005 # calculation time interval
 times = int(T/deltat)
 
 # load all value functions, grids and spatial derivative array
 value1v0 = np.load('MRAG/1v0AttackDefend.npy')  # value1v0.shape = [100, 100, len(tau)]
-v1v1 = np.load('MRAG/1v1AttackDefend.npy')
+# v1v1 = np.load('MRAG/1v1AttackDefend.npy')
+v1v1 = np.load('MRAG/1v1AttackDefend_speed1.npy')
 value1v1 = v1v1[..., np.newaxis]  # value1v1.shape = [45, 45, 45, 45, 1]
 grid1v0 = Grid(np.array([-1.0, -1.0]), np.array([1.0, 1.0]), 2, np.array([100, 100])) # original 45
 grid1v1 = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([45, 45, 45, 45])) # original 45
