@@ -18,7 +18,8 @@ print(f'The shape of the 2v1 value function is {value2v1.shape} \n')
 
 # 2v1 simulation
 # initial positions
-attackers = [(-0.2, 0.0), (-0.5, -0.5)]  # [(-0.5, 0.0), (0.0, 0.8)], [(-0.5, 0.5), (-0.3, -0.8)]
+
+attackers = [(-0.2, 0.0), (-0.8, -0.8)]  # [(-0.5, 0.0), (0.0, 0.8)], [(-0.5, 0.5), (-0.3, -0.8)]
 defenders = [(0.0, 0.0)] # [(0.3, -0.3)], [(0.0, 0.0)]
 a1x = attackers[0][0]
 a1y = attackers[0][1]
@@ -43,7 +44,7 @@ plot_game0(grids1v1, value_function1v1, attackers_plot1, defenders_plot1, name="
 jointstates2v1 = (a1x, a1y, a2x, a2y, d1x, d1y)
 a1x_slice, a1y_slice, a2x_slice, a2y_slice, d1x_slice, d1y_slice = lo2slice2v1(jointstates2v1, slices=30)
 # value_function2v1 = value2v1[:, :, a2x_slice, a2y_slice, d1x_slice, d1y_slice]
-value_function2v1 = value2v1[:, :, a2x_slice, a2y_slice, d1x_slice, d1y_slice]
+value_function2v1 = value2v1[a1x_slice, a1y_slice, :, :, d1x_slice, d1y_slice]
 
 # plotting players
 attackers_plot2 = [(a1x, a1y), (a2x, a2y)]

@@ -11,7 +11,7 @@ from odp.Plots.plotting_utilities import *
 # Simulation 3: 6 attackers with 2 defenders
 # preparations
 print("Preparing for the simulaiton... \n")
-T = 0.340 # total simulation time t = [44(A4 0.220s), 68(A0 0.340), 111(A3 0.555), 149(A1 0.745), 206(A2 1.03), t=1.035 end]
+T = 1.2 # total simulation time t = [44(A4 0.220s), 68(A0 0.340), 111(A3 0.555), 149(A1 0.745), 206(A2 1.03), t=1.035 end]
 deltat = 0.005 # calculation time interval
 times = int(T/deltat)
 
@@ -19,11 +19,12 @@ times = int(T/deltat)
 value1v0 = np.load('MRAG/1v0AttackDefend.npy')  # value1v0.shape = [100, 100, len(tau)]
 v1v1 = np.load('MRAG/1v1AttackDefend.npy')
 value1v1 = v1v1[..., np.newaxis]  # value1v1.shape = [45, 45, 45, 45, 1]
-v2v1 = np.load('MRAG/2v1AttackDefend.npy')
+# v2v1 = np.load('MRAG/2v1AttackDefend.npy')
+v2v1 = np.load('2v1AttackDefend.npy')
 value2v1 = v2v1[..., np.newaxis]  # value2v1.shape = [30, 30, 30, 30, 30, 30, 1]
 grid1v0 = Grid(np.array([-1.0, -1.0]), np.array([1.0, 1.0]), 2, np.array([100, 100])) # original 45
 grid1v1 = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([45, 45, 45, 45])) # original 45
-grid2v1 = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 6, np.array([36, 36, 36, 36, 36, 36]))
+grid2v1 = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 6, np.array([30, 30, 30, 30, 30, 30]))
 agents_1v0 = AttackerDefender1v0(uMode="min", dMode="max")
 agents_1v1 = AttackerDefender1v1(uMode="min", dMode="max")  # 1v1 (4 dims dynamics)
 agents_2v1 = AttackerDefender2v1(uMode="min", dMode="max")  # 2v1 (6 dim dynamics)
