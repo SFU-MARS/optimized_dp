@@ -6,10 +6,10 @@ from utilities import lo2slice1v1, lo2slice2v1, lo2slice1v0
 from odp.solver import HJSolver, computeSpatDerivArray
 
 # load reach-avoid sets 
-value1v1 = np.load('1v1AttackDefend.npy')
+value1v1 = np.load('1v1AttackDefend_speed1.npy')
 # value2v1 = np.load('MRAG/2v1AttackDefend.npy')
-value2v1 = np.load('2v1AttackDefend.npy')
-grids1v1 = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([30, 30, 30, 30]))
+value2v1 = np.load('2v1AttackDefend_speed1.npy')
+grids1v1 = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([45, 45, 45, 45])) # [45, 45, 45, 45], [30, 30, 30, 30]
 grid2v1 = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]),
                6, np.array([30, 30, 30, 30, 30, 30]))  # [30, 30, 30, 30, 30, 30][36, 36, 36, 36, 36, 36]
 # print(f'The shape of the 1v1 value function is {value1v1.shape} \n')
