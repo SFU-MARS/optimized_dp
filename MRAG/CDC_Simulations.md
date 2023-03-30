@@ -56,4 +56,8 @@ result:
 The current status at iteration211 of attackers is arrived:[0, 0] + been captured:[1, 1]. 
 All attackers have arrived or been captured at the time t=1.06. 
 
-#### 4v1
+#### 8v4 baseline
+1. S1
+attackers_initials = [(0.0, 0.0), (0.0, 0.8), (-0.8, -0.5), (0.5, -0.5), (-0.8, 0.0), (0.8, 0.5), (-0.5, -0.3), (0.8, -0.5)]
+defenders_initials = [(0.3, 0.5), (-0.3, -0.5), (0.3, -0.5), (-0.3, 0.5)]  # , (0.3, -0.5)
+result: 6 are captured.

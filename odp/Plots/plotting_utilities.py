@@ -60,7 +60,6 @@ def plot_isosurface(grid, V, plot_option):
     else:
         raise Exception('dims_plot length should be equal to 2 or 3\n')
 
-
 def plot_2d(grid, V_2D):
     dims_plot = [0, 1]
     dim1, dim2 = dims_plot[0], dims_plot[1]
@@ -92,7 +91,6 @@ def plot_2d(grid, V_2D):
     fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 1.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
     fig.show()
     print("Please check the plot on your browser.")
-
 
 def plot_2d_with_avoid(grid, V_2D):
     dims_plot = [0, 1]
@@ -847,6 +845,7 @@ def plot_simulation6v2_1(attackers_x, attackers_y, defenders_x, defenders_y):
     fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
     fig.show()
     print("Please check the plot on your browser.")
+
 
 def plot_simulation6v2_2(attackers_x, attackers_y, defenders_x, defenders_y):
 
@@ -1651,6 +1650,291 @@ def plot_simulation6v2_b4(attackers_x, attackers_y, defenders_x, defenders_y):
     # figure settings
     fig.update_layout(autosize=False, width=498, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
                       title={'text': "<b>t=0.850s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
+    fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
+    fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
+    fig.show()
+    print("Please check the plot on your browser.")
+
+
+def plot_simulation8v4_1(attackers_x, attackers_y, defenders_x, defenders_y):
+
+    print("Plotting beautiful 2D plots. Please wait\n")
+
+    fig = go.Figure(data = go.Scatter(x=[0.6, 0.8], y=[0.1, 0.1], mode='lines', name='Target', line=dict(color='purple')), 
+                    layout=Layout(plot_bgcolor='rgba(0,0,0,0)')) # for the legend
+    # plot target
+    fig.add_shape(type='rect', x0=0.6, y0=0.1, x1=0.8, y1=0.3, line=dict(color='purple', width=3.0), name="Target")
+
+    # plot obstacles
+    fig.add_shape(type='rect', x0=-0.1, y0=0.3, x1=0.1, y1=0.6, line=dict(color='black', width=3.0), name="Obstacle")
+    fig.add_shape(type='rect', x0=-0.1, y0=-1.0, x1=0.1, y1=-0.3, line=dict(color='black', width=3.0))
+    fig.add_trace(go.Scatter(x=[-0.1, 0.1], y=[0.3, 0.3], mode='lines', name='Obstacle', line=dict(color='black')))
+    
+    # plot MIP results
+    fig.add_shape(type="line", x0=attackers_x[0][-1], y0=attackers_y[0][-1], x1=defenders_x[0][-1], y1=defenders_y[0][-1], line=dict(color="green",width=2))
+    fig.add_shape(type="line", x0=attackers_x[7][-1], y0=attackers_y[7][-1], x1=defenders_x[0][-1], y1=defenders_y[0][-1], line=dict(color="green",width=2))
+    fig.add_shape(type="line", x0=attackers_x[3][-1], y0=attackers_y[3][-1], x1=defenders_x[1][-1], y1=defenders_y[1][-1], line=dict(color="green",width=2))
+    fig.add_shape(type="line", x0=attackers_x[6][-1], y0=attackers_y[6][-1], x1=defenders_x[1][-1], y1=defenders_y[1][-1], line=dict(color="green",width=2))
+    fig.add_shape(type="line", x0=attackers_x[1][-1], y0=attackers_y[1][-1], x1=defenders_x[2][-1], y1=defenders_y[2][-1], line=dict(color="green",width=2))
+    fig.add_shape(type="line", x0=attackers_x[2][-1], y0=attackers_y[2][-1], x1=defenders_x[2][-1], y1=defenders_y[2][-1], line=dict(color="green",width=2))
+    fig.add_shape(type="line", x0=attackers_x[4][-1], y0=attackers_y[4][-1], x1=defenders_x[3][-1], y1=defenders_y[3][-1], line=dict(color="green",width=2))
+    fig.add_shape(type="line", x0=attackers_x[5][-1], y0=attackers_y[5][-1], x1=defenders_x[3][-1], y1=defenders_y[3][-1], line=dict(color="green",width=2))
+
+    # fig.add_trace(go.Scatter(x=[attackers_x[0][-1], defenders_x[0][-1]], y=[attackers_y[0][-1], defenders_y[0][-1]], mode="lines+markers", name="D1-A1", marker=dict(symbol="cross", size=5, color='green')))
+    # fig.add_trace(go.Scatter(x=[attackers_x[7][-1], defenders_x[0][-1]], y=[attackers_y[7][-1], defenders_y[0][-1]], mode="lines+markers", name="D1-A8", marker=dict(symbol="cross", size=5, color='green')))
+    # fig.add_trace(go.Scatter(x=[attackers_x[3][-1], defenders_x[1][-1]], y=[attackers_y[3][-1], defenders_y[1][-1]], mode="lines+markers", name="D2-A4", marker=dict(symbol="cross", size=5, color='green')))
+    # fig.add_trace(go.Scatter(x=[attackers_x[6][-1], defenders_x[1][-1]], y=[attackers_y[6][-1], defenders_y[1][-1]], mode="lines+markers", name="D2-A7", marker=dict(symbol="cross", size=5, color='green')))
+    # fig.add_trace(go.Scatter(x=[attackers_x[1][-1], defenders_x[2][-1]], y=[attackers_y[1][-1], defenders_y[2][-1]], mode="lines+markers", name="D3-A2", marker=dict(symbol="cross", size=5, color='green')))
+    # fig.add_trace(go.Scatter(x=[attackers_x[2][-1], defenders_x[2][-1]], y=[attackers_y[2][-1], defenders_y[2][-1]], mode="lines+markers", name="D3-A3", marker=dict(symbol="cross", size=5, color='green')))
+    # fig.add_trace(go.Scatter(x=[attackers_x[4][-1], defenders_x[3][-1]], y=[attackers_y[4][-1], defenders_y[3][-1]], mode="lines+markers", name="D4-A5", marker=dict(symbol="cross", size=5, color='green')))
+    # fig.add_trace(go.Scatter(x=[attackers_x[5][-1], defenders_x[3][-1]], y=[attackers_y[5][-1], defenders_y[3][-1]], mode="lines+markers", name="D4-A6", marker=dict(symbol="cross", size=5, color='green')))
+
+    # plot attackers
+    for i in range(len(attackers_x)):
+        sparsex = attackers_x[i][0:-1:5]
+        sparsey = attackers_y[i][0:-1:5]
+        sparsex.append(attackers_x[i][-1])
+        sparsey.append(attackers_y[i][-1])
+        fig.add_trace(go.Scatter(x=sparsex, y=sparsey, mode="markers", name=f"A{i+1}", marker=dict(symbol="triangle-up", size=8, color='red'))) # trajectory
+
+    # plot defenders
+    # for j in range(len(defenders_x)):
+    d1sparsex = defenders_x[0][0:-1:8]
+    d1sparsey = defenders_y[0][0:-1:8]
+    d1sparsex.append(defenders_x[0][-1])
+    d1sparsey.append(defenders_y[0][-1])
+    fig.add_trace(go.Scatter(x=d1sparsex, y=d1sparsey, mode="markers", name='D1', marker=dict(symbol="square", size=8, color='blue'))) # symbol="star"
+
+    d2sparsex = defenders_x[1][0:-1:8]
+    d2sparsey = defenders_y[1][0:-1:8]
+    d2sparsex.append(defenders_x[1][-1])
+    d2sparsey.append(defenders_y[1][-1])
+    fig.add_trace(go.Scatter(x=d2sparsex, y=d2sparsey, mode="markers", name='D2', marker=dict(symbol="square", size=8, color='blue'))) # symbol="star"
+
+    d3sparsex = defenders_x[2][0:-1:8]
+    d3sparsey = defenders_y[2][0:-1:8]
+    d3sparsex.append(defenders_x[2][-1])
+    d3sparsey.append(defenders_y[2][-1])
+    fig.add_trace(go.Scatter(x=d3sparsex, y=d3sparsey, mode="markers", name='D3', marker=dict(symbol="square", size=8, color='blue'))) # symbol="star"
+
+    d4sparsex = defenders_x[3][0:-1:8]
+    d4sparsey = defenders_y[3][0:-1:8]
+    d4sparsex.append(defenders_x[3][-1])
+    d4sparsey.append(defenders_y[3][-1])
+    fig.add_trace(go.Scatter(x=d4sparsex, y=d4sparsey, mode="markers", name='D4', marker=dict(symbol="square", size=8, color='blue'))) # symbol="star"
+
+    # figure settings
+    fig.update_layout(autosize=False, width=475, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
+                      title={'text': "<b>t=0.000s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
+    fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
+    fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
+    fig.show()
+    print("Please check the plot on your browser.")
+
+def plot_simulation8v4_2(attackers_x, attackers_y, defenders_x, defenders_y):
+
+    print("Plotting beautiful 2D plots. Please wait\n")
+
+    fig = go.Figure(data = go.Scatter(x=[0.6, 0.8], y=[0.1, 0.1], mode='lines', name='Target', line=dict(color='purple')), 
+                    layout=Layout(plot_bgcolor='rgba(0,0,0,0)')) # for the legend
+    # plot target
+    fig.add_shape(type='rect', x0=0.6, y0=0.1, x1=0.8, y1=0.3, line=dict(color='purple', width=3.0), name="Target")
+
+    # plot obstacles
+    fig.add_shape(type='rect', x0=-0.1, y0=0.3, x1=0.1, y1=0.6, line=dict(color='black', width=3.0), name="Obstacle")
+    fig.add_shape(type='rect', x0=-0.1, y0=-1.0, x1=0.1, y1=-0.3, line=dict(color='black', width=3.0))
+    fig.add_trace(go.Scatter(x=[-0.1, 0.1], y=[0.3, 0.3], mode='lines', name='Obstacle', line=dict(color='black')))
+    
+    # plot MIP results
+    # fig.add_trace(go.Scatter(x=[attackers_x[0][-1], defenders_x[0][-1]], y=[attackers_y[0][-1], defenders_y[0][-1]], mode="lines+markers", name="D1-A1", marker=dict(symbol="cross", size=5, color='green')))
+    # fig.add_trace(go.Scatter(x=[attackers_x[7][-1], defenders_x[0][-1]], y=[attackers_y[7][-1], defenders_y[0][-1]], mode="lines+markers", name="D1-A8", marker=dict(symbol="cross", size=5, color='green')))
+    # fig.add_trace(go.Scatter(x=[attackers_x[3][-1], defenders_x[1][-1]], y=[attackers_y[3][-1], defenders_y[1][-1]], mode="lines+markers", name="D2-A4", marker=dict(symbol="cross", size=5, color='green')))
+    # fig.add_trace(go.Scatter(x=[attackers_x[6][-1], defenders_x[1][-1]], y=[attackers_y[6][-1], defenders_y[1][-1]], mode="lines+markers", name="D2-A7", marker=dict(symbol="cross", size=5, color='green')))
+    # fig.add_trace(go.Scatter(x=[attackers_x[1][-1], defenders_x[2][-1]], y=[attackers_y[1][-1], defenders_y[2][-1]], mode="lines+markers", name="D3-A2", marker=dict(symbol="cross", size=5, color='green')))
+    # fig.add_trace(go.Scatter(x=[attackers_x[2][-1], defenders_x[2][-1]], y=[attackers_y[2][-1], defenders_y[2][-1]], mode="lines+markers", name="D3-A3", marker=dict(symbol="cross", size=5, color='green')))
+    # fig.add_trace(go.Scatter(x=[attackers_x[4][-1], defenders_x[3][-1]], y=[attackers_y[4][-1], defenders_y[3][-1]], mode="lines+markers", name="D4-A5", marker=dict(symbol="cross", size=5, color='green')))
+    # fig.add_trace(go.Scatter(x=[attackers_x[5][-1], defenders_x[3][-1]], y=[attackers_y[5][-1], defenders_y[3][-1]], mode="lines+markers", name="D4-A6", marker=dict(symbol="cross", size=5, color='green')))
+
+    # plot attackers
+    for i in range(len(attackers_x)):
+        sparsex = [attackers_x[i][-1]]
+        sparsey = [attackers_y[i][-1]]
+        # sparsex.append(attackers_x[i][-1])
+        # sparsey.append(attackers_y[i][-1])
+        fig.add_trace(go.Scatter(x=sparsex, y=sparsey, mode="markers", name=f"A{i+1} captured", marker=dict(symbol="cross-open", size=8, color='red'))) # trajectory
+
+    # # plot defenders
+    # # for j in range(len(defenders_x)):
+    # d1sparsex = defenders_x[0][0:-1:8]
+    # d1sparsey = defenders_y[0][0:-1:8]
+    # d1sparsex.append(defenders_x[0][-1])
+    # d1sparsey.append(defenders_y[0][-1])
+    # fig.add_trace(go.Scatter(x=d1sparsex, y=d1sparsey, mode="markers", name='D1 traj', marker=dict(symbol="square", size=8, color='blue'))) # symbol="star"
+
+    # d2sparsex = defenders_x[1][0:-1:8]
+    # d2sparsey = defenders_y[1][0:-1:8]
+    # d2sparsex.append(defenders_x[1][-1])
+    # d2sparsey.append(defenders_y[1][-1])
+    # fig.add_trace(go.Scatter(x=d2sparsex, y=d2sparsey, mode="markers", name='D2 traj', marker=dict(symbol="square", size=8, color='blue'))) # symbol="star"
+
+    # d3sparsex = defenders_x[2][0:-1:8]
+    # d3sparsey = defenders_y[2][0:-1:8]
+    # d3sparsex.append(defenders_x[2][-1])
+    # d3sparsey.append(defenders_y[2][-1])
+    # fig.add_trace(go.Scatter(x=d3sparsex, y=d3sparsey, mode="markers", name='D3 traj', marker=dict(symbol="square", size=8, color='blue'))) # symbol="star"
+
+    # d4sparsex = defenders_x[3][0:-1:8]
+    # d4sparsey = defenders_y[3][0:-1:8]
+    # d4sparsex.append(defenders_x[3][-1])
+    # d4sparsey.append(defenders_y[3][-1])
+    # fig.add_trace(go.Scatter(x=d4sparsex, y=d4sparsey, mode="markers", name='D4 traj', marker=dict(symbol="square", size=8, color='blue'))) # symbol="star"
+
+    # figure settings
+    fig.update_layout(autosize=False, width=475, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
+                      title={'text': "<b>t=1.280s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
+    fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
+    fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
+    fig.show()
+    print("Please check the plot on your browser.")
+
+def plot_simulation8v4_b1(attackers_x, attackers_y, defenders_x, defenders_y):
+
+    print("Plotting beautiful 2D plots. Please wait\n")
+
+    fig = go.Figure(data = go.Scatter(x=[0.6, 0.8], y=[0.1, 0.1], mode='lines', name='Target', line=dict(color='purple')), 
+                    layout=Layout(plot_bgcolor='rgba(0,0,0,0)')) # for the legend
+    # plot target
+    fig.add_shape(type='rect', x0=0.6, y0=0.1, x1=0.8, y1=0.3, line=dict(color='purple', width=3.0), name="Target")
+
+    # plot obstacles
+    fig.add_shape(type='rect', x0=-0.1, y0=0.3, x1=0.1, y1=0.6, line=dict(color='black', width=3.0), name="Obstacle")
+    fig.add_shape(type='rect', x0=-0.1, y0=-1.0, x1=0.1, y1=-0.3, line=dict(color='black', width=3.0))
+    fig.add_trace(go.Scatter(x=[-0.1, 0.1], y=[0.3, 0.3], mode='lines', name='Obstacle', line=dict(color='black')))
+    
+    # plot MIP results
+    fig.add_shape(type="line", x0=attackers_x[0][-1], y0=attackers_y[0][-1], x1=defenders_x[0][-1], y1=defenders_y[0][-1], line=dict(color="green",width=2))
+    fig.add_shape(type="line", x0=attackers_x[3][-1], y0=attackers_y[3][-1], x1=defenders_x[1][-1], y1=defenders_y[1][-1], line=dict(color="green",width=2))
+    fig.add_shape(type="line", x0=attackers_x[2][-1], y0=attackers_y[2][-1], x1=defenders_x[2][-1], y1=defenders_y[2][-1], line=dict(color="green",width=2))
+    fig.add_shape(type="line", x0=attackers_x[1][-1], y0=attackers_y[1][-1], x1=defenders_x[3][-1], y1=defenders_y[3][-1], line=dict(color="green",width=2))
+
+    # fig.add_trace(go.Scatter(x=[attackers_x[0][-1], defenders_x[0][-1]], y=[attackers_y[0][-1], defenders_y[0][-1]], mode="lines+markers", name="D1-A1", marker=dict(symbol="cross", size=5, color='green')))
+    # fig.add_trace(go.Scatter(x=[attackers_x[3][-1], defenders_x[1][-1]], y=[attackers_y[3][-1], defenders_y[1][-1]], mode="lines+markers", name="D2-A4", marker=dict(symbol="cross", size=5, color='green')))
+    # fig.add_trace(go.Scatter(x=[attackers_x[2][-1], defenders_x[2][-1]], y=[attackers_y[2][-1], defenders_y[2][-1]], mode="lines+markers", name="D3-A3", marker=dict(symbol="cross", size=5, color='green')))
+    # fig.add_trace(go.Scatter(x=[attackers_x[1][-1], defenders_x[3][-1]], y=[attackers_y[1][-1], defenders_y[3][-1]], mode="lines+markers", name="D4-A2", marker=dict(symbol="cross", size=5, color='green')))
+
+
+    # plot attackers
+    for i in range(len(attackers_x)):
+        sparsex = attackers_x[i][0:-1:5]
+        sparsey = attackers_y[i][0:-1:5]
+        sparsex.append(attackers_x[i][-1])
+        sparsey.append(attackers_y[i][-1])
+        fig.add_trace(go.Scatter(x=sparsex, y=sparsey, mode="markers", name=f"A{i+1}", marker=dict(symbol="triangle-up", size=8, color='red'))) # trajectory
+
+    # plot defenders
+    # for j in range(len(defenders_x)):
+    d1sparsex = defenders_x[0][0:-1:8]
+    d1sparsey = defenders_y[0][0:-1:8]
+    d1sparsex.append(defenders_x[0][-1])
+    d1sparsey.append(defenders_y[0][-1])
+    fig.add_trace(go.Scatter(x=d1sparsex, y=d1sparsey, mode="markers", name='D1', marker=dict(symbol="square", size=8, color='blue'))) # symbol="star"
+
+    d2sparsex = defenders_x[1][0:-1:8]
+    d2sparsey = defenders_y[1][0:-1:8]
+    d2sparsex.append(defenders_x[1][-1])
+    d2sparsey.append(defenders_y[1][-1])
+    fig.add_trace(go.Scatter(x=d2sparsex, y=d2sparsey, mode="markers", name='D2', marker=dict(symbol="square", size=8, color='blue'))) # symbol="star"
+
+    d3sparsex = defenders_x[2][0:-1:8]
+    d3sparsey = defenders_y[2][0:-1:8]
+    d3sparsex.append(defenders_x[2][-1])
+    d3sparsey.append(defenders_y[2][-1])
+    fig.add_trace(go.Scatter(x=d3sparsex, y=d3sparsey, mode="markers", name='D3', marker=dict(symbol="square", size=8, color='blue'))) # symbol="star"
+
+    d4sparsex = defenders_x[3][0:-1:8]
+    d4sparsey = defenders_y[3][0:-1:8]
+    d4sparsex.append(defenders_x[3][-1])
+    d4sparsey.append(defenders_y[3][-1])
+    fig.add_trace(go.Scatter(x=d4sparsex, y=d4sparsey, mode="markers", name='D4', marker=dict(symbol="square", size=8, color='blue'))) # symbol="star"
+
+    # figure settings
+    fig.update_layout(autosize=False, width=475, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
+                      title={'text': "<b>t=0.000s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
+    fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
+    fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
+    fig.show()
+    print("Please check the plot on your browser.")
+
+def plot_simulation8v4_b2(attackers_x, attackers_y, defenders_x, defenders_y):
+
+    print("Plotting beautiful 2D plots. Please wait\n")
+
+    fig = go.Figure(data = go.Scatter(x=[0.6, 0.8], y=[0.1, 0.1], mode='lines', name='Target', line=dict(color='purple')), 
+                    layout=Layout(plot_bgcolor='rgba(0,0,0,0)')) # for the legend
+    # plot target
+    fig.add_shape(type='rect', x0=0.6, y0=0.1, x1=0.8, y1=0.3, line=dict(color='purple', width=3.0), name="Target")
+
+    # plot obstacles
+    fig.add_shape(type='rect', x0=-0.1, y0=0.3, x1=0.1, y1=0.6, line=dict(color='black', width=3.0), name="Obstacle")
+    fig.add_shape(type='rect', x0=-0.1, y0=-1.0, x1=0.1, y1=-0.3, line=dict(color='black', width=3.0))
+    fig.add_trace(go.Scatter(x=[-0.1, 0.1], y=[0.3, 0.3], mode='lines', name='Obstacle', line=dict(color='black')))
+    
+    # plot MIP results
+    # fig.add_trace(go.Scatter(x=[attackers_x[0][-1], defenders_x[0][-1]], y=[attackers_y[0][-1], defenders_y[0][-1]], mode="lines+markers", name="D1-A1", marker=dict(symbol="cross", size=5, color='green')))
+    # fig.add_trace(go.Scatter(x=[attackers_x[7][-1], defenders_x[0][-1]], y=[attackers_y[7][-1], defenders_y[0][-1]], mode="lines+markers", name="D1-A8", marker=dict(symbol="cross", size=5, color='green')))
+    # fig.add_trace(go.Scatter(x=[attackers_x[3][-1], defenders_x[1][-1]], y=[attackers_y[3][-1], defenders_y[1][-1]], mode="lines+markers", name="D2-A4", marker=dict(symbol="cross", size=5, color='green')))
+    # fig.add_trace(go.Scatter(x=[attackers_x[6][-1], defenders_x[1][-1]], y=[attackers_y[6][-1], defenders_y[1][-1]], mode="lines+markers", name="D2-A7", marker=dict(symbol="cross", size=5, color='green')))
+    # fig.add_trace(go.Scatter(x=[attackers_x[1][-1], defenders_x[2][-1]], y=[attackers_y[1][-1], defenders_y[2][-1]], mode="lines+markers", name="D3-A2", marker=dict(symbol="cross", size=5, color='green')))
+    # fig.add_trace(go.Scatter(x=[attackers_x[2][-1], defenders_x[2][-1]], y=[attackers_y[2][-1], defenders_y[2][-1]], mode="lines+markers", name="D3-A3", marker=dict(symbol="cross", size=5, color='green')))
+    # fig.add_trace(go.Scatter(x=[attackers_x[4][-1], defenders_x[3][-1]], y=[attackers_y[4][-1], defenders_y[3][-1]], mode="lines+markers", name="D4-A5", marker=dict(symbol="cross", size=5, color='green')))
+    # fig.add_trace(go.Scatter(x=[attackers_x[5][-1], defenders_x[3][-1]], y=[attackers_y[5][-1], defenders_y[3][-1]], mode="lines+markers", name="D4-A6", marker=dict(symbol="cross", size=5, color='green')))
+
+    # plot attackers
+    for i in range(6):
+        sparsex = [attackers_x[i][-1]]
+        sparsey = [attackers_y[i][-1]]
+        # sparsex.append(attackers_x[i][-1])
+        # sparsey.append(attackers_y[i][-1])
+        fig.add_trace(go.Scatter(x=sparsex, y=sparsey, mode="markers", name=f"A{i+1} captured", marker=dict(symbol="cross-open", size=8, color='red'))) # trajectory
+    
+    sparsex5 = [attackers_x[6][-1]]
+    sparsey5 = [attackers_y[6][-1]]
+    fig.add_trace(go.Scatter(x=sparsex5, y=sparsey5, mode="markers", name=f"A{7} arrived", marker=dict(symbol="triangle-up", size=8, color='red'))) # trajectory
+
+    sparsex6 = [attackers_x[7][-1] ]
+    sparsey6 = [attackers_y[7][-1]]
+    fig.add_trace(go.Scatter(x=sparsex6, y=sparsey6, mode="markers", name=f"A{8} arrived", marker=dict(symbol="triangle-up", size=8, color='red'))) # trajectory
+
+
+    # # plot defenders
+    # # for j in range(len(defenders_x)):
+    # d1sparsex = defenders_x[0][0:-1:8]
+    # d1sparsey = defenders_y[0][0:-1:8]
+    # d1sparsex.append(defenders_x[0][-1])
+    # d1sparsey.append(defenders_y[0][-1])
+    # fig.add_trace(go.Scatter(x=d1sparsex, y=d1sparsey, mode="markers", name='D1 traj', marker=dict(symbol="square", size=8, color='blue'))) # symbol="star"
+
+    # d2sparsex = defenders_x[1][0:-1:8]
+    # d2sparsey = defenders_y[1][0:-1:8]
+    # d2sparsex.append(defenders_x[1][-1])
+    # d2sparsey.append(defenders_y[1][-1])
+    # fig.add_trace(go.Scatter(x=d2sparsex, y=d2sparsey, mode="markers", name='D2 traj', marker=dict(symbol="square", size=8, color='blue'))) # symbol="star"
+
+    # d3sparsex = defenders_x[2][0:-1:8]
+    # d3sparsey = defenders_y[2][0:-1:8]
+    # d3sparsex.append(defenders_x[2][-1])
+    # d3sparsey.append(defenders_y[2][-1])
+    # fig.add_trace(go.Scatter(x=d3sparsex, y=d3sparsey, mode="markers", name='D3 traj', marker=dict(symbol="square", size=8, color='blue'))) # symbol="star"
+
+    # d4sparsex = defenders_x[3][0:-1:8]
+    # d4sparsey = defenders_y[3][0:-1:8]
+    # d4sparsex.append(defenders_x[3][-1])
+    # d4sparsey.append(defenders_y[3][-1])
+    # fig.add_trace(go.Scatter(x=d4sparsex, y=d4sparsey, mode="markers", name='D4 traj', marker=dict(symbol="square", size=8, color='blue'))) # symbol="star"
+
+    # figure settings
+    fig.update_layout(autosize=False, width=475, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
+                      title={'text': "<b>t=1.455s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
     fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
     fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
     fig.show()
