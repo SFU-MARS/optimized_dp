@@ -20,7 +20,7 @@ print(f'The shape of the 2v1 value function is {value2v1.shape} \n')
 # initial positions
 #attackers = [(0.0, 0.8), (0.2, 0.5)]  # [(-0.5, 0.0), (0.0, 0.8)], [(-0.5, 0.5), (-0.3, -0.8)], [(-0.5, -0.3), (0.8, -0.5)]
 #defenders = [(-0.3, -0.3)] # [(0.3, -0.3)], [(0.0, 0.0)], [(0.3, 0.5)]
-attackers = [(-0.5, -0.3), (0.8, -0.5)]
+attackers = [(-0.5, 0.0), (0.0, 0.8)]
 defenders = [(0.3, -0.3)]
 
 a1x = attackers[0][0]
@@ -39,20 +39,20 @@ value_function1v1 = value1v1[:, :, d1x_slice, d1y_slice]  # , 0] if the saveAllT
 # plotting players
 attackers_plot1 = [(a1x, a1y), (a2x, a2y)]  # (a2x, a2y)
 defenders_plot1 = [(d1x, d1y)]
-# plot_game(grids1v1, value_function1v1, attackers_plot1, defenders_plot1, name="$\mathcal{RA}^{11}_{\infty}$")
+plot_game(grids1v1, value_function1v1, attackers_plot1, defenders_plot1, name="$\mathcal{RA}^{11}_{\infty}$")
 # plot_game0(grids1v1, value_function1v1, attackers_plot1, defenders_plot1, name="$\mathcal{RA}^{21}_{\infty}$")
 
 # plot 2v1 reach-avoid set
 jointstates2v1 = (a1x, a1y, a2x, a2y, d1x, d1y)
 a1x_slice, a1y_slice, a2x_slice, a2y_slice, d1x_slice, d1y_slice = lo2slice2v1(jointstates2v1, slices=30)
-# value_function2v1 = value2v1[:, :, a2x_slice, a2y_slice, d1x_slice, d1y_slice]
-value_function2v1 = value2v1[a1x_slice, a1y_slice, :, :, d1x_slice, d1y_slice]
+value_function2v1 = value2v1[:, :, a2x_slice, a2y_slice, d1x_slice, d1y_slice]
+# value_function2v1 = value2v1[a1x_slice, a1y_slice, :, :, d1x_slice, d1y_slice]
 
 # plotting players
 attackers_plot2 = [(a1x, a1y), (a2x, a2y)]
 defenders_plot2 = [(d1x, d1y)]
-plot_game(grid2v1, value_function2v1, attackers_plot2, defenders_plot2, name="$\mathcal{RA}^{21}_{\infty}$")
-# plot_game0(grid2v1, value_function2v1, attackers_plot2, defenders_plot2, name="$\mathcal{RA}^{21}_{\infty}$")
+# plot_game(grid2v1, value_function2v1, attackers_plot2, defenders_plot2, name="$\mathcal{RA}^{21}_{\infty}$")
+plot_game0(grid2v1, value_function2v1, attackers_plot2, defenders_plot2, name="$\mathcal{RA}^{21}_{\infty}$")
 
 
 

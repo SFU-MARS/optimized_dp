@@ -12,7 +12,7 @@ from MaximumMatching import MaxMatching
 # Simulation 1 baseline: 2 attackers with 1 defenders
 # preparations
 print("Preparing for the simulaiton... \n")
-T = 1.1 # total simulation time T = [0.5s(100 A0 is captured) ,0.785s(156 A1 arrives)]
+T = 0.785 # total simulation time T = [0.53s (106 A0 by D0) ,0.785s(156 A1 arrives)]
 deltat = 0.005 # calculation time interval
 times = int(T/deltat)
 
@@ -30,7 +30,7 @@ tau1v1 = np.arange(start=0, stop=4.5 + 1e-5, step=0.025)
 
 
 # initialize positions of attackers and defenders
-attackers_initials = [(-0.5, -0.3), (0.8, -0.5)]  # [(-0.5, 0.0), (0.0, 0.8)]  [(-0.5, -0.3), (0.8, -0.5)]
+attackers_initials = [(-0.5, 0.0), (0.0, 0.8)]  # [(-0.5, 0.0), (0.0, 0.8)]  [(-0.5, -0.3), (0.8, -0.5)]
 defenders_initials = [(0.3, -0.3)]
 
 num_attacker = len(attackers_initials)
@@ -134,11 +134,11 @@ print(f"The final captured_status of all attackers is {attackers_status_logs[-1]
 # plot the trajectories
 # plot_simulation(attackers_x, attackers_y, defenders_x, defenders_y)
 
-# plot the trajectories seperately [0.2s(40 A0 is captured) ,0.62s(124 A1 arrives)]
-if T == 0.5:  # 100
+# plot the trajectories seperately T = [0.53s (106 A0 by D0) ,0.785s(156 A1 arrives)]
+if T == 0.53:  # 100
     plot_simulation2v1_b1(attackers_x, attackers_y, defenders_x, defenders_y)  
 elif T == 0.785: ## slice 156
     plot_simulation2v1_b2(attackers_x, attackers_y, defenders_x, defenders_y)  
 else:
-    plot_simulation2v1_b2(attackers_x, attackers_y, defenders_x, defenders_y)  
+    # plot_simulation2v1_b2(attackers_x, attackers_y, defenders_x, defenders_y)  
     plot_simulation(attackers_x, attackers_y, defenders_x, defenders_y)

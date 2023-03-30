@@ -11,7 +11,7 @@ from odp.Plots.plotting_utilities import *
 # Simulation 3: 6 attackers with 2 defenders
 # preparations
 print("Preparing for the simulaiton... \n")
-T = 1.2 # total simulation time t = [44(A4 0.220s), 68(A0 0.340), 111(A3 0.555), 149(A1 0.745), 206(A2 1.03), t=1.035 end]
+T = 0.955 # total simulation time T = [0.120s (24, A4 by D1), 0.280s (56 A0 by D0), 0.460s (92 A3 by D0), 0.525s (106 A5 by D0), 0.700s (140 A1 by D0), 0.955s (191 A2 by D0)]
 deltat = 0.005 # calculation time interval
 times = int(T/deltat)
 
@@ -143,16 +143,18 @@ t_slice = [0, 44, 68, 111, 149, 206, 206]
 mips = [[[0, 1], [2, 4]], [[0, 1], [2]], [[1, 3], [2]], [[1, 2], []], [[2], []]]
 # total simulation time t = 
 
-# plot the trajectories seperately  T= [44(A4 0.220s), 68(A0 0.340), 111(A3 0.555), 149(A1 0.745), 206(A2 1.03), t=1.035 end]
-if T == 0.220:  
+# plot the trajectories seperately  T = [0.120s (24, A4 by D1), 0.280s (56 A0 by D0), 0.460s (92 A3 by D0), 0.525s (106 A5 by D0), 0.700s (140 A1 by D0), 0.955s (191 A2 by D0)]
+if T == 0.120:  
     plot_simulation6v2_1(attackers_x, attackers_y, defenders_x, defenders_y)
-elif T == 0.340: 
+elif T == 0.280: # -24
     plot_simulation6v2_2(attackers_x, attackers_y, defenders_x, defenders_y)
-elif T == 0.555:
+elif T == 0.460: # -56
     plot_simulation6v2_3(attackers_x, attackers_y, defenders_x, defenders_y)
-elif T == 0.745:
+elif T == 0.525:
     plot_simulation6v2_4(attackers_x, attackers_y, defenders_x, defenders_y)
-elif T == 1.03:
+elif T == 0.700:
     plot_simulation6v2_5(attackers_x, attackers_y, defenders_x, defenders_y)
+elif T == 0.955:
+    plot_simulation6v2_6(attackers_x, attackers_y, defenders_x, defenders_y)
 else:
     plot_simulation(attackers_x, attackers_y, defenders_x, defenders_y)

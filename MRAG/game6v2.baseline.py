@@ -12,7 +12,7 @@ from MaximumMatching import MaxMatching
 # Simulation 3 baseline: 6 attackers with 2 defenders
 # preparations
 print("Preparing for the simulaiton... \n")
-T = 1.2  # total simulation time T= [0.2s (40 A0 by D0, A2 by D1) , 0.615s (123 A1,A3,A5 arrive), 0.91s (182 A3 BY D0)]
+T = 0.665  # total simulation time T= [0.285s (57 A1 by D0), 0.605s (121 A5 arrived), 0.625s (125 A4 arrived), 0.665s (133 A2 by D0), 0.750s (150 A0 by D1), 0.850s (170 A3 by D0)]
 deltat = 0.005 # calculation time interval
 times = int(T/deltat)
 
@@ -134,12 +134,25 @@ print(f"The final captured_status of all attackers is {attackers_status_logs[-1]
 # plot the trajectories
 # plot_simulation(attackers_x, attackers_y, defenders_x, defenders_y)
 
-# plot the trajectories seperately  T= [0.2s (40 A0 by D0, A2 by D1) , 0.615s (123 A1,A3,A5 arrive), 0.91s (182 A3 BY D0)]
-if T == 0.2:  
+# plot the trajectories seperately  T= [0.285s (57 A1 by D0), 0.605s (121 A5 arrived), 0.625s (125 A4 arrived), 0.665s (133 A2 by D0), 0.750s (150 A0 by D1), 0.850s (170 A3 by D0)]
+if T == 0.285:  
     plot_simulation6v2_b1(attackers_x, attackers_y, defenders_x, defenders_y)
-elif T == 0.615: 
+elif T == 0.665: 
     plot_simulation6v2_b2(attackers_x, attackers_y, defenders_x, defenders_y)
-elif T == 0.91:
+elif T == 0.750:
     plot_simulation6v2_b3(attackers_x, attackers_y, defenders_x, defenders_y)
+elif T == 0.850:
+    plot_simulation6v2_b4(attackers_x, attackers_y, defenders_x, defenders_y)
 else:
     plot_simulation(attackers_x, attackers_y, defenders_x, defenders_y)
+
+# check the smallest distance
+# D and A1
+distances_d2a3 = []
+for po in range(len(attackers_trajectory[2])):
+    a1 = attackers_trajectory[2][po]
+    d0 = defenders_trajectory[1][po]
+    distance = np.sqrt((a1[0] - d0[0])**2 + (a1[1] - d0[1])**2)
+    distances_d2a3.append(distance)
+minimum_distance = np.min(distances_d2a3)
+print(f"The smallest distance between D2 and A3 is {minimum_distance}.\n")
