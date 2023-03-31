@@ -1140,7 +1140,7 @@ def plot_simulation6v2_1s(attackers_x, attackers_y, defenders_x, defenders_y):
     fig.add_trace(go.Scatter(x=d2sparsex, y=d2sparsey, mode="markers", name='D2 traj', marker=dict(symbol="square", size=4, color='blue'))) # symbol="star"
 
     # figure settings
-    fig.update_layout(autosize=False, width=475, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
+    fig.update_layout(autosize=False, width=498, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
                       title={'text': "<b>t=0.100s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
     fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
     fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
@@ -1953,7 +1953,7 @@ def plot_simulation6v2_b1s(attackers_x, attackers_y, defenders_x, defenders_y):
     fig.add_trace(go.Scatter(x=d2sparsex, y=d2sparsey, mode="markers", name='D2 traj', marker=dict(symbol="square", size=4, color='blue'))) # symbol="star"
 
     # figure settings
-    fig.update_layout(autosize=False, width=475, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
+    fig.update_layout(autosize=False, width=498, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
                       title={'text': "<b>t=0.100s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
     fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
     fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
