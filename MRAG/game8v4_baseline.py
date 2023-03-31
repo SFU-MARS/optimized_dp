@@ -13,7 +13,7 @@ from MaximumMatching import MaxMatching
 # Simulation 4 baseline: 8 attackers with 4 defenders
 # preparations
 print("Preparing for the simulaiton... \n")
-T = 1.455 # total simulation time T = [1.455s (291)]
+T = 1.5 # total simulation time T = [0.130s (26 A0 by D0), 0.5s (100 A3 by D1), 0.605s (121 A7 arrived), 0.905s (181 A6 arrived), 0.990s (198 A2 by D1), 0.945s (189 A4 by D1), 1.190s (238 A5 by D0),  1.455s (291 A1 by D0)]
 deltat = 0.005 # calculation time interval
 times = int(T/deltat)
 
@@ -139,10 +139,19 @@ print("The game is over. \n")
 print(f"The results of the selected is {capture_decisions}. \n")
 print(f"The final captured_status of all attackers is {attackers_status_logs[-1]}. \n")
 
-# plot the trajectories seperately  T = [0.120s (24, A4 by D1), 0.280s (56 A0 by D0), 0.460s (92 A3 by D0), 0.525s (106 A5 by D0), 0.700s (140 A1 by D0), 0.955s (191 A2 by D0)]
+# plot the trajectories seperately 
+# T = [0.130s (26 A0 by D0), 0.5s (100 A3 by D1), 0.605s (121 A7 arrived), 0.905s (181 A6 arrived), 0.990s (198 A2 by D1), 0.945s (189 A4 by D1), 1.190s (238 A5 by D0),  1.455s (291 A1 by D0)]
 if T == 0:  
     plot_simulation8v4_b1(attackers_x, attackers_y, defenders_x, defenders_y)
+elif T == 0.1:
+    plot_simulation8v4_b1s(attackers_x, attackers_y, defenders_x, defenders_y)
+elif T == 0.5:
+    plot_simulation8v4_b2s(attackers_x, attackers_y, defenders_x, defenders_y)
+elif T == 1.0:
+    plot_simulation8v4_b3s(attackers_x, attackers_y, defenders_x, defenders_y)
 elif T == 1.455: # -24
+    plot_simulation8v4_b2(attackers_x, attackers_y, defenders_x, defenders_y)
+elif T == 1.5:
     plot_simulation8v4_b2(attackers_x, attackers_y, defenders_x, defenders_y)
 else:
     plot_simulation(attackers_x, attackers_y, defenders_x, defenders_y)
