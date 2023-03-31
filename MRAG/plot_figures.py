@@ -40,7 +40,7 @@ value_function1v1 = value1v1[:, :, d1x_slice, d1y_slice]  # , 0] if the saveAllT
 # plotting players
 attackers_plot1 = [(a1x, a1y), (a2x, a2y)]  # (a2x, a2y)
 defenders_plot1 = [(d1x, d1y)]
-# plot_game1v1(grids1v1, value_function1v1, attackers_plot1, defenders_plot1, name="$\mathcal{RA}^{11}_{\infty}$")
+plot_game1v1(grids1v1, value_function1v1, attackers_plot1, defenders_plot1, name="$\mathcal{RA}^{11}_{\infty}$")
 # plot_game0(grids1v1, value_function1v1, attackers_plot1, defenders_plot1, name="$\mathcal{RA}^{21}_{\infty}$")
 
 # plot 2v1 reach-avoid set

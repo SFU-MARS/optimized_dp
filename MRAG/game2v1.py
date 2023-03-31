@@ -11,7 +11,7 @@ from odp.Plots.plotting_utilities import *
 # Simulation 1: 2 attackers with 1 defenders
 # preparations
 print("Preparing for the simulaiton... \n")
-T = 0.475 # attackers_stop_times = [0.475s (95 A1 is captured), 0.69s (138 A0 by D0)]
+T = 0.785 # attackers_stop_times = [0.475s (95 A1 is captured), 0.69s (138 A0 by D0)]
 deltat = 0.005 # calculation time interval
 times = int(T/deltat)
 
@@ -142,6 +142,8 @@ if T == 0.475:
     plot_simulation2v1_1(attackers_x, attackers_y, defenders_x, defenders_y)  # 
 elif T == 0.69: ##  - slice 95
     plot_simulation2v1_2(attackers_x, attackers_y, defenders_x, defenders_y)  # 
+elif T == 0.785:
+    plot_simulation2v1_2s(attackers_x, attackers_y, defenders_x, defenders_y)  # 
 else:
     plot_simulation(attackers_x, attackers_y, defenders_x, defenders_y)
     # plot_simulation2v1_2(attackers_x, attackers_y, defenders_x, defenders_y)  

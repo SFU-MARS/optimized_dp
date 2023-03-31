@@ -137,6 +137,8 @@ print(f"The final captured_status of all attackers is {attackers_status_logs[-1]
 # plot the trajectories seperately T = [0.53s (106 A0 by D0) ,0.785s(156 A1 arrives)]
 if T == 0.53:  # 100
     plot_simulation2v1_b1(attackers_x, attackers_y, defenders_x, defenders_y)  
+elif T == 0.475:
+    plot_simulation2v1_b1s(attackers_x, attackers_y, defenders_x, defenders_y)
 elif T == 0.785: ## slice 156
     plot_simulation2v1_b2(attackers_x, attackers_y, defenders_x, defenders_y)  
 else:
