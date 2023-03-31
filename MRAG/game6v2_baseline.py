@@ -12,7 +12,7 @@ from MaximumMatching import MaxMatching
 # Simulation 3 baseline: 6 attackers with 2 defenders
 # preparations
 print("Preparing for the simulaiton... \n")
-T = 0.75  # total simulation time T= [0.285s (57 A1 by D0), 0.605s (121 A5 arrived), 0.625s (125 A4 arrived), 0.665s (133 A2 by D0), 0.750s (150 A0 by D1), 0.850s (170 A3 by D0)]
+T = 0.3  # total simulation time T= [0.285s (57 A1 by D0), 0.605s (121 A5 arrived), 0.625s (125 A4 arrived), 0.665s (133 A2 by D0), 0.750s (150 A0 by D1), 0.850s (170 A3 by D0)]
 deltat = 0.005 # calculation time interval
 times = int(T/deltat)
 
@@ -137,12 +137,20 @@ print(f"The final captured_status of all attackers is {attackers_status_logs[-1]
 # plot the trajectories seperately  T= [0.285s (57 A1 by D0), 0.605s (121 A5 arrived), 0.625s (125 A4 arrived), 0.665s (133 A2 by D0), 0.750s (150 A0 by D1), 0.850s (170 A3 by D0)]
 if T == 0.285:  
     plot_simulation6v2_b1(attackers_x, attackers_y, defenders_x, defenders_y)
+elif T == 0.100:
+    plot_simulation6v2_b1s(attackers_x, attackers_y, defenders_x, defenders_y)
+elif T == 0.300:
+    plot_simulation6v2_b2s(attackers_x, attackers_y, defenders_x, defenders_y)
 elif T == 0.665: 
     plot_simulation6v2_b2(attackers_x, attackers_y, defenders_x, defenders_y)
+elif T == 0.700:
+    plot_simulation6v2_b3s(attackers_x, attackers_y, defenders_x, defenders_y)
 elif T == 0.750:
     plot_simulation6v2_b3(attackers_x, attackers_y, defenders_x, defenders_y)
 elif T == 0.850:
     plot_simulation6v2_b4(attackers_x, attackers_y, defenders_x, defenders_y)
+elif T == 1.00:
+    plot_simulation6v2_b4s(attackers_x, attackers_y, defenders_x, defenders_y)
 else:
     plot_simulation(attackers_x, attackers_y, defenders_x, defenders_y)
 
