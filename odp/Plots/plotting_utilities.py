@@ -467,8 +467,8 @@ def plot_simulation2v1_1(attackers_x, attackers_y, defenders_x, defenders_y):
 
     # figure settings
     # fig.update_layout(showlegend=False)  # to display the legends or not
-    fig.update_layout(autosize=False, width=550, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
-                      title={'text': "<b>t=0.475s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=20)) # LightSteelBlue
+    fig.update_layout(autosize=False, width=560, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
+                      title={'text': "<b>Our method, t=0.475s<b>", 'y':0.85, 'x':0.5, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=20)) # LightSteelBlue
     fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
     fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
     fig.show()
@@ -520,7 +520,7 @@ def plot_simulation2v1_2(attackers_x, attackers_y, defenders_x, defenders_y):
     # figure settings
     # fig.update_layout(showlegend=False)  # to display the legends or not
     fig.update_layout(autosize=False, width=560, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
-                      title={'text': "<b>t=0.690s<b>", 'y':0.85, 'x':0.4, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=20)) # LightSteelBlue
+                      title={'text': "<b>t=0.690s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=20)) # LightSteelBlue
     fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
     fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
     fig.show()
@@ -572,7 +572,7 @@ def plot_simulation2v1_2s(attackers_x, attackers_y, defenders_x, defenders_y):
     # figure settings
     # fig.update_layout(showlegend=False)  # to display the legends or not
     fig.update_layout(autosize=False, width=560, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
-                      title={'text': "<b>t=0.785s<b>", 'y':0.85, 'x':0.4, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=20)) # LightSteelBlue
+                      title={'text': "<b>Our method, t=0.785s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=20)) # LightSteelBlue
     fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
     fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
     fig.show()
@@ -656,8 +656,8 @@ def plot_simulation2v1_b1s(attackers_x, attackers_y, defenders_x, defenders_y):
         fig.add_trace(go.Scatter(x=dsparsex, y=dsparsey, mode="markers", name=f'D{j+1} traj', marker=dict(symbol="square", size=4, color='blue'))) # symbol="star"
 
     # figure settings
-    fig.update_layout(autosize=False, width=550, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
-                      title={'text': "<b>t=0.475s<b>", 'y':0.85, 'x':0.4, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=20)) # LightSteelBlue
+    fig.update_layout(autosize=False, width=560, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
+                      title={'text': "<b>Baseline, t=0.475s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=20)) # LightSteelBlue
     fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
     fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
     fig.show()
@@ -712,7 +712,7 @@ def plot_simulation2v1_b2(attackers_x, attackers_y, defenders_x, defenders_y):
 
     # figure settings
     fig.update_layout(autosize=False, width=560, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
-                      title={'text': "<b>t=0.785s<b>", 'y':0.85, 'x':0.4, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=20)) # LightSteelBlue
+                      title={'text': "<b>Baseline, t=0.785s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=20)) # LightSteelBlue
     fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
     fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
     fig.show()
@@ -1140,7 +1140,7 @@ def plot_simulation6v2_1s(attackers_x, attackers_y, defenders_x, defenders_y):
 
     # figure settings
     fig.update_layout(autosize=False, width=498, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
-                      title={'text': "<b>t=0.100s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
+                      title={'text': "<b>Our method, t=0.1s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
     fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
     fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
     fig.show()
@@ -1232,7 +1232,7 @@ def plot_simulation6v2_2s(attackers_x, attackers_y, defenders_x, defenders_y):
 
     # figure settings
     fig.update_layout(autosize=False, width=498, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
-                      title={'text': "<b>t=0.300s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
+                      title={'text': "<b>Our method, t=0.3s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
     fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
     fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
     fig.show()
@@ -1528,13 +1528,6 @@ def plot_simulation6v2_5(attackers_x, attackers_y, defenders_x, defenders_y):
     fig.add_shape(type="line", x0=attackers_x[1][-1], y0=attackers_y[1][-1], x1=defenders_x[0][-1], y1=defenders_y[0][-1], line=dict(color="green",width=2))
     fig.add_shape(type="line", x0=attackers_x[2][-1], y0=attackers_y[2][-1], x1=defenders_x[0][-1], y1=defenders_y[0][-1], line=dict(color="green",width=2))
 
-    # for i in range(len(attackers_x)):
-    #     sparsex = attackers_x[i][0:-1:5]
-    #     sparsey = attackers_y[i][0:-1:5]
-    #     sparsex.append(attackers_x[i][-1])
-    #     sparsey.append(attackers_y[i][-1])
-    #     fig.add_trace(go.Scatter(x=sparsex, y=sparsey, mode="markers", name=f"A{i+1} traj", marker=dict(symbol="triangle-up", size=4, color='red'))) # trajectory
-
     # plot attacker 0
     sparsex1 = [attackers_x[0][-1]]
     sparsey1 = [attackers_y[0][-1]]
@@ -1593,7 +1586,7 @@ def plot_simulation6v2_5(attackers_x, attackers_y, defenders_x, defenders_y):
 
     # figure settings
     fig.update_layout(autosize=False, width=498, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
-                      title={'text': "<b>t=0.700s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
+                      title={'text': "<b>Our method, t=0.7s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
     fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
     fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
     fig.show()
@@ -1770,7 +1763,7 @@ def plot_simulation6v2_4s(attackers_x, attackers_y, defenders_x, defenders_y):
 
     # figure settings
     fig.update_layout(autosize=False, width=498, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
-                      title={'text': "<b>t=1.000s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
+                      title={'text': "<b>Our method, t=1.0s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
     fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
     fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
     fig.show()
@@ -1885,15 +1878,6 @@ def plot_simulation6v2_b1s(attackers_x, attackers_y, defenders_x, defenders_y):
     fig.add_shape(type="line", x0=attackers_x[1][-1], y0=attackers_y[1][-1], x1=defenders_x[0][-1], y1=defenders_y[0][-1], line=dict(color="green",width=2))
     fig.add_shape(type="line", x0=attackers_x[0][-1], y0=attackers_y[0][-1], x1=defenders_x[1][-1], y1=defenders_y[1][-1], line=dict(color="green",width=2))
 
-
-
-    # for i in range(len(attackers_x)):
-    #     sparsex = attackers_x[i][0:-1:5]
-    #     sparsey = attackers_y[i][0:-1:5]
-    #     sparsex.append(attackers_x[i][-1])
-    #     sparsey.append(attackers_y[i][-1])
-    #     fig.add_trace(go.Scatter(x=sparsex, y=sparsey, mode="markers", name=f"A{i+1} traj", marker=dict(symbol="triangle-up", size=4, color='red'))) # trajectory
-
     # plot attacker 0
     sparsex1 = attackers_x[0][0:-1:5]
     sparsey1 = attackers_y[0][0:-1:5]
@@ -1952,7 +1936,7 @@ def plot_simulation6v2_b1s(attackers_x, attackers_y, defenders_x, defenders_y):
 
     # figure settings
     fig.update_layout(autosize=False, width=498, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
-                      title={'text': "<b>t=0.100s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
+                      title={'text': "<b>Baseline, t=0.1s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
     fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
     fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
     fig.show()
@@ -2043,7 +2027,7 @@ def plot_simulation6v2_b2s(attackers_x, attackers_y, defenders_x, defenders_y):
 
     # figure settings
     fig.update_layout(autosize=False, width=498, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
-                      title={'text': "<b>t=0.300s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
+                      title={'text': "<b>Baseline, t=0.3s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
     fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
     fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
     fig.show()
@@ -2246,13 +2230,6 @@ def plot_simulation6v2_b3s(attackers_x, attackers_y, defenders_x, defenders_y):
     fig.add_shape(type="line", x0=attackers_x[3][-1], y0=attackers_y[3][-1], x1=defenders_x[0][-1], y1=defenders_y[0][-1], line=dict(color="green",width=2))
     fig.add_shape(type="line", x0=attackers_x[0][-1], y0=attackers_y[0][-1], x1=defenders_x[1][-1], y1=defenders_y[1][-1], line=dict(color="green",width=2))
 
-    # for i in range(len(attackers_x)):
-    #     sparsex = attackers_x[i][0:-1:5]
-    #     sparsey = attackers_y[i][0:-1:5]
-    #     sparsex.append(attackers_x[i][-1])
-    #     sparsey.append(attackers_y[i][-1])
-    #     fig.add_trace(go.Scatter(x=sparsex, y=sparsey, mode="markers", name=f"A{i+1} traj", marker=dict(symbol="triangle-up", size=4, color='red'))) # trajectory
-
     # plot attacker 0
     sparsex1 = attackers_x[0][0:-1:5]
     sparsey1 = attackers_y[0][0:-1:5]
@@ -2311,7 +2288,7 @@ def plot_simulation6v2_b3s(attackers_x, attackers_y, defenders_x, defenders_y):
 
     # figure settings
     fig.update_layout(autosize=False, width=498, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
-                      title={'text': "<b>t=0.700s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
+                      title={'text': "<b>Baseline, t=0.7s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
     fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
     fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
     fig.show()
@@ -2424,13 +2401,6 @@ def plot_simulation6v2_b4s(attackers_x, attackers_y, defenders_x, defenders_y):
     # fig.add_trace(go.Scatter(x=[attackers_x[3][-1], defenders_x[0][-1]], y=[attackers_y[3][-1], defenders_y[0][-1]], mode="lines+markers", name="D1-A4", marker=dict(symbol="cross", size=5, color='green')))
     # fig.add_trace(go.Scatter(x=[attackers_x[0][-1], defenders_x[1][-1]], y=[attackers_y[0][-1], defenders_y[1][-1]], mode="lines+markers", name="D2-A1", marker=dict(symbol="cross", size=5, color='green')))
 
-    # for i in range(len(attackers_x)):
-    #     sparsex = attackers_x[i][0:-1:5]
-    #     sparsey = attackers_y[i][0:-1:5]
-    #     sparsex.append(attackers_x[i][-1])
-    #     sparsey.append(attackers_y[i][-1])
-    #     fig.add_trace(go.Scatter(x=sparsex, y=sparsey, mode="markers", name=f"A{i+1} traj", marker=dict(symbol="triangle-up", size=4, color='red'))) # trajectory
-
     # plot attacker 0
     sparsex1 = [attackers_x[0][-1]]
     sparsey1 = [attackers_y[0][-1]]
@@ -2489,7 +2459,7 @@ def plot_simulation6v2_b4s(attackers_x, attackers_y, defenders_x, defenders_y):
 
     # figure settings
     fig.update_layout(autosize=False, width=498, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
-                      title={'text': "<b>t=1.000s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
+                      title={'text': "<b>Baseline, t=1.0s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
     fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
     fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
     fig.show()
@@ -2595,15 +2565,6 @@ def plot_simulation8v4_1s(attackers_x, attackers_y, defenders_x, defenders_y):
     fig.add_shape(type="line", x0=attackers_x[1][-1], y0=attackers_y[1][-1], x1=defenders_x[3][-1], y1=defenders_y[3][-1], line=dict(color="green",width=2))
     fig.add_shape(type="line", x0=attackers_x[5][-1], y0=attackers_y[5][-1], x1=defenders_x[3][-1], y1=defenders_y[3][-1], line=dict(color="green",width=2))
 
-    # fig.add_trace(go.Scatter(x=[attackers_x[0][-1], defenders_x[0][-1]], y=[attackers_y[0][-1], defenders_y[0][-1]], mode="lines+markers", name="D1-A1", marker=dict(symbol="cross", size=5, color='green')))
-    # fig.add_trace(go.Scatter(x=[attackers_x[7][-1], defenders_x[0][-1]], y=[attackers_y[7][-1], defenders_y[0][-1]], mode="lines+markers", name="D1-A8", marker=dict(symbol="cross", size=5, color='green')))
-    # fig.add_trace(go.Scatter(x=[attackers_x[3][-1], defenders_x[1][-1]], y=[attackers_y[3][-1], defenders_y[1][-1]], mode="lines+markers", name="D2-A4", marker=dict(symbol="cross", size=5, color='green')))
-    # fig.add_trace(go.Scatter(x=[attackers_x[6][-1], defenders_x[1][-1]], y=[attackers_y[6][-1], defenders_y[1][-1]], mode="lines+markers", name="D2-A7", marker=dict(symbol="cross", size=5, color='green')))
-    # fig.add_trace(go.Scatter(x=[attackers_x[1][-1], defenders_x[2][-1]], y=[attackers_y[1][-1], defenders_y[2][-1]], mode="lines+markers", name="D3-A2", marker=dict(symbol="cross", size=5, color='green')))
-    # fig.add_trace(go.Scatter(x=[attackers_x[2][-1], defenders_x[2][-1]], y=[attackers_y[2][-1], defenders_y[2][-1]], mode="lines+markers", name="D3-A3", marker=dict(symbol="cross", size=5, color='green')))
-    # fig.add_trace(go.Scatter(x=[attackers_x[4][-1], defenders_x[3][-1]], y=[attackers_y[4][-1], defenders_y[3][-1]], mode="lines+markers", name="D4-A5", marker=dict(symbol="cross", size=5, color='green')))
-    # fig.add_trace(go.Scatter(x=[attackers_x[5][-1], defenders_x[3][-1]], y=[attackers_y[5][-1], defenders_y[3][-1]], mode="lines+markers", name="D4-A6", marker=dict(symbol="cross", size=5, color='green')))
-
     # plot attackers
     for i in range(len(attackers_x)):
         sparsex = attackers_x[i][0:-1:5]
@@ -2640,7 +2601,7 @@ def plot_simulation8v4_1s(attackers_x, attackers_y, defenders_x, defenders_y):
 
     # figure settings
     fig.update_layout(autosize=False, width=498, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
-                      title={'text': "<b>t=0.100s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
+                      title={'text': "<b>Our method, t=0.1s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
     fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
     fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
     fig.show()
@@ -2756,7 +2717,7 @@ def plot_simulation8v4_2s(attackers_x, attackers_y, defenders_x, defenders_y):
 
     # figure settings
     fig.update_layout(autosize=False, width=498, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
-                      title={'text': "<b>t=0.500s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
+                      title={'text': "<b>Our method, t=0.5s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
     fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
     fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
     fig.show()
@@ -2872,7 +2833,7 @@ def plot_simulation8v4_3s(attackers_x, attackers_y, defenders_x, defenders_y):
 
     # figure settings
     fig.update_layout(autosize=False, width=498, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
-                      title={'text': "<b>t=1.000s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
+                      title={'text': "<b>Our method, t=1.0s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
     fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
     fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
     fig.show()
@@ -2938,7 +2899,7 @@ def plot_simulation8v4_2(attackers_x, attackers_y, defenders_x, defenders_y):
 
     # figure settings
     fig.update_layout(autosize=False, width=498, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
-                      title={'text': "<b>t=1.500s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
+                      title={'text': "<b>Our method, t=1.5s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
     fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
     fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
     fig.show()
@@ -3075,7 +3036,7 @@ def plot_simulation8v4_b1s(attackers_x, attackers_y, defenders_x, defenders_y):
 
     # figure settings
     fig.update_layout(autosize=False, width=498, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
-                      title={'text': "<b>t=0.100s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
+                      title={'text': "<b>Baseline, t=0.1s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
     fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
     fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
     fig.show()
@@ -3189,7 +3150,7 @@ def plot_simulation8v4_b2s(attackers_x, attackers_y, defenders_x, defenders_y):
 
     # figure settings
     fig.update_layout(autosize=False, width=498, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
-                      title={'text': "<b>t=0.500s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
+                      title={'text': "<b>Baseline, t=0.5s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
     fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
     fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
     fig.show()
@@ -3300,7 +3261,7 @@ def plot_simulation8v4_b3s(attackers_x, attackers_y, defenders_x, defenders_y):
 
     # figure settings
     fig.update_layout(autosize=False, width=498, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
-                      title={'text': "<b>t=1.000s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
+                      title={'text': "<b>Baseline, t=1.0s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
     fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
     fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
     fig.show()
@@ -3376,7 +3337,7 @@ def plot_simulation8v4_b2(attackers_x, attackers_y, defenders_x, defenders_y):
 
     # figure settings
     fig.update_layout(autosize=False, width=498, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
-                      title={'text': "<b>t=1.500s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
+                      title={'text': "<b>Baseline, t=1.5s<b>", 'y':0.85, 'x':0.425, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=12)) # LightSteelBlue
     fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
     fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
     fig.show()
