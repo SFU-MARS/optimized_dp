@@ -567,7 +567,7 @@ def plot_simulation2v1_2s(attackers_x, attackers_y, defenders_x, defenders_y):
         dsparsey = [defenders_y[j][-1]]
         # dsparsex.append(defenders_x[j][-1])
         # dsparsey.append(defenders_y[j][-1])
-        fig.add_trace(go.Scatter(x=dsparsex, y=dsparsey, mode="markers", name=f'D{j+1} stoped', marker=dict(symbol="square-open", size=8, color='blue'))) # , symbol="square", size=4, color='blue'
+        fig.add_trace(go.Scatter(x=dsparsex, y=dsparsey, mode="markers", name=f'D{j+1} stopped', marker=dict(symbol="square-open", size=8, color='blue'))) # , symbol="square", size=4, color='blue'
 
     # figure settings
     # fig.update_layout(showlegend=False)  # to display the legends or not
@@ -704,11 +704,11 @@ def plot_simulation2v1_b2(attackers_x, attackers_y, defenders_x, defenders_y):
 
     # plot defenders
     for j in range(len(defenders_x)):
-        dsparsex = defenders_x[j][100:-1:8]
-        dsparsey = defenders_y[j][100:-1:8]
-        dsparsex.append(defenders_x[j][-1])
-        dsparsey.append(defenders_y[j][-1])
-        fig.add_trace(go.Scatter(x=dsparsex, y=dsparsey, mode="markers", name=f'D{j+1} traj', marker=dict(symbol="square", size=4, color='blue'))) # symbol="star"
+        dsparsex = [defenders_x[j][-1]]
+        dsparsey = [defenders_y[j][-1]]
+        # dsparsex.append(defenders_x[j][-1])
+        # dsparsey.append(defenders_y[j][-1])
+        fig.add_trace(go.Scatter(x=dsparsex, y=dsparsey, mode="markers", name=f'D{j+1} stopped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
 
     # figure settings
     fig.update_layout(autosize=False, width=560, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
@@ -1589,7 +1589,7 @@ def plot_simulation6v2_5(attackers_x, attackers_y, defenders_x, defenders_y):
     d2sparsey = [defenders_y[1][-1]]
     d2sparsex.append(defenders_x[1][-1])
     d2sparsey.append(defenders_y[1][-1])
-    fig.add_trace(go.Scatter(x=d2sparsex, y=d2sparsey, mode="markers", name='D2 stoped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
+    fig.add_trace(go.Scatter(x=d2sparsex, y=d2sparsey, mode="markers", name='D2 stopped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
 
     # figure settings
     fig.update_layout(autosize=False, width=498, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
@@ -1678,7 +1678,7 @@ def plot_simulation6v2_6(attackers_x, attackers_y, defenders_x, defenders_y):
     d2sparsey = [defenders_y[1][-1]]
     d2sparsex.append(defenders_x[1][-1])
     d2sparsey.append(defenders_y[1][-1])
-    fig.add_trace(go.Scatter(x=d2sparsex, y=d2sparsey, mode="markers", name='D2 stoped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
+    fig.add_trace(go.Scatter(x=d2sparsex, y=d2sparsey, mode="markers", name='D2 stopped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
 
     # figure settings
     fig.update_layout(autosize=False, width=498, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
@@ -1760,13 +1760,13 @@ def plot_simulation6v2_4s(attackers_x, attackers_y, defenders_x, defenders_y):
     d1sparsey = [defenders_y[0][-1]]
     # d1sparsex.append(defenders_x[0][-1])
     # d1sparsey.append(defenders_y[0][-1])
-    fig.add_trace(go.Scatter(x=d1sparsex, y=d1sparsey, mode="markers", name='D1 stoped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
+    fig.add_trace(go.Scatter(x=d1sparsex, y=d1sparsey, mode="markers", name='D1 stopped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
 
     d2sparsex = [defenders_x[1][-1]]
     d2sparsey = [defenders_y[1][-1]]
     d2sparsex.append(defenders_x[1][-1])
     d2sparsey.append(defenders_y[1][-1])
-    fig.add_trace(go.Scatter(x=d2sparsex, y=d2sparsey, mode="markers", name='D2 stoped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
+    fig.add_trace(go.Scatter(x=d2sparsex, y=d2sparsey, mode="markers", name='D2 stopped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
 
     # figure settings
     fig.update_layout(autosize=False, width=498, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
@@ -2396,7 +2396,7 @@ def plot_simulation6v2_b4(attackers_x, attackers_y, defenders_x, defenders_y):
     d2sparsey = [defenders_y[1][-1]]
     # d2sparsex.append(defenders_x[1][-1])
     # d2sparsey.append(defenders_y[1][-1])
-    fig.add_trace(go.Scatter(x=d2sparsex, y=d2sparsey, mode="markers", name='D2 stoped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
+    fig.add_trace(go.Scatter(x=d2sparsex, y=d2sparsey, mode="markers", name='D2 stopped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
 
     # figure settings
     fig.update_layout(autosize=False, width=498, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
@@ -2479,13 +2479,13 @@ def plot_simulation6v2_b4s(attackers_x, attackers_y, defenders_x, defenders_y):
     d1sparsey = [defenders_y[0][-1]]
     # d1sparsex.append(defenders_x[0][-1])
     # d1sparsey.append(defenders_y[0][-1])
-    fig.add_trace(go.Scatter(x=d1sparsex, y=d1sparsey, mode="markers", name='D1 stoped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
+    fig.add_trace(go.Scatter(x=d1sparsex, y=d1sparsey, mode="markers", name='D1 stopped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
 
     d2sparsex = [defenders_x[1][-1]]
     d2sparsey = [defenders_y[1][-1]]
     # d2sparsex.append(defenders_x[1][-1])
     # d2sparsey.append(defenders_y[1][-1])
-    fig.add_trace(go.Scatter(x=d2sparsex, y=d2sparsey, mode="markers", name='D2 stoped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
+    fig.add_trace(go.Scatter(x=d2sparsex, y=d2sparsey, mode="markers", name='D2 stopped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
 
     # figure settings
     fig.update_layout(autosize=False, width=498, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
@@ -2746,13 +2746,13 @@ def plot_simulation8v4_2s(attackers_x, attackers_y, defenders_x, defenders_y):
     d3sparsey = [defenders_y[2][-1]]
     # d3sparsex.append(defenders_x[2][-1])
     # d3sparsey.append(defenders_y[2][-1])
-    fig.add_trace(go.Scatter(x=d3sparsex, y=d3sparsey, mode="markers", name='D3 stoped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
+    fig.add_trace(go.Scatter(x=d3sparsex, y=d3sparsey, mode="markers", name='D3 stopped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
 
     d4sparsex = [defenders_x[3][-1]]
     d4sparsey = [defenders_y[3][-1]]
     # d4sparsex.append(defenders_x[3][-1])
     # d4sparsey.append(defenders_y[3][-1])
-    fig.add_trace(go.Scatter(x=d4sparsex, y=d4sparsey, mode="markers", name='D4 stoped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
+    fig.add_trace(go.Scatter(x=d4sparsex, y=d4sparsey, mode="markers", name='D4 stopped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
 
     # figure settings
     fig.update_layout(autosize=False, width=498, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
@@ -2850,19 +2850,19 @@ def plot_simulation8v4_3s(attackers_x, attackers_y, defenders_x, defenders_y):
     d1sparsey = [defenders_y[0][-1]]
     # d1sparsex.append(defenders_x[0][-1])
     # d1sparsey.append(defenders_y[0][-1])
-    fig.add_trace(go.Scatter(x=d1sparsex, y=d1sparsey, mode="markers", name='D1 stoped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
+    fig.add_trace(go.Scatter(x=d1sparsex, y=d1sparsey, mode="markers", name='D1 stopped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
 
     d2sparsex = [defenders_x[1][-1]]
     d2sparsey = [defenders_y[1][-1]]
     # d2sparsex.append(defenders_x[1][-1])
     # d2sparsey.append(defenders_y[1][-1])
-    fig.add_trace(go.Scatter(x=d2sparsex, y=d2sparsey, mode="markers", name='D2 stoped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
+    fig.add_trace(go.Scatter(x=d2sparsex, y=d2sparsey, mode="markers", name='D2 stopped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
 
     d3sparsex = [defenders_x[2][-1]]
     d3sparsey = [defenders_y[2][-1]]
     # d3sparsex.append(defenders_x[2][-1])
     # d3sparsey.append(defenders_y[2][-1])
-    fig.add_trace(go.Scatter(x=d3sparsex, y=d3sparsey, mode="markers", name='D3 stoped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
+    fig.add_trace(go.Scatter(x=d3sparsex, y=d3sparsey, mode="markers", name='D3 stopped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
 
     d4sparsex = defenders_x[3][100:-1:8]
     d4sparsey = defenders_y[3][100:-1:8]
@@ -2916,25 +2916,25 @@ def plot_simulation8v4_2(attackers_x, attackers_y, defenders_x, defenders_y):
     d1sparsey = [defenders_y[0][-1]]
     # d1sparsex.append(defenders_x[0][-1])
     # d1sparsey.append(defenders_y[0][-1])
-    fig.add_trace(go.Scatter(x=d1sparsex, y=d1sparsey, mode="markers", name='D1 stoped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
+    fig.add_trace(go.Scatter(x=d1sparsex, y=d1sparsey, mode="markers", name='D1 stopped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
 
     d2sparsex = [defenders_x[1][-1]]
     d2sparsey = [defenders_y[1][-1]]
     # d2sparsex.append(defenders_x[1][-1])
     # d2sparsey.append(defenders_y[1][-1])
-    fig.add_trace(go.Scatter(x=d2sparsex, y=d2sparsey, mode="markers", name='D2 stoped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
+    fig.add_trace(go.Scatter(x=d2sparsex, y=d2sparsey, mode="markers", name='D2 stopped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
 
     d3sparsex = [defenders_x[2][-1]]
     d3sparsey = [defenders_y[2][-1]]
     # d3sparsex.append(defenders_x[2][-1])
     # d3sparsey.append(defenders_y[2][-1])
-    fig.add_trace(go.Scatter(x=d3sparsex, y=d3sparsey, mode="markers", name='D3 stoped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
+    fig.add_trace(go.Scatter(x=d3sparsex, y=d3sparsey, mode="markers", name='D3 stopped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
 
     d4sparsex = [defenders_x[3][-1]]
     d4sparsey = [defenders_y[3][-1]]
     # d4sparsex.append(defenders_x[3][-1])
     # d4sparsey.append(defenders_y[3][-1])
-    fig.add_trace(go.Scatter(x=d4sparsex, y=d4sparsey, mode="markers", name='D4 stoped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
+    fig.add_trace(go.Scatter(x=d4sparsex, y=d4sparsey, mode="markers", name='D4 stopped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
 
     # figure settings
     fig.update_layout(autosize=False, width=498, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
@@ -3290,13 +3290,13 @@ def plot_simulation8v4_b3s(attackers_x, attackers_y, defenders_x, defenders_y):
     d3sparsey = [defenders_y[2][-1]]
     # d3sparsex.append(defenders_x[2][-1])
     # d3sparsey.append(defenders_y[2][-1])
-    fig.add_trace(go.Scatter(x=d3sparsex, y=d3sparsey, mode="markers", name='D3 stoped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
+    fig.add_trace(go.Scatter(x=d3sparsex, y=d3sparsey, mode="markers", name='D3 stopped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
 
     d4sparsex = [defenders_x[3][-1]]
     d4sparsey = [defenders_y[3][-1]]
     # d4sparsex.append(defenders_x[3][-1])
     # d4sparsey.append(defenders_y[3][-1])
-    fig.add_trace(go.Scatter(x=d4sparsex, y=d4sparsey, mode="markers", name='D4 stoped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
+    fig.add_trace(go.Scatter(x=d4sparsex, y=d4sparsey, mode="markers", name='D4 stopped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
 
     # figure settings
     fig.update_layout(autosize=False, width=498, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
@@ -3354,25 +3354,25 @@ def plot_simulation8v4_b2(attackers_x, attackers_y, defenders_x, defenders_y):
     d1sparsey = [defenders_y[0][-1]]
     # d1sparsex.append(defenders_x[0][-1])
     # d1sparsey.append(defenders_y[0][-1])
-    fig.add_trace(go.Scatter(x=d1sparsex, y=d1sparsey, mode="markers", name='D1 stoped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
+    fig.add_trace(go.Scatter(x=d1sparsex, y=d1sparsey, mode="markers", name='D1 stopped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
 
     d2sparsex = [defenders_x[1][-1]]
     d2sparsey = [defenders_y[1][-1]]
     # d2sparsex.append(defenders_x[1][-1])
     # d2sparsey.append(defenders_y[1][-1])
-    fig.add_trace(go.Scatter(x=d2sparsex, y=d2sparsey, mode="markers", name='D2 stoped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
+    fig.add_trace(go.Scatter(x=d2sparsex, y=d2sparsey, mode="markers", name='D2 stopped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
 
     d3sparsex = [defenders_x[2][-1]]
     d3sparsey = [defenders_y[2][-1]]
     # d3sparsex.append(defenders_x[2][-1])
     # d3sparsey.append(defenders_y[2][-1])
-    fig.add_trace(go.Scatter(x=d3sparsex, y=d3sparsey, mode="markers", name='D3 stoped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
+    fig.add_trace(go.Scatter(x=d3sparsex, y=d3sparsey, mode="markers", name='D3 stopped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
 
     d4sparsex = [defenders_x[3][-1]]
     d4sparsey = [defenders_y[3][-1]]
     # d4sparsex.append(defenders_x[3][-1])
     # d4sparsey.append(defenders_y[3][-1])
-    fig.add_trace(go.Scatter(x=d4sparsex, y=d4sparsey, mode="markers", name='D4 stoped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
+    fig.add_trace(go.Scatter(x=d4sparsex, y=d4sparsey, mode="markers", name='D4 stopped', marker=dict(symbol="square-open", size=8, color='blue'))) # symbol="star"
 
     # figure settings
     fig.update_layout(autosize=False, width=498, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0), 
