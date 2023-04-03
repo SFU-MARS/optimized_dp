@@ -121,8 +121,8 @@ V_0 = TTRSolver(my_car, g, targetSet, epsilon, po)
 * Shapes/ShapesFunctions.py : Add-in functions for initializing different shapes/intial value functions
 * computeGraphs/CustomGraphFunctions.py: Ready-to-user HeteroCL style utility functions
 
-### Citation (Bibtex)  
-Please cite our paper if you use the toolbox in your research:
+### Paper and Citation (Bibtex)  
+Please cite our paper (https://arxiv.org/abs/2204.05520) if you use the toolbox in your research:
 ```
 @misc{https://doi.org/10.48550/arxiv.2204.05520,
   doi = {10.48550/ARXIV.2204.05520},
