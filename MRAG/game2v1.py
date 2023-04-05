@@ -75,7 +75,7 @@ for _ in range(0, times):
     # print(f"The attackers in the {_} step are at {current_attackers} \n")
     # print(f"The defenders in the {_} step are at {current_defenders} \n")
 
-    # MIP problem
+    # MIP Optimization
     Ic = capture_individual2(current_attackers, current_defenders, v1v1, stops_index)
     Pc, value_list = capture_pair(current_attackers, current_defenders, v2v1)
     selected = mip_solver(num_attacker, num_defender, Pc, Ic)
