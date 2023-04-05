@@ -7,7 +7,7 @@ from MRAG.AttackerDefender1v1 import AttackerDefender1v1
 from MRAG.AttackerDefender2v1 import AttackerDefender2v1
 from odp.Plots.plotting_utilities import *
 
-# This debug for not loading spatial derivatives array before the game
+
 # Simulation 1: 2 attackers with 1 defenders
 # preparations
 print("Preparing for the simulaiton... \n")
@@ -72,8 +72,6 @@ attackers_status_logs.append(attackers_status)
 print("The simulation starts: \n")
 # simulation starts
 for _ in range(0, times):
-    # print(f"The attackers in the {_} step are at {current_attackers} \n")
-    # print(f"The defenders in the {_} step are at {current_defenders} \n")
 
     # MIP Optimization
     Ic = capture_individual2(current_attackers, current_defenders, v1v1, stops_index)
@@ -99,14 +97,14 @@ for _ in range(0, times):
             a1x, a1y = current_attackers[attacker_index]
             joint_states1v1 = (a1x, a1y, d1x, d1y) 
             control_defenders.append((0.0, 0.0))  # defender_control1v1_1slice(agents_1v1, grid1v1, value1v1, tau1v1, joint_states1v1)
-    # print(f'The control in the {_} step of defenders are {control_defenders} \n')
+
     # update the next postions of defenders
     newd_positions = next_positions(current_defenders, control_defenders, deltat)  # , selected, current_captured
     current_defenders = newd_positions
     
     # calculate the current controls of attackers
     control_attackers = attackers_control(agents_1v0, grid1v0, value1v0, tau1v0, current_attackers)
-    # print(f'The control in the {_} step of attackers are {control_attackers} \n')
+
     # update the next postions of attackers
     newa_positions = next_positions_a2(current_attackers, control_attackers, deltat, stops_index)  # , current_captured
     current_attackers = newa_positions
