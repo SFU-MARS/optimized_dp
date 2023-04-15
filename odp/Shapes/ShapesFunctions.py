@@ -40,12 +40,14 @@ def CylinderShape(grid, ignore_dims, center, radius):
 #     return data
 
 def ShapeRectangle(grid, target_min, target_max):
-    data = np.maximum(grid.vs[0] - target_max[0], -grid.vs[0] + target_min[0])  # can I use np.zeros(grid.pts_each_dim)
+    data = np.maximum(grid.vs[0] - target_max[0], -grid.vs[0] + target_min[0])  
 
     for i in range(grid.dims):
         data = np.maximum(data,  grid.vs[i] - target_max[i])
         data = np.maximum(data, -grid.vs[i] + target_min[i])
 
+    # data = np.float32(data) # in the hjvalue2v1, the cache is too much with np.float32, don't forget
+    # print(f'In shape is {data.dtype}')
     return data
 
 def ShapeRectangle1(grid, target_min, target_max, ignore_dims):
