@@ -52,8 +52,15 @@ def solveValueIteration(MDP_obj):
     # Now use the executable
     t_s = time.time()
     if MDP_obj._bounds.shape[0] == 3:
-        f(V_opt, actions, intermeds, trans, interpV, gamma, epsilon, iVals, sVals, bounds, goal, ptsEachDim, count,
-            maxIters, useNN, fillVal)
+        iter = 0
+        resweep = 1
+        while iter < MDP_obj._maxIters and resweep == 1:
+            reSweep = hcl.asarray(np.zeros([1]))
+            print("Currently at iteration {}".format(iter))
+            f(V_opt, actions, intermeds, trans, interpV, gamma, epsilon, reSweep, iVals, sVals, bounds, goal, ptsEachDim, count,
+                maxIters, useNN, fillVal)
+            iter += 1
+            resweep = reSweep.asnumpy()[0]
     else:
         f(V_opt, actions, intermeds, trans, interpV, gamma, epsilon, iVals, sVals, bounds, goal, ptsEachDim, count,
           maxIters, useNN)
