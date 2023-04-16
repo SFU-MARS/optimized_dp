@@ -32,6 +32,10 @@ class Grid:
         self.vs[i] is reshape into (1,1, ... , pts_each_dim[i], ..., 1) such that pts_each_dim[i] is used in ith position
         """
         self.vs = []
+        """
+        self.grid_points is same as self.vs; however, it is not reshaped. 
+        self.grid_points[i] is a numpy array with length pts_each_dim[i] 
+        """
         self.grid_points = []
         for i in range(dims):
             tmp = np.linspace(self.min[i], self.max[i],

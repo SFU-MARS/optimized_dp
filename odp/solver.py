@@ -335,3 +335,27 @@ def TTRSolver(dynamics_obj, grid, init_value, epsilon, plot_option):
     plot_isosurface(grid, V_0.asnumpy(), plot_option)
     return V_0.asnumpy()
 
+def computeSpatDerivArray(grid, V, deriv_dim, accuracy="low"):
+    # Return a tensor same size as V that contains spatial derivatives at every state in V
+    hcl.init()
+    hcl.config.init_dtype = hcl.Float(32)
+
+    # Need to make sure that value array has the same size as grid
+    assert list(V.shape) == list(grid.pts_each_dim)
+
+    V_0 = hcl.asarray(V)
+    spatial_deriv = hcl.asarray(np.zeros(tuple(grid.pts_each_dim)))
+
+    # Get executable, obstacle check intial value function
+    if grid.dims == 3:
+        compute_SpatDeriv = graph_3D(None, grid, "None", accuracy,
+                                     generate_SpatDeriv=True, deriv_dim=deriv_dim)
+    if grid.dims == 4:
+        compute_SpatDeriv = graph_4D(None, grid, "None", accuracy,
+                                     generate_SpatDeriv=True, deriv_dim=deriv_dim)
+    if grid.dims == 5:
+        compute_SpatDeriv = graph_5D(None, grid, "None", accuracy,
+                                     generate_SpatDeriv=True, deriv_dim=deriv_dim)
+
+    compute_SpatDeriv(V_0, spatial_deriv)
+    return spatial_deriv.asnumpy()

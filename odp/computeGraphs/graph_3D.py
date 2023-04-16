@@ -6,7 +6,7 @@ from odp.spatialDerivatives.second_orderENO3D import *
 
 #from user_definer import *
 #def graph_3D(dynamics_obj, grid):
-def graph_3D(my_object, g, compMethod, accuracy):
+def graph_3D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv_dim=1):
     V_f = hcl.placeholder(tuple(g.pts_each_dim), name="V_f", dtype=hcl.Float())
     V_init = hcl.placeholder(tuple(g.pts_each_dim), name="V_init", dtype=hcl.Float())
     l0 = hcl.placeholder(tuple(g.pts_each_dim), name="l0", dtype=hcl.Float())
@@ -251,7 +251,7 @@ def graph_3D(my_object, g, compMethod, accuracy):
                         diss = hcl.scalar(0, "diss")
                         diss[0] = 0.5 * (
                                 deriv_diff1[i, j, k] * alpha1[0] + deriv_diff2[i, j, k] * alpha2[0] + deriv_diff3[i, j, k] * alpha3[0])
-                        
+
                         # Finally
                         V_new[i, j, k] = -(V_new[i, j, k] - diss[0])
 
@@ -284,17 +284,45 @@ def graph_3D(my_object, g, compMethod, accuracy):
         hcl.update(V_init, lambda i, j, k: V_new[i, j, k])
         return result
 
-    s = hcl.create_schedule([V_f, V_init, x1, x2, x3, t, l0], graph_create)
-    ##################### CODE OPTIMIZATION HERE ###########################
-    print("Optimizing\n")
+    def returnDerivative(V_array, Deriv_array):
+        with hcl.Stage("ComputeDeriv"):
+            with hcl.for_(0, V_array.shape[0], name="i") as i:
+                with hcl.for_(0, V_array.shape[1], name="j") as j:
+                    with hcl.for_(0, V_array.shape[2], name="k") as k:
+                        dV_dx_L = hcl.scalar(0, "dV_dx_L")
+                        dV_dx_R = hcl.scalar(0, "dV_dx_R")
+                        if accuracy == "low":
+                            if deriv_dim == 1:
+                                dV_dx_L[0], dV_dx_R[0] = spa_derivX(i, j, k, V_array, g)
+                            if deriv_dim == 2:
+                                dV_dx_L[0], dV_dx_R[0] = spa_derivY(i, j, k, V_array, g)
+                            if deriv_dim == 3:
+                                dV_dx_L[0], dV_dx_R[0] = spa_derivT(i, j, k, V_array, g)
+                        if accuracy == "medium":
+                            if deriv_dim == 1:
+                                dV_dx_L[0], dV_dx_R[0] = secondOrderX(i, j, k, V_array, g)
+                            if deriv_dim == 2:
+                                dV_dx_L[0], dV_dx_R[0] = secondOrderY(i, j, k, V_array, g)
+                            if deriv_dim == 3:
+                                dV_dx_L[0], dV_dx_R[0] = secondOrderT(i, j, k, V_array, g)
 
-    # Accessing the hamiltonian and dissipation stage
-    s_H = graph_create.Hamiltonian
-    s_D = graph_create.Dissipation
+                        Deriv_array[i, j, k] = (dV_dx_L[0] + dV_dx_R[0]) / 2
 
-    # Thread parallelize hamiltonian and dissipation computation
-    s[s_H].parallel(s_H.i)
-    s[s_D].parallel(s_D.i)
+    if generate_SpatDeriv == False:
+        s = hcl.create_schedule([V_f, V_init, x1, x2, x3, t, l0], graph_create)
+        ##################### CODE OPTIMIZATION HERE ###########################
+        print("Optimizing\n")
+
+        # Accessing the hamiltonian and dissipation stage
+        s_H = graph_create.Hamiltonian
+        s_D = graph_create.Dissipation
+
+        # Thread parallelize hamiltonian and dissipation computation
+        s[s_H].parallel(s_H.i)
+        s[s_D].parallel(s_D.i)
+    else:
+        print("I'm here\n")
+        s = hcl.create_schedule([V_init, V_f], returnDerivative)
 
     # Inspect IR
     # if args.llvm:
@@ -302,4 +330,3 @@ def graph_3D(my_object, g, compMethod, accuracy):
 
     # Return executable
     return (hcl.build(s))
-    
