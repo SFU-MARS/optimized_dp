@@ -4,7 +4,7 @@ from odp.computeGraphs.graph_4D import *
 
 
 # Update the phi function at position (i,j,k)
-def updatePhi(i, j, k, l, my_object, phi, g, x1, x2, x3, x4, debugger):
+def updatePhi(i, j, k, l, my_object, phi, g, x1, x2, x3, x4):
     dV_dx1_L = hcl.scalar(0, "dV_dx1_L")
     dV_dx1_R = hcl.scalar(0, "dV_dx1_R")
     dV_dx1 = hcl.scalar(0, "dV_dx1")
@@ -39,7 +39,8 @@ def updatePhi(i, j, k, l, my_object, phi, g, x1, x2, x3, x4, debugger):
     uOpt = my_object.opt_ctrl(0, (x1[i], x2[j], x3[k], x4[l]),
                               (dV_dx1[0], dV_dx2[0], dV_dx3[0], dV_dx4[0]))
     # Find optimal disturbance
-    dOpt = my_object.opt_dstb((dV_dx1[0], dV_dx2[0], dV_dx3[0], dV_dx4[0]))
+    dOpt = my_object.opt_dstb(0, (x1[i], x2[j], x3[k], x4[l]),
+                              (dV_dx1[0], dV_dx2[0], dV_dx3[0], dV_dx4[0]))
 
     # Find rates of changes based on dynamics equation
     dx1_dt, dx2_dt, dx3_dt, dx4_dt = my_object.dynamics(0, (x1[i], x2[j], x3[k], x4[l]), uOpt, dOpt)
@@ -69,15 +70,15 @@ def updatePhi(i, j, k, l, my_object, phi, g, x1, x2, x3, x4, debugger):
 
     # New phi
     phiNew[0] = (-H[0] + diss1[0] + diss2[0] + diss3[0] + diss4[0]) / c[0]
-    debugger[i, j, k, l] = phiNew[0]
+    # debugger[i, j, k, l] = phiNew[0]
     phi[i, j, k, l] = my_min(phi[i, j, k, l], phiNew[0])
 
-def EvalBoundary(phi, g, debug2):
+def EvalBoundary(phi, g):
     if 0 not in g.pDim:
         with hcl.for_(0, phi.shape[1], name="j") as j:
             with hcl.for_(0, phi.shape[2], name="k") as k:
                 with hcl.for_(0, phi.shape[3], name="l") as l:
-                    debug2[0] = j
+                    # debug2[0] = j
                     tmp1 = hcl.scalar(0, "tmp1")
                     tmp1[0] = 2 * phi[1, j, k, l] - phi[2, j, k, l]
                     tmp1[0] = my_max(tmp1[0], phi[2, j, k, l])
@@ -89,53 +90,53 @@ def EvalBoundary(phi, g, debug2):
                     phi[phi.shape[0] - 1, j, k, l] = my_min(tmp2[0], phi[phi.shape[0] - 1, j, k, l])
 
     if 1 not in g.pDim:
-        with hcl.for_(0, phi.shape[0], name="i") as i2:
+        with hcl.for_(0, phi.shape[0], name="i3") as i3:
             with hcl.for_(0, phi.shape[2], name="k") as k:
                 with hcl.for_(0, phi.shape[3], name="l") as l:
                     tmp1 = hcl.scalar(0, "tmp1")
-                    tmp1[0] = 2 * phi[i2, 1, k, l] - phi[i2, 2, k, l]
-                    tmp1[0] = my_max(tmp1[0], phi[i2, 2, k, l ])
-                    phi[i2, 0, k, l] = my_min(tmp1[0], phi[i2, 0, k, l])
+                    tmp1[0] = 2 * phi[i3, 1, k, l] - phi[i3, 2, k, l]
+                    tmp1[0] = my_max(tmp1[0], phi[i3, 2, k, l ])
+                    phi[i3, 0, k, l] = my_min(tmp1[0], phi[i3, 0, k, l])
 
                     tmp2 = hcl.scalar(0, "tmp2")
-                    tmp2[0] = 2 * phi[i2, phi.shape[1] - 2, k, l] - phi[i2, phi.shape[1] - 3, k, l]
-                    tmp2[0] = my_max(tmp2[0], phi[i2, phi.shape[1] - 3, k, l])
-                    phi[i2, phi.shape[1] - 1, k, l] = my_min(tmp2[0], phi[i2, phi.shape[1] - 1, k, l])
+                    tmp2[0] = 2 * phi[i3, phi.shape[1] - 2, k, l] - phi[i3, phi.shape[1] - 3, k, l]
+                    tmp2[0] = my_max(tmp2[0], phi[i3, phi.shape[1] - 3, k, l])
+                    phi[i3, phi.shape[1] - 1, k, l] = my_min(tmp2[0], phi[i3, phi.shape[1] - 1, k, l])
 
     if 2 not in g.pDim:
-        with hcl.for_(0, phi.shape[0], name="i") as i2:
+        with hcl.for_(0, phi.shape[0], name="i3") as i3:
             with hcl.for_(0, phi.shape[1], name="j") as j:
                 with hcl.for_(0, phi.shape[3], name="l") as l:
                     tmp1 = hcl.scalar(0, "tmp1")
-                    tmp1[0] = 2 * phi[i2, j, 1, l] - phi[i2, j, 2, l]
-                    tmp1[0] = my_max(tmp1[0], phi[i2, j, 2, l])
-                    phi[i2, j, 0, l] = my_min(tmp1[0], phi[i2, j, 0, l])
+                    tmp1[0] = 2 * phi[i3, j, 1, l] - phi[i3, j, 2, l]
+                    tmp1[0] = my_max(tmp1[0], phi[i3, j, 2, l])
+                    phi[i3, j, 0, l] = my_min(tmp1[0], phi[i3, j, 0, l])
 
                     tmp2 = hcl.scalar(0, "tmp2")
-                    tmp2[0] = 2 * phi[i2, j, phi.shape[2] - 2, l] - phi[i2, j, phi.shape[2] - 3, l]
-                    tmp2[0] = my_max(tmp2[0], phi[i2, j, phi.shape[2] - 3, l])
-                    phi[i2, j, phi.shape[2] - 1, l] = my_min(tmp2[0], phi[i2, j, phi.shape[2] - 1, l])
+                    tmp2[0] = 2 * phi[i3, j, phi.shape[2] - 2, l] - phi[i3, j, phi.shape[2] - 3, l]
+                    tmp2[0] = my_max(tmp2[0], phi[i3, j, phi.shape[2] - 3, l])
+                    phi[i3, j, phi.shape[2] - 1, l] = my_min(tmp2[0], phi[i3, j, phi.shape[2] - 1, l])
 
     if 3 not in g.pDim:
-        with hcl.for_(0, phi.shape[0], name="i") as i2:
+        with hcl.for_(0, phi.shape[0], name="i3") as i3:
             with hcl.for_(0, phi.shape[1], name="j") as j:
                 with hcl.for_(0, phi.shape[2], name="k") as k:
                     tmp1 = hcl.scalar(0, "tmp1")
-                    tmp1[0] = 2 * phi[i2, j, k, 1] - phi[i2, j, k, 2]
-                    tmp1[0] = my_max(tmp1[0], phi[i2, j, k, 2])
-                    phi[i2, j, k, 0] = my_min(tmp1[0], phi[i2, j, k, 0])
+                    tmp1[0] = 2 * phi[i3, j, k, 1] - phi[i3, j, k, 2]
+                    tmp1[0] = my_max(tmp1[0], phi[i3, j, k, 2])
+                    phi[i3, j, k, 0] = my_min(tmp1[0], phi[i3, j, k, 0])
 
                     tmp2 = hcl.scalar(0, "tmp2")
-                    tmp2[0] = 2 * phi[i2, j, k, phi.shape[2] - 2] - phi[i2, j, k, phi.shape[2] - 3]
-                    tmp2[0] = my_max(tmp2[0], phi[i2, j, k, phi.shape[2] - 3])
-                    phi[i2, j, k, phi.shape[2] - 1] = my_min(tmp2[0], phi[i2, j, k, phi.shape[2] - 1])
+                    tmp2[0] = 2 * phi[i3, j, k, phi.shape[2] - 2] - phi[i3, j, k, phi.shape[2] - 3]
+                    tmp2[0] = my_max(tmp2[0], phi[i3, j, k, phi.shape[2] - 3])
+                    phi[i3, j, k, phi.shape[2] - 1] = my_min(tmp2[0], phi[i3, j, k, phi.shape[2] - 1])
 
 
 
 ######################################### VALUE ITERATION ##########################################
 
 def TTR_4D(my_object, g):
-    def solve_phiNew(phi, x1, x2, x3, x4, debugger, debug2):
+    def solve_phiNew(phi, x1, x2, x3, x4):
             l_i = 0 if 0 in g.pDim else 1
             h_i = phi.shape[0] if 0 in g.pDim else phi.shape[0] - 1
             l_j = 0 if 1 in g.pDim else 1
@@ -150,8 +151,8 @@ def TTR_4D(my_object, g):
                     with hcl.for_(l_j, h_j, name="j") as j:
                         with hcl.for_(l_k, h_k, name="k") as k:
                             with hcl.for_(l_l, h_l, name="l") as l:
-                                updatePhi(i, j, k, l, my_object, phi, g, x1, x2, x3, x4, debugger)
-                EvalBoundary(phi, g, debug2)
+                                updatePhi(i, j, k, l, my_object, phi, g, x1, x2, x3, x4)
+                EvalBoundary(phi, g)
 
             # Perform value iteration by sweeping in direction 2
             with hcl.Stage("Sweep_2"):
@@ -162,8 +163,8 @@ def TTR_4D(my_object, g):
                                 i2 = phi.shape[0] - i - 1
                                 j2 = phi.shape[1] - j - 1
                                 k2 = phi.shape[2] - k - 1
-                                updatePhi(i2, j2, k2, l, my_object, phi, g, x1, x2, x3, x4, debugger)
-                EvalBoundary(phi, g, debug2)
+                                updatePhi(i2, j2, k2, l, my_object, phi, g, x1, x2, x3, x4)
+                EvalBoundary(phi, g)
 
             # Perform value iteration by sweeping in direction 3
             with hcl.Stage("Sweep_3"):
@@ -173,8 +174,8 @@ def TTR_4D(my_object, g):
                             with hcl.for_(l_l, h_l, name="l") as l:
                                 j2 = phi.shape[1] - j - 1
                                 k2 = phi.shape[2] - k - 1
-                                updatePhi(i, j2, k2, l, my_object, phi, g, x1, x2, x3, x4, debugger)
-                EvalBoundary(phi, g, debug2)
+                                updatePhi(i, j2, k2, l, my_object, phi, g, x1, x2, x3, x4)
+                EvalBoundary(phi, g)
 
             # Perform value iteration by sweeping in direction 4
             with hcl.Stage("Sweep_4"):
@@ -184,8 +185,8 @@ def TTR_4D(my_object, g):
                             with hcl.for_(l_l, h_l, name="l") as l:
                                 i2 = phi.shape[0] - i - 1
                                 j2 = phi.shape[1] - j - 1
-                                updatePhi(i2, j2, k, l, my_object, phi, g, x1, x2, x3, x4, debugger)
-                EvalBoundary(phi, g, debug2)
+                                updatePhi(i2, j2, k, l, my_object, phi, g, x1, x2, x3, x4)
+                EvalBoundary(phi, g)
 
             # Perform value iteration by sweeping in direction 5
             with hcl.Stage("Sweep_5"):
@@ -195,8 +196,8 @@ def TTR_4D(my_object, g):
                             with hcl.for_(l_l, h_l, name="l") as l:
                                 i2 = phi.shape[0] - i - 1
                                 l2 = phi.shape[3] - l - 1
-                                updatePhi(i2, j, k, l2, my_object, phi, g, x1, x2, x3, x4, debugger)
-                EvalBoundary(phi, g, debug2)
+                                updatePhi(i2, j, k, l2, my_object, phi, g, x1, x2, x3, x4)
+                EvalBoundary(phi, g)
 
             # Perform value iteration by sweeping in direction 6
             with hcl.Stage("Sweep_6"):
@@ -206,8 +207,8 @@ def TTR_4D(my_object, g):
                             with hcl.for_(l_l, h_l, name="l") as l:
                                 j2 = phi.shape[1] - j - 1
                                 l2 = phi.shape[3] - l - 1
-                                updatePhi(i, j2, k, l2, my_object, phi, g, x1, x2, x3, x4, debugger)
-                EvalBoundary(phi, g, debug2)
+                                updatePhi(i, j2, k, l2, my_object, phi, g, x1, x2, x3, x4)
+                EvalBoundary(phi, g)
 
             # Perform value iteration by sweeping in direction 7
             with hcl.Stage("Sweep_7"):
@@ -217,8 +218,8 @@ def TTR_4D(my_object, g):
                             with hcl.for_(l_l, h_l, name="l") as l:
                                 k2 = phi.shape[2] - k - 1
                                 l2 = phi.shape[3] - l - 1
-                                updatePhi(i, j, k2, l2, my_object, phi, g, x1, x2, x3, x4, debugger)
-                EvalBoundary(phi, g, debug2)
+                                updatePhi(i, j, k2, l2, my_object, phi, g, x1, x2, x3, x4)
+                EvalBoundary(phi, g)
 
             # Perform value iteration by sweeping in direction 8
             with hcl.Stage("Sweep_8"):
@@ -230,8 +231,8 @@ def TTR_4D(my_object, g):
                                 j2 = phi.shape[1] - j - 1
                                 k2 = phi.shape[2] - k - 1
                                 l2 = phi.shape[3] - l - 1
-                                updatePhi(i2, j2, k2, l2, my_object, phi, g, x1, x2, x3, x4, debugger)
-                EvalBoundary(phi, g, debug2)
+                                updatePhi(i2, j2, k2, l2, my_object, phi, g, x1, x2, x3, x4)
+                EvalBoundary(phi, g)
 
 
     ###################################### SETUP PLACEHOLDERS ######################################
@@ -242,12 +243,13 @@ def TTR_4D(my_object, g):
     x3 = hcl.placeholder((g.pts_each_dim[2],), name="x3", dtype=hcl.Float())
     x4 = hcl.placeholder((g.pts_each_dim[3],), name="x4", dtype=hcl.Float())
     phi = hcl.placeholder(tuple(g.pts_each_dim), name="phi", dtype=hcl.Float())
-    debugger = hcl.placeholder(tuple(g.pts_each_dim), name="debugger", dtype=hcl.Float())
-    debug2 = hcl.placeholder((0,), "debug2")
+    # debugger = hcl.placeholder(tuple(g.pts_each_dim), name="debugger", dtype=hcl.Float())
+    # debug2 = hcl.placeholder((0,), "debug2")
 
     # Create a static schedule -- graph
-    s = hcl.create_schedule([phi, x1, x2, x3, x4, debugger, debug2], solve_phiNew)
+    # s = hcl.create_schedule([phi, x1, x2, x3, x4, debugger, debug2], solve_phiNew)
 
+    s = hcl.create_schedule([phi, x1, x2, x3, x4], solve_phiNew)
     sweep_1 = solve_phiNew.Sweep_1
     sweep_2 = solve_phiNew.Sweep_2
     sweep_3 = solve_phiNew.Sweep_3
@@ -257,14 +259,14 @@ def TTR_4D(my_object, g):
     sweep_7 = solve_phiNew.Sweep_7
     sweep_8 = solve_phiNew.Sweep_8
 
-    s[sweep_1].parallel(sweep_1.i)
-    s[sweep_2].parallel(sweep_2.i)
-    s[sweep_3].parallel(sweep_3.i)
-    s[sweep_4].parallel(sweep_4.i)
-    s[sweep_5].parallel(sweep_5.i)
-    s[sweep_6].parallel(sweep_6.i)
-    s[sweep_7].parallel(sweep_7.i)
-    s[sweep_8].parallel(sweep_8.i)
+    # s[sweep_1].parallel(sweep_1.i)
+    # s[sweep_2].parallel(sweep_2.i)
+    # s[sweep_3].parallel(sweep_3.i)
+    # s[sweep_4].parallel(sweep_4.i)
+    # s[sweep_5].parallel(sweep_5.i)
+    # s[sweep_6].parallel(sweep_6.i)
+    # s[sweep_7].parallel(sweep_7.i)
+    # s[sweep_8].parallel(sweep_8.i)
 
     # Build an executable and return
     return hcl.build(s)
