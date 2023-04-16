@@ -121,6 +121,21 @@ V_0 = TTRSolver(my_car, g, targetSet, epsilon, po)
 * Shapes/ShapesFunctions.py : Add-in functions for initializing different shapes/intial value functions
 * computeGraphs/CustomGraphFunctions.py: Ready-to-user HeteroCL style utility functions
 
+### Paper and Citation (Bibtex)  
+Please cite our paper (https://arxiv.org/abs/2204.05520) if you use the toolbox in your research:
+```
+@misc{https://doi.org/10.48550/arxiv.2204.05520,
+  doi = {10.48550/ARXIV.2204.05520},
+  url = {https://arxiv.org/abs/2204.05520},
+  author = {Bui, Minh and Giovanis, George and Chen, Mo and Shriraman, Arrvindh},
+  keywords = {Systems and Control (eess.SY), FOS: Electrical engineering, electronic engineering, information engineering, FOS: Electrical engineering, electronic engineering, information engineering},
+  title = {OptimizedDP: An Efficient, User-friendly Library For Optimal Control and Dynamic Programming},
+  publisher = {arXiv},
+  year = {2022}, 
+  copyright = {Creative Commons Attribution 4.0 International}
+}
+```  
+
 
 # Related Projects
 ### MATLAB
