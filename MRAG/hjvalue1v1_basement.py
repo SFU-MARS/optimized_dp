@@ -21,7 +21,7 @@ import math
 
 ##################################################### EXAMPLE 4 1v1AttackerDefender ####################################
 
-grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([45, 45, 45, 45]))
+grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([30, 30, 30, 30])) # [45, 45, 45, 45], [30, 30, 30, 30]
 
 # Define my object dynamics
 agents_1v1 = AttackerDefender1v1(uMode="min", dMode="max")  # 1v1 (4 dims dynamics)
@@ -58,5 +58,5 @@ result = HJSolver(agents_1v1, grids, [reach_set, avoid_set], tau, compMethods, p
 
 print(f'The shape of the value function is {result.shape} \n')
 # save the value function
-np.save('/localhome/hha160/optimized_dp/MRAG/1v1AttackDefend_speed15.npy', result)  # grid = 45
-# np.save('1v1AttackDefend_g30_speed15.npy', result)  # grid = 30
+# np.save('/localhome/hha160/optimized_dp/MRAG/1v1AttackDefend_speed15.npy', result)  # grid = 45
+np.save('1v1AttackDefend_g30_speed15.npy', result)  # grid = 30
