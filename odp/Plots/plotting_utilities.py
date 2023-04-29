@@ -13,10 +13,11 @@ def plot_isosurface(grid, V, plot_option):
             idx[i] = plot_option.slices[slice_idx]
             slice_idx += 1
 
-
-    if len(dims_plot) != 3:
+    if len(dims_plot) != 3 and len(dims_plot) != 2:
         raise Exception('dims_plot length should be equal to 3\n')
-    else:
+
+    if len(dims_plot) == 3:
+        # Plot 3D isosurface
         dim1, dim2, dim3 = dims_plot[0], dims_plot[1], dims_plot[2]
         complex_x = complex(0, grid.pts_each_dim[dim1])
         complex_y = complex(0, grid.pts_each_dim[dim2])
@@ -26,8 +27,11 @@ def plot_isosurface(grid, V, plot_option):
 
         my_V = V[tuple(idx)]
 
-        if (V > 0.0).all() or (V < 0.0).all():
-            print("Implicit surface will not be shown since all values have the same sign ")
+        if (my_V > 0.0).all():
+            print("Implicit surface will not be shown since all values are positive ")
+        if (my_V < 0.0).all():
+            print("Implicit surface will not be shown since all values are negative ")
+
         print("Plotting beautiful plots. Please wait\n")
         fig = go.Figure(data=go.Isosurface(
             x=mg_X.flatten(),
@@ -40,5 +44,35 @@ def plot_isosurface(grid, V, plot_option):
             isomax=plot_option.max_isosurface,
             caps=dict(x_show=True, y_show=True)
         ))
+        fig.show()
+        print("Please check the plot on your browser.")
+
+    if len(dims_plot) == 2:
+        dim1, dim2 = dims_plot[0], dims_plot[1]
+        complex_x = complex(0, grid.pts_each_dim[dim1])
+        complex_y = complex(0, grid.pts_each_dim[dim2])
+        mg_X, mg_Y = np.mgrid[grid.min[dim1]:grid.max[dim1]: complex_x, grid.min[dim2]:grid.max[dim2]: complex_y]
+
+        my_V = V[tuple(idx)]
+
+        if (my_V > 0.0).all():
+            print("Implicit surface will not be shown since all values are positive ")
+        if (my_V < 0.0).all():
+            print("Implicit surface will not be shown since all values are negative ")
+
+        print("Plotting beautiful 2D plots. Please wait\n")
+        fig = go.Figure(data=go.Contour(
+            x=mg_X.flatten(),
+            y=mg_Y.flatten(),
+            z=my_V.flatten(),
+            zmin=0.0,
+            ncontours=1,
+            contours_coloring='none',  # former: lines
+            name="Reachable Set",  # zero level
+            line_width=1.5,
+            line_color='magenta',
+            zmax=0.0,
+        ), layout=go.Layout(plot_bgcolor='rgba(0,0,0,0)'))  # ,paper_bgcolor='rgba(0,0,0,0)'
+
         fig.show()
         print("Please check the plot on your browser.")
