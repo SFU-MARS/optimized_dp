@@ -1,12 +1,12 @@
 from odp.Grid.GridProcessing import Grid
 # from first_order_generic import spa_deriv
-from MRAG.update_state import next_state, update_state
+from update_state import next_state, update_state
 import numpy as np
-from MRAG.find_tEarlist import find_sign_change
+from find_tEarlist import find_sign_change
 
 def compute_opt_traj1v0(grid, V, tau, dynamics, x1_1v0, x2_1v0, subsamples=1):
     """
-    Computes the optimal trajectory, controls and disturbance to a minimal BRT/BRS, 这个函数是和dynamics是有关系的
+    Computes the optimal trajectory, controls and disturbance to a minimal BRT/BRS based on the dynamics
 
     Args:
         the flip
@@ -25,15 +25,12 @@ def compute_opt_traj1v0(grid, V, tau, dynamics, x1_1v0, x2_1v0, subsamples=1):
     """
     assert V.shape[-1] == len(tau)
 
-    dt = (tau[1] - tau[0]) / subsamples  # subsamples ? 师兄建议为1
+    dt = (tau[1] - tau[0]) / subsamples  # the subsample is recommended to be 1
 
     # first entry is dyn_sys at time tau[-1]
     # second entry is dyn_sys at time tau[-2]...
     traj = np.empty((V.shape[-1], len(dynamics.x)))  # traj.shape = [len(tau), dim]
     traj[0] = dynamics.x
-
-    # flip the value with respect to the index
-    # V = np.flip(V, grid.dims) # 这里不用flip, V[.., 0] 就是Reach Avoid Set
 
     opt_u = []
     opt_d = []
@@ -49,13 +46,13 @@ def compute_opt_traj1v0(grid, V, tau, dynamics, x1_1v0, x2_1v0, subsamples=1):
         V = V - valueAtX
     
     # the traj should start asap since we trust the FRAT timebound
-    negToPos, posToNeg = find_sign_change(grid, V, dynamics.x)  # negToPos 意味着 这个位置一开始在RAS里，但是下个step就不在了，这里会很慢
+    negToPos, posToNeg = find_sign_change(grid, V, dynamics.x) 
     print("negToPos is {}".format(negToPos))
     t_earliest = negToPos  # to unify variable names
 
     for iter in range(0,len(tau)):
         if iter < t_earliest:
-            traj[iter] = np.array(dynamics.x)  # 在edge之前，agent不用动
+            traj[iter] = np.array(dynamics.x)  # before reaches the edge, the agent keeps still
             t.append(tau[iter])
             t_earlist_log.append(t_earliest)
             v_log.append(grid.get_value(V[..., iter], dynamics.x))
