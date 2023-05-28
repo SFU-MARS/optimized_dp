@@ -84,7 +84,7 @@ def graph_6D(my_object, g, compMethod, accuracy):
                 V_new[i, j, k, l, m, n] = V_init[i, j, k, l, m, n]
 
         def maxVWithVInit(i, j, k, l, m, n):
-            with hcl.if_(V_new[i, j, k, l, m, n] > V_init[i, j, k, l, m, n]):
+            with hcl.if_(V_new[i, j, k, l, m, n] < V_init[i, j, k, l, m, n]):
                 V_new[i, j, k, l, m, n] = V_init[i, j, k, l, m, n]
 
         # Calculate Hamiltonian for every grid point in V_init
