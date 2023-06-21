@@ -24,7 +24,7 @@ def compute_control(dynamics, grids, values_all, tau, state):
     Args:
         dynamics: (instance): The instance of the given dynamics.
         grids (instance): The instance of the class Grid.
-        values (ndarray): The value function with all time slices, in the shape of [size, size, ..., len(tau)].
+        values_all (ndarray): The value function with all time slices, in the shape of [size, size, ..., len(tau)].
         tau (ndarray): All time indices.
         state (tuple): The current state.
     
@@ -121,3 +121,17 @@ def spa_deriv(indices, values, grids, periodic_dims=[]):
 
         spa_derivatives.append(((left_deriv + right_deriv) / 2)[0])
     return spa_derivatives
+
+def compute_opt_traj(dynamics, grids, values_all, tau, state):
+    """Computes the trajectory, optimal controls and disturbances to the BRT based on the dynamics
+
+    Args:
+
+    Returns:
+
+    """
+    # assert values_all.shape[-1] == len(tau)  
+    trajectory, controls, disturbances = [], [], []
+    initial_state = state
+
+    pass
