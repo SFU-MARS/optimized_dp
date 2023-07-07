@@ -86,7 +86,8 @@ def next_position(dynamics, current_state, u, d, tstep):
     Arg:
         dynamics (instance): The instance of the given dynamics.
         current_state (tuple): The current state of the agent.
-        controls (tuple): The current control inputs.
+        u (tuple): The current control inputs u.
+        d (tuple): The current disturbance inputs d.
         tstep (int): The time interval.
 
     Returns:
