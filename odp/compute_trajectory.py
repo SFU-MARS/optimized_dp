@@ -80,10 +80,11 @@ def spa_deriv(indices, values, grids, periodic_dims=[]):
     return spa_derivatives
 
 
-def next_position(current_state, controls, tstep):
-    """Updates the next position of the agent. This function should be consistent with the dynamics.
+def next_position(dynamics, current_state, u, d, tstep):
+    """Updates the next position of the agent.
 
     Arg:
+        dynamics (instance): The instance of the given dynamics.
         current_state (tuple): The current state of the agent.
         controls (tuple): The current control inputs.
         tstep (int): The time interval.
@@ -91,11 +92,8 @@ def next_position(current_state, controls, tstep):
     Returns:
         The new position.
     """
-    temp = []
-    dim = len(controls)
-    for i in range(dim):
-        temp.append(current_state[i]+controls[i]*tstep)
-    return tuple(temp)
+    next_state = dynamics.dynamics_python(tstep, current_state, u, d)
+    return next_state
 
 
 def compute_opt_traj(dynamics, grids, values_all, tau, state):
@@ -182,7 +180,7 @@ def compute_opt_traj(dynamics, grids, values_all, tau, state):
             opt_d.append(current_d)
 
             # apply the control and update the current_state
-            next_state = next_position(current_state, current_u, dt)
+            next_state = next_position(dynamics, current_state, current_u, current_d, dt)
             current_state = next_state
             t_earlist_log.append(t_earliest)
             v_log.append(grids.get_value(values_all[..., iter], current_state))
