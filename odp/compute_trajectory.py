@@ -93,7 +93,7 @@ def next_position(dynamics, current_state, u, d, tstep):
     Returns:
         The new position.
     """
-    next_state = dynamics.dynamics_python(tstep, current_state, u, d)
+    next_state = current_state + tstep * dynamics.dynamics_python(current_state, u, d)
     return next_state
 
 
