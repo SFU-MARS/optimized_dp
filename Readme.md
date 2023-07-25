@@ -1,5 +1,5 @@
 # Multi-Agent Reach-Avoid Games (MARAG)
-This repository contains the implementation of the paper "Multi-Agent Reach-Avoid Games: Two Attackers Versus One Defender and Mixed Integer Programming (2023 CDC under review)". This implementation is based on the [OptimizedDP library](https://github.com/SFU-MARS/optimized_dp) developed by the MARS lab, Simon Fraser University.
+This repository contains the implementation of the paper "Multi-Agent Reach-Avoid Games: Two Attackers Versus One Defender and Mixed Integer Programming (2023 CDC accepted)". This implementation is based on the [OptimizedDP library](https://github.com/SFU-MARS/optimized_dp) developed by the MARS lab, Simon Fraser University.
 
 # Details to Reimplement
 ## Step 1: Set Dynamics
