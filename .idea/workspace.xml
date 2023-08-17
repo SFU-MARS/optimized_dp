@@ -1,0 +1,516 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="0fe3ee31-0242-48cd-a423-11fc1744b9ff" name="Changes" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/odp/Plots/plotting_utilities.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/MRAG/plot_figures.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/odp/dynamics/AttackerDefender4D.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/MRAG/AD_Game.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/MRAG/utilities.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/MRAG/reachavoid4D.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/MRAG/MaximumMatching.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/MRAG/ValueFunction.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/odp/dynamics/DubinsCar4D2.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/examples/examples.py" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2Gv9UXuoaagXh8IVt79ITYABjQo" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../projects/E2C-pytorch" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/odp/dynamics" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Python.plot_figures">
+    <configuration name="AD_Game" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="optimized_dp" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/MRAG" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/MRAG/AD_Game.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="MaximumMatching" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="optimized_dp" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/MRAG" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/MRAG/MaximumMatching.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="ValueFunction" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="optimized_dp" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/MRAG" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/MRAG/ValueFunction.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="plot_figures" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="optimized_dp" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/MRAG" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/MRAG/plot_figures.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="utilities" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="optimized_dp" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/MRAG" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/MRAG/utilities.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.plot_figures" />
+        <item itemvalue="Python.ValueFunction" />
+        <item itemvalue="Python.AD_Game" />
+        <item itemvalue="Python.utilities" />
+        <item itemvalue="Python.MaximumMatching" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="0fe3ee31-0242-48cd-a423-11fc1744b9ff" name="Changes" comment="" />
+      <created>1667258206868</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1667258206868</updated>
+      <workItem from="1669157188702" duration="817000" />
+      <workItem from="1669194144191" duration="800000" />
+      <workItem from="1669411940631" duration="7604000" />
+    </task>
+    <task id="LOCAL-00001" summary="&quot;feat: write the setup file&quot;">
+      <created>1667345329464</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1667345329464</updated>
+    </task>
+    <task id="LOCAL-00002" summary="&quot;debug: revise the way to import the class&quot;">
+      <created>1667352182989</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1667352182989</updated>
+    </task>
+    <task id="LOCAL-00003" summary="&quot;debug: revise the dimension of the settings of reach set and obstacle set&quot;">
+      <created>1667426197050</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1667426197050</updated>
+    </task>
+    <task id="LOCAL-00004" summary="&quot;try: try different lookback time length and compare their results&quot;">
+      <created>1667426403441</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1667426403441</updated>
+    </task>
+    <task id="LOCAL-00005" summary="&quot;try: add some tricks to help understand the result&quot;">
+      <created>1667427038538</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1667427038538</updated>
+    </task>
+    <task id="LOCAL-00006" summary="&quot;try: try to plot 2D figure but failed, new function needs to be added&quot;">
+      <created>1667433619809</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1667433619809</updated>
+    </task>
+    <task id="LOCAL-00007" summary="&quot;revise: add 1 more obstacle and the union logic using np.min()&quot;">
+      <created>1667590147748</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1667590147748</updated>
+    </task>
+    <task id="LOCAL-00008" summary="&quot;revise: English grammar typo in the annotation&quot;">
+      <created>1667590674491</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1667590674491</updated>
+    </task>
+    <task id="LOCAL-00009" summary="&quot;revise: use Kyra's function capture_set&quot;">
+      <created>1667675645046</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1667675645046</updated>
+    </task>
+    <task id="LOCAL-00010" summary="&quot;revise: reconstruct the reach_set and avoid_set&quot;">
+      <created>1667777455276</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1667777455276</updated>
+    </task>
+    <task id="LOCAL-00011" summary="&quot;revise: start to add plot_2d&quot;">
+      <created>1667777814457</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1667777814457</updated>
+    </task>
+    <task id="LOCAL-00012" summary="&quot;revise: small alters on annotation&quot;">
+      <created>1667845015412</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1667845015413</updated>
+    </task>
+    <task id="LOCAL-00013" summary="&quot;revise: add the plot_2d function in plotting_utilities.py&quot;">
+      <created>1667847409111</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1667847409111</updated>
+    </task>
+    <task id="LOCAL-00014" summary="&quot;revise: revise the if elif else logic&quot;">
+      <created>1667848272468</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1667848272468</updated>
+    </task>
+    <task id="LOCAL-00015" summary="&quot;revise: change different lookback_length time&quot;">
+      <created>1667851565893</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1667851565893</updated>
+    </task>
+    <task id="LOCAL-00016" summary="&quot;revise: the results seem wrong and change the plot to check&quot;">
+      <created>1667855805415</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1667855805415</updated>
+    </task>
+    <task id="LOCAL-00017" summary="&quot;revise: add new plot_2d function because of the original plot2d logic doesn't work reasonably.&quot;">
+      <created>1668555082058</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1668555082058</updated>
+    </task>
+    <task id="LOCAL-00018" summary="&quot;revise: separate the plotting part here so that the ValueFunction doesn't need to run every time before plotting.&quot;">
+      <created>1668555148684</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1668555148685</updated>
+    </task>
+    <task id="LOCAL-00019" summary="&quot;revise: try different time horizon lookback_length.&quot;">
+      <created>1668555415627</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1668555415627</updated>
+    </task>
+    <task id="LOCAL-00020" summary="&quot;revise: add new file plot_figures.py for plotting results.&quot;">
+      <created>1668557409428</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1668557409429</updated>
+    </task>
+    <task id="LOCAL-00021" summary="&quot;revise: add the whole logic in this file.&quot;">
+      <created>1668557427827</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1668557427827</updated>
+    </task>
+    <task id="LOCAL-00022" summary="&quot;revise: check different time span 0.&quot;">
+      <created>1668645549475</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1668645549475</updated>
+    </task>
+    <task id="LOCAL-00023" summary="&quot;revise: alter the wrong comments&quot;">
+      <created>1668646570620</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1668646570620</updated>
+    </task>
+    <task id="LOCAL-00024" summary="&quot;revise: change different positions of the defender, but still something wrong.&quot;">
+      <created>1668648280938</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1668648280938</updated>
+    </task>
+    <task id="LOCAL-00025" summary="&quot;revise: change different positions of the defender, but still something wrong.&quot;">
+      <created>1668648595153</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1668648595153</updated>
+    </task>
+    <task id="LOCAL-00026" summary="&quot;revise: add the value function file.&quot;">
+      <created>1669146773218</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1669146773218</updated>
+    </task>
+    <task id="LOCAL-00027" summary="&quot;feat: the dynamics seem to be wrong so try different dynamics structures.&quot;">
+      <created>1669161363178</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1669161363178</updated>
+    </task>
+    <task id="LOCAL-00028" summary="&quot;feat: AttackDefender4D0.py is the former dynamics I designed; reachavoid4D.py is from Kyra.&quot;">
+      <created>1669161449940</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1669161449940</updated>
+    </task>
+    <task id="LOCAL-00029" summary="&quot;feat: add todo in ValueFunction.py about the dynamics.&quot;">
+      <created>1669161798285</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1669161798285</updated>
+    </task>
+    <task id="LOCAL-00030" summary="&quot;feat: alter some formats.&quot;">
+      <created>1669161874659</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1669161874659</updated>
+    </task>
+    <task id="LOCAL-00031" summary="&quot;feat: alter some formats.&quot;">
+      <created>1669161885790</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1669161885790</updated>
+    </task>
+    <task id="LOCAL-00032" summary="&quot;feat: alter some formats.&quot;">
+      <created>1669162760210</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1669162760210</updated>
+    </task>
+    <task id="LOCAL-00033" summary="&quot;feat: change the capture radius from 0.3 to 0.1.&quot;">
+      <created>1669194858001</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1669194858001</updated>
+    </task>
+    <task id="LOCAL-00034" summary="&quot;feat: change the dynamics.&quot;">
+      <created>1669239826288</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1669239826288</updated>
+    </task>
+    <task id="LOCAL-00035" summary="&quot;feat: add utilities.py to help to control.&quot;">
+      <created>1669243701883</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1669243701883</updated>
+    </task>
+    <task id="LOCAL-00036" summary="&quot;feat: some normal alters.&quot;">
+      <created>1669244495773</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1669244495773</updated>
+    </task>
+    <task id="LOCAL-00037" summary="&quot;feat: add one recording file.&quot;">
+      <created>1669245685207</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1669245685207</updated>
+    </task>
+    <task id="LOCAL-00038" summary="&quot;feat: try different lookback_length and chech the convergence of the value function.&quot;">
+      <created>1669251958372</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1669251958372</updated>
+    </task>
+    <task id="LOCAL-00039" summary="&quot;feat: try different debugs: no capture or only obs1 or only obs2, etc.&quot;">
+      <created>1669422993184</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1669422993184</updated>
+    </task>
+    <task id="LOCAL-00040" summary="&quot;feat: remain the original settings.&quot;">
+      <created>1669768401161</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1669768401161</updated>
+    </task>
+    <option name="localTasksCounter" value="41" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="&quot;revise: add the plot_2d function in plotting_utilities.py&quot;" />
+    <MESSAGE value="&quot;revise: revise the if elif else logic&quot;" />
+    <MESSAGE value="&quot;revise: change different lookback_length time&quot;" />
+    <MESSAGE value="&quot;revise: the results seem wrong and change the plot to check&quot;" />
+    <MESSAGE value="&quot;revise: add new plot_2d function because of the original plot2d logic doesn't work reasonably.&quot;" />
+    <MESSAGE value="&quot;revise: separate the plotting part here so that the ValueFunction doesn't need to run every time before plotting.&quot;" />
+    <MESSAGE value="&quot;revise: try different time horizon lookback_length.&quot;" />
+    <MESSAGE value="&quot;revise: add new file plot_figures.py for plotting results.&quot;" />
+    <MESSAGE value="&quot;revise: add the whole logic in this file.&quot;" />
+    <MESSAGE value="&quot;revise: check different time span 0.&quot;" />
+    <MESSAGE value="&quot;revise: alter the wrong comments&quot;" />
+    <MESSAGE value="&quot;revise: change different positions of the defender, but still something wrong.&quot;" />
+    <MESSAGE value="&quot;revise: add the value function file.&quot;" />
+    <MESSAGE value="&quot;feat: the dynamics seem to be wrong so try different dynamics structures.&quot;" />
+    <MESSAGE value="&quot;feat: AttackDefender4D0.py is the former dynamics I designed; reachavoid4D.py is from Kyra.&quot;" />
+    <MESSAGE value="&quot;feat: add todo in ValueFunction.py about the dynamics.&quot;" />
+    <MESSAGE value="&quot;feat: alter some formats.&quot;" />
+    <MESSAGE value="&quot;feat: change the capture radius from 0.3 to 0.1.&quot;" />
+    <MESSAGE value="&quot;feat: change the dynamics.&quot;" />
+    <MESSAGE value="&quot;feat: add utilities.py to help to control.&quot;" />
+    <MESSAGE value="&quot;feat: some normal alters.&quot;" />
+    <MESSAGE value="&quot;feat: add one recording file.&quot;" />
+    <MESSAGE value="&quot;feat: try different lookback_length and chech the convergence of the value function.&quot;" />
+    <MESSAGE value="&quot;feat: try different debugs: no capture or only obs1 or only obs2, etc.&quot;" />
+    <MESSAGE value="&quot;feat: remain the original settings.&quot;" />
+    <option name="LAST_COMMIT_MESSAGE" value="&quot;feat: remain the original settings.&quot;" />
+  </component>
+  <component name="XDebuggerManager">
+    <watches-manager>
+      <configuration name="PythonConfigurationType">
+        <watch expression="plot_option.slices" language="Python" />
+      </configuration>
+    </watches-manager>
+  </component>
+</project>
