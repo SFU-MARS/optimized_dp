@@ -102,7 +102,7 @@ def graph_4D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
                                 dV_dx2_L[0], dV_dx2_R[0] = spa_derivX2_4d(i, j, k, l, V_init, g)
                                 dV_dx3_L[0], dV_dx3_R[0] = spa_derivX3_4d(i, j, k, l, V_init, g)
                                 dV_dx4_L[0], dV_dx4_R[0] = spa_derivX4_4d(i, j, k, l, V_init, g)
-                            if accuracy == "high":
+                            if accuracy == "medium":
                                 dV_dx1_L[0], dV_dx1_R[0] = secondOrderX1_4d(i, j, k, l, V_init, g)
                                 dV_dx2_L[0], dV_dx2_R[0] = secondOrderX2_4d(i, j, k, l, V_init, g)
                                 dV_dx3_L[0], dV_dx3_R[0] = secondOrderX3_4d(i, j, k, l, V_init, g)
