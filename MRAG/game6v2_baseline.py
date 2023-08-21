@@ -155,12 +155,12 @@ else:
     plot_simulation(attackers_x, attackers_y, defenders_x, defenders_y)
 
 # check the smallest distance
-# D and A1
-distances_d2a3 = []
-for po in range(len(attackers_trajectory[2])):
-    a1 = attackers_trajectory[2][po]
-    d0 = defenders_trajectory[1][po]
-    distance = np.sqrt((a1[0] - d0[0])**2 + (a1[1] - d0[1])**2)
-    distances_d2a3.append(distance)
-minimum_distance = np.min(distances_d2a3)
-print(f"The smallest distance between D2 and A3 is {minimum_distance}.\n")
+# # D and A1
+# distances_d2a3 = []
+# for po in range(len(attackers_trajectory[2])):
+#     a1 = attackers_trajectory[2][po]
+#     d0 = defenders_trajectory[1][po]
+#     distance = np.sqrt((a1[0] - d0[0])**2 + (a1[1] - d0[1])**2)
+#     distances_d2a3.append(distance)
+# minimum_distance = np.min(distances_d2a3)
+# print(f"The smallest distance between D2 and A3 is {minimum_distance}.\n")

@@ -141,8 +141,8 @@ for _ in range(0, times):
         break
 print("The game is over. \n")
 
-print(f"The results of the selected is {capture_decisions}. \n")
-print(f"The final captured_status of all attackers is {attackers_status_logs[-1]}. \n")
+# print(f"The results of the selected is {capture_decisions}. \n")
+# print(f"The final captured_status of all attackers is {attackers_status_logs[-1]}. \n")
 
 # plot the trajectories seperately  
 # T = [0.125s (25 A0 by D0), 0.165s (33 A2 by D2), 0.295s (59 A7 by D1),  0.340S (68 A4 by D3),  o.655s (131 A3 by D1), 0.720s (144 A6 by D0), 0.940s (188 A5 by D3), 1.455s (291 A1 by D3)]
