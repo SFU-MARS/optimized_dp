@@ -1,11 +1,13 @@
+from odp.Plots.plotting_utilities import *
 from utilities import *
 from odp.Grid import Grid
 from compute_opt_traj import compute_opt_traj1v0
 from odp.solver import HJSolver, computeSpatDerivArray
+from copy import deepcopy
 from MRAG.AttackerDefender1v0 import AttackerDefender1v0
 from MRAG.AttackerDefender1v1 import AttackerDefender1v1 
 from MRAG.AttackerDefender2v1 import AttackerDefender2v1
-from odp.Plots.plotting_utilities import *
+
 
 
 # Simulation 1: 2 attackers with 1 defenders
@@ -18,12 +20,12 @@ times = int(T/deltat)
 # load all value functions, grids and spatial derivative array
 value1v0 = np.load('MRAG/1v0AttackDefend.npy')  # value1v0.shape = [100, 100, len(tau)]
 print(value1v0.shape)
-# v1v1 = np.load('MRAG/1v1AttackDefend_speed15.npy')
-v1v1 = np.load('MRAG/1v1AttackDefend.npy')
+v1v1 = np.load('MRAG/1v1AttackDefend_speed15.npy')
+# v1v1 = np.load('MRAG/1v1AttackDefend.npy')
 value1v1 = v1v1[..., np.newaxis]  # value1v1.shape = [45, 45, 45, 45, 1]
 # v2v1 = np.load('MRAG/2v1AttackDefend.npy')
-# v2v1 = np.load('2v1AttackDefend_speed15.npy') # grid = 30
-v2v1 = np.load('MRAG/2v1AttackDefend_new.npy') # grid = 30
+v2v1 = np.load('2v1AttackDefend_speed15.npy') # grid = 30
+#v2v1 = np.load('MRAG/2v1AttackDefend_t125.npy') # grid = 30
 print(f"The shape of the 2v1 value function is {v2v1.shape}. \n")
 value2v1 = v2v1[..., np.newaxis]  # value2v1.shape = [30, 30, 30, 30, 30, 30, 1]
 grid1v0 = Grid(np.array([-1.0, -1.0]), np.array([1.0, 1.0]), 2, np.array([100, 100])) # original 45
@@ -70,7 +72,7 @@ for j in range(num_defender):
 attackers_status_logs = []
 attackers_status = [0 for _ in range(num_attacker)]
 stops_index = []  # the list stores the indexes of attackers that has been captured or arrived
-attackers_status_logs.append(attackers_status)
+attackers_status_logs.append(deepcopy(attackers_status))
 
 print("The simulation starts: \n")
 # simulation starts
@@ -125,7 +127,7 @@ for _ in range(0, times):
 
     # check the attackers status: captured or not  
     attackers_status = capture_check(current_attackers, current_defenders, selected, attackers_status)
-    attackers_status_logs.append(attackers_status)
+    attackers_status_logs.append(deepcopy(attackers_status))
     attackers_arrived = arrived_check(current_attackers)
     stops_index = stoped_check(attackers_status, attackers_arrived)
     print(f"The current status at iteration{_} of attackers is arrived:{attackers_arrived} + been captured:{attackers_status}. \n")
@@ -133,12 +135,14 @@ for _ in range(0, times):
     if len(stops_index) == num_attacker:
         print(f"All attackers have arrived or been captured at the time t={(_+1)*deltat}. \n")
         break
+
 print("The game is over. \n")
 
 print(f"The results of the selected is {capture_decisions}. \n")
 print(f"The final captured_status of all attackers is {attackers_status_logs[-1]}. \n")
 
-animation_2v1(attackers_trajectory, defenders_trajectory, T)
+# Play the animation
+animation_2v1(attackers_trajectory, defenders_trajectory, attackers_status_logs, T)
 
 # plot the trajectories seperately T = [0.475s (95 A1 by D0), 0.69s (138 A0 by D0)]
 if T == 0.475:
