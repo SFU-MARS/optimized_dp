@@ -586,6 +586,75 @@ def plot_simulation2v1_2s(attackers_x, attackers_y, defenders_x, defenders_y):
     print("Please check the plot on your browser.")
 
 
+def animation_2v1(attackers_traj, defenders_traj, T):
+    # Just a movie with the agent's positions for now
+    N = len(attackers_traj[0])
+    num_attackers = len(attackers_traj)
+    num_defenders = len(defenders_traj)
+
+    attackers_traj = np.array(attackers_traj)
+    defenders_traj = np.array(defenders_traj)
+
+    attacker_x_list = [attackers_traj[i, :, 0] for i in range(num_attackers)]
+    attacker_y_list = [attackers_traj[i, :, 1] for i in range(num_attackers)]
+    defender_x_list = [defenders_traj[i, :, 0] for i in range(num_defenders)]
+    defender_y_list = [defenders_traj[i, :, 1] for i in range(num_defenders)]
+
+    print("N is {}".format(N))
+    print(attacker_x_list[0].shape)
+    assert attacker_x_list[0].shape[0] == N
+    # Example
+    # frames=[go.Frame(data=[go.Scatter(x=[1, 2], y=[1, 2])]),
+    #         go.Frame(data=[go.Scatter(x=[1, 4], y=[1, 4])]),
+    #         go.Frame(data=[go.Scatter(x=[3, 4], y=[3, 4])],
+    #                  layout=go.Layout(title_text="End Title"))]
+
+    # First generate the frames
+    frames= [] # All the frames
+    # Go through all the time steps
+    for t in range(0, N, 2):
+        # Data for each frame
+        frame_data = []
+
+        # Go through list defenders
+        for i_d in range(num_defenders):
+            dsparsex = [defender_x_list[i_d][t]]
+            dsparsey = [defender_y_list[i_d][t]]
+            #frame_data.append(go.Scatter(x=dsparsex, y=dsparsey, mode="markers", name=f'$D_{i_d+1}$ traj', marker=dict(symbol="square", size=4, color='blue'), showlegend=False)) # symb
+            frame_data.append(go.Scatter(x=defender_x_list[i_d][0:t], y=defender_y_list[i_d][0:t], mode='lines', name=f'$D_{i_d+1}$ traj', line=dict(color='blue')))
+        # Go through list of attackers
+        for i_a in range(num_attackers):
+            sparsex = [attacker_x_list[i_a][t]] # [my_list[i:i+3] for i in range(len(my_list)-2)]
+            sparsey = [attacker_y_list[i_a][t]]
+            #frame_data.append(go.Scatter(x=sparsex, y=sparsey, mode="markers", name=f"$A_{i_a+1}$", marker=dict(symbol="triangle-up", size=4, color='red'), showlegend=False))
+            frame_data.append(go.Scatter(x=attacker_x_list[i_a][0:t], y=attacker_y_list[i_a][0:t], mode='lines', name=f'$A_{i_a+1}$ traj', line=dict(color='red')))
+        frames.append(go.Frame(data=frame_data))
+
+    print("Frames {}".format(frames))
+    # Static object - obstacles, goal region, grid
+
+    fig = go.Figure(data = go.Scatter(x=[0.6, 0.8], y=[0.1, 0.1], mode='lines', name='Target', line=dict(color='purple')),
+                    layout=Layout(plot_bgcolor='rgba(0,0,0,0)', updatemenus=[dict(type="buttons",
+                                                                                  buttons=[dict(label="Play",
+                                                                                                method="animate",
+                                                                                                args=[None])])]), frames=frames) # for the legend
+
+    # plot target
+    fig.add_shape(type='rect', x0=0.6, y0=0.1, x1=0.8, y1=0.3, line=dict(color='purple', width=3.0), name="Target")
+    # plot obstacles
+    fig.add_shape(type='rect', x0=-0.1, y0=0.3, x1=0.1, y1=0.6, line=dict(color='black', width=3.0), name="Obstacle")
+    fig.add_shape(type='rect', x0=-0.1, y0=-1.0, x1=0.1, y1=-0.3, line=dict(color='black', width=3.0))
+    fig.add_trace(go.Scatter(x=[-0.1, 0.1], y=[0.3, 0.3], mode='lines', name='Obstacle', line=dict(color='black')))
+
+    # figure settings
+    # fig.update_layout(showlegend=False)  # to display the legends or not
+    fig.update_layout(autosize=False, width=560, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0),
+                      title={'text': "<b>Our method, t={}s<b>".format(T), 'y':0.85, 'x':0.4, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=20)) # LightSteelBlue
+    fig.update_xaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False
+    fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
+    fig.show()
+    print("Please check the plot on your browser.")
+
 def plot_simulation2v1_b1(attackers_x, attackers_y, defenders_x, defenders_y):  
     # for 2v1 baseline
     print("Plotting beautiful 2D plots. Please wait\n")
