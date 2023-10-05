@@ -1,6 +1,6 @@
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 import numpy as np
-
 
 def plot_isosurface(grid, V, plot_option):
     dims_plot = plot_option.dims_plot
@@ -38,11 +38,20 @@ def plot_isosurface(grid, V, plot_option):
             y=mg_Y.flatten(),
             z=mg_Z.flatten(),
             value=my_V.flatten(),
-            colorscale='jet',
+            caps=dict(x_show=True, y_show=True),
             isomin=plot_option.min_isosurface,
-            surface_count=1,
+            surface_count=plot_option.surface_count,
             isomax=plot_option.max_isosurface,
-            caps=dict(x_show=True, y_show=True)
+            colorscale=plot_option.colorscale,
+            opacity=plot_option.opacity,
+            contour=plot_option.contour,
+            flatshading=plot_option.flatshading,
+            lighting=plot_option.lighting,
+            lightposition=plot_option.lightposition,
+            reversescale=plot_option.reversescale,
+            showlegend=plot_option.showlegend,
+            showscale=plot_option.showscale,
+            uid=plot_option.uid
         ))
         fig.show()
         print("Please check the plot on your browser.")
@@ -61,6 +70,7 @@ def plot_isosurface(grid, V, plot_option):
             print("Implicit surface will not be shown since all values are negative ")
 
         print("Plotting beautiful 2D plots. Please wait\n")
+        # TODO Chong
         fig = go.Figure(data=go.Contour(
             x=mg_X.flatten(),
             y=mg_Y.flatten(),
