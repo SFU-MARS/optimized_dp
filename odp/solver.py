@@ -5,8 +5,8 @@ import time
 from odp.Plots import plot_isosurface
 
 # Backward reachable set computation library
-from odp.computeGraphs import graph_3D, graph_4D, graph_5D, graph_6D
-from odp.TimeToReach import TTR_3D, TTR_4D, TTR_5D 
+from odp.computeGraphs import graph_1D, graph_2D, graph_3D, graph_4D, graph_5D, graph_6D
+from odp.TimeToReach import TTR_1D, TTR_2D, TTR_3D, TTR_4D, TTR_5D 
 
 # Value Iteration library
 from odp.valueIteration import value_iteration_3D, value_iteration_4D, value_iteration_5D, value_iteration_6D
@@ -136,8 +136,10 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
 
     # Array for each state values
     list_x1 = np.reshape(grid.vs[0], grid.pts_each_dim[0])
-    list_x2 = np.reshape(grid.vs[1], grid.pts_each_dim[1])
-    list_x3 = np.reshape(grid.vs[2], grid.pts_each_dim[2])
+    if grid.dims >= 2:
+        list_x2 = np.reshape(grid.vs[1], grid.pts_each_dim[1])
+    if grid.dims >= 3:
+        list_x3 = np.reshape(grid.vs[2], grid.pts_each_dim[2])
     if grid.dims >= 4:
         list_x4 = np.reshape(grid.vs[3], grid.pts_each_dim[3])
     if grid.dims >= 5:
@@ -147,8 +149,10 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
 
     # Convert state arrays to hcl array type
     list_x1 = hcl.asarray(list_x1)
-    list_x2 = hcl.asarray(list_x2)
-    list_x3 = hcl.asarray(list_x3)
+    if grid.dims >= 2:
+        list_x2 = hcl.asarray(list_x2)
+    if grid.dims >= 3:
+        list_x3 = hcl.asarray(list_x3)
     if grid.dims >= 4:
         list_x4 = hcl.asarray(list_x4)
     if grid.dims >= 5:
@@ -157,6 +161,12 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
         list_x6 = hcl.asarray(list_x6)
 
     # Get executable, obstacle check intial value function
+    if grid.dims == 1:
+        solve_pde = graph_1D(dynamics_obj, grid, compMethod["TargetSetMode"], accuracy)
+
+    if grid.dims == 2:
+        solve_pde = graph_2D(dynamics_obj, grid, compMethod["TargetSetMode"], accuracy)
+
     if grid.dims == 3:
         solve_pde = graph_3D(dynamics_obj, grid, compMethod["TargetSetMode"], accuracy)
 
@@ -201,6 +211,10 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
             start = time.time()
 
             # Run the execution and pass input into graph
+            if grid.dims == 1:
+                solve_pde(V_1, V_0, list_x1, t_minh, l0)
+            if grid.dims == 2:
+                solve_pde(V_1, V_0, list_x1, list_x2, t_minh, l0)
             if grid.dims == 3:
                 solve_pde(V_1, V_0, list_x1, list_x2, list_x3, t_minh, l0)
             if grid.dims == 4:
@@ -275,8 +289,10 @@ def TTRSolver(dynamics_obj, grid, init_value, epsilon, plot_option):
 
     # Re-shape states vector
     list_x1 = np.reshape(grid.vs[0], grid.pts_each_dim[0])
-    list_x2 = np.reshape(grid.vs[1], grid.pts_each_dim[1])
-    list_x3 = np.reshape(grid.vs[2], grid.pts_each_dim[2])
+    if grid.dims >= 2:
+        list_x2 = np.reshape(grid.vs[1], grid.pts_each_dim[1])
+    if grid.dims >= 3:
+        list_x3 = np.reshape(grid.vs[2], grid.pts_each_dim[2])
     if grid.dims >= 4:
         list_x4 = np.reshape(grid.vs[3], grid.pts_each_dim[3])
     if grid.dims >= 5:
@@ -286,8 +302,10 @@ def TTRSolver(dynamics_obj, grid, init_value, epsilon, plot_option):
 
     # Convert states vector to hcl array type
     list_x1 = hcl.asarray(list_x1)
-    list_x2 = hcl.asarray(list_x2)
-    list_x3 = hcl.asarray(list_x3)
+    if grid.dims >= 2:
+        list_x2 = hcl.asarray(list_x2)
+    if grid.dims >= 3:
+        list_x3 = hcl.asarray(list_x3)
     if grid.dims >= 4:
         list_x4 = hcl.asarray(list_x4)
     if grid.dims >= 5:
@@ -296,7 +314,10 @@ def TTRSolver(dynamics_obj, grid, init_value, epsilon, plot_option):
         list_x6 = hcl.asarray(list_x6)
 
     # Get executable
-
+    if grid.dims == 1:
+        solve_TTR = TTR_1D(dynamics_obj, grid)
+    if grid.dims == 2:
+        solve_TTR = TTR_2D(dynamics_obj, grid)
     if grid.dims == 3:
         solve_TTR = TTR_3D(dynamics_obj, grid)
     if grid.dims == 4:
@@ -317,6 +338,10 @@ def TTRSolver(dynamics_obj, grid, init_value, epsilon, plot_option):
     while error > epsilon:
         print("Iteration: {} Error: {}".format(count, error))
         count += 1
+        if grid.dims == 1:
+            solve_TTR(V_0, list_x1)
+        if grid.dims == 2:
+            solve_TTR(V_0, list_x1, list_x2)
         if grid.dims == 3:
             solve_TTR(V_0, list_x1, list_x2, list_x3)
         if grid.dims == 4:
@@ -347,6 +372,12 @@ def computeSpatDerivArray(grid, V, deriv_dim, accuracy="low"):
     spatial_deriv = hcl.asarray(np.zeros(tuple(grid.pts_each_dim)))
 
     # Get executable, obstacle check intial value function
+    if grid.dims == 1:
+        compute_SpatDeriv = graph_1D(None, grid, "None", accuracy,
+                                     generate_SpatDeriv=True, deriv_dim=deriv_dim)
+    if grid.dims == 2:
+        compute_SpatDeriv = graph_2D(None, grid, "None", accuracy,
+                                     generate_SpatDeriv=True, deriv_dim=deriv_dim)
     if grid.dims == 3:
         compute_SpatDeriv = graph_3D(None, grid, "None", accuracy,
                                      generate_SpatDeriv=True, deriv_dim=deriv_dim)
