@@ -7,12 +7,16 @@ class PlotOptions:
                legendgrouptitle=None, legendrank=None, legendwidth=None, 
                lighting=None, lightposition=None, 
                opacity=0.8, reversescale=None, 
-               showlegend=None, showscale=None, 
+               showlegend=None, showscale=None, figSize=None,
                surface_count=1, uid=None):
     
-    if plot_type not in ["2d_plot", "3d_plot"]:
+    if plot_type not in ["1d_plot", "2d_plot", "3d_plot"]:
         raise Exception("Illegal plot type !")
 
+    if plot_type == "1d_plot" :
+        if len(plotDims) != 1:
+            raise Exception("Make sure that dim_plot size is 1 !!")
+        
     if plot_type == "2d_plot" :
         if len(plotDims) != 2:
             raise Exception("Make sure that dim_plot size is 2 !!")

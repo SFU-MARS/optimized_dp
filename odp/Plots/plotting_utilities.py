@@ -13,8 +13,8 @@ def plot_isosurface(grid, V, plot_option):
             idx[i] = plot_option.slices[slice_idx]
             slice_idx += 1
 
-    if len(dims_plot) != 3 and len(dims_plot) != 2:
-        raise Exception('dims_plot length should be equal to 3\n')
+    if len(dims_plot) != 3 and len(dims_plot) != 2 and len(dims_plot) != 1:
+        raise Exception('dims_plot length should be equal to 3, 2 or 1\n')
 
     if len(dims_plot) == 3:
         # Plot 3D isosurface
@@ -86,3 +86,5 @@ def plot_isosurface(grid, V, plot_option):
 
         fig.show()
         print("Please check the plot on your browser.")
+
+    if len(dims_plot) == 1:
