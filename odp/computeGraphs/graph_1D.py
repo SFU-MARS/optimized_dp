@@ -66,12 +66,12 @@ def graph_1D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
 
                 # No tensor slice operation
                 if accuracy == "low":
-                    dV_dx_L[0], dV_dx_R[0] = spa_derivX(i, j, V_init, g)
+                    dV_dx_L[0], dV_dx_R[0] = spa_derivX(i, V_init, g)
                 if accuracy == "medium":
-                    dV_dx_L[0], dV_dx_R[0] = secondOrderX(i, j, V_init, g)
+                    dV_dx_L[0], dV_dx_R[0] = secondOrderX(i, V_init, g)
 
                 # Saves spatial derivative diff into tables
-                deriv_diff1[i, j, k] = dV_dx_R[0] - dV_dx_L[0]
+                deriv_diff1[i] = dV_dx_R[0] - dV_dx_L[0]
 
                 # Calculate average gradient
                 dV_dx[0] = (dV_dx_L + dV_dx_R) / 2
@@ -83,10 +83,10 @@ def graph_1D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
                                             (dV_dx[0]))
 
                 # Calculate dynamical rates of changes
-                dx_dt, dy_dt = my_object.dynamics(t, (x1[i]), uOpt, dOpt)
+                dx_dt = my_object.dynamics(t, (x1[i]), uOpt, dOpt)
 
                 # Calculate Hamiltonian terms:
-                V_new[i, j, k] = -(dx_dt * dV_dx[0])
+                V_new[i] = -(dx_dt * dV_dx[0])
 
                 # Get derivMin
                 with hcl.if_(dV_dx_L[0] < min_deriv1[0]):
@@ -115,75 +115,74 @@ def graph_1D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
             uOptU1 = hcl.scalar(0, "uOptU1")
 
             with hcl.for_(0, V_init.shape[0], name="i") as i:
-                with hcl.for_(0, V_init.shape[1], name="j") as j:
-                    dx_LL1 = hcl.scalar(0, "dx_LL1")
+                dx_LL1 = hcl.scalar(0, "dx_LL1")
 
-                    dx_UL1 = hcl.scalar(0, "dx_UL1")
+                dx_UL1 = hcl.scalar(0, "dx_UL1")
 
-                    dx_UU1 = hcl.scalar(0, "dx_UU1")
+                dx_UU1 = hcl.scalar(0, "dx_UU1")
 
-                    dx_LU1 = hcl.scalar(0, "dx_LU1")
+                dx_LU1 = hcl.scalar(0, "dx_LU1")
 
-                    # Find LOWER BOUND optimal disturbance
-                    dOptL1[0] = my_object.opt_dstb(t,  (x1[i]),\
-                                                                        (min_deriv1[0]))
+                # Find LOWER BOUND optimal disturbance
+                dOptL1[0] = my_object.opt_dstb(t,  (x1[i]),\
+                                                                    (min_deriv1[0]))
 
-                    dOptU1[0] = my_object.opt_dstb(t, (x1[i]),\
-                                                                        (max_deriv1[0]))
+                dOptU1[0] = my_object.opt_dstb(t, (x1[i]),\
+                                                                    (max_deriv1[0]))
 
-                    # Find LOWER BOUND optimal control
-                    uOptL1[0] = my_object.opt_ctrl(t, (x1[i]), \
-                                                                                    (min_deriv1[0]))
+                # Find LOWER BOUND optimal control
+                uOptL1[0] = my_object.opt_ctrl(t, (x1[i]), \
+                                                                                (min_deriv1[0]))
 
-                        # Find UPPER BOUND optimal control
-                    uOptU1[0] = my_object.opt_ctrl(t, (x1[i]),
-                                                                                        (max_deriv1[0]))
-                        # Find magnitude of rates of changes
-                    dx_LL1[0] = my_object.dynamics(t, (x1[i]),
-                                                                                        (uOptL1[0]), \
-                                                                                        (dOptL1[0]))
-                    dx_LL1[0] = my_abs(dx_LL1[0])
-
-                    dx_LU1[0] = my_object.dynamics(t, (x1[i]),
+                    # Find UPPER BOUND optimal control
+                uOptU1[0] = my_object.opt_ctrl(t, (x1[i]),
+                                                                                    (max_deriv1[0]))
+                    # Find magnitude of rates of changes
+                dx_LL1[0] = my_object.dynamics(t, (x1[i]),
                                                                                     (uOptL1[0]), \
+                                                                                    (dOptL1[0]))
+                dx_LL1[0] = my_abs(dx_LL1[0])
+
+                dx_LU1[0] = my_object.dynamics(t, (x1[i]),
+                                                                                (uOptL1[0]), \
+                                                                                (dOptU1[0]))
+                dx_LU1[0] = my_abs(dx_LU1[0])
+
+                # Calculate alpha
+                alpha1[0] = my_max(dx_LL1[0], dx_LU1[0])
+
+                dx_UL1[0] = my_object.dynamics(t, (x1[i]),\
+                                                                                    (uOptU1[0]), \
+                                                                                    (dOptL1[0]))
+                dx_UL1[0] = my_abs(dx_UL1[0])
+
+                # Calculate alpha
+                alpha1[0] = my_max(alpha1[0], dx_UL1[0])
+
+                dx_UU1[0] = my_object.dynamics(t, (x1[i]),
+                                                                                    (uOptU1[0]),\
                                                                                     (dOptU1[0]))
-                    dx_LU1[0] = my_abs(dx_LU1[0])
+                dx_UU1[0] = my_abs(dx_UU1[0])
+                # Calculate alpha
+                alpha1[0] = my_max(alpha1[0], dx_UU1[0])
 
-                    # Calculate alpha
-                    alpha1[0] = my_max(dx_LL1[0], dx_LU1[0])
+                diss = hcl.scalar(0, "diss")
+                diss[0] = 0.5 * (
+                        deriv_diff1[i] * alpha1[0])
 
-                    dx_UL1[0] = my_object.dynamics(t, (x1[i]),\
-                                                                                        (uOptU1[0]), \
-                                                                                        (dOptL1[0]))
-                    dx_UL1[0] = my_abs(dx_UL1[0])
+                # Finally
+                V_new[i] = -(V_new[i] - diss[0])
 
-                    # Calculate alpha
-                    alpha1[0] = my_max(alpha1[0], dx_UL1[0])
-
-                    dx_UU1[0] = my_object.dynamics(t, (x1[i]),
-                                                                                        (uOptU1[0]),\
-                                                                                        (dOptU1[0]))
-                    dx_UU1[0] = my_abs(dx_UU1[0])
-                    # Calculate alpha
-                    alpha1[0] = my_max(alpha1[0], dx_UU1[0])
-
-                    diss = hcl.scalar(0, "diss")
-                    diss[0] = 0.5 * (
-                            deriv_diff1[i, j] * alpha1[0])
-
-                    # Finally
-                    V_new[i, j] = -(V_new[i, j] - diss[0])
-
-                    # Calculate alphas
-                    with hcl.if_(alpha1[0] > max_alpha1[0]):
-                        max_alpha1[0] = alpha1[0]
+                # Calculate alphas
+                with hcl.if_(alpha1[0] > max_alpha1[0]):
+                    max_alpha1[0] = alpha1[0]
 
 
 
         # Determine time step
         delta_t = hcl.compute((1,), lambda x: step_bound(), name="delta_t")
         # Integrate
-        result = hcl.update(V_new, lambda i, j: V_init[i, j] + V_new[i, j] * delta_t[0])
+        result = hcl.update(V_new, lambda i: V_init[i] + V_new[i] * delta_t[0])
 
         # Different computation method check
         if compMethod == 'maxVWithV0' or compMethod == 'maxVWithVTarget':
