@@ -44,7 +44,7 @@ def graph_1D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
             with hcl.if_(V_new[i] > V_init[i]):
                 V_new[i] = V_init[i]
 
-        def maxVWithVInit(i, j):
+        def maxVWithVInit(i):
             with hcl.if_(V_new[i] < V_init[i]):
                 V_new[i] = V_init[i]
 
