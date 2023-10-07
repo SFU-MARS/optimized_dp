@@ -83,8 +83,8 @@ def graph_2D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
                             dV_dy_L[0], dV_dy_R[0] = secondOrderY(i, j, V_init, g)
 
                         # Saves spatial derivative diff into tables
-                        deriv_diff1[i, j, k] = dV_dx_R[0] - dV_dx_L[0]
-                        deriv_diff2[i, j, k] = dV_dy_R[0] - dV_dy_L[0]
+                        deriv_diff1[i, j] = dV_dx_R[0] - dV_dx_L[0]
+                        deriv_diff2[i, j] = dV_dy_R[0] - dV_dy_L[0]
 
                         # Calculate average gradient
                         dV_dx[0] = (dV_dx_L + dV_dx_R) / 2
@@ -100,7 +100,7 @@ def graph_2D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
                         dx_dt, dy_dt = my_object.dynamics(t, (x1[i], x2[j]), uOpt, dOpt)
 
                         # Calculate Hamiltonian terms:
-                        V_new[i, j, k] = -(dx_dt * dV_dx[0] + dy_dt * dV_dy[0])
+                        V_new[i, j] = -(dx_dt * dV_dx[0] + dy_dt * dV_dy[0])
 
                         # Get derivMin
                         with hcl.if_(dV_dx_L[0] < min_deriv1[0]):
