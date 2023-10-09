@@ -125,43 +125,43 @@ def graph_1D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
 
                 # Find LOWER BOUND optimal disturbance
                 dOptL1[0] = my_object.opt_dstb(t,  (x1[i]),\
-                                                                    (min_deriv1[0]))
+                                                                (min_deriv1[0]))
 
                 dOptU1[0] = my_object.opt_dstb(t, (x1[i]),\
-                                                                    (max_deriv1[0]))
+                                                                (max_deriv1[0]))
 
                 # Find LOWER BOUND optimal control
                 uOptL1[0] = my_object.opt_ctrl(t, (x1[i]), \
-                                                                                (min_deriv1[0]))
+                                                                (min_deriv1[0]))
 
                     # Find UPPER BOUND optimal control
                 uOptU1[0] = my_object.opt_ctrl(t, (x1[i]),
-                                                                                    (max_deriv1[0]))
+                                                                (max_deriv1[0]))
                     # Find magnitude of rates of changes
                 dx_LL1[0] = my_object.dynamics(t, (x1[i]),
-                                                                                    (uOptL1[0]), \
-                                                                                    (dOptL1[0]))
+                                                                (uOptL1[0]), \
+                                                                (dOptL1[0]))
                 dx_LL1[0] = my_abs(dx_LL1[0])
 
                 dx_LU1[0] = my_object.dynamics(t, (x1[i]),
-                                                                                (uOptL1[0]), \
-                                                                                (dOptU1[0]))
+                                                                (uOptL1[0]), \
+                                                                (dOptU1[0]))
                 dx_LU1[0] = my_abs(dx_LU1[0])
 
                 # Calculate alpha
                 alpha1[0] = my_max(dx_LL1[0], dx_LU1[0])
 
                 dx_UL1[0] = my_object.dynamics(t, (x1[i]),\
-                                                                                    (uOptU1[0]), \
-                                                                                    (dOptL1[0]))
+                                                                (uOptU1[0]), \
+                                                                (dOptL1[0]))
                 dx_UL1[0] = my_abs(dx_UL1[0])
 
                 # Calculate alpha
                 alpha1[0] = my_max(alpha1[0], dx_UL1[0])
 
                 dx_UU1[0] = my_object.dynamics(t, (x1[i]),
-                                                                                    (uOptU1[0]),\
-                                                                                    (dOptU1[0]))
+                                                                (uOptU1[0]),\
+                                                                (dOptU1[0]))
                 dx_UU1[0] = my_abs(dx_UU1[0])
                 # Calculate alpha
                 alpha1[0] = my_max(alpha1[0], dx_UU1[0])
@@ -233,4 +233,5 @@ def graph_1D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
         #print(hcl.lower(s))
 
     # Return executable
+
     return (hcl.build(s))

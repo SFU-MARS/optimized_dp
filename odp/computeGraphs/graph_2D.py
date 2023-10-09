@@ -65,64 +65,64 @@ def graph_2D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
         with hcl.Stage("Hamiltonian"):
             with hcl.for_(0, V_init.shape[0], name="i") as i:  # Plus 1 as for loop count stops at V_init.shape[0]
                 with hcl.for_(0, V_init.shape[1], name="j") as j:
-                        # Variables to calculate dV_dx
-                        dV_dx_L = hcl.scalar(0, "dV_dx_L")
-                        dV_dx_R = hcl.scalar(0, "dV_dx_R")
-                        dV_dx = hcl.scalar(0, "dV_dx")
-                        # Variables to calculate dV_dy
-                        dV_dy_L = hcl.scalar(0, "dV_dy_L")
-                        dV_dy_R = hcl.scalar(0, "dV_dy_R")
-                        dV_dy = hcl.scalar(0, "dV_dy")
+                    # Variables to calculate dV_dx
+                    dV_dx_L = hcl.scalar(0, "dV_dx_L")
+                    dV_dx_R = hcl.scalar(0, "dV_dx_R")
+                    dV_dx = hcl.scalar(0, "dV_dx")
+                    # Variables to calculate dV_dy
+                    dV_dy_L = hcl.scalar(0, "dV_dy_L")
+                    dV_dy_R = hcl.scalar(0, "dV_dy_R")
+                    dV_dy = hcl.scalar(0, "dV_dy")
 
-                        # No tensor slice operation
-                        if accuracy == "low":
-                            dV_dx_L[0], dV_dx_R[0] = spa_derivX(i, j, V_init, g)
-                            dV_dy_L[0], dV_dy_R[0] = spa_derivY(i, j, V_init, g)
-                        if accuracy == "medium":
-                            dV_dx_L[0], dV_dx_R[0] = secondOrderX(i, j, V_init, g)
-                            dV_dy_L[0], dV_dy_R[0] = secondOrderY(i, j, V_init, g)
+                    # No tensor slice operation
+                    if accuracy == "low":
+                        dV_dx_L[0], dV_dx_R[0] = spa_derivX(i, j, V_init, g)
+                        dV_dy_L[0], dV_dy_R[0] = spa_derivY(i, j, V_init, g)
+                    if accuracy == "medium":
+                        dV_dx_L[0], dV_dx_R[0] = secondOrderX(i, j, V_init, g)
+                        dV_dy_L[0], dV_dy_R[0] = secondOrderY(i, j, V_init, g)
 
-                        # Saves spatial derivative diff into tables
-                        deriv_diff1[i, j] = dV_dx_R[0] - dV_dx_L[0]
-                        deriv_diff2[i, j] = dV_dy_R[0] - dV_dy_L[0]
+                    # Saves spatial derivative diff into tables
+                    deriv_diff1[i, j] = dV_dx_R[0] - dV_dx_L[0]
+                    deriv_diff2[i, j] = dV_dy_R[0] - dV_dy_L[0]
 
-                        # Calculate average gradient
-                        dV_dx[0] = (dV_dx_L + dV_dx_R) / 2
-                        dV_dy[0] = (dV_dy_L + dV_dy_R) / 2
+                    # Calculate average gradient
+                    dV_dx[0] = (dV_dx_L + dV_dx_R) / 2
+                    dV_dy[0] = (dV_dy_L + dV_dy_R) / 2
 
-                        # Use method of DubinsCar to solve optimal control instead
-                        uOpt = my_object.opt_ctrl(t, (x1[i], x2[j]),
-                                                      (dV_dx[0], dV_dy[0]))
-                        dOpt = my_object.opt_dstb(t, (x1[i], x2[j]),
-                                                 (dV_dx[0], dV_dy[0]))
+                    # Use method of DubinsCar to solve optimal control instead
+                    uOpt = my_object.opt_ctrl(t, (x1[i], x2[j]),
+                                                    (dV_dx[0], dV_dy[0]))
+                    dOpt = my_object.opt_dstb(t, (x1[i], x2[j]),
+                                                (dV_dx[0], dV_dy[0]))
 
-                        # Calculate dynamical rates of changes
-                        dx_dt, dy_dt = my_object.dynamics(t, (x1[i], x2[j]), uOpt, dOpt)
+                    # Calculate dynamical rates of changes
+                    dx_dt, dy_dt = my_object.dynamics(t, (x1[i], x2[j]), uOpt, dOpt)
 
-                        # Calculate Hamiltonian terms:
-                        V_new[i, j] = -(dx_dt * dV_dx[0] + dy_dt * dV_dy[0])
+                    # Calculate Hamiltonian terms:
+                    V_new[i, j] = -(dx_dt * dV_dx[0] + dy_dt * dV_dy[0])
 
-                        # Get derivMin
-                        with hcl.if_(dV_dx_L[0] < min_deriv1[0]):
-                            min_deriv1[0] = dV_dx_L[0]
-                        with hcl.if_(dV_dx_R[0] < min_deriv1[0]):
-                            min_deriv1[0] = dV_dx_R[0]
+                    # Get derivMin
+                    with hcl.if_(dV_dx_L[0] < min_deriv1[0]):
+                        min_deriv1[0] = dV_dx_L[0]
+                    with hcl.if_(dV_dx_R[0] < min_deriv1[0]):
+                        min_deriv1[0] = dV_dx_R[0]
 
-                        with hcl.if_(dV_dy_L[0] < min_deriv2[0]):
-                            min_deriv2[0] = dV_dy_L[0]
-                        with hcl.if_(dV_dy_R[0] < min_deriv2[0]):
-                            min_deriv2[0] = dV_dy_R[0]
+                    with hcl.if_(dV_dy_L[0] < min_deriv2[0]):
+                        min_deriv2[0] = dV_dy_L[0]
+                    with hcl.if_(dV_dy_R[0] < min_deriv2[0]):
+                        min_deriv2[0] = dV_dy_R[0]
 
-                        # Get derivMax
-                        with hcl.if_(dV_dx_L[0] > max_deriv1[0]):
-                            max_deriv1[0] = dV_dx_L[0]
-                        with hcl.if_(dV_dx_R[0] > max_deriv1[0]):
-                            max_deriv1[0] = dV_dx_R[0]
+                    # Get derivMax
+                    with hcl.if_(dV_dx_L[0] > max_deriv1[0]):
+                        max_deriv1[0] = dV_dx_L[0]
+                    with hcl.if_(dV_dx_R[0] > max_deriv1[0]):
+                        max_deriv1[0] = dV_dx_R[0]
 
-                        with hcl.if_(dV_dy_L[0] > max_deriv2[0]):
-                            max_deriv2[0] = dV_dy_L[0]
-                        with hcl.if_(dV_dy_R[0] > max_deriv2[0]):
-                            max_deriv2[0] = dV_dy_R[0]
+                    with hcl.if_(dV_dy_L[0] > max_deriv2[0]):
+                        max_deriv2[0] = dV_dy_L[0]
+                    with hcl.if_(dV_dy_R[0] > max_deriv2[0]):
+                        max_deriv2[0] = dV_dy_R[0]
 
 
         # Calculate the dissipation
