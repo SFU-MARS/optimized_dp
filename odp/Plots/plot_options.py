@@ -1,6 +1,6 @@
 
 class PlotOptions:
-  def __init__(self, do_plot=True, plot_type="3d_plot", plotDims=[],
+  def __init__(self, do_plot=True, plot_type="set", plotDims=[],
                slicesCut=[], min_isosurface = 0, max_isosurface = 0, 
                colorscale='Rainbow', contour=None,  flatshading=None,  
                legend=None, legendgroup=None, 
@@ -10,20 +10,11 @@ class PlotOptions:
                showlegend=None, showscale=None, figSize=None,
                surface_count=1, uid=None):
     
-    if plot_type not in ["1d_plot", "2d_plot", "3d_plot"]:
+    if plot_type not in ["set", "value"]:
         raise Exception("Illegal plot type !")
-
-    if plot_type == "1d_plot" :
-        if len(plotDims) != 1:
-            raise Exception("Make sure that dim_plot size is 1 !!")
-        
-    if plot_type == "2d_plot" :
-        if len(plotDims) != 2:
-            raise Exception("Make sure that dim_plot size is 2 !!")
-
-    if plot_type == "3d_plot" :
-        if len(plotDims) != 3:
-            raise Exception("Make sure that dim_plot size is 3 !!")
+    
+    if len(plotDims) != 1 and len(plotDims) != 2 and len(plotDims) != 3:
+        raise Exception("Make sure that dim_plot size is 1, 2, or 3!!")
 
     self.do_plot = do_plot
     self.dims_plot = plotDims
