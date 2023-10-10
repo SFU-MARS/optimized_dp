@@ -15,6 +15,12 @@ class PlotOptions:
     
     if len(plotDims) != 1 and len(plotDims) != 2 and len(plotDims) != 3:
         raise Exception("Make sure that dim_plot size is 1, 2, or 3!!")
+    
+    if plot_type == "value" and len(plotDims) != 3:
+        raise Exception("Make sure that dim_plot size is 2 or 1 for value function plot!!")
+    
+    if plot_type == "set" and len(plotDims) != 1:
+        raise Exception("Make sure that dim_plot size is 2 or 3 for 0 sublevel set plot!!")
 
     self.do_plot = do_plot
     self.dims_plot = plotDims
