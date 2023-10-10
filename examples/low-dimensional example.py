@@ -46,7 +46,7 @@ tau = np.arange(start=0, stop=Lookback_length + small_number, step=t_step)
 sys = Plane2D()
 
 # STEP 5: Initialize plotting option
-po2 = PlotOptions(do_plot=True, plot_type="2d_plot", plotDims=[0,1],
+po2 = PlotOptions(do_plot=True, plot_type="set", plotDims=[0,1],
                   slicesCut=[], colorscale="Hot")
 
 # STEP 6: Call HJSolver function
