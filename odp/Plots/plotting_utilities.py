@@ -1,5 +1,6 @@
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+import plotly.express as px
 import numpy as np
 
 def plot_isosurface(grid, V, plot_option):
@@ -88,3 +89,79 @@ def plot_isosurface(grid, V, plot_option):
         print("Please check the plot on your browser.")
 
     if len(dims_plot) == 1:
+        #TODO Chong: do not need mesh grid
+        dim1 = dims_plot[0]
+        complex_x = complex(0, grid.pts_each_dim[dim1])
+        mg_X = np.mgrid[grid.min[dim1]:grid.max[dim1]: complex_x]
+
+        my_V = V[tuple(idx)]
+
+        if (my_V > 0.0).all():
+            print("Implicit surface will not be shown since all values are positive ")
+        if (my_V < 0.0).all():
+            print("Implicit surface will not be shown since all values are negative ")
+
+        print("Plotting beautiful 1D plots. Please wait\n")
+        fig = go.Figure(data=px.line(
+            x=mg_X.flatten(),
+            y=my_V.flatten(),
+            name="Reachable Set",
+            labels={'x','Vaue'}
+        ), layout=go.Layout(plot_bgcolor='rgba(0,0,0,0)'))
+
+        fig.show()
+        print("Please check the plot on your browser.")
+
+
+def plot_valuefunction(grid, V, plot_option):
+    '''
+    Plot value function V, 1D or 2D grid is allowed
+    https://plotly.com/python/3d-surface-plots/
+    '''
+    dims_plot = plot_option.dims_plot
+    idx = [slice(None)] * grid.dims
+    slice_idx = 0
+
+    dims_list = list(range(grid.dims))
+    for i in dims_list:
+        if i not in dims_plot:
+            idx[i] = plot_option.slices[slice_idx]
+            slice_idx += 1
+
+    if len(dims_plot) != 2 and len(dims_plot) != 1:
+        raise Exception('dims_plot length should be equal to 2 or 1\n')
+
+    if len(dims_plot) == 2:
+        # Plot 3D surface
+        dim1, dim2 = dims_plot[0], dims_plot[1]
+        # complex_x = complex(0, grid.pts_each_dim[dim1])
+        # complex_y = complex(0, grid.pts_each_dim[dim2])
+        # mg_X, mg_Y = np.mgrid[grid.min[dim1]:grid.max[dim1]: complex_x, grid.min[dim2]:grid.max[dim2]: complex_y]
+
+        my_X = np.linspace(grid.min[dim1], grid.max[dim1], grid.pts_each_dim[dim1])
+        my_Y = np.linspace(grid.min[dim2], grid.max[dim2], grid.pts_each_dim[dim2])
+        my_V = V[tuple(idx)]
+
+        print("Plotting beautiful plots. Please wait\n")
+        fig = go.Figure(data=go.Surface(
+            # TODO chong: allow multiple sub-level sets
+            contours = {
+            "z": {"show": True, "start": 0, "end": 0, "size": 100, "color":"white"},
+            },
+            x=my_X,
+            y=my_Y,
+            z=my_V,
+            colorscale=plot_option.colorscale,
+            opacity=plot_option.opacity,
+            lighting=plot_option.lighting,
+            lightposition=plot_option.lightposition
+            ))
+        fig.update_layout(
+        scene = {
+            "xaxis": {"nticks": 20},
+            "zaxis": {"nticks": 4},
+            'camera_eye': {"x": 0, "y": -1, "z": 0.5},
+            "aspectratio": {"x": 1, "y": 1, "z": 0.2}
+        })
+        fig.show()
+        print("Please check the plot on your browser.")
