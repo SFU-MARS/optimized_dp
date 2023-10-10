@@ -146,7 +146,7 @@ def plot_valuefunction(grid, V, plot_option):
         fig = go.Figure(data=go.Surface(
             # TODO chong: allow multiple sub-level sets
             contours = {
-            "z": {"show": True, "start": 0, "end": 0, "size": 100, "color":"white"},
+            "z": {"show": True, "start": -1, "end": 1, "size": 1, "color":"white", },
             },
             x=my_X,
             y=my_Y,
@@ -163,5 +163,6 @@ def plot_valuefunction(grid, V, plot_option):
             'camera_eye': {"x": 0, "y": -1, "z": 0.5},
             "aspectratio": {"x": 1, "y": 1, "z": 0.2}
         })
+
         fig.show()
         print("Please check the plot on your browser.")
