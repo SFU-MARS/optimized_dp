@@ -7,11 +7,12 @@ from odp.spatialDerivatives.second_orderENO1D import *
 #from user_definer import *
 #def graph_1D(dynamics_obj, grid):
 def graph_1D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv_dim=1):
+    print("pts_each_dim {}".format(tuple(g.pts_each_dim)))
     V_f = hcl.placeholder(tuple(g.pts_each_dim), name="V_f", dtype=hcl.Float())
     V_init = hcl.placeholder(tuple(g.pts_each_dim), name="V_init", dtype=hcl.Float())
     l0 = hcl.placeholder(tuple(g.pts_each_dim), name="l0", dtype=hcl.Float())
     t = hcl.placeholder((2,), name="t", dtype=hcl.Float())
-    probe = hcl.placeholder(tuple(g.pts_each_dim), name="probe", dtype=hcl.Float())
+    # probe = hcl.placeholder(tuple(g.pts_each_dim), name="probe", dtype=hcl.Float())
 
     # Positions vector
     x1 = hcl.placeholder((g.pts_each_dim[0],), name="x1", dtype=hcl.Float())
@@ -76,17 +77,19 @@ def graph_1D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
                 # Calculate average gradient
                 dV_dx[0] = (dV_dx_L + dV_dx_R) / 2
 
+                V_new[i] = dV_dx[0]*2
+
                 # Use method of DubinsCar to solve optimal control instead
-                uOpt = my_object.opt_ctrl(t, (x1[i]),
-                                                (dV_dx[0]))
-                dOpt = my_object.opt_dstb(t, (x1[i]),
-                                            (dV_dx[0]))
+                uOpt = my_object.opt_ctrl(t, (x1[i],),
+                                                (dV_dx[0],))
+                dOpt = my_object.opt_dstb(t, (x1[i], ),
+                                            (dV_dx[0], ))
 
                 # Calculate dynamical rates of changes
-                dx_dt = my_object.dynamics(t, (x1[i]), uOpt, dOpt)
+                dx_dt = my_object.dynamics(t, (x1[i], ), uOpt, dOpt)
 
                 # Calculate Hamiltonian terms:
-                V_new[i] = -(dx_dt * dV_dx[0])
+                V_new[i] = -(dx_dt[0] * dV_dx[0])
 
                 # Get derivMin
                 with hcl.if_(dV_dx_L[0] < min_deriv1[0]):
@@ -124,44 +127,44 @@ def graph_1D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
                 dx_LU1 = hcl.scalar(0, "dx_LU1")
 
                 # Find LOWER BOUND optimal disturbance
-                dOptL1[0] = my_object.opt_dstb(t,  (x1[i]),\
-                                                                (min_deriv1[0]))
+                dOptL1[0] = my_object.opt_dstb(t,  (x1[i], ),\
+                                                                (min_deriv1[0], ))[0]
 
-                dOptU1[0] = my_object.opt_dstb(t, (x1[i]),\
-                                                                (max_deriv1[0]))
+                dOptU1[0] = my_object.opt_dstb(t, (x1[i], ),\
+                                                                (max_deriv1[0], ))[0]
 
                 # Find LOWER BOUND optimal control
-                uOptL1[0] = my_object.opt_ctrl(t, (x1[i]), \
-                                                                (min_deriv1[0]))
+                uOptL1[0] = my_object.opt_ctrl(t, (x1[i], ), \
+                                                                (min_deriv1[0], ))[0]
 
                     # Find UPPER BOUND optimal control
-                uOptU1[0] = my_object.opt_ctrl(t, (x1[i]),
-                                                                (max_deriv1[0]))
+                uOptU1[0] = my_object.opt_ctrl(t, (x1[i], ),
+                                                                (max_deriv1[0], ))[0]
                     # Find magnitude of rates of changes
-                dx_LL1[0] = my_object.dynamics(t, (x1[i]),
-                                                                (uOptL1[0]), \
-                                                                (dOptL1[0]))
+                dx_LL1[0] = my_object.dynamics(t, (x1[i], ),
+                                                                (uOptL1[0], ), \
+                                                                (dOptL1[0], ))[0]
                 dx_LL1[0] = my_abs(dx_LL1[0])
 
-                dx_LU1[0] = my_object.dynamics(t, (x1[i]),
-                                                                (uOptL1[0]), \
-                                                                (dOptU1[0]))
+                dx_LU1[0] = my_object.dynamics(t, (x1[i], ),
+                                                                (uOptL1[0], ), \
+                                                                (dOptU1[0], ))[0]
                 dx_LU1[0] = my_abs(dx_LU1[0])
 
                 # Calculate alpha
                 alpha1[0] = my_max(dx_LL1[0], dx_LU1[0])
 
-                dx_UL1[0] = my_object.dynamics(t, (x1[i]),\
-                                                                (uOptU1[0]), \
-                                                                (dOptL1[0]))
+                dx_UL1[0] = my_object.dynamics(t, (x1[i], ),\
+                                                                (uOptU1[0], ), \
+                                                                (dOptL1[0], ))[0]
                 dx_UL1[0] = my_abs(dx_UL1[0])
 
                 # Calculate alpha
                 alpha1[0] = my_max(alpha1[0], dx_UL1[0])
 
-                dx_UU1[0] = my_object.dynamics(t, (x1[i]),
-                                                                (uOptU1[0]),\
-                                                                (dOptU1[0]))
+                dx_UU1[0] = my_object.dynamics(t, (x1[i], ),
+                                                                (uOptU1[0], ),\
+                                                                (dOptU1[0], ))[0]
                 dx_UU1[0] = my_abs(dx_UU1[0])
                 # Calculate alpha
                 alpha1[0] = my_max(alpha1[0], dx_UU1[0])
@@ -219,11 +222,11 @@ def graph_1D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
 
         # Accessing the hamiltonian and dissipation stage
         s_H = graph_create.Hamiltonian
-        s_D = graph_create.Dissipation
+        # s_D = graph_create.Dissipation
 
         # Thread parallelize hamiltonian and dissipation computation
         s[s_H].parallel(s_H.i)
-        s[s_D].parallel(s_D.i)
+        # s[s_D].parallel(s_D.i)
     else:
         print("I'm here\n")
         s = hcl.create_schedule([V_init, V_f], returnDerivative)

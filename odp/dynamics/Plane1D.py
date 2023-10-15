@@ -20,12 +20,12 @@ class Plane1D:
 
         with hcl.if_(spat_deriv[0] > 0):
             with hcl.if_(self.uMode == "min"):
-                opt_v[0] = self.vxMin
+                opt_v[0] = self.vMin
         with hcl.elif_(spat_deriv[0] < 0):
             with hcl.if_(self.uMode == "max"):
-                opt_v[0] = self.vxMin
+                opt_v[0] = self.vMin
 
-        return (opt_v[0])
+        return (opt_v[0], )
 
     def opt_dstb(self, t, state, spat_deriv):
         """
@@ -37,11 +37,11 @@ class Plane1D:
 
         # Just create and pass back, even though they're not used
 
-        return (d1[0])
+        return (d1[0], )
 
     def dynamics(self, t, state, uOpt, dOpt):
         x_dot = hcl.scalar(0, "x_dot")
 
         x_dot[0] = uOpt[0] + dOpt[0]
 
-        return (x_dot[0])
+        return (x_dot[0], )
