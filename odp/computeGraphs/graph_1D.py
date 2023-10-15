@@ -7,7 +7,6 @@ from odp.spatialDerivatives.second_orderENO1D import *
 #from user_definer import *
 #def graph_1D(dynamics_obj, grid):
 def graph_1D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv_dim=1):
-    print("pts_each_dim {}".format(tuple(g.pts_each_dim)))
     V_f = hcl.placeholder(tuple(g.pts_each_dim), name="V_f", dtype=hcl.Float())
     V_init = hcl.placeholder(tuple(g.pts_each_dim), name="V_init", dtype=hcl.Float())
     l0 = hcl.placeholder(tuple(g.pts_each_dim), name="l0", dtype=hcl.Float())
