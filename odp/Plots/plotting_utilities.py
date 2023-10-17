@@ -158,6 +158,7 @@ def plot_valuefunction(grid, V, plot_option):
             ))
 
     if len(dims_plot) == 2 and len(V.shape) == 3:
+        # ref: https://plotly.com/python/visualizing-mri-volume-slices/
         # Plot 3D surface with animation
         dim1, dim2 = dims_plot[0], dims_plot[1]
         # complex_x = complex(0, grid.pts_each_dim[dim1])
@@ -169,9 +170,26 @@ def plot_valuefunction(grid, V, plot_option):
 
         print("Plotting beautiful plots. Please wait\n")
 
-        # make figure
-        fig = go.Figure(
-            data=[go.Surface(
+        # Define frames
+        fig = go.Figure(frames=[go.Frame(data = go.Surface(
+            # TODO chong: allow multiple sub-level sets
+            contours = {
+            "z": {"show": True, "start": -1, "end": 1, "size": 1, "color":"white", },
+            },
+            x=my_X,
+            y=my_Y,
+            z=V[:, :, N-k-1],
+            colorscale=plot_option.colorscale,
+            opacity=plot_option.opacity,
+            lighting=plot_option.lighting,
+            lightposition=plot_option.lightposition
+            ),
+            name=str(k) # you need to name the frame for the animation to behave properly
+            )
+            for k in range(N)])
+
+        # Add data to be displayed before animation starts
+        fig.add_trace(go.Surface(
             # TODO chong: allow multiple sub-level sets
             contours = {
             "z": {"show": True, "start": -1, "end": 1, "size": 1, "color":"white", },
@@ -183,284 +201,71 @@ def plot_valuefunction(grid, V, plot_option):
             opacity=plot_option.opacity,
             lighting=plot_option.lighting,
             lightposition=plot_option.lightposition
-            )],
-            layout=go.Layout(
-                            updatemenus=[dict(type="buttons",
-                                buttons=[dict(label="Play",
-                                                method="animate",
-                                                args=[None])])]),
-            frames=[go.Frame(
-                    data=go.Surface(
-                    # TODO chong: allow multiple sub-level sets
-                    contours = {
-                    "z": {"show": True, "start": -1, "end": 1, "size": 1, "color":"white", },
-                    },
-                    x=my_X,
-                    y=my_Y,
-                    z=V[:,:,N-k-1],
-                    colorscale=plot_option.colorscale,
-                    opacity=plot_option.opacity,
-                    lighting=plot_option.lighting,
-                    lightposition=plot_option.lightposition),
-                    name=str(k)
-                    )
-
-                    for k in range(N)]
-            )        
-
-        #update camera view
-        fig.update_layout(scene={
-                "xaxis": {"nticks": 20},
-                "zaxis": {"nticks": 4},
-                'camera_eye': {"x": 0, "y": -1, "z": 0.5},
-                "aspectratio": {"x": 1, "y": 1, "z": 0.2}
-            })
+            ))
         
-        #update x-axis and y-axis and hover mode
-        fig.update_xaxes(range=[grid.min[dim1], grid.max[dim1]], title="x")
-        fig.update_yaxes(range=[grid.min[dim2], grid.max[dim2]], title="y")
-        fig.update_layout(hovermode="closest")
-
-        #update slider
-        steps = []
-        for k in range(N):
-            step = dict(
-            method="animate",
-            args=[  [str(k)],  # Verify that the frame name is passed here.
-                    {"frame": {"duration": 300, "redraw": False},
+        def frame_args(duration):
+            return {
+                    "frame": {"duration": duration},
                     "mode": "immediate",
-                    "transition": {"duration": 300}}
-                ],  # layout attribute
-            label=str(k)
-            )
-            steps.append(step)
-
-        sliders = [dict(
-            active=0,
-            yanchor = "top",
-            xanchor = "left",
-            currentvalue = {
-                "font": {"size": 20},
-                "prefix": "Time Step:",
-                "visible": True,
-                "xanchor": "right"
-            },
-            transition = {"duration": 300, "easing": "cubic-in-out"},
-            pad = {"b": 10, "t": 50},
-            len = 0.9,
-            x = 0.1,
-            y = 0,
-            steps=steps
-        )]
-
-        # update button
-        updatemenus = [dict(
-        buttons = [
-            dict(
-                args = [None, {"frame": {"duration": 500, "redraw": False},
-                                "fromcurrent": True, "transition": {"duration": 300,
-                                                                    "easing": "quadratic-in-out"}}],
-                label = "Play",
-                method = "animate"
-                ),
-            dict(
-                 args = [[None], {"frame": {"duration": 0, "redraw": False},
-                                  "mode": "immediate",
-                                  "transition": {"duration": 0}}],
-                label = "Pause",
-                method = "animate"
-                )
-        ],
-        direction = "left",
-        pad = {"r": 10, "t": 87},
-        showactive = False,
-        type = "buttons",
-        x = 0.1,
-        xanchor = "right",
-        y = 0,
-        yanchor = "top"
-        )]
-
-        # sliders = [dict(steps = [dict(method= 'animate',
-        #                         args= [[f'frame{k}'],                           
-        #                         dict(mode= 'immediate',
-        #                             frame= dict(duration=400, redraw=True),
-        #                             transition=dict(duration= 0))
-        #                             ],
-        #                         label=f'{k+1}'
-        #                         ) for k in range(N)], 
-        #             active=0,
-        #             transition= dict(duration= 0 ),
-        #             x=0, # slider starting position  
-        #             y=0, 
-        #             currentvalue=dict(font=dict(size=12), 
-        #                             prefix='frame: ', 
-        #                             visible=True, 
-        #                             xanchor= 'center'
-        #                             ),  
-        #             len=1.0) #slider length
-        #     ]
-
-        fig.update_layout(updatemenus=updatemenus, sliders=sliders)
-
-
-
-        # make figure
-        # fig_dict = {
-        #     "data": [],
-        #     "layout": {},
-        #     "frames": []
-        # }
-
-        # # fill in most of layout
-        # fig_dict["layout"]["xaxis"] = {"range": [grid.min[dim1], grid.max[dim1]], "title": "x"}
-        # fig_dict["layout"]["yaxis"] = {"range": [grid.min[dim2], grid.max[dim2]], "title": "y"}
-        # fig_dict["layout"]["hovermode"] = "closest"
-        # fig_dict["layout"]["updatemenus"] = [
-        #     {
-        #         "buttons": [
-        #             {
-        #                 "args": [None, {"frame": {"duration": 500, "redraw": False},
-        #                                 "fromcurrent": True, "transition": {"duration": 300,
-        #                                                                     "easing": "quadratic-in-out"}}],
-        #                 "label": "Play",
-        #                 "method": "animate"
-        #             },
-        #             {
-        #                 "args": [[None], {"frame": {"duration": 0, "redraw": False},
-        #                                 "mode": "immediate",
-        #                                 "transition": {"duration": 0}}],
-        #                 "label": "Pause",
-        #                 "method": "animate"
-        #             }
-        #         ],
-        #         "direction": "left",
-        #         "pad": {"r": 10, "t": 87},
-        #         "showactive": False,
-        #         "type": "buttons",
-        #         "x": 0.1,
-        #         "xanchor": "right",
-        #         "y": 0,
-        #         "yanchor": "top"
-        #     }
-        # ]
-
-        # sliders_dict = {
-        #     "active": 0,
-        #     "yanchor": "top",
-        #     "xanchor": "left",
-        #     "currentvalue": {
-        #         "font": {"size": 20},
-        #         "prefix": "Time Step:",
-        #         "visible": True,
-        #         "xanchor": "right"
-        #     },
-        #     "transition": {"duration": 300, "easing": "cubic-in-out"},
-        #     "pad": {"b": 10, "t": 50},
-        #     "len": 0.9,
-        #     "x": 0.1,
-        #     "y": 0,
-        #     "steps": []
-        # }
-
-        # fig_dict["layout"]["scene"] = {
-        #         "xaxis": {"nticks": 20},
-        #         "zaxis": {"nticks": 4},
-        #         'camera_eye': {"x": 0, "y": -1, "z": 0.5},
-        #         "aspectratio": {"x": 1, "y": 1, "z": 0.2}
-        #     }
-
-        # # make data
-        # fig_dict["data"] = [go.Surface(
-        #     # TODO chong: allow multiple sub-level sets
-        #     contours = {
-        #     "z": {"show": True, "start": -1, "end": 1, "size": 1, "color":"white", },
-        #     },
-        #     x=my_X,
-        #     y=my_Y,
-        #     z=V[:, :, N-1],
-        #     colorscale=plot_option.colorscale,
-        #     opacity=plot_option.opacity,
-        #     lighting=plot_option.lighting,
-        #     lightposition=plot_option.lightposition
-        # )]
-
-        # # make frames  
-        # fig_dict["frames"] = [go.Frame(
-        # data=go.Surface(
-        # # TODO chong: allow multiple sub-level sets
-        # contours = {
-        # "z": {"show": True, "start": -1, "end": 1, "size": 1, "color":"white", },
-        # },
-        # x=my_X,
-        # y=my_Y,
-        # z=V[:,:,N-k-1],
-        # colorscale=plot_option.colorscale,
-        # opacity=plot_option.opacity,
-        # lighting=plot_option.lighting,
-        # lightposition=plot_option.lightposition),
-        # name = str(k))
-        # for k in range(N)]     
-
-        # for k in range(N):
-        #     slider_step = {
-        #         "args": [
-        #             [str(k)],  # Verify that the frame name is passed here.
-        #             {"frame": {"duration": 300, "redraw": False},
-        #             "mode": "immediate",
-        #             "transition": {"duration": 300}}
-        #         ],
-        #         "label": str(k),  # Verify that the label matches the frame name.
-        #         "method": "animate"
-        #     }
-        #     sliders_dict["steps"].append(slider_step)
-
-
-    
-        # print("I'm here")
-        # fig_dict["layout"]["sliders"] = [sliders_dict]
-
-        # fig = go.Figure(fig_dict)
-
-         # Create figure
-        # fig = go.Figure(
-        #     data=[go.Surface(
-        #     # TODO chong: allow multiple sub-level sets
-        #     contours = {
-        #     "z": {"show": True, "start": -1, "end": 1, "size": 1, "color":"white", },
-        #     },
-        #     x=my_X,
-        #     y=my_Y,
-        #     z=V[:, :, N-1],
-        #     colorscale=plot_option.colorscale,
-        #     opacity=plot_option.opacity,
-        #     lighting=plot_option.lighting,
-        #     lightposition=plot_option.lightposition
-        #     )],
-        #     layout=go.Layout(
-        #                     updatemenus=[dict(type="buttons",
-        #                         buttons=[dict(label="Play",
-        #                                         method="animate",
-        #                                         args=[None])])]),
-        #     frames=[go.Frame(
-        #             data=go.Surface(
-        #             # TODO chong: allow multiple sub-level sets
-        #             contours = {
-        #             "z": {"show": True, "start": -1, "end": 1, "size": 1, "color":"white", },
-        #             },
-        #             x=my_X,
-        #             y=my_Y,
-        #             z=V[:,:,N-k-1],
-        #             colorscale=plot_option.colorscale,
-        #             opacity=plot_option.opacity,
-        #             lighting=plot_option.lighting,
-        #             lightposition=plot_option.lightposition)
-        #             )
-
-        #             for k in range(N)]
-        #     )
+                    "fromcurrent": True,
+                    "transition": {"duration": duration, "easing": "linear"},
+                }
         
+        sliders = [
+            {
+                "pad": {"b": 10, "t": 60},
+                "len": 0.9,
+                "x": 0.1,
+                "y": 0,
+                "currentvalue": {
+                    "font": {"size": 20},
+                    "prefix": "Time Step:",
+                    "visible": True,
+                    "xanchor": "right"
+                },
+                "steps": [
+                    {
+                        "args": [[f.name], frame_args(0)],
+                        "label": str(k),
+                        "method": "animate",
+                    }
+                    for k, f in enumerate(fig.frames)
+                ],
+            }
+        ]
 
+        # Layout
+        fig.update_layout(
+                title='2D Value Function',
+                scene=dict( xaxis={"nticks": 20},
+                            zaxis={"nticks": 4},
+                            camera_eye={"x": 0, "y": -1, "z": 0.5},
+                            aspectratio={"x": 1, "y": 1, "z": 0.2}
+                            ),
+                updatemenus = [
+                    {
+                        "buttons": [
+                            {
+                                "args": [None, frame_args(300)],
+                                "label": "Play", # play symbol
+                                "method": "animate",
+                            },
+                            {
+                                "args": [[None], frame_args(0)],
+                                "label": "pause", # pause symbol
+                                "method": "animate",
+                            },
+                        ],
+                        "direction": "left",
+                        "pad": {"r": 10, "t": 70},
+                        "type": "buttons",
+                        "x": 0.1,
+                        "y": 0,
+                    }
+                ],
+                sliders=sliders
+        )
+        
 
 
     fig.show()
