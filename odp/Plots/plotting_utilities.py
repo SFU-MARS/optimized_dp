@@ -17,8 +17,8 @@ def plot_isosurface(grid, V, plot_option):
     if len(dims_plot) != 3 and len(dims_plot) != 2 and len(dims_plot) != 1:
         raise Exception('dims_plot length should be equal to 3, 2 or 1\n')
 
-    if len(dims_plot) == 3:
-        # Plot 3D isosurface
+    if len(dims_plot) == 3 and len(V.shape) == 3:
+        # Plot 3D isosurface for only one time step
         dim1, dim2, dim3 = dims_plot[0], dims_plot[1], dims_plot[2]
         complex_x = complex(0, grid.pts_each_dim[dim1])
         complex_y = complex(0, grid.pts_each_dim[dim2])
@@ -52,10 +52,83 @@ def plot_isosurface(grid, V, plot_option):
             reversescale=plot_option.reversescale,
             showlegend=plot_option.showlegend,
             showscale=plot_option.showscale,
-            uid=plot_option.uid
         ))
         fig.show()
         print("Please check the plot on your browser.")
+
+    if len(dims_plot) == 3 and len(V.shape) == 4:
+        # Plot 3D isosurface with animation
+        dim1, dim2, dim3 = dims_plot[0], dims_plot[1], dims_plot[2]
+
+        dim1, dim2, dim3 = dims_plot[0], dims_plot[1], dims_plot[2]
+        complex_x = complex(0, grid.pts_each_dim[dim1])
+        complex_y = complex(0, grid.pts_each_dim[dim2])
+        complex_z = complex(0, grid.pts_each_dim[dim3])
+        mg_X, mg_Y, mg_Z = np.mgrid[grid.min[dim1]:grid.max[dim1]: complex_x, grid.min[dim2]:grid.max[dim2]: complex_y,
+                           grid.min[dim3]:grid.max[dim3]: complex_z]
+
+        N = V.shape[3]
+        print("Plotting beautiful plots. Please wait\n")
+
+        # Define frames
+        fig = go.Figure(frames=[go.Frame(data = go.Isosurface(
+            x=mg_X.flatten(),
+            y=mg_Y.flatten(),
+            z=mg_Z.flatten(),
+            value=V[:, :, :, N-k-1].flatten(),
+            caps=dict(x_show=True, y_show=True),
+            isomin=plot_option.min_isosurface,
+            surface_count=plot_option.surface_count,
+            isomax=plot_option.max_isosurface,
+            colorscale=plot_option.colorscale,
+            opacity=plot_option.opacity,
+            contour=plot_option.contour,
+            flatshading=plot_option.flatshading,
+            lighting=plot_option.lighting,
+            lightposition=plot_option.lightposition,
+            reversescale=plot_option.reversescale,
+            showlegend=plot_option.showlegend,
+            showscale=plot_option.showscale,
+            ),
+            name=str(k) # you need to name the frame for the animation to behave properly
+            )
+            for k in range(N)])
+
+        # Add data to be displayed before animation starts
+        fig.add_trace(go.Isosurface(
+            x=mg_X.flatten(),
+            y=mg_Y.flatten(),
+            z=mg_Z.flatten(),
+            value=V[:, :, :, N-1].flatten(),
+            caps=dict(x_show=True, y_show=True),
+            isomin=plot_option.min_isosurface,
+            surface_count=plot_option.surface_count,
+            isomax=plot_option.max_isosurface,
+            colorscale=plot_option.colorscale,
+            opacity=plot_option.opacity,
+            contour=plot_option.contour,
+            flatshading=plot_option.flatshading,
+            lighting=plot_option.lighting,
+            lightposition=plot_option.lightposition,
+            reversescale=plot_option.reversescale,
+            showlegend=plot_option.showlegend,
+            showscale=plot_option.showscale,
+            ))
+        
+        fig.update_layout(
+            title='3D Set',
+            scene=dict( xaxis={"nticks": 20},
+                        zaxis={"nticks": 20},
+                        camera_eye={"x": 0, "y": -1, "z": 0.5},
+                        aspectratio={"x": 1, "y": 1, "z": 0.6}
+                        ))
+        
+        fig = slider_define(fig)
+        fig.show()
+        print("Please check the plot on your browser.")
+
+
+
 
     if len(dims_plot) == 2:
         dim1, dim2 = dims_plot[0], dims_plot[1]
@@ -134,9 +207,6 @@ def plot_valuefunction(grid, V, plot_option):
     if len(dims_plot) == 2 and len(V.shape) == 2:
         # Plot 3D surface for only one time step
         dim1, dim2 = dims_plot[0], dims_plot[1]
-        # complex_x = complex(0, grid.pts_each_dim[dim1])
-        # complex_y = complex(0, grid.pts_each_dim[dim2])
-        # mg_X, mg_Y = np.mgrid[grid.min[dim1]:grid.max[dim1]: complex_x, grid.min[dim2]:grid.max[dim2]: complex_y]
 
         my_X = np.linspace(grid.min[dim1], grid.max[dim1], grid.pts_each_dim[dim1])
         my_Y = np.linspace(grid.min[dim2], grid.max[dim2], grid.pts_each_dim[dim2])
@@ -161,9 +231,6 @@ def plot_valuefunction(grid, V, plot_option):
         # ref: https://plotly.com/python/visualizing-mri-volume-slices/
         # Plot 3D surface with animation
         dim1, dim2 = dims_plot[0], dims_plot[1]
-        # complex_x = complex(0, grid.pts_each_dim[dim1])
-        # complex_y = complex(0, grid.pts_each_dim[dim2])
-        # mg_X, mg_Y = np.mgrid[grid.min[dim1]:grid.max[dim1]: complex_x, grid.min[dim2]:grid.max[dim2]: complex_y]
         my_X = np.linspace(grid.min[dim1], grid.max[dim1], grid.pts_each_dim[dim1])
         my_Y = np.linspace(grid.min[dim2], grid.max[dim2], grid.pts_each_dim[dim2])
         N = V.shape[2]
@@ -203,7 +270,27 @@ def plot_valuefunction(grid, V, plot_option):
             lightposition=plot_option.lightposition
             ))
         
-        def frame_args(duration):
+        fig.update_layout(
+            title='2D Value Function',
+            scene=dict( xaxis={"nticks": 20},
+                        zaxis={"nticks": 4},
+                        camera_eye={"x": 0, "y": -1, "z": 0.5},
+                        aspectratio={"x": 1, "y": 1, "z": 0.2}
+                        ))
+        
+        fig = slider_define(fig)
+
+    fig.show()
+    print("Please check the plot on your browser.")
+
+
+###################################################################################################################################
+def slider_define(fig):
+    '''
+    Internal function
+    Define slider for the animation
+    '''
+    def frame_args(duration):
             return {
                     "frame": {"duration": duration},
                     "mode": "immediate",
@@ -211,7 +298,7 @@ def plot_valuefunction(grid, V, plot_option):
                     "transition": {"duration": duration, "easing": "linear"},
                 }
         
-        sliders = [
+    sliders = [
             {
                 "pad": {"b": 10, "t": 60},
                 "len": 0.9,
@@ -235,13 +322,7 @@ def plot_valuefunction(grid, V, plot_option):
         ]
 
         # Layout
-        fig.update_layout(
-                title='2D Value Function',
-                scene=dict( xaxis={"nticks": 20},
-                            zaxis={"nticks": 4},
-                            camera_eye={"x": 0, "y": -1, "z": 0.5},
-                            aspectratio={"x": 1, "y": 1, "z": 0.2}
-                            ),
+    fig.update_layout(
                 updatemenus = [
                     {
                         "buttons": [
@@ -265,9 +346,4 @@ def plot_valuefunction(grid, V, plot_option):
                 ],
                 sliders=sliders
         )
-        
-
-
-    fig.show()
-    print("Please check the plot on your browser.")
-
+    return fig
