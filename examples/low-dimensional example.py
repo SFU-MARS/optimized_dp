@@ -5,7 +5,7 @@ from odp.Grid import Grid
 from odp.Shapes import *
 
 # Specify the  file that includes dynamic systems
-from odp.dynamics import Plane2D, Plane1D
+from odp.dynamics import DubinsCapture, Plane2D, Plane1D
 # Plot options
 from odp.Plots import PlotOptions
 from odp.Plots import plot_isosurface, plot_valuefunction
@@ -22,6 +22,46 @@ import math
 - Initialize plotting option
 - Call HJSolver function
 """
+##################################################### 3D EXAMPLE #####################################################
+# STEP 1: Define grid
+grid_min = np.array([-4.0, -4.0, -math.pi])
+grid_max = np.array([4.0, 4.0, math.pi])
+dims = 3
+N = np.array([40, 40, 40])
+pd=[2]
+g = Grid(grid_min, grid_max, dims, N, pd)
+
+# STEP 2: Generate initial values for grid using shape functions
+center = np.zeros(dims)
+radius = 1.0
+ignore_dims = [2]
+Initial_value_f = CylinderShape(g, ignore_dims, center, radius)
+
+# STEP 3: Time length for computations
+Lookback_length = 1.0
+t_step = 0.05
+
+small_number = 1e-5
+tau = np.arange(start=0, stop=Lookback_length + small_number, step=t_step)
+
+# STEP 4: System dynamics for computation
+sys = DubinsCapture(uMode="max", dMode="min")
+
+# STEP 5: Initialize plotting option
+po1 = PlotOptions(do_plot=False, plot_type="set", plotDims=[0,1,2])
+
+po2 = PlotOptions(do_plot=True, plot_type="set", plotDims=[0,1,2],
+                  slicesCut=[], colorscale="Bluered")
+
+# STEP 6: Call HJSolver function
+compMethod = { "TargetSetMode": "None"}
+result_2 = HJSolver(sys, g, Initial_value_f, tau, compMethod, po1, saveAllTimeSteps=True)
+
+plot_isosurface(g, result_2, po2)
+
+print(result_2.shape)
+
+
 
 ##################################################### 2D EXAMPLE #####################################################
 # STEP 1: Define grid
