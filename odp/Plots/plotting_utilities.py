@@ -129,8 +129,8 @@ def plot_isosurface(grid, V, plot_option):
 
 
 
-
-    if len(dims_plot) == 2:
+    if len(dims_plot) == 2 and len(V.shape) == 2:
+        # Plot 2D isosurface for only one time step
         dim1, dim2 = dims_plot[0], dims_plot[1]
         complex_x = complex(0, grid.pts_each_dim[dim1])
         complex_y = complex(0, grid.pts_each_dim[dim2])
@@ -161,8 +161,55 @@ def plot_isosurface(grid, V, plot_option):
         fig.show()
         print("Please check the plot on your browser.")
 
-    if len(dims_plot) == 1:
-        #TODO Chong: do not need mesh grid
+    if len(dims_plot) == 2 and len(V.shape) == 3:
+        # Plot 2D isosurface with animation
+        dim1, dim2 = dims_plot[0], dims_plot[1]
+        complex_x = complex(0, grid.pts_each_dim[dim1])
+        complex_y = complex(0, grid.pts_each_dim[dim2])
+        mg_X, mg_Y = np.mgrid[grid.min[dim1]:grid.max[dim1]: complex_x, grid.min[dim2]:grid.max[dim2]: complex_y]
+
+        N = V.shape[2]
+
+        print("Plotting beautiful plots. Please wait\n")
+        # Define frames
+        fig = go.Figure(frames=[go.Frame(data = go.Contour(
+            x=mg_X.flatten(),
+            y=mg_Y.flatten(),
+            z=V[:,:,N-k-1].flatten(),
+            zmin=0.0,
+            ncontours=1,
+            contours_coloring='none',  # former: lines
+            name="Reachable Set",  # zero level
+            line_width=1.5,
+            line_color='magenta',
+            zmax=0.0,
+            ), layout=go.Layout(plot_bgcolor='rgba(0,0,0,0)'),
+            name=str(k) # you need to name the frame for the animation to behave properly
+            )
+            for k in range(N)])
+
+        # Add data to be displayed before animation starts
+        fig.add_trace(go.Contour(
+            x=mg_X.flatten(),
+            y=mg_Y.flatten(),
+            z=V[:,:,N-1].flatten(),
+            zmin=0.0,
+            ncontours=1,
+            contours_coloring='none',  # former: lines
+            name="Reachable Set",  # zero level
+            line_width=1.5,
+            line_color='magenta',
+            zmax=0.0,
+            ))
+        
+        fig.update_layout(title='2D Set',)
+        
+        fig = slider_define(fig)
+        fig.show()
+        print("Please check the plot on your browser.")
+
+    if len(dims_plot) == 1 and len(V.shape) == 1:
+        # Plot 1D isosurface for only one time step
         dim1 = dims_plot[0]
         complex_x = complex(0, grid.pts_each_dim[dim1])
         mg_X = np.mgrid[grid.min[dim1]:grid.max[dim1]: complex_x]
@@ -181,6 +228,46 @@ def plot_isosurface(grid, V, plot_option):
             name="Reachable Set",
             labels={'x','Vaue'}
         ), layout=go.Layout(plot_bgcolor='rgba(0,0,0,0)'))
+
+        fig.show()
+        print("Please check the plot on your browser.")
+
+
+
+    if len(dims_plot) == 1 and len(V.shape) == 2:
+        # Plot 1D isosurface with animation
+        dim1 = dims_plot[0]
+        complex_x = complex(0, grid.pts_each_dim[dim1])
+        mg_X = np.mgrid[grid.min[dim1]:grid.max[dim1]: complex_x]
+        
+        N = V.shape[1]
+
+        # Define frames
+        fig = go.Figure(frames=[go.Frame(data=px.line(
+            x=mg_X.flatten(),
+            y=V[:,N-k-1].flatten(),
+            labels={'x','Vaue'}
+            ), layout=go.Layout(plot_bgcolor='rgba(0,0,0,0)'),
+            name=str(k) # you need to name the frame for the animation to behave properly
+            )
+            for k in range(N)])
+
+        # Add data to be displayed before animation starts
+        fig.add_trace(go.Contour(
+            x=mg_X.flatten(),
+            y=mg_Y.flatten(),
+            z=V[:,:,N-1].flatten(),
+            zmin=0.0,
+            ncontours=1,
+            contours_coloring='none',  # former: lines
+            line_width=1.5,
+            line_color='magenta',
+            zmax=0.0,
+            ))
+        
+        fig.update_layout(title='1D Value Function',)
+        
+        fig = slider_define(fig)
 
         fig.show()
         print("Please check the plot on your browser.")
@@ -279,6 +366,61 @@ def plot_valuefunction(grid, V, plot_option):
                         ))
         
         fig = slider_define(fig)
+
+    if len(dims_plot) == 1 and len(V.shape) == 1:
+        # Plot 1D isosurface for only one time step
+        dim1 = dims_plot[0]
+        complex_x = complex(0, grid.pts_each_dim[dim1])
+        mg_X = np.mgrid[grid.min[dim1]:grid.max[dim1]: complex_x]
+
+        my_V = V[tuple(idx)]
+
+        if (my_V > 0.0).all():
+            print("Implicit surface will not be shown since all values are positive ")
+        if (my_V < 0.0).all():
+            print("Implicit surface will not be shown since all values are negative ")
+
+        print("Plotting beautiful 1D plots. Please wait\n")
+        fig = go.Figure(data=px.line(
+            x=mg_X.flatten(),
+            y=my_V.flatten(),
+            name="Reachable Set",
+            labels={'x','Vaue'}
+        ), layout=go.Layout(plot_bgcolor='rgba(0,0,0,0)'))
+
+        fig.show()
+        print("Please check the plot on your browser.")
+
+
+
+    if len(dims_plot) == 1 and len(V.shape) == 2:
+        # Plot 1D isosurface with animation
+        dim1 = dims_plot[0]
+        complex_x = complex(0, grid.pts_each_dim[dim1])
+        mg_X = np.mgrid[grid.min[dim1]:grid.max[dim1]: complex_x]
+        
+        N = V.shape[1]
+
+        # Define frames
+        fig = go.Figure(frames=[go.Frame(data=px.line(
+            x=mg_X.flatten(),
+            y=V[:,N-k-1].flatten(),
+            labels={'x','Vaue'}
+            ), layout=go.Layout(plot_bgcolor='rgba(0,0,0,0)'),
+            name=str(k) # you need to name the frame for the animation to behave properly
+            )
+            for k in range(N)])
+
+        # Add data to be displayed before animation starts
+        fig.add_trace(px.line(
+            x=mg_X.flatten(),
+            y=V[:,:,N-1].flatten(),
+            labels={'x','Vaue'}))
+        
+        fig.update_layout(title='1D Value Function',)
+        
+        fig = slider_define(fig)
+
 
     fig.show()
     print("Please check the plot on your browser.")
