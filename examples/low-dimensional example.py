@@ -22,6 +22,7 @@ import math
 - Initialize plotting option
 - Call HJSolver function
 """
+
 ##################################################### 3D EXAMPLE #####################################################
 # STEP 1: Define grid
 grid_min = np.array([-4.0, -4.0, -math.pi])
@@ -55,11 +56,9 @@ po2 = PlotOptions(do_plot=True, plot_type="set", plotDims=[0,1,2],
 
 # STEP 6: Call HJSolver function
 compMethod = { "TargetSetMode": "None"}
-result_2 = HJSolver(sys, g, Initial_value_f, tau, compMethod, po1, saveAllTimeSteps=True)
+result_3 = HJSolver(sys, g, Initial_value_f, tau, compMethod, po1, saveAllTimeSteps=True)
 
-plot_isosurface(g, result_2, po2)
-
-print(result_2.shape)
+plot_isosurface(g, result_3, po2)
 
 
 
@@ -89,49 +88,50 @@ sys = Plane2D()
 # STEP 5: Initialize plotting option
 po1 = PlotOptions(do_plot=False, plot_type="value", plotDims=[0,1])
 
-po2 = PlotOptions(do_plot=True, plot_type="value", plotDims=[0,1],
-                  slicesCut=[], colorscale="Hot")
-
 # STEP 6: Call HJSolver function
 compMethod = { "TargetSetMode": "None"}
 result_2 = HJSolver(sys, g, Initial_value_f, tau, compMethod, po1, saveAllTimeSteps=True)
 
+# Visualization of animated 2D value function 
+po2 = PlotOptions(do_plot=True, plot_type="value", plotDims=[0,1],
+                  slicesCut=[], colorscale="Hot")
 plot_valuefunction(g, result_2, po2)
 
-print(result_2.shape)
-
+# Visualization of animated 2D 0 sublevel set
+po3 = PlotOptions(do_plot=True, plot_type="set", plotDims=[0,1],
+                  slicesCut=[], colorscale="Bluered")
+plot_isosurface(g, result_2, po2)
 
 
 # ##################################################### 1D EXAMPLE #####################################################
-# # STEP 1: Define grid
-# grid_min_1 = np.array([-4.0])
-# grid_max_1 = np.array([4.0])
-# dims_1 = 1
-# N_1 = np.array([40])
-# g_1 = Grid(grid_min_1, grid_max_1, dims_1, N_1)
+# STEP 1: Define grid
+grid_min_1 = np.array([-4.0])
+grid_max_1 = np.array([4.0])
+dims_1 = 1
+N_1 = np.array([40])
+g_1 = Grid(grid_min_1, grid_max_1, dims_1, N_1)
 
-# # STEP 2: Generate initial values for grid using shape functions
-# target_min_1 = np.array([-1.0])
-# target_max_1 = np.array([1.0])
-# Initial_value_f_1 = ShapeRectangle(g_1, target_min_1, target_max_1)
+# STEP 2: Generate initial values for grid using shape functions
+target_min_1 = np.array([-1.0])
+target_max_1 = np.array([1.0])
+Initial_value_f_1 = ShapeRectangle(g_1, target_min_1, target_max_1)
 
-# # STEP 3: Time length for computations
-# Lookback_length = 2.0
-# t_step = 0.05
+# STEP 3: Time length for computations
+Lookback_length = 2.0
+t_step = 0.05
 
-# small_number = 1e-5
-# tau = np.arange(start=0, stop=Lookback_length + small_number, step=t_step)
+small_number = 1e-5
+tau = np.arange(start=0, stop=Lookback_length + small_number, step=t_step)
 
-# # STEP 4: System dynamics for computation
-# sys_1 = Plane1D()
+# STEP 4: System dynamics for computation
+sys_1 = Plane1D()
 
-# # STEP 5: Initialize plotting option
-# po2 = PlotOptions(do_plot=True, plot_type="1d_plot", plotDims=[0],
-#                   slicesCut=[])
+# STEP 5: Initialize plotting option
+po2 = PlotOptions(do_plot=True, plot_type="set", plotDims=[0],
+                  slicesCut=[])
 
-# # STEP 6: Call HJSolver function
-# compMethod = { "TargetSetMode": "None"}
+# STEP 6: Call HJSolver function
+compMethod = { "TargetSetMode": "None"}
 
-# print(1)
-# result_1 = HJSolver(sys_1, g_1, Initial_value_f_1, tau, compMethod, po2)
+result_1 = HJSolver(sys_1, g_1, Initial_value_f_1, tau, compMethod, po2)
 
