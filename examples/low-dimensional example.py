@@ -127,11 +127,15 @@ tau = np.arange(start=0, stop=Lookback_length + small_number, step=t_step)
 sys_1 = Plane1D()
 
 # STEP 5: Initialize plotting option
-po2 = PlotOptions(do_plot=True, plot_type="set", plotDims=[0],
+po1 = PlotOptions(do_plot=False, plot_type="value", plotDims=[0],
                   slicesCut=[])
 
 # STEP 6: Call HJSolver function
 compMethod = { "TargetSetMode": "None"}
 
-result_1 = HJSolver(sys_1, g_1, Initial_value_f_1, tau, compMethod, po2)
+result_1 = HJSolver(sys_1, g_1, Initial_value_f_1, tau, compMethod, po1, saveAllTimeSteps=True)
+
+po2 = PlotOptions(do_plot=True, plot_type="value", plotDims=[0],
+                  slicesCut=[], colorscale="Hot")
+plot_valuefunction(g_1, result_1, po2)
 
