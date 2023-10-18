@@ -384,7 +384,6 @@ def plot_valuefunction(grid, V, plot_option):
         fig = go.Figure(data=px.line(
             x=mg_X.flatten(),
             y=my_V.flatten(),
-            name="Reachable Set",
             labels={'x','Vaue'}
         ), layout=go.Layout(plot_bgcolor='rgba(0,0,0,0)'))
 
@@ -402,20 +401,18 @@ def plot_valuefunction(grid, V, plot_option):
         N = V.shape[1]
 
         # Define frames
-        fig = go.Figure(frames=[go.Frame(data=px.line(
+        fig = go.Figure(frames=[go.Frame(data=go.Scatter(
             x=mg_X.flatten(),
-            y=V[:,N-k-1].flatten(),
-            labels={'x','Vaue'}
+            y=V[:,N-k-1].flatten()
             ), layout=go.Layout(plot_bgcolor='rgba(0,0,0,0)'),
             name=str(k) # you need to name the frame for the animation to behave properly
             )
             for k in range(N)])
 
         # Add data to be displayed before animation starts
-        fig.add_trace(px.line(
+        fig.add_trace(go.Scatter(
             x=mg_X.flatten(),
-            y=V[:,:,N-1].flatten(),
-            labels={'x','Vaue'}))
+            y=V[:,N-1].flatten()))
         
         fig.update_layout(title='1D Value Function',)
         
