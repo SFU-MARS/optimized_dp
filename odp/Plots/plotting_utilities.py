@@ -387,6 +387,9 @@ def plot_valuefunction(grid, V, plot_option):
             labels={'x','Vaue'}
         ), layout=go.Layout(plot_bgcolor='rgba(0,0,0,0)'))
 
+        fig.update_yaxes(zeroline=True, zerolinewidth=1, zerolinecolor='black')
+        fig.update_yaxes(range=[-1, 1.5])
+
         fig.show()
         print("Please check the plot on your browser.")
 
@@ -416,7 +419,10 @@ def plot_valuefunction(grid, V, plot_option):
         
         fig.update_layout(title='1D Value Function',)
         
-        fig = slider_define(fig)
+        fig = slider_define(fig, duration=20)
+
+        fig.update_yaxes(zeroline=True, zerolinewidth=1, zerolinecolor='black')
+        fig.update_yaxes(range=[-1, 1.5])
 
 
     fig.show()
@@ -424,7 +430,7 @@ def plot_valuefunction(grid, V, plot_option):
 
 
 ###################################################################################################################################
-def slider_define(fig):
+def slider_define(fig, duration=300):
     '''
     Internal function
     Define slider for the animation
@@ -466,7 +472,7 @@ def slider_define(fig):
                     {
                         "buttons": [
                             {
-                                "args": [None, frame_args(300)],
+                                "args": [None, frame_args(duration)],
                                 "label": "Play", # play symbol
                                 "method": "animate",
                             },
