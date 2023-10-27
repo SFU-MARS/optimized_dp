@@ -53,8 +53,9 @@ sys = DubinsCapture(uMode="max", dMode="min")
 # STEP 5: Initialize plotting option
 po1 = PlotOptions(do_plot=False, plot_type="set", plotDims=[0,1,2])
 
-po2 = PlotOptions(do_plot=True, plot_type="set", plotDims=[0,1,2],
-                  slicesCut=[], colorscale="Bluered")
+# While file needs to be saved locally, set save_fig=True and filename, recommend to set interactive_html=True for better visualization
+po2 = PlotOptions(do_plot=False, plot_type="set", plotDims=[0,1,2],
+                  slicesCut=[], colorscale="Bluered", save_fig=True, filename="3D_0_sublevel_set", interactive_html=True)
 
 # STEP 6: Call HJSolver function
 compMethod = { "TargetSetMode": "None"}
@@ -95,17 +96,17 @@ compMethod = { "TargetSetMode": "None"}
 result_2 = HJSolver(sys, g, Initial_value_f, tau, compMethod, po1, saveAllTimeSteps=True)
 
 # Visualization of animated 2D value function 
-po2 = PlotOptions(do_plot=True, plot_type="value", plotDims=[0,1],
-                  slicesCut=[], colorscale="Hot")
+po2 = PlotOptions(do_plot=False, plot_type="value", plotDims=[0,1],
+                  slicesCut=[], colorscale="Hot", save_fig=True, filename="2D_0_valuefunction", interactive_html=True)
 plot_valuefunction(g, result_2, po2)
 
 # Visualization of animated 2D 0 sublevel set
-po3 = PlotOptions(do_plot=True, plot_type="set", plotDims=[0,1],
-                  slicesCut=[], colorscale="Bluered")
-plot_isosurface(g, result_2, po2)
+po3 = PlotOptions(do_plot=False, plot_type="set", plotDims=[0,1],
+                  slicesCut=[], colorscale="Bluered", save_fig=True, filename="2D_0_sublevel_set", interactive_html=True)
+plot_isosurface(g, result_2, po3)
 
 
-# ##################################################### 1D EXAMPLE #####################################################
+##################################################### 1D EXAMPLE #####################################################
 # STEP 1: Define grid
 grid_min_1 = np.array([-4.0])
 grid_max_1 = np.array([4.0])
@@ -137,7 +138,7 @@ compMethod = { "TargetSetMode": "None"}
 
 result_1 = HJSolver(sys_1, g_1, Initial_value_f_1, tau, compMethod, po1, saveAllTimeSteps=True)
 
-po2 = PlotOptions(do_plot=True, plot_type="value", plotDims=[0],
-                  slicesCut=[], colorscale="Hot")
+po2 = PlotOptions(do_plot=False, plot_type="value", plotDims=[0],
+                  slicesCut=[], colorscale="Hot", save_fig=True, filename="1D_0_valuefunction", interactive_html=True)
 plot_valuefunction(g_1, result_1, po2)
 
