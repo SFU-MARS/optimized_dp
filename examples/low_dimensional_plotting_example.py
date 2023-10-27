@@ -136,9 +136,9 @@ po1 = PlotOptions(do_plot=False, plot_type="value", plotDims=[0],
 # STEP 6: Call HJSolver function
 compMethod = { "TargetSetMode": "None"}
 
-result_1 = HJSolver(sys_1, g_1, Initial_value_f_1, tau, compMethod, po1, saveAllTimeSteps=True)
+result_1 = HJSolver(sys_1, g_1, Initial_value_f_1, tau, compMethod, po1, saveAllTimeSteps=False)
 
 po2 = PlotOptions(do_plot=False, plot_type="value", plotDims=[0],
-                  slicesCut=[], colorscale="Hot", save_fig=True, filename="1D_0_valuefunction", interactive_html=True)
+                  slicesCut=[], save_fig=True, filename="1D_0_valuefunction.png", interactive_html=False)
 plot_valuefunction(g_1, result_1, po2)
 
