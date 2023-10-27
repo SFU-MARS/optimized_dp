@@ -53,8 +53,6 @@ def plot_isosurface(grid, V, plot_option):
             showlegend=plot_option.showlegend,
             showscale=plot_option.showscale,
         ))
-        fig.show()
-        print("Please check the plot on your browser.")
 
     if len(dims_plot) == 3 and len(V.shape) == 4:
         # Plot 3D isosurface with animation
@@ -124,9 +122,6 @@ def plot_isosurface(grid, V, plot_option):
                         ))
         
         fig = slider_define(fig)
-        fig.show()
-        print("Please check the plot on your browser.")
-
 
 
     if len(dims_plot) == 2 and len(V.shape) == 2:
@@ -157,9 +152,6 @@ def plot_isosurface(grid, V, plot_option):
             line_color='magenta',
             zmax=0.0,
         ), layout=go.Layout(plot_bgcolor='rgba(0,0,0,0)'))  # ,paper_bgcolor='rgba(0,0,0,0)'
-
-        fig.show()
-        print("Please check the plot on your browser.")
 
     if len(dims_plot) == 2 and len(V.shape) == 3:
         # Plot 2D isosurface with animation
@@ -205,8 +197,7 @@ def plot_isosurface(grid, V, plot_option):
         fig.update_layout(title='2D Set',)
         
         fig = slider_define(fig)
-        fig.show()
-        print("Please check the plot on your browser.")
+
 
     if len(dims_plot) == 1 and len(V.shape) == 1:
         # Plot 1D isosurface for only one time step
@@ -228,9 +219,6 @@ def plot_isosurface(grid, V, plot_option):
             name="Reachable Set",
             labels={'x','Vaue'}
         ), layout=go.Layout(plot_bgcolor='rgba(0,0,0,0)'))
-
-        fig.show()
-        print("Please check the plot on your browser.")
 
 
 
@@ -269,8 +257,17 @@ def plot_isosurface(grid, V, plot_option):
         
         fig = slider_define(fig)
 
+
+    if plot_option.do_plot:
         fig.show()
         print("Please check the plot on your browser.")
+
+    # Local figure save
+    if plot_option.save_fig:
+        if plot_option.interactive_html:
+            fig.write_html(plot_option.filename + ".html")
+        else:
+            fig.write_image(plot_option.filename)
 
 
 def plot_valuefunction(grid, V, plot_option):
@@ -390,9 +387,6 @@ def plot_valuefunction(grid, V, plot_option):
         fig.update_yaxes(zeroline=True, zerolinewidth=1, zerolinecolor='black')
         fig.update_yaxes(range=[-1, 1.5])
 
-        fig.show()
-        print("Please check the plot on your browser.")
-
 
 
     if len(dims_plot) == 1 and len(V.shape) == 2:
@@ -419,15 +413,22 @@ def plot_valuefunction(grid, V, plot_option):
         
         fig.update_layout(title='1D Value Function',)
         
-        fig = slider_define(fig, duration=20)
+        fig = slider_define(fig, duration=0)
+
 
         fig.update_yaxes(zeroline=True, zerolinewidth=1, zerolinecolor='black')
         fig.update_yaxes(range=[-1, 1.5])
+        fig.update_layout(transition = {'duration':0})
 
-
-    fig.show()
-    print("Please check the plot on your browser.")
-
+    if plot_option.do_plot:
+        fig.show()
+        print("Please check the plot on your browser.")
+        # Local figure save
+    if plot_option.save_fig:
+        if plot_option.interactive_html:
+            fig.write_html(plot_option.filename + ".html")
+        else:
+            fig.write_image(plot_option.filename)
 
 ###################################################################################################################################
 def slider_define(fig, duration=300):
@@ -440,7 +441,7 @@ def slider_define(fig, duration=300):
                     "frame": {"duration": duration},
                     "mode": "immediate",
                     "fromcurrent": True,
-                    "transition": {"duration": duration, "easing": "linear"},
+                    "transition": {"duration": duration},
                 }
         
     sliders = [

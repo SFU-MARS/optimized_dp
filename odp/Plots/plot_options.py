@@ -2,7 +2,7 @@
 class PlotOptions:
   def __init__(self, do_plot=True, plot_type="set", plotDims=[],
                slicesCut=[], min_isosurface = 0, max_isosurface = 0, 
-               colorscale='Rainbow', contour=None,  flatshading=None,  
+               colorscale='Rainbow', save_fig=False, filename=None, interactive_html=False, contour=None,  flatshading=None,  
                legend=None, legendgroup=None, 
                legendgrouptitle=None, legendrank=None, legendwidth=None, 
                lighting=None, lightposition=None, 
@@ -28,6 +28,11 @@ class PlotOptions:
     self.slices = slicesCut
     self.min_isosurface = min_isosurface
     self.max_isosurface = max_isosurface
+
+# Plotly save figure option
+    self.save_fig = save_fig
+    self.filename = filename
+    self.interactive_html = interactive_html
 
 # Editable Visualization  (Plotly)
 # https://plotly.github.io/plotly.py-docs/generated/plotly.graph_objects.Isosurface.html
