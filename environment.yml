@@ -55,6 +55,7 @@ dependencies:
   - idna=3.4=pyhd8ed1ab_0
   - jack=1.9.22=h11f4161_0
   - jpeg=9e=h166bdaf_2
+  - kaleido-core=0.2.1=h3644ca4_0
   - keyutils=1.6.1=h166bdaf_0
   - kiwisolver=1.4.4=py38h43d8883_1
   - krb5=1.20.1=h81ceb04_0
@@ -122,6 +123,7 @@ dependencies:
   - mamba=1.2.0=py38haad2881_0
   - matplotlib=3.6.3=py38h578d9bd_0
   - matplotlib-base=3.6.3=py38hd6c3c57_0
+  - mathjax=2.7.7=ha770c72_3 
   - mpg123=1.31.2=hcb278e6_0
   - munkres=1.1.4=pyh9f0ad1d_0
   - mysql-common=8.0.32=ha901b37_0
@@ -155,6 +157,7 @@ dependencies:
   - python=3.8.16=he550d4f_1_cpython
   - python-dateutil=2.8.2=pyhd8ed1ab_0
   - python_abi=3.8=2_cp38
+  - python-kaleido-0.2.1-pyhd8ed1ab_0
   - qt-main=5.15.6=h602db52_6
   - readline=8.2=h5eee18b_0
   - reproc=14.2.4=h0b41bf4_0
@@ -199,3 +202,4 @@ dependencies:
   - zstandard=0.19.0=py38h5945529_1
   - zstd=1.5.2=h3eb15da_6
   - heterocl=0.3
+  - kaleido-core=0.2.1=h3644ca4_0
