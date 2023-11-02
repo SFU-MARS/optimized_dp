@@ -1,6 +1,6 @@
 import heterocl as hcl
 import numpy as np
-from odp.computeGraphs.graph_2D import *
+from odp.computeGraphs.graph_1D import *
 
 # Update the phi function at position (i)
 def updatePhi(i, j, my_object, phi, g, x1):
