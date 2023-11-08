@@ -182,4 +182,3 @@ dependencies:
   - zlib=1.2.13=hd590300_5
   - zstd=1.5.5=hfc55251_0
   - heterocl==0.3
-prefix: /local-scratch/localhome/mla233/mambaforge/envs/odp
