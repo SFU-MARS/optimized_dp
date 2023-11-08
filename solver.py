@@ -265,9 +265,9 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
     ##################### PLOTTING #####################
     if plot_option.do_plot :
         # Only plots last value array for now
-        if plot_option.plot_type == "3d_plot":
+        if plot_option.plot_type == "set":
             plot_isosurface(grid, V_1.asnumpy(), plot_option)
-        else:
+        elif plot_option.plot_type == "value":
             plot_valuefunction(grid, V_1.asnumpy(), plot_option)
 
     if saveAllTimeSteps is True:
@@ -360,9 +360,9 @@ def TTRSolver(dynamics_obj, grid, init_value, epsilon, plot_option):
     print("Finished solving\n")
 
     ##################### PLOTTING #####################
-    if plot_option.plot_type == "3d_plot":
+    if plot_option.plot_type == "set":
         plot_isosurface(grid, V_0.asnumpy(), plot_option)
-    else:
+    elif plot_option.plot_type == "value":
         plot_valuefunction(grid, V_0.asnumpy(), plot_option)
 
     return V_0.asnumpy()
