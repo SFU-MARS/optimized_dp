@@ -6,7 +6,7 @@ from odp.Plots import plot_isosurface, plot_valuefunction
 
 # Backward reachable set computation library
 from odp.computeGraphs import graph_1D, graph_2D, graph_3D, graph_4D, graph_5D, graph_6D
-from odp.TimeToReach import TTR_1D, TTR_2D, TTR_3D, TTR_4D, TTR_5D 
+from odp.TimeToReach import TTR_2D, TTR_3D, TTR_4D, TTR_5D 
 
 # Value Iteration library
 from odp.valueIteration import value_iteration_3D, value_iteration_4D, value_iteration_5D, value_iteration_6D
