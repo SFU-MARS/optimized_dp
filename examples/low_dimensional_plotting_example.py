@@ -13,6 +13,7 @@ from odp.Plots import plot_isosurface, plot_valuefunction
 from odp.solver import HJSolver, computeSpatDerivArray
 
 import math
+import os
 
 """ USER INTERFACES
 - Define grid
@@ -24,6 +25,8 @@ import math
 
 Note: If run on the server, please save the result and use the plot function on your local machine
 """
+
+os.mkdir("plots")
 
 ##################################################### 3D EXAMPLE #####################################################
 # STEP 1: Define grid
@@ -55,7 +58,7 @@ po1 = PlotOptions(do_plot=False, plot_type="set", plotDims=[0,1,2])
 
 # While file needs to be saved locally, set save_fig=True and filename, recommend to set interactive_html=True for better visualization
 po2 = PlotOptions(do_plot=False, plot_type="set", plotDims=[0,1,2],
-                  slicesCut=[], colorscale="Bluered", save_fig=True, filename="3D_0_sublevel_set", interactive_html=True)
+                  slicesCut=[], colorscale="Bluered", save_fig=True, filename="plots/3D_0_sublevel_set", interactive_html=True)
 
 # STEP 6: Call HJSolver function
 compMethod = { "TargetSetMode": "None"}
@@ -102,7 +105,7 @@ plot_valuefunction(g, result_2, po2)
 
 # Visualization of animated 2D 0 sublevel set
 po3 = PlotOptions(do_plot=False, plot_type="set", plotDims=[0,1],
-                  slicesCut=[], colorscale="Bluered", save_fig=True, filename="2D_0_sublevel_set", interactive_html=True)
+                  slicesCut=[], colorscale="Bluered", save_fig=True, filename="plots/2D_0_sublevel_set", interactive_html=True)
 plot_isosurface(g, result_2, po3)
 
 
@@ -139,6 +142,6 @@ compMethod = { "TargetSetMode": "None"}
 result_1 = HJSolver(sys_1, g_1, Initial_value_f_1, tau, compMethod, po1, saveAllTimeSteps=False)
 
 po2 = PlotOptions(do_plot=False, plot_type="value", plotDims=[0],
-                  slicesCut=[], save_fig=True, filename="1D_0_valuefunction.png", interactive_html=False)
+                  slicesCut=[], save_fig=True, filename="plots/1D_0_valuefunction.png", interactive_html=False)
 plot_valuefunction(g_1, result_1, po2)
 
