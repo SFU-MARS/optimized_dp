@@ -23,38 +23,65 @@ Please install the following:
 
     ```sudo apt-install libtinfo5 ``` 
 
+
 # Solving the Hamilton-Jacobi-Issac (HJI) PDE
-* We provide a running example of solving HJI PDE in the file [`examples/examples.py`](https://github.com/SFU-MARS/optimized_dp/examples/examples.py):
+* We provide a running example of solving HJI PDE in the file [`examples/low_dimensional_plotting_example.py`](https://github.com/SFU-MARS/optimized_dp/examples/examples.py):
 ```python
-g = Grid(np.array([-4.0, -4.0, -math.pi]), np.array([4.0, 4.0, math.pi]), 3, np.array([40, 40, 40]), [2])
+# STEP 1: Define grid
+grid_min = np.array([-4.0, -4.0, -math.pi])
+grid_max = np.array([4.0, 4.0, math.pi])
+dims = 3
+N = np.array([40, 40, 40])
+pd=[2]
+g = Grid(grid_min, grid_max, dims, N, pd)
 
-# A sphere shape (no dimension passed in) 
-Initial_value_f = CylinderShape(g, [], np.zeros(3), 1)
+# STEP 2: Generate initial values for grid using shape functions
+center = np.zeros(dims)
+radius = 1.0
+ignore_dims = [2]
+Initial_value_f = CylinderShape(g, ignore_dims, center, radius)
 
-# Look-back length and time step
+# STEP 3: Time length for computations
 lookback_length = 2.0
 t_step = 0.05
 
 small_number = 1e-5
 tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)
 
-# User-defined system dynamcics
-my_car = DubinsCapture()
+# STEP 4: User-defined System dynamics for computation
+sys = DubinsCapture(uMode="max", dMode="min")
 
 po2 = PlotOptions(do_plot=False, plot_type="3d_plot", plotDims=[0,1,2],
                   slicesCut=[])
                   
-# Computing Backward Reachable-Tube (BRT)
-compMethods = { "PrevSetsMode": "minVWithV0"}
-result = HJSolver(my_car, g, Initial_value_f, tau, compMethods, po2, saveAllTimeSteps=True )
+# STEP 5: Initialize plotting option
+po1 = PlotOptions(do_plot=True, plot_type="set", plotDims=[0,1,2])
+
+# STEP 6: Call HJSolver function (BRS)
+compMethod = { "TargetSetMode": "None"}
+result_3 = HJSolver(sys, g, Initial_value_f, tau, compMethod, po1, saveAllTimeSteps=True)
 ```
-* To run the example, execute the command `python3 examples.py`
-* If the parameter `do_plot` is set to `True` when initializing `PlotOptions`, there will be a 3D green colored sub-zero level set popping up in your default browser like below. 
+* To run the example, execute the command `python3 low_dimensional_plotting_example.py`
+* If the parameter `do_plot` is set to `True`, when initializing `PlotOptions`. The parameter `saveAllTimeSteps` is set to `False` in `HJSolver`, an static 3D plot will show on pop-up browser.
 <!-- ![BallPic](images/ball_pic.png) -->
 <div align="center">
-<img src="images/ball_pic.png" width="500" height="400">
+<img src="images/3D_0_sublevel_set.png" width="500" height="400">
 </div>        
 
+* If interactive 3D animation needs to be visualized, and outputs need to be saved locally
+```python
+# While file needs to be saved locally, set save_fig=True and filename, recommend to set interactive_html=True for better interaction
+po2 = PlotOptions(do_plot=False, plot_type="set", plotDims=[0,1,2],
+                  slicesCut=[], colorscale="Bluered", save_fig=True, filename="plots/3D_0_sublevel_set.png", interactive_html=False)
+
+# STEP 7: Visualizing output
+plot_isosurface(g, result_3, po2)
+```
+
+* Check the interactive result [`images/3D_0_sublevel_set.html`](https://github.com/SFU-MARS/optimized_dp/images/3D_0_sublevel_set.html)
+
+
+* For computing result higher than 6D, check [`examples/examples.py`](https://github.com/SFU-MARS/optimized_dp/examples/examples.py)
 * Notes: For 6 dimensions, recommended grid size is 20-30 each dimension on system with 32Gbs of DRAM.
 * Create a class file in folder dynamics/ to specify your own system dynamics. Remember to import the class in your running example.  
 
