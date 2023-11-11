@@ -78,7 +78,7 @@ po2 = PlotOptions(do_plot=False, plot_type="set", plotDims=[0,1,2],
 plot_isosurface(g, result_3, po2)
 ```
 
-* Check the interactive result [`images/3D_0_sublevel_set.html`](https://github.com/SFU-MARS/optimized_dp/images/3D_0_sublevel_set.html)
+<!-- * Check the interactive result [`images/3D_0_sublevel_set.html`](https://github.com/SFU-MARS/optimized_dp/images/3D_0_sublevel_set.html) -->
 
 
 * For computing result higher than 6D, check [`examples/examples.py`](https://github.com/SFU-MARS/optimized_dp/examples/examples.py)
