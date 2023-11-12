@@ -42,7 +42,7 @@ my_car = DubinsCapture(uMode="max", dMode="min")
 
 # Specify how to plot the isosurface of the value function ( for higher-than-3-dimension arrays, which slices, indices
 # we should plot if we plot at all )
-po2 = PlotOptions(do_plot=True, plot_type="3d_plot", plotDims=[0,1,2],
+po2 = PlotOptions(do_plot=True, plot_type="set", plotDims=[0,1,2],
                   slicesCut=[])
 
 """
@@ -87,6 +87,8 @@ state_vector = (g.grid_points[0][10], g.grid_points[1][20], g.grid_points[2][30]
 opt_ctrl = my_car.optCtrl_inPython(state_vector, spat_deriv_vector)
 print("Optimal control is {}\n".format(opt_ctrl))
 
+print("chong: example 1 finished")
+
 ##################################################### EXAMPLE 2 #####################################################
 
 g = Grid(np.array([-3.0, -1.0, 0.0, -math.pi]), np.array([3.0, 4.0, 4.0, math.pi]), 4, np.array([60, 60, 20, 36]), [3])
@@ -105,7 +107,7 @@ small_number = 1e-5
 
 tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)
 
-po = PlotOptions(do_plot=True, plot_type="2d_plot", plotDims=[0,1],
+po = PlotOptions(do_plot=True, plot_type="value", plotDims=[0,1],
                   slicesCut=[19, 30])
 
 # In this example, we compute a Backward Reachable Tube
@@ -129,6 +131,8 @@ opt_a, opt_w = my_car.optCtrl_inPython(spat_deriv_vector)
 print("Optimal accel is {}\n".format(opt_a))
 print("Optimal rotation is {}\n".format(opt_w))
 
+print("chong: example 2 finished")
+
 ##################################################### EXAMPLE 3 #####################################################
 
 # Third scenario with Reach-Avoid set
@@ -149,7 +153,7 @@ tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)
 
 my_car = DubinsCapture(uMode="min", dMode="max")
 
-po2 = PlotOptions(do_plot=True, plot_type="2d_plot", plotDims=[0,1,2],
+po2 = PlotOptions(do_plot=True, plot_type="set", plotDims=[0,1,2],
                   slicesCut=[])
 
 """
@@ -179,3 +183,5 @@ compMethods = { "TargetSetMode": "minVWithVTarget",
                 "ObstacleSetMode": "maxVWithObstacle"}
 # HJSolver(dynamics object, grid, initial value function, time length, system objectives, plotting options)
 result = HJSolver(my_car, g, [goal, obstacle], tau, compMethods, po2, saveAllTimeSteps=True )
+
+print("chong: example 3 finished")

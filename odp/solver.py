@@ -6,7 +6,7 @@ from odp.Plots import plot_isosurface, plot_valuefunction
 
 # Backward reachable set computation library
 from odp.computeGraphs import graph_1D, graph_2D, graph_3D, graph_4D, graph_5D, graph_6D
-from odp.TimeToReach import TTR_1D, TTR_2D, TTR_3D, TTR_4D, TTR_5D 
+from odp.TimeToReach import TTR_2D, TTR_3D, TTR_4D, TTR_5D 
 
 # Value Iteration library
 from odp.valueIteration import value_iteration_3D, value_iteration_4D, value_iteration_5D, value_iteration_6D
@@ -265,9 +265,9 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
     ##################### PLOTTING #####################
     if plot_option.do_plot :
         # Only plots last value array for now
-        if plot_option.plot_type == "3d_plot":
+        if plot_option.plot_type == "set":
             plot_isosurface(grid, V_1.asnumpy(), plot_option)
-        else:
+        elif plot_option.plot_type == "value":
             plot_valuefunction(grid, V_1.asnumpy(), plot_option)
 
     if saveAllTimeSteps is True:
@@ -317,8 +317,8 @@ def TTRSolver(dynamics_obj, grid, init_value, epsilon, plot_option):
         list_x6 = hcl.asarray(list_x6)
 
     # Get executable
-    if grid.dims == 1:
-        solve_TTR = TTR_1D(dynamics_obj, grid)
+    # if grid.dims == 1:
+    #     solve_TTR = TTR_1D(dynamics_obj, grid)
     if grid.dims == 2:
         solve_TTR = TTR_2D(dynamics_obj, grid)
     if grid.dims == 3:
@@ -360,10 +360,12 @@ def TTRSolver(dynamics_obj, grid, init_value, epsilon, plot_option):
     print("Finished solving\n")
 
     ##################### PLOTTING #####################
-    if plot_option.plot_type == "3d_plot":
-        plot_isosurface(grid, V_0.asnumpy(), plot_option)
-    else:
-        plot_valuefunction(grid, V_0.asnumpy(), plot_option)
+    if plot_option.do_plot :
+        # Only plots last value array for now
+        if plot_option.plot_type == "set":
+            plot_isosurface(grid, V_0.asnumpy(), plot_option)
+        elif plot_option.plot_type == "value":
+            plot_valuefunction(grid, V_0.asnumpy(), plot_option)
 
     return V_0.asnumpy()
 

@@ -3,7 +3,7 @@ from plotly.subplots import make_subplots
 import plotly.express as px
 import numpy as np
 
-def plot_isosurface(grid, V, plot_option):
+def plot_isosurface(grid, V_ori, plot_option):
     dims_plot = plot_option.dims_plot
     idx = [slice(None)] * grid.dims
     slice_idx = 0
@@ -13,6 +13,8 @@ def plot_isosurface(grid, V, plot_option):
         if i not in dims_plot:
             idx[i] = plot_option.slices[slice_idx]
             slice_idx += 1
+
+    V = V_ori[tuple(idx)]
 
     if len(dims_plot) != 3 and len(dims_plot) != 2 and len(dims_plot) != 1:
         raise Exception('dims_plot length should be equal to 3, 2 or 1\n')
@@ -270,7 +272,7 @@ def plot_isosurface(grid, V, plot_option):
             fig.write_image(plot_option.filename)
 
 
-def plot_valuefunction(grid, V, plot_option):
+def plot_valuefunction(grid, V_ori, plot_option):
     '''
     Plot value function V, 1D or 2D grid is allowed
     https://plotly.com/python/3d-surface-plots/
@@ -285,6 +287,8 @@ def plot_valuefunction(grid, V, plot_option):
             idx[i] = plot_option.slices[slice_idx]
             slice_idx += 1
 
+    V = V_ori[tuple(idx)]
+
     if len(dims_plot) != 2 and len(dims_plot) != 1:
         raise Exception('dims_plot length should be equal to 2 or 1\n')
 
@@ -294,7 +298,7 @@ def plot_valuefunction(grid, V, plot_option):
 
         my_X = np.linspace(grid.min[dim1], grid.max[dim1], grid.pts_each_dim[dim1])
         my_Y = np.linspace(grid.min[dim2], grid.max[dim2], grid.pts_each_dim[dim2])
-        my_V = V[tuple(idx)]
+        my_V = V
 
         print("Plotting beautiful plots. Please wait\n")
         fig = go.Figure(data=go.Surface(
