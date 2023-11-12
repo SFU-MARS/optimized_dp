@@ -266,9 +266,15 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
     if plot_option.do_plot :
         # Only plots last value array for now
         if plot_option.plot_type == "set":
-            plot_isosurface(grid, V_1.asnumpy(), plot_option)
+            if saveAllTimeSteps:
+                plot_isosurface(grid, valfuncs, plot_option)
+            else:
+                plot_isosurface(grid, V_1.asnumpy(), plot_option)
         elif plot_option.plot_type == "value":
-            plot_valuefunction(grid, V_1.asnumpy(), plot_option)
+            if saveAllTimeSteps:
+                plot_valuefunction(grid, valfuncs, plot_option)
+            else:
+                plot_valuefunction(grid, V_1.asnumpy(), plot_option)
 
     if saveAllTimeSteps is True:
         valfuncs[..., 0] = V_1.asnumpy()

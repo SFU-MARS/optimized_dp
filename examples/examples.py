@@ -87,8 +87,6 @@ state_vector = (g.grid_points[0][10], g.grid_points[1][20], g.grid_points[2][30]
 opt_ctrl = my_car.optCtrl_inPython(state_vector, spat_deriv_vector)
 print("Optimal control is {}\n".format(opt_ctrl))
 
-print("chong: example 1 finished")
-
 ##################################################### EXAMPLE 2 #####################################################
 
 g = Grid(np.array([-3.0, -1.0, 0.0, -math.pi]), np.array([3.0, 4.0, 4.0, math.pi]), 4, np.array([60, 60, 20, 36]), [3])
@@ -130,8 +128,6 @@ spat_deriv_vector = (x_derivative[10,20,15,15], y_derivative[10,20,15,15],
 opt_a, opt_w = my_car.optCtrl_inPython(spat_deriv_vector)
 print("Optimal accel is {}\n".format(opt_a))
 print("Optimal rotation is {}\n".format(opt_w))
-
-print("chong: example 2 finished")
 
 ##################################################### EXAMPLE 3 #####################################################
 
@@ -183,5 +179,3 @@ compMethods = { "TargetSetMode": "minVWithVTarget",
                 "ObstacleSetMode": "maxVWithObstacle"}
 # HJSolver(dynamics object, grid, initial value function, time length, system objectives, plotting options)
 result = HJSolver(my_car, g, [goal, obstacle], tau, compMethods, po2, saveAllTimeSteps=True )
-
-print("chong: example 3 finished")

@@ -4,6 +4,8 @@ import plotly.express as px
 import numpy as np
 
 def plot_isosurface(grid, V_ori, plot_option):
+    print(V_ori.shape)
+
     dims_plot = plot_option.dims_plot
     idx = [slice(None)] * grid.dims
     slice_idx = 0
@@ -277,8 +279,10 @@ def plot_valuefunction(grid, V_ori, plot_option):
     Plot value function V, 1D or 2D grid is allowed
     https://plotly.com/python/3d-surface-plots/
     '''
+    print(V_ori.shape)
+    
     dims_plot = plot_option.dims_plot
-    idx = [slice(None)] * grid.dims
+    idx = [slice(None)] * len(V_ori.shape)
     slice_idx = 0
 
     dims_list = list(range(grid.dims))
@@ -288,6 +292,11 @@ def plot_valuefunction(grid, V_ori, plot_option):
             slice_idx += 1
 
     V = V_ori[tuple(idx)]
+
+    print(idx)
+    print(len(dims_plot))
+    print(len(V.shape))
+
 
     if len(dims_plot) != 2 and len(dims_plot) != 1:
         raise Exception('dims_plot length should be equal to 2 or 1\n')
