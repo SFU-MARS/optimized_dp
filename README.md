@@ -8,7 +8,7 @@ The repo contains implementation of dynamic programming based algorithms in opti
 
 In comparison with previous works, our toolbox strives to be both efficient in implementation while being user-friendly. This is reflected in our choice of having Python as a language for initializing problems and having python-like HeteroCL [3] language for the core algorithms implementation and dynamical systems specification. Our implementation is 7-32x faster than the [Level Set Toolbox](https://github.com/risk-sensitive-reachability/ToolboxLS) and [HelperOC](https://github.com/HJReachability/helperOC) and 2-3x faster than [BEACLS](https://hjreachability.github.io/beacls/) implementation in C++. Please find more details about using the repo for solving your problems in this page, and should you have any questions/problems/requests please direct the messages to Minh Bui at buiminhb@sfu.ca 
 
-# Quickstart (Ubuntu 18 & 20)
+# Quickstart (Ubuntu 18, 20, 22)
 Please install the following:
 * Install Anaconda (https://docs.anaconda.com/anaconda/install/linux/)
 * Create a virtual environemnt using the provided `environment.yml`
@@ -18,10 +18,10 @@ Please install the following:
 * Install the `optimized_dp` repository
 
     ``` pip install -e . ```
-* Note: If you're on Ubuntu 20.04, you may have encounter an error regarding ``` libtinfo5 ```. 
+* Note: If you're on Ubuntu 20.04 or 22.04, you may have encounter an error regarding ``` libtinfo5 ```. 
   To fix, please just run this command 
 
-    ```sudo apt-install libtinfo5 ``` 
+    ```sudo apt install libtinfo5 ``` 
 
 
 # Solving the Hamilton-Jacobi-Issac (HJI) PDE
@@ -85,7 +85,7 @@ plot_isosurface(g, result_3, po2)
 * Notes: For 6 dimensions, recommended grid size is 20-30 each dimension on system with 32Gbs of DRAM.
 * Create a class file in folder dynamics/ to specify your own system dynamics. Remember to import the class in your running example.  
 
-## System dynamic specification
+## System dynamics specification
 It can noticed in ```user_definer.py``` that the class DubinsCapture is imported from the folder ```dynamics/```, where our example system dynamics. 
 ```python 
 import heterocl as hcl
