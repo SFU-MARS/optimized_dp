@@ -112,3 +112,10 @@ def Intersection(shape1, shape2):
         np.ndarray: the element-wise minimum of two shapes
     """
     return np.maximum(shape1, shape2)
+
+def ShapeEllipsoid(grid, center, semiAxLen):
+    data = np.zeros(grid.pts_each_dim)  
+    for i in range(grid.dims):
+        data = data + np.power(grid.vs[i] - center[i],2)/np.power(semiAxLen[i],2)
+    data = np.sqrt(data) - 1
+    return data
