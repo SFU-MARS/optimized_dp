@@ -17,8 +17,8 @@ def CylinderShape(grid, ignore_dims, center, radius):
         if i not in ignore_dims:
             # This works because of broadcasting
             data = data + np.power(grid.vs[i] - center[i], 2)
-    data = np.sqrt(data) - radius
-    return data
+    #data = np.sqrt(data) - radius
+    return data - radius*radius
 
 # Range is a list of list of ranges
 # def Rectangle4D(grid, range):
