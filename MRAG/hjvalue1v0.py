@@ -1,3 +1,6 @@
+import os
+import time
+import psutil
 import numpy as np
 # Utility functions to initialize the problem
 from odp.Grid import Grid
@@ -9,7 +12,6 @@ from odp.Plots import PlotOptions
 from odp.Plots.plotting_utilities import plot_2d, plot_isosurface, plot_original
 # Solver core
 from odp.solver import HJSolver, computeSpatDerivArray
-import math
 
 """ USER INTERFACES
 - Define grid
@@ -20,6 +22,9 @@ import math
 """
 
 ##################################################### EXAMPLE 6 1v0AttackerDefender ####################################
+
+# Record the time of whole process
+start_time = time.time()
 
 grids = Grid(np.array([-1.0, -1.0]), np.array([1.0, 1.0]), 2, np.array([100, 100])) # original 45
 
@@ -57,13 +62,28 @@ po = PlotOptions(do_plot=False, plot_type="2d_plot", plotDims=[0, 1], slicesCut=
 # In this example, we compute a Reach-Avoid Tube
 compMethods = {"TargetSetMode": "minVWithVTarget", "ObstacleSetMode": "maxVWithObstacle"} # original one
 # compMethods = {"TargetSetMode": None}
+# Record solving time and the solving CPU memory usage
+solve_start_time = time.time()
+# initial_memory_usage = psutil.virtual_memory().used / (1024 ** 3)
 result = HJSolver(agents_1v0, grids, [reach_set, avoid_set], tau, compMethods, po, saveAllTimeSteps=True) # original one
+process = psutil.Process(os.getpid())
+print(f"The CPU memory used during the calculation of the value function is {process.memory_info().rss/(1024 ** 3): .2f} GB.")  # in bytes
 # result = HJSolver(agents_1v0, grids, reach_set, tau, compMethods, po, saveAllTimeSteps=True)
-
+# final_memory_usage = psutil.virtual_memory().used / (1024 ** 3)
+solve_end_time = time.time()
 print(f'The shape of the value function is {result.shape} \n')
+print(f"The time of solving HJ is {solve_end_time - solve_start_time} seconds.")
 # save the value function
 # np.save('/localhome/hha160/optimized_dp/MRAG/1v0AttackDefend.npy', result)
-np.save('MRAG/1v0AttackDefend.npy', result)
+np.save('MRAG/1v0AttackDefend11111.npy', result)
+
+# Record the time of whole process
+end_time = time.time()
+print(f"The time of whole process is {end_time - start_time} seconds.")
+# # Get the memory usage
+# value_function_calculation_memory_usage = initial_memory_usage - final_memory_usage
+# print(f"The CPU memory usage is {value_function_calculation_memory_usage: .2f} GB.")
+# print(f"The CPU memory usage is {psutil.virtual_memory().used / (1024 ** 3): .2f} GB.")
 
 # # compute spatial derivatives at every state
 # x_derivative = computeSpatDerivArray(grids, result, deriv_dim=1, accuracy="low")
