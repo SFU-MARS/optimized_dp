@@ -12,8 +12,8 @@
 
 echo 'Start to compile the sh file now!'
 
-source ~/.zshrc
 conda activate odp
 cd /localscratch/hha160/MARAG
 echo 'Start to run the main code now!'
+
 python MRAG/hjvalue1v0.py

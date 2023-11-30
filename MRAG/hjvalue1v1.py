@@ -1,3 +1,6 @@
+import os
+import time
+import psutil
 import numpy as np
 # Utility functions to initialize the problem
 from odp.Grid import Grid
@@ -9,7 +12,6 @@ from odp.Plots import PlotOptions
 from odp.Plots.plotting_utilities import plot_2d, plot_isosurface
 # Solver core
 from odp.solver import HJSolver, computeSpatDerivArray
-import math
 
 """ USER INTERFACES
 - Define grid
