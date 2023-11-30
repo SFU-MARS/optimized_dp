@@ -17,4 +17,4 @@ conda activate odp
 git checkout solar
 cd /localscratch/hha160/MARAG
 echo 'Start to run the main code now!'
-python MRAG/hjvale1v0.py
+python MRAG/hjvalue1v0.py
