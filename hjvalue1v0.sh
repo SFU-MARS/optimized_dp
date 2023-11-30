@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 #SBATCH --gres=gpu:1         # Number of GPUs (per node)
 #SBATCH --mem=64G               # memory (per node)
 #SBATCH --time=1-15:00            # time (DD-HH:MM)
