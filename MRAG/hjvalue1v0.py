@@ -75,7 +75,7 @@ print(f'The shape of the value function is {result.shape} \n')
 print(f"The time of solving HJ is {solve_end_time - solve_start_time} seconds.")
 # save the value function
 # np.save('/localhome/hha160/optimized_dp/MRAG/1v0AttackDefend.npy', result)
-np.save('MRAG/1v0AttackDefend11111.npy', result)
+np.save('MRAG/1v0AttackDefend.npy', result)
 
 # Record the time of whole process
 end_time = time.time()
