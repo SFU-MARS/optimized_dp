@@ -7,14 +7,13 @@
 #SBATCH --mail-user=hha160@sfu.ca
 #SBATCH --nodelist=cs-venus-06
 #SBATCH --partition=long
-#SBATCH --output=/localscratch/hha160/MARAG_Output/hjvalue1v0.out
+#SBATCH --output=/localscratch/hha160/MARAG/hjvalue1v0.out
 #SBATCH -J hjvalue1v0
 
 echo 'Start to compile the sh file now!'
 
 source ~/.zshrc
 conda activate odp
-git checkout solar
 cd /localscratch/hha160/MARAG
 echo 'Start to run the main code now!'
 python MRAG/hjvalue1v0.py
