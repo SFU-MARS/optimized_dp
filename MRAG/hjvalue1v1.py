@@ -22,6 +22,8 @@ from odp.solver import HJSolver, computeSpatDerivArray
 """
 
 ##################################################### EXAMPLE 4 1v1AttackerDefender ####################################
+# Record the time of whole process
+start_time = time.time()
 
 grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([45, 45, 45, 45]))
 
@@ -55,10 +57,24 @@ po = PlotOptions(do_plot=False, plot_type="2d_plot", plotDims=[0, 1], slicesCut=
 # In this example, we compute a Reach-Avoid Tube
 compMethods = {"TargetSetMode": "minVWithVTarget", "ObstacleSetMode": "maxVWithObstacle"} # original one
 # compMethods = {"TargetSetMode": "minVWithVTarget"}
+solve_start_time = time.time()
+
 result = HJSolver(agents_1v1, grids, [reach_set, avoid_set], tau, compMethods, po, saveAllTimeSteps=None) # original one
 # result = HJSolver(my_2agents, g, avoid_set, tau, compMethods, po, saveAllTimeSteps=True)
+process = psutil.Process(os.getpid())
+print(f"The CPU memory used during the calculation of the value function is {process.memory_info().rss/(1024 ** 3): .2f} GB.")  # in bytes
+
+solve_end_time = time.time()
+print(f'The shape of the value function is {result.shape} \n')
+print(f"The size of the value function is {result.nbytes / (1024 ** 3): .2f} GB or {result.nbytes/(1024 ** 2)} MB.")
+print(f"The time of solving HJ is {solve_end_time - solve_start_time} seconds.")
 
 print(f'The shape of the value function is {result.shape} \n')
 # save the value function
-np.save('/localhome/hha160/optimized_dp/MRAG/1v1AttackDefend_speed15.npy', result)  # grid = 45
-# np.save('1v1AttackDefend_g30_speed15.npy', result)  # grid = 30
+# np.save('/localhome/hha160/optimized_dp/MRAG/1v1AttackDefend_speed15.npy', result)  # grid = 45
+np.save('1v1AttackDefend_g30_speed15.npy', result)  # grid = 30
+print(f"The value function has been saved successfully.")
+
+# Record the time of whole process
+end_time = time.time()
+print(f"The time of whole process is {end_time - start_time} seconds.")
