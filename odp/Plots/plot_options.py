@@ -8,7 +8,7 @@ class PlotOptions:
                lighting=None, lightposition=None, 
                opacity=0.8, reversescale=None, 
                showlegend=None, showscale=None, figSize=None,
-               surface_count=1, uid=None):
+               surface_count=1, uid=None, scale=None):
     
     if plot_type not in ["set", "value"]:
         raise Exception("Illegal plot type !")
@@ -71,6 +71,9 @@ class PlotOptions:
 
     # Assign an id to this trace
     self.uid = uid
+
+    # Scale of downsampling data
+    self.scale = scale
 
 
 

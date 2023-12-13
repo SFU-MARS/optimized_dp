@@ -1,23 +1,14 @@
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import plotly.express as px
+from odp.Grid import Grid
 import numpy as np
 
 def plot_isosurface(grid, V_ori, plot_option):
-    print(V_ori.shape)
-
+    
     dims_plot = plot_option.dims_plot
-    idx = [slice(None)] * grid.dims
-    slice_idx = 0
-
-    dims_list = list(range(grid.dims))
-    for i in dims_list:
-        if i not in dims_plot:
-            idx[i] = plot_option.slices[slice_idx]
-            slice_idx += 1
-
-    V = V_ori[tuple(idx)]
-
+    grid, V = pre_plot(plot_option, grid, V_ori)
+  
     if len(dims_plot) != 3 and len(dims_plot) != 2 and len(dims_plot) != 1:
         raise Exception('dims_plot length should be equal to 3, 2 or 1\n')
 
@@ -278,25 +269,9 @@ def plot_valuefunction(grid, V_ori, plot_option):
     '''
     Plot value function V, 1D or 2D grid is allowed
     https://plotly.com/python/3d-surface-plots/
-    '''
-    print(V_ori.shape)
-    
+    '''   
     dims_plot = plot_option.dims_plot
-    idx = [slice(None)] * len(V_ori.shape)
-    slice_idx = 0
-
-    dims_list = list(range(grid.dims))
-    for i in dims_list:
-        if i not in dims_plot:
-            idx[i] = plot_option.slices[slice_idx]
-            slice_idx += 1
-
-    V = V_ori[tuple(idx)]
-
-    print(idx)
-    print(len(dims_plot))
-    print(len(V.shape))
-
+    grid, V = pre_plot(plot_option, grid, V_ori)
 
     if len(dims_plot) != 2 and len(dims_plot) != 1:
         raise Exception('dims_plot length should be equal to 2 or 1\n')
@@ -506,3 +481,86 @@ def slider_define(fig, duration=300):
                 sliders=sliders
         )
     return fig
+
+'''
+Pre-processing steps for plotting
+'''
+def pre_plot(plot_option, grid, V_ori):
+
+    # Slicing process
+    dims_plot = plot_option.dims_plot
+    idx = [slice(None)] * grid.dims
+    slice_idx = 0
+
+    # Build new grid
+    grid_min = grid.min
+    grid_max = grid.max
+    dims = grid.dims
+    N = grid.pts_each_dim
+
+    delete_idx = []
+    dims_list = list(range(grid.dims))
+    for i in dims_list:
+        if i not in dims_plot:
+            idx[i] = plot_option.slices[slice_idx]
+            slice_idx += 1
+            dims = dims -1
+            delete_idx.append(i)
+    N = np.delete(N, delete_idx)
+    grid_min = np.delete(grid_min, delete_idx)
+    grid_max = np.delete(grid_max, delete_idx)
+
+    V = V_ori[tuple(idx)]
+    grid = Grid(grid_min, grid_max, dims, N)
+
+    # Downsamping process
+    if plot_option.scale is not None:
+        scale = plot_option.scale
+    else:
+        scale = [1] * grid.dims
+        for i in range(grid.dims):
+            if grid.pts_each_dim[i] > 30:
+                scale[i] = np.floor(grid.pts_each_dim[i]/30).astype(int)
+    grid, V = downsample(grid, V, scale)
+
+    return grid, V
+
+
+'''
+Dowsampling for large 3D grid size, e.g. 100x100x100
+For efficient plotting
+'''
+def downsample(g, data, scale):
+    '''
+    Internal function
+    Downsample data according to scale
+    '''
+    if len(scale) != g.dims:
+        raise Exception('scale length should be equal to grid dimension\n')
+
+    odd_ind =[False] * g.dims
+    for i in range(g.dims):
+        if g.pts_each_dim[i] % scale[i] != 0:
+            odd_ind[i] = True
+    
+    # Generate new data
+    idx = [slice(0,None,scale[0])] * g.dims
+    for i in range(g.dims):
+        if odd_ind[i]:
+                idx[i] = slice(0,-(g.pts_each_dim[i]%scale[i]),scale[i])
+    data_out = data[tuple(idx)]
+    # Generate new grid
+    grid_min = g.min
+    grid_max = g.max
+    dims = g.dims
+    N = g.pts_each_dim
+    for i in range(g.dims):
+        if odd_ind[i]:
+            grid_max[i] = g.max[i]-(g.pts_each_dim[i]%scale[i])*(g.max[i]-g.min[i])/g.pts_each_dim[i]
+            N[i] = ((g.pts_each_dim[i]-g.pts_each_dim[i]%scale[i])/scale[i]).astype(np.int64)
+        else:
+            N[i] = (g.pts_each_dim[i]/scale[i]).astype(np.int64)
+    g_out = Grid(grid_min, grid_max, dims, N)
+
+    return g_out, data_out
+       
