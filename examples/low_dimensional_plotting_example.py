@@ -8,7 +8,7 @@ from odp.Shapes import *
 from odp.dynamics import DubinsCapture, Plane2D, Plane1D
 # Plot options
 from odp.Plots import PlotOptions
-from odp.Plots import plot_isosurface, plot_valuefunction, downsample
+from odp.Plots import plot_isosurface, plot_valuefunction
 # Solver core
 from odp.solver import HJSolver, computeSpatDerivArray
 
