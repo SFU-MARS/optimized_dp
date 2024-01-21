@@ -7,12 +7,12 @@ import numpy as np
 def plot_isosurface(grid, V_ori, plot_option):
     
     dims_plot = plot_option.dims_plot
-    grid, V = pre_plot(plot_option, grid, V_ori)
+    grid, my_V = pre_plot(plot_option, grid, V_ori)
   
     if len(dims_plot) != 3 and len(dims_plot) != 2 and len(dims_plot) != 1:
         raise Exception('dims_plot length should be equal to 3, 2 or 1\n')
 
-    if len(dims_plot) == 3 and len(V.shape) == 3:
+    if len(dims_plot) == 3 and len(my_V.shape) == 3:
         # Plot 3D isosurface for only one time step
         dim1, dim2, dim3 = dims_plot[0], dims_plot[1], dims_plot[2]
         complex_x = complex(0, grid.pts_each_dim[dim1])
@@ -20,8 +20,7 @@ def plot_isosurface(grid, V_ori, plot_option):
         complex_z = complex(0, grid.pts_each_dim[dim3])
         mg_X, mg_Y, mg_Z = np.mgrid[grid.min[dim1]:grid.max[dim1]: complex_x, grid.min[dim2]:grid.max[dim2]: complex_y,
                            grid.min[dim3]:grid.max[dim3]: complex_z]
-
-        my_V = V[tuple(idx)]
+        
 
         if (my_V > 0.0).all():
             print("Implicit surface will not be shown since all values are positive ")
@@ -49,7 +48,7 @@ def plot_isosurface(grid, V_ori, plot_option):
             showscale=plot_option.showscale,
         ))
 
-    if len(dims_plot) == 3 and len(V.shape) == 4:
+    if len(dims_plot) == 3 and len(my_V.shape) == 4:
         # Plot 3D isosurface with animation
         dim1, dim2, dim3 = dims_plot[0], dims_plot[1], dims_plot[2]
 
@@ -60,7 +59,7 @@ def plot_isosurface(grid, V_ori, plot_option):
         mg_X, mg_Y, mg_Z = np.mgrid[grid.min[dim1]:grid.max[dim1]: complex_x, grid.min[dim2]:grid.max[dim2]: complex_y,
                            grid.min[dim3]:grid.max[dim3]: complex_z]
 
-        N = V.shape[3]
+        N = my_V.shape[3]
         print("Plotting beautiful plots. Please wait\n")
 
         # Define frames
@@ -68,7 +67,7 @@ def plot_isosurface(grid, V_ori, plot_option):
             x=mg_X.flatten(),
             y=mg_Y.flatten(),
             z=mg_Z.flatten(),
-            value=V[:, :, :, N-k-1].flatten(),
+            value=my_V[:, :, :, N-k-1].flatten(),
             caps=dict(x_show=True, y_show=True),
             isomin=plot_option.min_isosurface,
             surface_count=plot_option.surface_count,
@@ -92,7 +91,7 @@ def plot_isosurface(grid, V_ori, plot_option):
             x=mg_X.flatten(),
             y=mg_Y.flatten(),
             z=mg_Z.flatten(),
-            value=V[:, :, :, N-1].flatten(),
+            value=my_V[:, :, :, N-1].flatten(),
             caps=dict(x_show=True, y_show=True),
             isomin=plot_option.min_isosurface,
             surface_count=plot_option.surface_count,
@@ -119,14 +118,13 @@ def plot_isosurface(grid, V_ori, plot_option):
         fig = slider_define(fig)
 
 
-    if len(dims_plot) == 2 and len(V.shape) == 2:
+    if len(dims_plot) == 2 and len(my_V.shape) == 2:
         # Plot 2D isosurface for only one time step
         dim1, dim2 = dims_plot[0], dims_plot[1]
         complex_x = complex(0, grid.pts_each_dim[dim1])
         complex_y = complex(0, grid.pts_each_dim[dim2])
         mg_X, mg_Y = np.mgrid[grid.min[dim1]:grid.max[dim1]: complex_x, grid.min[dim2]:grid.max[dim2]: complex_y]
 
-        my_V = V[tuple(idx)]
 
         if (my_V > 0.0).all():
             print("Implicit surface will not be shown since all values are positive ")
@@ -148,21 +146,21 @@ def plot_isosurface(grid, V_ori, plot_option):
             zmax=0.0,
         ), layout=go.Layout(plot_bgcolor='rgba(0,0,0,0)'))  # ,paper_bgcolor='rgba(0,0,0,0)'
 
-    if len(dims_plot) == 2 and len(V.shape) == 3:
+    if len(dims_plot) == 2 and len(my_V.shape) == 3:
         # Plot 2D isosurface with animation
         dim1, dim2 = dims_plot[0], dims_plot[1]
         complex_x = complex(0, grid.pts_each_dim[dim1])
         complex_y = complex(0, grid.pts_each_dim[dim2])
         mg_X, mg_Y = np.mgrid[grid.min[dim1]:grid.max[dim1]: complex_x, grid.min[dim2]:grid.max[dim2]: complex_y]
 
-        N = V.shape[2]
+        N = my_V.shape[2]
 
         print("Plotting beautiful plots. Please wait\n")
         # Define frames
         fig = go.Figure(frames=[go.Frame(data = go.Contour(
             x=mg_X.flatten(),
             y=mg_Y.flatten(),
-            z=V[:,:,N-k-1].flatten(),
+            z=my_V[:,:,N-k-1].flatten(),
             zmin=0.0,
             ncontours=1,
             contours_coloring='none',  # former: lines
@@ -179,7 +177,7 @@ def plot_isosurface(grid, V_ori, plot_option):
         fig.add_trace(go.Contour(
             x=mg_X.flatten(),
             y=mg_Y.flatten(),
-            z=V[:,:,N-1].flatten(),
+            z=my_V[:,:,N-1].flatten(),
             zmin=0.0,
             ncontours=1,
             contours_coloring='none',  # former: lines
@@ -194,13 +192,11 @@ def plot_isosurface(grid, V_ori, plot_option):
         fig = slider_define(fig)
 
 
-    if len(dims_plot) == 1 and len(V.shape) == 1:
+    if len(dims_plot) == 1 and len(my_V.shape) == 1:
         # Plot 1D isosurface for only one time step
         dim1 = dims_plot[0]
         complex_x = complex(0, grid.pts_each_dim[dim1])
         mg_X = np.mgrid[grid.min[dim1]:grid.max[dim1]: complex_x]
-
-        my_V = V[tuple(idx)]
 
         if (my_V > 0.0).all():
             print("Implicit surface will not be shown since all values are positive ")
@@ -217,18 +213,18 @@ def plot_isosurface(grid, V_ori, plot_option):
 
 
 
-    if len(dims_plot) == 1 and len(V.shape) == 2:
+    if len(dims_plot) == 1 and len(my_V.shape) == 2:
         # Plot 1D isosurface with animation
         dim1 = dims_plot[0]
         complex_x = complex(0, grid.pts_each_dim[dim1])
         mg_X = np.mgrid[grid.min[dim1]:grid.max[dim1]: complex_x]
         
-        N = V.shape[1]
+        N = my_V.shape[1]
 
         # Define frames
         fig = go.Figure(frames=[go.Frame(data=px.line(
             x=mg_X.flatten(),
-            y=V[:,N-k-1].flatten(),
+            y=my_V[:,N-k-1].flatten(),
             labels={'x','Vaue'}
             ), layout=go.Layout(plot_bgcolor='rgba(0,0,0,0)'),
             name=str(k) # you need to name the frame for the animation to behave properly
@@ -239,7 +235,7 @@ def plot_isosurface(grid, V_ori, plot_option):
         fig.add_trace(go.Contour(
             x=mg_X.flatten(),
             y=mg_Y.flatten(),
-            z=V[:,:,N-1].flatten(),
+            z=my_V[:,:,N-1].flatten(),
             zmin=0.0,
             ncontours=1,
             contours_coloring='none',  # former: lines
@@ -271,18 +267,18 @@ def plot_valuefunction(grid, V_ori, plot_option):
     https://plotly.com/python/3d-surface-plots/
     '''   
     dims_plot = plot_option.dims_plot
-    grid, V = pre_plot(plot_option, grid, V_ori)
+    grid, my_V = pre_plot(plot_option, grid, V_ori)
 
     if len(dims_plot) != 2 and len(dims_plot) != 1:
         raise Exception('dims_plot length should be equal to 2 or 1\n')
 
-    if len(dims_plot) == 2 and len(V.shape) == 2:
+    if len(dims_plot) == 2 and len(my_V.shape) == 2:
         # Plot 3D surface for only one time step
         dim1, dim2 = dims_plot[0], dims_plot[1]
 
         my_X = np.linspace(grid.min[dim1], grid.max[dim1], grid.pts_each_dim[dim1])
         my_Y = np.linspace(grid.min[dim2], grid.max[dim2], grid.pts_each_dim[dim2])
-        my_V = V
+        my_V = my_V
 
         print("Plotting beautiful plots. Please wait\n")
         fig = go.Figure(data=go.Surface(
@@ -299,13 +295,13 @@ def plot_valuefunction(grid, V_ori, plot_option):
             lightposition=plot_option.lightposition
             ))
 
-    if len(dims_plot) == 2 and len(V.shape) == 3:
+    if len(dims_plot) == 2 and len(my_V.shape) == 3:
         # ref: https://plotly.com/python/visualizing-mri-volume-slices/
         # Plot 3D surface with animation
         dim1, dim2 = dims_plot[0], dims_plot[1]
         my_X = np.linspace(grid.min[dim1], grid.max[dim1], grid.pts_each_dim[dim1])
         my_Y = np.linspace(grid.min[dim2], grid.max[dim2], grid.pts_each_dim[dim2])
-        N = V.shape[2]
+        N = my_V.shape[2]
 
         print("Plotting beautiful plots. Please wait\n")
 
@@ -317,7 +313,7 @@ def plot_valuefunction(grid, V_ori, plot_option):
             },
             x=my_X,
             y=my_Y,
-            z=V[:, :, N-k-1],
+            z=my_V[:, :, N-k-1],
             colorscale=plot_option.colorscale,
             opacity=plot_option.opacity,
             lighting=plot_option.lighting,
@@ -335,7 +331,7 @@ def plot_valuefunction(grid, V_ori, plot_option):
             },
             x=my_X,
             y=my_Y,
-            z=V[:, :, N-1],
+            z=my_V[:, :, N-1],
             colorscale=plot_option.colorscale,
             opacity=plot_option.opacity,
             lighting=plot_option.lighting,
@@ -352,13 +348,12 @@ def plot_valuefunction(grid, V_ori, plot_option):
         
         fig = slider_define(fig)
 
-    if len(dims_plot) == 1 and len(V.shape) == 1:
+    if len(dims_plot) == 1 and len(my_V.shape) == 1:
         # Plot 1D isosurface for only one time step
         dim1 = dims_plot[0]
         complex_x = complex(0, grid.pts_each_dim[dim1])
         mg_X = np.mgrid[grid.min[dim1]:grid.max[dim1]: complex_x]
 
-        my_V = V[tuple(idx)]
 
         if (my_V > 0.0).all():
             print("Implicit surface will not be shown since all values are positive ")
@@ -377,18 +372,18 @@ def plot_valuefunction(grid, V_ori, plot_option):
 
 
 
-    if len(dims_plot) == 1 and len(V.shape) == 2:
+    if len(dims_plot) == 1 and len(my_V.shape) == 2:
         # Plot 1D isosurface with animation
         dim1 = dims_plot[0]
         complex_x = complex(0, grid.pts_each_dim[dim1])
         mg_X = np.mgrid[grid.min[dim1]:grid.max[dim1]: complex_x]
         
-        N = V.shape[1]
+        N = my_V.shape[1]
 
         # Define frames
         fig = go.Figure(frames=[go.Frame(data=go.Scatter(
             x=mg_X.flatten(),
-            y=V[:,N-k-1].flatten()
+            y=my_V[:,N-k-1].flatten()
             ), layout=go.Layout(plot_bgcolor='rgba(0,0,0,0)'),
             name=str(k) # you need to name the frame for the animation to behave properly
             )
@@ -397,7 +392,7 @@ def plot_valuefunction(grid, V_ori, plot_option):
         # Add data to be displayed before animation starts
         fig.add_trace(go.Scatter(
             x=mg_X.flatten(),
-            y=V[:,N-1].flatten()))
+            y=my_V[:,N-1].flatten()))
         
         fig.update_layout(title='1D Value Function',)
         
