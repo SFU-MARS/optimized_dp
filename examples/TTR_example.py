@@ -7,7 +7,7 @@ from odp.dynamics import DubinsCar
 # Plot options
 from odp.Plots import PlotOptions 
 # Solver core
-from odp.solver import HJSolver
+from odp.solver import *
 import math
 
 # Compute BRS only
@@ -18,7 +18,7 @@ my_car = DubinsCar(uMode="min")
 
 # Initialize target set as a cylinder
 targeSet = CylinderShape(g, [2], np.array([0.0, 1.0, 0.0]), 0.70)
-po = PlotOptions("3d_plot", plotDims=[0,1,2], slicesCut=[],
+po = PlotOptions(do_plot=False, plot_type="3d_plot", plotDims=[0,1,2], slicesCut=[],
                 min_isosurface=0, max_isosurface=0)
 
 lookback_length = 1.5

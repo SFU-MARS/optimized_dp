@@ -149,7 +149,7 @@ tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)
 
 my_car = DubinsCapture(uMode="min", dMode="max")
 
-po2 = PlotOptions(do_plot=True, plot_type="2d_plot", plotDims=[0,1,2],
+po2 = PlotOptions(do_plot=True, plot_type="3d_plot", plotDims=[0,1,2],
                   slicesCut=[])
 
 """
