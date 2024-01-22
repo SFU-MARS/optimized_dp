@@ -8,7 +8,9 @@ from odp.Shapes import *
 from odp.dynamics import DubinsCapture
 from odp.dynamics import DubinsCar4D2
 # Plot options
-from odp.Plots import PlotOptions, plot_isosurface
+from odp.Plots import PlotOptions
+from odp.Plots import plot_isosurface, plot_valuefunction
+
 # Solver core
 from odp.solver import HJSolver, computeSpatDerivArray
 
@@ -89,6 +91,8 @@ state_vector = (g.grid_points[0][10], g.grid_points[1][20], g.grid_points[2][30]
 
 # Compute the optimal control
 opt_ctrl = my_car.optCtrl_inPython(state_vector, spat_deriv_vector)
+
+plot_isosurface(g, last_time_step_result, po2)
 
 ##################################################### EXAMPLE 2 #####################################################
 
