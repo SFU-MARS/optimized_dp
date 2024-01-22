@@ -45,9 +45,8 @@ my_car = DubinsCapture(uMode="max", dMode="min")
 
 # Specify how to plot the isosurface of the value function ( for higher-than-3-dimension arrays, which slices, indices
 # we should plot if we plot at all )
-po2 = PlotOptions(do_plot=False, plot_type="set", plotDims=[0,1,2],
-                  slicesCut=[])
-# plot_isosurface(g, Initial_value_f, po2)
+po2 = PlotOptions(do_plot=True, plot_type="set", plotDims=[0,1,2],
+                  slicesCut=[], save_fig=True, filename="test.png")
 
 """
 Assign one of the following strings to `TargetSetMode` to specify the characteristics of computation
@@ -76,8 +75,6 @@ for solving a reach-avoid problem
 compMethods = { "TargetSetMode": "minVWithV0"}
 # HJSolver(dynamics object, grid, initial value function, time length, system objectives, plotting options)
 result = HJSolver(my_car, g, Initial_value_f, tau, compMethods, po2, saveAllTimeSteps=True )
-plot_isosurface(g, result, po2)
-
 
 last_time_step_result = result[..., 0]
 # Compute spatial derivatives at every state
@@ -117,7 +114,7 @@ po = PlotOptions(do_plot=True, plot_type="value", plotDims=[0,1],
 
 # In this example, we compute a Backward Reachable Tube
 compMethods = { "TargetSetMode": "minVWithV0"}
-result = HJSolver(my_car, g, Initial_value_f, tau, compMethods, po, saveAllTimeSteps=False)
+result = HJSolver(my_car, g, Initial_value_f, tau, compMethods, po, saveAllTimeSteps=True)
 
 last_time_step_result = result[..., 0]
 
