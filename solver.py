@@ -266,15 +266,9 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
     if plot_option.do_plot :
         # Only plots last value array for now
         if plot_option.plot_type == "set":
-            if saveAllTimeSteps is True:
-                plot_isosurface(grid, valfuncs, plot_option)
-            else:
-                plot_isosurface(grid, V_1.asnumpy(), plot_option)
+            plot_isosurface(grid, V_1.asnumpy(), plot_option)
         elif plot_option.plot_type == "value":
-            if saveAllTimeSteps is True:
-                plot_valuefunction(grid, valfuncs, plot_option)
-            else:
-                plot_valuefunction(grid, V_1.asnumpy(), plot_option)
+            plot_valuefunction(grid, V_1.asnumpy(), plot_option)
 
     if saveAllTimeSteps is True:
         valfuncs[..., 0] = V_1.asnumpy()
@@ -323,8 +317,8 @@ def TTRSolver(dynamics_obj, grid, init_value, epsilon, plot_option):
         list_x6 = hcl.asarray(list_x6)
 
     # Get executable
-    # if grid.dims == 1:
-    #     solve_TTR = TTR_1D(dynamics_obj, grid)
+    if grid.dims == 1:
+        solve_TTR = TTR_1D(dynamics_obj, grid)
     if grid.dims == 2:
         solve_TTR = TTR_2D(dynamics_obj, grid)
     if grid.dims == 3:
@@ -366,12 +360,10 @@ def TTRSolver(dynamics_obj, grid, init_value, epsilon, plot_option):
     print("Finished solving\n")
 
     ##################### PLOTTING #####################
-    if plot_option.do_plot :
-        # Only plots last value array for now
-        if plot_option.plot_type == "set":
-            plot_isosurface(grid, V_0.asnumpy(), plot_option)
-        elif plot_option.plot_type == "value":
-            plot_valuefunction(grid, V_0.asnumpy(), plot_option)
+    if plot_option.plot_type == "set":
+        plot_isosurface(grid, V_0.asnumpy(), plot_option)
+    elif plot_option.plot_type == "value":
+        plot_valuefunction(grid, V_0.asnumpy(), plot_option)
 
     return V_0.asnumpy()
 

@@ -8,9 +8,10 @@ from odp.Shapes import *
 from odp.dynamics import DubinsCapture
 from odp.dynamics import DubinsCar4D2
 # Plot options
-from odp.Plots import PlotOptions
+from odp.Plots import PlotOptions, plot_isosurface
 # Solver core
 from odp.solver import HJSolver, computeSpatDerivArray
+
 
 import math
 
@@ -30,7 +31,7 @@ g = Grid(np.array([-4.0, -4.0, -math.pi]), np.array([4.0, 4.0, math.pi]), 3, np.
 Initial_value_f = CylinderShape(g, [], np.zeros(3), 1)
 
 # Look-back length and time step of computation
-lookback_length = 2.0
+lookback_length = 2.
 t_step = 0.05
 
 small_number = 1e-5
@@ -42,8 +43,9 @@ my_car = DubinsCapture(uMode="max", dMode="min")
 
 # Specify how to plot the isosurface of the value function ( for higher-than-3-dimension arrays, which slices, indices
 # we should plot if we plot at all )
-po2 = PlotOptions(do_plot=True, plot_type="3d_plot", plotDims=[0,1,2],
+po2 = PlotOptions(do_plot=False, plot_type="set", plotDims=[0,1,2],
                   slicesCut=[])
+# plot_isosurface(g, Initial_value_f, po2)
 
 """
 Assign one of the following strings to `TargetSetMode` to specify the characteristics of computation
@@ -72,6 +74,8 @@ for solving a reach-avoid problem
 compMethods = { "TargetSetMode": "minVWithV0"}
 # HJSolver(dynamics object, grid, initial value function, time length, system objectives, plotting options)
 result = HJSolver(my_car, g, Initial_value_f, tau, compMethods, po2, saveAllTimeSteps=True )
+plot_isosurface(g, result, po2)
+
 
 last_time_step_result = result[..., 0]
 # Compute spatial derivatives at every state
@@ -85,7 +89,6 @@ state_vector = (g.grid_points[0][10], g.grid_points[1][20], g.grid_points[2][30]
 
 # Compute the optimal control
 opt_ctrl = my_car.optCtrl_inPython(state_vector, spat_deriv_vector)
-print("Optimal control is {}\n".format(opt_ctrl))
 
 ##################################################### EXAMPLE 2 #####################################################
 
@@ -105,12 +108,12 @@ small_number = 1e-5
 
 tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)
 
-po = PlotOptions(do_plot=True, plot_type="2d_plot", plotDims=[0,1],
+po = PlotOptions(do_plot=True, plot_type="value", plotDims=[0,1],
                   slicesCut=[19, 30])
 
 # In this example, we compute a Backward Reachable Tube
 compMethods = { "TargetSetMode": "minVWithV0"}
-result = HJSolver(my_car, g, Initial_value_f, tau, compMethods, po, saveAllTimeSteps=True)
+result = HJSolver(my_car, g, Initial_value_f, tau, compMethods, po, saveAllTimeSteps=False)
 
 last_time_step_result = result[..., 0]
 
@@ -149,7 +152,9 @@ tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)
 
 my_car = DubinsCapture(uMode="min", dMode="max")
 
-po2 = PlotOptions(do_plot=True, plot_type="3d_plot", plotDims=[0,1,2],
+#po2 = PlotOptions(do_plot=True, plot_type="3d_plot", plotDims=[0,1,2],
+
+po2 = PlotOptions(do_plot=True, plot_type="set", plotDims=[0,1,2],
                   slicesCut=[])
 
 """
@@ -178,4 +183,4 @@ for solving a reach-avoid problem
 compMethods = { "TargetSetMode": "minVWithVTarget",
                 "ObstacleSetMode": "maxVWithObstacle"}
 # HJSolver(dynamics object, grid, initial value function, time length, system objectives, plotting options)
-result = HJSolver(my_car, g, [goal, obstacle], tau, compMethods, po2, saveAllTimeSteps=True )
+result = HJSolver(my_car, g, [goal, obstacle], tau, compMethods, po2, saveAllTimeSteps=False )
