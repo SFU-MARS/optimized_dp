@@ -5,3 +5,4 @@ from odp.Shapes.ShapesFunctions import Lower_Half_Space
 from odp.Shapes.ShapesFunctions import Upper_Half_Space
 from odp.Shapes.ShapesFunctions import Intersection
 from odp.Shapes.ShapesFunctions import Union
+from odp.Shapes.ShapesFunctions import ShapeEllipsoid
