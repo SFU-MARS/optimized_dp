@@ -31,16 +31,20 @@ start_time = time.time()
 # grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]),
 #              6, np.array([30, 30, 30, 30, 30, 30]))  # grid = 30
 # grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
-#              6, np.array([45, 45, 45, 45, 45, 45]))  # grid = 45
+#              6, np.array([32, 32, 32, 32, 32, 32]))  # grid = 32
 grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
-             6, np.array([32, 32, 32, 32, 32, 32]))  # grid = 32
+             6, np.array([33, 33, 33, 33, 33, 33]))  # grid = 33
+# grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
+#              6, np.array([45, 45, 45, 45, 45, 45]))  # grid = 45
+
 
 process = psutil.Process(os.getpid())
 print("1. Gigabytes consumed by the grids is {}".format(process.memory_info().rss/(1024 ** 3)))  # in bytes
 
 # First load the 4D reach-avoid set
 # RA_1V1 = np.load("1v1AttackDefend_g30_speed15.npy")  # grid = 30
-RA_1V1 = np.load("1v1AttackDefend_g32_speed15.npy")  # grid = 32
+# RA_1V1 = np.load("1v1AttackDefend_g32_speed15.npy")  # grid = 32
+RA_1V1 = np.load("1v1AttackDefend_g33_speed15.npy")  # grid = 33
 # RA_1V1 = np.load("1v1AttackDefend_g45_speed15.npy")  # grid = 45
 
 # Define my object dynamics
@@ -72,7 +76,8 @@ a1_captured = np.array(a1_captured, dtype='float32')
 # Backproject 4D reach-avoid array to 6D
 # The losing conditions is complement of winning conditions of attacker 2
 # a2_lose_after_a1 = -(np.zeros((30, 30, 30, 30, 30, 30)) + np.expand_dims(RA_1V1, axis = (0, 1)))  # grid = 30
-a2_lose_after_a1 = -(np.zeros((32, 32, 32, 32, 32, 32)) + np.expand_dims(RA_1V1, axis = (0, 1)))  # grid = 32
+# a2_lose_after_a1 = -(np.zeros((32, 32, 32, 32, 32, 32)) + np.expand_dims(RA_1V1, axis = (0, 1)))  # grid = 32
+a2_lose_after_a1 = -(np.zeros((33, 33, 33, 33, 33, 33)) + np.expand_dims(RA_1V1, axis = (0, 1)))  # grid = 33
 # a2_lose_after_a1 = -(np.zeros((45, 45, 45, 45, 45, 45)) + np.expand_dims(RA_1V1, axis = (0, 1)))  # grid = 45
 a2_lose_after_a1 = np.array(a2_lose_after_a1, dtype='float32')
 process = psutil.Process(os.getpid())
@@ -112,7 +117,8 @@ del capture_a2
 
 # The losing conditions is complement of winning conditions of attacker 1
 # a1_lose_after_a2 = -(np.zeros((30, 30, 30, 30, 30, 30)) + np.expand_dims(RA_1V1, axis = (2, 3)))  # grid = 30
-a1_lose_after_a2 = -(np.zeros((32, 32, 32, 32, 32, 32)) + np.expand_dims(RA_1V1, axis = (2, 3)))  # grid = 32
+# a1_lose_after_a2 = -(np.zeros((32, 32, 32, 32, 32, 32)) + np.expand_dims(RA_1V1, axis = (2, 3)))  # grid = 32
+a1_lose_after_a2 = -(np.zeros((33, 33, 33, 33, 33, 33)) + np.expand_dims(RA_1V1, axis = (2, 3)))  # grid = 33
 # a1_lose_after_a2 = -(np.zeros((45, 45, 45, 45, 45, 45)) + np.expand_dims(RA_1V1, axis = (2, 3)))  # grid = 45
 
 a1_lose_after_a2 = np.array(a1_lose_after_a2, dtype='float32')
@@ -209,7 +215,8 @@ print(f'The shape of the value function is {result.shape} \n')
 
 # np.save('2v1AttackDefend.npy', result)
 print("The calculation is done! \n")
-np.save('2v1AttackDefend_g32_speed15.npy', result)
+# np.save('2v1AttackDefend_g32_speed15.npy', result)
+np.save('2v1AttackDefend_g33_speed15.npy', result)
 print(f"The value function has been saved successfully.")
 
 # Record the time of whole process
