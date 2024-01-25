@@ -1,16 +1,16 @@
 Start to compile the sh file now!
 ]2;conda activate odp]1;]2;cd /localscratch/hha160/MARAG]1;]2;echo 'Start to run the main code now!']1;Start to run the main code now!
-]2;python MRAG/hjvalue2v1_solar.py]1;1. Gigabytes consumed by the grids is 0.08920669555664062
-2. Gigabytes consumed of the obstalce1 31.038959503173828
-3. Gigabytes consumed of the obstalce2 61.97288513183594
-4. Gigabytes consumed of the losing conditions 92.96832656860352
-5. Gigabytes consumed of the avoid set1 to attacker2 123.85652923583984
-6. Gigabytes consumed of the avoid set2 to attacker2 185.72440719604492
-7. Gigabytes consumed 92.92259216308594
-8. Gigabytes consumed of the losing conditions a1 lose after a2 123.85653305053711
-9. Gigabytes consumed 61.988651275634766
-10. Gigabytes consumed 247.74495697021484
-11. Gigabytes consumed 216.81101608276367
+]2;python MRAG/hjvalue2v1_solar.py]1;1. Gigabytes consumed by the grids is 0.08917236328125
+2. Gigabytes consumed of the obstalce1 31.038917541503906
+3. Gigabytes consumed of the obstalce2 61.972843170166016
+4. Gigabytes consumed of the losing conditions 92.96829986572266
+5. Gigabytes consumed of the avoid set1 to attacker2 123.85650253295898
+6. Gigabytes consumed of the avoid set2 to attacker2 185.72438049316406
+7. Gigabytes consumed 92.92256546020508
+8. Gigabytes consumed of the losing conditions a1 lose after a2 123.85650634765625
+9. Gigabytes consumed 61.988624572753906
+10. Gigabytes consumed 247.74493026733398
+11. Gigabytes consumed 216.8109893798828
 Initializing
 
 Obstacles set exists !
@@ -35,18 +35,18 @@ Traceback (most recent call last):
     check_call(_LIB.TVMFuncCall(
   File "/home/hha160/.conda/envs/odp/lib/python3.8/site-packages/heterocl/tvm/_ffi/base.py", line 66, in check_call
     raise TVMError(py_str(_LIB.TVMGetLastError()))
-heterocl.tvm._ffi.base.TVMError: [16:56:08] src/codegen/llvm/codegen_llvm.cc:748: unknown intrinsic signed_integer_overflow
+heterocl.tvm._ffi.base.TVMError: [17:46:19] src/codegen/llvm/codegen_llvm.cc:748: unknown intrinsic signed_integer_overflow
 
 Stack trace returned 10 entries:
-[bt] (0) /home/hha160/.conda/envs/odp/lib/libhcl.so(dmlc::StackTrace()+0x40) [0x7f09b84ce940]
-[bt] (1) /home/hha160/.conda/envs/odp/lib/libhcl.so(dmlc::LogMessageFatal::~LogMessageFatal()+0x2b) [0x7f09b84cf0cb]
-[bt] (2) /home/hha160/.conda/envs/odp/lib/libhcl.so(TVM::codegen::CodeGenLLVM::CreateIntrinsic(Halide::Internal::Call const*)+0x71) [0x7f09b8802501]
-[bt] (3) /home/hha160/.conda/envs/odp/lib/libhcl.so(TVM::codegen::CodeGenCPU::CreateIntrinsic(Halide::Internal::Call const*)+0x38) [0x7f09b8812988]
-[bt] (4) /home/hha160/.conda/envs/odp/lib/libhcl.so(TVM::codegen::CodeGenLLVM::VisitExpr_(Halide::Internal::Call const*)+0x39) [0x7f09b87f7b79]
-[bt] (5) /home/hha160/.conda/envs/odp/lib/libhcl.so(TVM::IRFunctor<llvm::Value* (TVM::NodeRef const&, TVM::ir::ExprFunctor<llvm::Value* (Halide::Expr const&)>*)>::operator()(TVM::NodeRef const&, TVM::ir::ExprFunctor<llvm::Value* (Halide::Expr const&)>*) const+0x6d) [0x7f09b87e0fcd]
-[bt] (6) /home/hha160/.conda/envs/odp/lib/libhcl.so(TVM::codegen::CodeGenLLVM::VisitExpr_(Halide::Internal::Load const*)+0x7a) [0x7f09b87ff1aa]
-[bt] (7) /home/hha160/.conda/envs/odp/lib/libhcl.so(TVM::IRFunctor<llvm::Value* (TVM::NodeRef const&, TVM::ir::ExprFunctor<llvm::Value* (Halide::Expr const&)>*)>::operator()(TVM::NodeRef const&, TVM::ir::ExprFunctor<llvm::Value* (Halide::Expr const&)>*) const+0x6d) [0x7f09b87e0fcd]
-[bt] (8) /home/hha160/.conda/envs/odp/lib/libhcl.so(TVM::codegen::CodeGenLLVM::VisitExpr_(Halide::Internal::Sub const*)+0x14) [0x7f09b87fa964]
-[bt] (9) /home/hha160/.conda/envs/odp/lib/libhcl.so(TVM::IRFunctor<llvm::Value* (TVM::NodeRef const&, TVM::ir::ExprFunctor<llvm::Value* (Halide::Expr const&)>*)>::operator()(TVM::NodeRef const&, TVM::ir::ExprFunctor<llvm::Value* (Halide::Expr const&)>*) const+0x6d) [0x7f09b87e0fcd]
+[bt] (0) /home/hha160/.conda/envs/odp/lib/libhcl.so(dmlc::StackTrace()+0x40) [0x7f5cf42ac940]
+[bt] (1) /home/hha160/.conda/envs/odp/lib/libhcl.so(dmlc::LogMessageFatal::~LogMessageFatal()+0x2b) [0x7f5cf42ad0cb]
+[bt] (2) /home/hha160/.conda/envs/odp/lib/libhcl.so(TVM::codegen::CodeGenLLVM::CreateIntrinsic(Halide::Internal::Call const*)+0x71) [0x7f5cf45e0501]
+[bt] (3) /home/hha160/.conda/envs/odp/lib/libhcl.so(TVM::codegen::CodeGenCPU::CreateIntrinsic(Halide::Internal::Call const*)+0x38) [0x7f5cf45f0988]
+[bt] (4) /home/hha160/.conda/envs/odp/lib/libhcl.so(TVM::codegen::CodeGenLLVM::VisitExpr_(Halide::Internal::Call const*)+0x39) [0x7f5cf45d5b79]
+[bt] (5) /home/hha160/.conda/envs/odp/lib/libhcl.so(TVM::IRFunctor<llvm::Value* (TVM::NodeRef const&, TVM::ir::ExprFunctor<llvm::Value* (Halide::Expr const&)>*)>::operator()(TVM::NodeRef const&, TVM::ir::ExprFunctor<llvm::Value* (Halide::Expr const&)>*) const+0x6d) [0x7f5cf45befcd]
+[bt] (6) /home/hha160/.conda/envs/odp/lib/libhcl.so(TVM::codegen::CodeGenLLVM::VisitExpr_(Halide::Internal::Load const*)+0x7a) [0x7f5cf45dd1aa]
+[bt] (7) /home/hha160/.conda/envs/odp/lib/libhcl.so(TVM::IRFunctor<llvm::Value* (TVM::NodeRef const&, TVM::ir::ExprFunctor<llvm::Value* (Halide::Expr const&)>*)>::operator()(TVM::NodeRef const&, TVM::ir::ExprFunctor<llvm::Value* (Halide::Expr const&)>*) const+0x6d) [0x7f5cf45befcd]
+[bt] (8) /home/hha160/.conda/envs/odp/lib/libhcl.so(TVM::codegen::CodeGenLLVM::VisitExpr_(Halide::Internal::Sub const*)+0x14) [0x7f5cf45d8964]
+[bt] (9) /home/hha160/.conda/envs/odp/lib/libhcl.so(TVM::IRFunctor<llvm::Value* (TVM::NodeRef const&, TVM::ir::ExprFunctor<llvm::Value* (Halide::Expr const&)>*)>::operator()(TVM::NodeRef const&, TVM::ir::ExprFunctor<llvm::Value* (Halide::Expr const&)>*) const+0x6d) [0x7f5cf45befcd]
 
 
