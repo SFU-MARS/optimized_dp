@@ -28,13 +28,17 @@ import os, psutil
 # Record the time of whole process
 start_time = time.time()
 
-grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]),
-             6, np.array([30, 30, 30, 30, 30, 30]))
+# grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]),
+#              6, np.array([30, 30, 30, 30, 30, 30]))  # grid = 30
+grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
+             6, np.array([45, 45, 45, 45, 45, 45]))  # grid = 30
+
 process = psutil.Process(os.getpid())
 print("1. Gigabytes consumed by the grids is {}".format(process.memory_info().rss/(1024 ** 3)))  # in bytes
 
 # First load the 4D reach-avoid set
-RA_1V1 = np.load("1v1AttackDefend_g30_speed15.npy")
+# RA_1V1 = np.load("1v1AttackDefend_g30_speed15.npy")  # grid = 30
+RA_1V1 = np.load("1v1AttackDefend_g45_speed15.npy")  # grid = 45
 
 # Define my object dynamics
 agents_2v1 = AttackerDefender2v1(uMode="min", dMode="max")  # 2v1 (6 dim dynamics)
@@ -64,7 +68,8 @@ a1_captured = np.array(a1_captured, dtype='float32')
 # TODO: check the axis is right
 # Backproject 4D reach-avoid array to 6D
 # The losing conditions is complement of winning conditions of attacker 2
-a2_lose_after_a1 = -(np.zeros((30, 30, 30, 30, 30, 30)) + np.expand_dims(RA_1V1, axis = (0, 1)))
+# a2_lose_after_a1 = -(np.zeros((30, 30, 30, 30, 30, 30)) + np.expand_dims(RA_1V1, axis = (0, 1)))  # grid = 30
+a2_lose_after_a1 = -(np.zeros((45, 45, 45, 45, 45, 45)) + np.expand_dims(RA_1V1, axis = (0, 1)))  # grid = 45
 a2_lose_after_a1 = np.array(a2_lose_after_a1, dtype='float32')
 process = psutil.Process(os.getpid())
 print("4. Gigabytes consumed of the losing conditions {}".format(process.memory_info().rss/(1024 ** 3)))  # in bytes
@@ -102,7 +107,9 @@ del obs_a2
 del capture_a2
 
 # The losing conditions is complement of winning conditions of attacker 1
-a1_lose_after_a2 = -(np.zeros((30, 30, 30, 30, 30, 30)) + np.expand_dims(RA_1V1, axis = (2, 3)))
+# a1_lose_after_a2 = -(np.zeros((30, 30, 30, 30, 30, 30)) + np.expand_dims(RA_1V1, axis = (2, 3)))  # grid = 30
+a1_lose_after_a2 = -(np.zeros((45, 45, 45, 45, 45, 45)) + np.expand_dims(RA_1V1, axis = (2, 3)))  # grid = 45
+
 a1_lose_after_a2 = np.array(a1_lose_after_a2, dtype='float32')
 process = psutil.Process(os.getpid())
 print("8. Gigabytes consumed of the losing conditions a1 lose after a2 {}".format(process.memory_info().rss/(1024 ** 3)))  # in bytes
