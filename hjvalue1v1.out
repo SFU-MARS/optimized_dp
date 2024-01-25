@@ -7,15 +7,15 @@ Optimizing
 
 Started running
 
-Total kernel time (s): 56.34667
+Total kernel time (s): 10.07114
 Finished solving
 
-The CPU memory used during the calculation of the value function is  0.77 GB.
-The shape of the value function is (45, 45, 45, 45) 
+The CPU memory used during the calculation of the value function is  0.25 GB.
+The shape of the value function is (32, 32, 32, 32) 
 
-The size of the value function is  0.02 GB or 15.642642974853516 MB.
-The time of solving HJ is 72.27578282356262 seconds.
-The shape of the value function is (45, 45, 45, 45) 
+The size of the value function is  0.00 GB or 4.0 MB.
+The time of solving HJ is 13.961774826049805 seconds.
+The shape of the value function is (32, 32, 32, 32) 
 
 The value function has been saved successfully.
-The time of whole process is 72.50162959098816 seconds.
+The time of whole process is 14.026569366455078 seconds.
