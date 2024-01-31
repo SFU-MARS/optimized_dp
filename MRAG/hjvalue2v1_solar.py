@@ -27,7 +27,7 @@ import os, psutil
 ##################################################### EXAMPLE 4 2v1AttackerDefender ####################################
 # Record the time of whole process
 start_time = time.time()
-
+print("The start time is {}".format(start_time))
 # grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]),
 #              6, np.array([30, 30, 30, 30, 30, 30]))  # grid = 30
 # grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
@@ -251,4 +251,5 @@ print(f"The value function has been saved successfully.")
 
 # Record the time of whole process
 end_time = time.time()
+print(f"The end time is {end_time}")
 print(f"The time of whole process is {end_time - start_time} seconds.")
