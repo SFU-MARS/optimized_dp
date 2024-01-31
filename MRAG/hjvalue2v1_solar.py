@@ -39,7 +39,9 @@ start_time = time.time()
 # grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
 #              6, np.array([35, 35, 35, 35, 35, 35]))  # grid = 35
 grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
-             6, np.array([37, 37, 37, 37, 37, 37]))  # grid = 37
+             6, np.array([36, 36, 36, 36, 36, 36]))  # grid = 36
+# grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
+#              6, np.array([37, 37, 37, 37, 37, 37]))  # grid = 37
 # grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
 #              6, np.array([40, 40, 40, 40, 40, 40]))  # grid = 40
 # grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
@@ -55,7 +57,8 @@ print("1. Gigabytes consumed by the grids is {}".format(process.memory_info().rs
 # RA_1V1 = np.load("1v1AttackDefend_g33_speed15.npy")  # grid = 33
 # RA_1V1 = np.load("1v1AttackDefend_g34_speed15.npy")  # grid = 34
 # RA_1V1 = np.load("1v1AttackDefend_g35_speed15.npy")  # grid = 35
-RA_1V1 = np.load("1v1AttackDefend_g37_speed15.npy")  # grid = 37
+RA_1V1 = np.load("1v1AttackDefend_g36_speed15.npy")  # grid = 36
+# RA_1V1 = np.load("1v1AttackDefend_g37_speed15.npy")  # grid = 37
 # RA_1V1 = np.load("1v1AttackDefend_g40_speed15.npy")  # grid = 40
 # RA_1V1 = np.load("1v1AttackDefend_g45_speed15.npy")  # grid = 45
 
@@ -92,7 +95,8 @@ a1_captured = np.array(a1_captured, dtype='float32')
 # a2_lose_after_a1 = -(np.zeros((33, 33, 33, 33, 33, 33)) + np.expand_dims(RA_1V1, axis = (0, 1)))  # grid = 33
 # a2_lose_after_a1 = -(np.zeros((34, 34, 34, 34, 34, 34)) + np.expand_dims(RA_1V1, axis = (0, 1)))  # grid = 34
 # a2_lose_after_a1 = -(np.zeros((35, 35, 35, 35, 35, 35)) + np.expand_dims(RA_1V1, axis = (0, 1)))  # grid = 35
-a2_lose_after_a1 = -(np.zeros((37, 37, 37, 37, 37, 37)) + np.expand_dims(RA_1V1, axis = (0, 1)))  # grid = 37
+a2_lose_after_a1 = -(np.zeros((36, 36, 36, 36, 36, 36)) + np.expand_dims(RA_1V1, axis = (0, 1)))  # grid = 36
+# a2_lose_after_a1 = -(np.zeros((37, 37, 37, 37, 37, 37)) + np.expand_dims(RA_1V1, axis = (0, 1)))  # grid = 37
 # a2_lose_after_a1 = -(np.zeros((40, 40, 40, 40, 40, 40)) + np.expand_dims(RA_1V1, axis = (0, 1)))  # grid = 40
 # a2_lose_after_a1 = -(np.zeros((45, 45, 45, 45, 45, 45)) + np.expand_dims(RA_1V1, axis = (0, 1)))  # grid = 45
 a2_lose_after_a1 = np.array(a2_lose_after_a1, dtype='float32')
@@ -137,7 +141,8 @@ del capture_a2
 # a1_lose_after_a2 = -(np.zeros((33, 33, 33, 33, 33, 33)) + np.expand_dims(RA_1V1, axis = (2, 3)))  # grid = 33
 # a1_lose_after_a2 = -(np.zeros((34, 34, 34, 34, 34, 34)) + np.expand_dims(RA_1V1, axis = (2, 3)))  # grid = 34
 # a1_lose_after_a2 = -(np.zeros((35, 35, 35, 35, 35, 35)) + np.expand_dims(RA_1V1, axis = (2, 3)))  # grid = 35
-a1_lose_after_a2 = -(np.zeros((37, 37, 37, 37, 37, 37)) + np.expand_dims(RA_1V1, axis = (2, 3)))  # grid = 37
+a1_lose_after_a2 = -(np.zeros((36, 36, 36, 36, 36, 36)) + np.expand_dims(RA_1V1, axis = (2, 3)))  # grid = 36
+# a1_lose_after_a2 = -(np.zeros((37, 37, 37, 37, 37, 37)) + np.expand_dims(RA_1V1, axis = (2, 3)))  # grid = 37
 # a1_lose_after_a2 = -(np.zeros((40, 40, 40, 40, 40, 40)) + np.expand_dims(RA_1V1, axis = (2, 3)))  # grid = 40
 # a1_lose_after_a2 = -(np.zeros((45, 45, 45, 45, 45, 45)) + np.expand_dims(RA_1V1, axis = (2, 3)))  # grid = 45
 
@@ -239,7 +244,8 @@ print("The calculation is done! \n")
 # np.save('2v1AttackDefend_g33_speed15.npy', result)
 # np.save('2v1AttackDefend_g34_speed15.npy', result)
 # np.save('2v1AttackDefend_g35_speed15.npy', result)
-np.save('2v1AttackDefend_g37_speed15.npy', result)
+np.save('2v1AttackDefend_g36_speed15.npy', result)
+# np.save('2v1AttackDefend_g37_speed15.npy', result)
 # np.save('2v1AttackDefend_g40_speed15.npy', result)
 print(f"The value function has been saved successfully.")
 
