@@ -30,7 +30,8 @@ start_time = time.time()
 # grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([33, 33, 33, 33]))
 # grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([34, 34, 34, 34]))
 # grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([35, 35, 35, 35]))
-grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([40, 40, 40, 40]))
+grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([37, 37, 37, 37]))
+# grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([40, 40, 40, 40]))
 # grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([45, 45, 45, 45]))  
 
 # Define my object dynamics
@@ -83,7 +84,8 @@ print(f'The shape of the value function is {result.shape} \n')
 # np.save('1v1AttackDefend_g33_speed15.npy', result)  # grid = 33
 # np.save('1v1AttackDefend_g34_speed15.npy', result)  # grid = 34
 # np.save('1v1AttackDefend_g35_speed15.npy', result)  # grid = 35
-np.save('1v1AttackDefend_g40_speed15.npy', result)  # grid = 40
+np.save('1v1AttackDefend_g37_speed15.npy', result)  # grid = 37
+# np.save('1v1AttackDefend_g40_speed15.npy', result)  # grid = 40
 # np.save('1v1AttackDefend_g45_speed15.npy', result)  # grid = 45
 
 print(f"The value function has been saved successfully.")
