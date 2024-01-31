@@ -1,0 +1,52 @@
+Start to compile the sh file now!
+]2;conda activate odp]1;]2;cd /localscratch/hha160/MARAG]1;]2;echo 'Start to run the main code now!']1;Start to run the main code now!
+]2;python MRAG/hjvalue2v1_solar.py]1;1. Gigabytes consumed by the grids is 0.095674368
+2. Gigabytes consumed of the obstalce1 10.3673856
+3. Gigabytes consumed of the obstalce2 20.629536768
+4. Gigabytes consumed of the losing conditions 30.922788864
+5. Gigabytes consumed of the avoid set1 to attacker2 41.163313152
+6. Gigabytes consumed of the avoid set2 to attacker2 61.689126912
+7. Gigabytes consumed 30.90044928
+8. Gigabytes consumed of the losing conditions a1 lose after a2 41.163358208
+9. Gigabytes consumed 20.637540352
+10. Gigabytes consumed 82.289844224
+11. Gigabytes consumed 72.026935296
+Initializing
+
+Obstacles set exists !
+Optimizing
+
+Traceback (most recent call last):
+  File "MRAG/hjvalue2v1_solar.py", line 223, in <module>
+    result = HJSolver(agents_2v1, grids, [reach_set, avoid_set], tau, compMethods, po, saveAllTimeSteps=False) # original one
+  File "/localscratch/hha160/MARAG/odp/solver.py", line 181, in HJSolver
+    solve_pde = graph_6D(dynamics_obj, grid, compMethod["TargetSetMode"], accuracy)
+  File "/localscratch/hha160/MARAG/odp/computeGraphs/MRAG_6D.py", line 437, in graph_6D
+    return (hcl.build(s))
+  File "/home/hha160/.conda/envs/odp/lib/python3.8/site-packages/heterocl/api.py", line 319, in build
+    return _build(schedule.sch, new_inputs, target=target, name=name, stmt=stmt, schedule_name=schedule.name)
+  File "/home/hha160/.conda/envs/odp/lib/python3.8/site-packages/heterocl/tvm/build_module.py", line 637, in build
+    mhost = codegen.build_module(fhost, str(target_host))
+  File "/home/hha160/.conda/envs/odp/lib/python3.8/site-packages/heterocl/tvm/codegen.py", line 20, in build_module
+    return _Build(lowered_func, target)
+  File "/home/hha160/.conda/envs/odp/lib/python3.8/site-packages/heterocl/tvm/_ffi/function.py", line 280, in my_api_func
+    return flocal(*args)
+  File "/home/hha160/.conda/envs/odp/lib/python3.8/site-packages/heterocl/tvm/_ffi/_ctypes/function.py", line 181, in __call__
+    check_call(_LIB.TVMFuncCall(
+  File "/home/hha160/.conda/envs/odp/lib/python3.8/site-packages/heterocl/tvm/_ffi/base.py", line 66, in check_call
+    raise TVMError(py_str(_LIB.TVMGetLastError()))
+heterocl.tvm._ffi.base.TVMError: [16:26:12] src/codegen/llvm/codegen_llvm.cc:748: unknown intrinsic signed_integer_overflow
+
+Stack trace returned 10 entries:
+[bt] (0) /home/hha160/.conda/envs/odp/lib/libhcl.so(dmlc::StackTrace()+0x40) [0x7f70b0bc3940]
+[bt] (1) /home/hha160/.conda/envs/odp/lib/libhcl.so(dmlc::LogMessageFatal::~LogMessageFatal()+0x2b) [0x7f70b0bc40cb]
+[bt] (2) /home/hha160/.conda/envs/odp/lib/libhcl.so(TVM::codegen::CodeGenLLVM::CreateIntrinsic(Halide::Internal::Call const*)+0x71) [0x7f70b0ef7501]
+[bt] (3) /home/hha160/.conda/envs/odp/lib/libhcl.so(TVM::codegen::CodeGenCPU::CreateIntrinsic(Halide::Internal::Call const*)+0x38) [0x7f70b0f07988]
+[bt] (4) /home/hha160/.conda/envs/odp/lib/libhcl.so(TVM::codegen::CodeGenLLVM::VisitExpr_(Halide::Internal::Call const*)+0x39) [0x7f70b0eecb79]
+[bt] (5) /home/hha160/.conda/envs/odp/lib/libhcl.so(TVM::IRFunctor<llvm::Value* (TVM::NodeRef const&, TVM::ir::ExprFunctor<llvm::Value* (Halide::Expr const&)>*)>::operator()(TVM::NodeRef const&, TVM::ir::ExprFunctor<llvm::Value* (Halide::Expr const&)>*) const+0x6d) [0x7f70b0ed5fcd]
+[bt] (6) /home/hha160/.conda/envs/odp/lib/libhcl.so(TVM::codegen::CodeGenLLVM::VisitExpr_(Halide::Internal::Load const*)+0x7a) [0x7f70b0ef41aa]
+[bt] (7) /home/hha160/.conda/envs/odp/lib/libhcl.so(TVM::IRFunctor<llvm::Value* (TVM::NodeRef const&, TVM::ir::ExprFunctor<llvm::Value* (Halide::Expr const&)>*)>::operator()(TVM::NodeRef const&, TVM::ir::ExprFunctor<llvm::Value* (Halide::Expr const&)>*) const+0x6d) [0x7f70b0ed5fcd]
+[bt] (8) /home/hha160/.conda/envs/odp/lib/libhcl.so(TVM::codegen::CodeGenLLVM::VisitExpr_(Halide::Internal::Sub const*)+0x14) [0x7f70b0eef964]
+[bt] (9) /home/hha160/.conda/envs/odp/lib/libhcl.so(TVM::IRFunctor<llvm::Value* (TVM::NodeRef const&, TVM::ir::ExprFunctor<llvm::Value* (Halide::Expr const&)>*)>::operator()(TVM::NodeRef const&, TVM::ir::ExprFunctor<llvm::Value* (Halide::Expr const&)>*) const+0x6d) [0x7f70b0ed5fcd]
+
+
