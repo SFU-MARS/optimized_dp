@@ -25,15 +25,11 @@ from odp.solver import HJSolver, computeSpatDerivArray
 # Record the time of whole process
 start_time = time.time()
 
-# grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([30, 30, 30, 30]))
-# grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([32, 32, 32, 32]))
+grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([25, 25, 25, 25]))
+
 # grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([33, 33, 33, 33]))
-# grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([34, 34, 34, 34]))
+
 # grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([35, 35, 35, 35]))
-grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([36, 36, 36, 36]))
-# grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([37, 37, 37, 37]))
-# grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([40, 40, 40, 40]))
-# grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([45, 45, 45, 45]))  
 
 # Define my object dynamics
 agents_1v1 = AttackerDefender1v1(uMode="min", dMode="max")  # 1v1 (4 dims dynamics)
@@ -80,12 +76,13 @@ print(f"The time of solving HJ is {solve_end_time - solve_start_time} seconds.")
 print(f'The shape of the value function is {result.shape} \n')
 # save the value function
 # np.save('/localhome/hha160/optimized_dp/MRAG/1v1AttackDefend_speed15.npy', result)  # grid = 45
+np.save('1v1AttackDefend_g25_speed15.npy', result)  # grid = 25
 # np.save('1v1AttackDefend_g30_speed15.npy', result)  # grid = 30
 # np.save('1v1AttackDefend_g32_speed15.npy', result)  # grid = 32
 # np.save('1v1AttackDefend_g33_speed15.npy', result)  # grid = 33
 # np.save('1v1AttackDefend_g34_speed15.npy', result)  # grid = 34
 # np.save('1v1AttackDefend_g35_speed15.npy', result)  # grid = 35
-np.save('1v1AttackDefend_g36_speed15.npy', result)  # grid = 36
+# np.save('1v1AttackDefend_g36_speed15.npy', result)  # grid = 36
 # np.save('1v1AttackDefend_g37_speed15.npy', result)  # grid = 37
 # np.save('1v1AttackDefend_g40_speed15.npy', result)  # grid = 40
 # np.save('1v1AttackDefend_g45_speed15.npy', result)  # grid = 45

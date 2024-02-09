@@ -66,6 +66,7 @@ class AttackerDefender1v1:
         return xA1_dot[0], xA2_dot[0], xD1_dot[0], xD2_dot[0]
 
     def opt_ctrl(self, t, state, spat_deriv):
+        # TODO: not finished, 2024.2.5
         """
         :param t: time t
         :param state: tuple of coordinates
