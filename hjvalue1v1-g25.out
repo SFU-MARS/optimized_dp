@@ -1,0 +1,21 @@
+Start to compile the sh file now!
+]2;conda activate odp]1;]2;cd /localscratch/hha160/MARAG]1;]2;echo 'Start to run the main code now!']1;Start to run the main code now!
+]2;python MRAG/hjvalue1v1.py]1;Initializing
+
+Obstacles set exists !
+Optimizing
+
+Started running
+
+Total kernel time (s): 4.86947
+Finished solving
+
+The CPU memory used during the calculation of the value function is  0.18 GB.
+The shape of the value function is (25, 25, 25, 25) 
+
+The size of the value function is  0.00 GB or 1.5625 MB.
+The time of solving HJ is 7.036548852920532 seconds.
+The shape of the value function is (25, 25, 25, 25) 
+
+The value function has been saved successfully.
+The time of whole process is 7.065707445144653 seconds.
