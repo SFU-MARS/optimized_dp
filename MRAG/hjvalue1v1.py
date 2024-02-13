@@ -77,15 +77,8 @@ print(f'The shape of the value function is {result.shape} \n')
 # save the value function
 # np.save('/localhome/hha160/optimized_dp/MRAG/1v1AttackDefend_speed15.npy', result)  # grid = 45
 np.save('1v1AttackDefend_g25_speed15.npy', result)  # grid = 25
-# np.save('1v1AttackDefend_g30_speed15.npy', result)  # grid = 30
-# np.save('1v1AttackDefend_g32_speed15.npy', result)  # grid = 32
 # np.save('1v1AttackDefend_g33_speed15.npy', result)  # grid = 33
-# np.save('1v1AttackDefend_g34_speed15.npy', result)  # grid = 34
 # np.save('1v1AttackDefend_g35_speed15.npy', result)  # grid = 35
-# np.save('1v1AttackDefend_g36_speed15.npy', result)  # grid = 36
-# np.save('1v1AttackDefend_g37_speed15.npy', result)  # grid = 37
-# np.save('1v1AttackDefend_g40_speed15.npy', result)  # grid = 40
-# np.save('1v1AttackDefend_g45_speed15.npy', result)  # grid = 45
 
 print(f"The value function has been saved successfully.")
 
