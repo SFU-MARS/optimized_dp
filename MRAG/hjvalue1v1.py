@@ -25,10 +25,9 @@ from odp.solver import HJSolver, computeSpatDerivArray
 # Record the time of whole process
 start_time = time.time()
 
-grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([25, 25, 25, 25]))
-
+# grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([25, 25, 25, 25]))
+grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([27, 27, 27, 27]))
 # grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([33, 33, 33, 33]))
-
 # grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([35, 35, 35, 35]))
 
 # Define my object dynamics
@@ -76,7 +75,8 @@ print(f"The time of solving HJ is {solve_end_time - solve_start_time} seconds.")
 print(f'The shape of the value function is {result.shape} \n')
 # save the value function
 # np.save('/localhome/hha160/optimized_dp/MRAG/1v1AttackDefend_speed15.npy', result)  # grid = 45
-np.save('1v1AttackDefend_g25_speed15.npy', result)  # grid = 25
+# np.save('1v1AttackDefend_g25_speed15.npy', result)  # grid = 25
+np.save('1v1AttackDefend_g27_speed15.npy', result)  # grid = 27
 # np.save('1v1AttackDefend_g33_speed15.npy', result)  # grid = 33
 # np.save('1v1AttackDefend_g35_speed15.npy', result)  # grid = 35
 
