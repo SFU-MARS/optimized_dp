@@ -237,47 +237,13 @@ class AttackerDefender2v1:
         return (opt_d1, opt_d2)
 
     def capture_set1(self, grid, capture_radius, mode):
-        ## todo: not sure whether this works or not
-        # Meshgrid is too expensive for 6D. So gotta be more cheap with our memory usage
-        # xa1, ya1, xa2, ya2, xd, yd = np.meshgrid(grid.grid_points[0], grid.grid_points[1],
-        #                              grid.grid_points[2], grid.grid_points[3],
-        #                              grid.grid_points[4], grid.grid_points[5], indexing='ij')
-        # data = np.power(xa1 - xd, 2) + np.power(ya1 - yd, 2)
-        # if mode == "capture":
-        #     return np.sqrt(data) - capture_radius
-        # if mode == "escape":
-        #     return capture_radius - np.sqrt(data)
-
         data = np.power(grid.vs[0] - grid.vs[4], 2) + np.power(grid.vs[1] -grid.vs[5], 2)
         if mode == "capture":
             return np.sqrt(data) - capture_radius
         if mode == "escape":
             return capture_radius - np.sqrt(data)
 
-
-        # this function is the distance between 1 attacker and 1 defender
-        # data = np.zeros(grid.pts_each_dim)
-        #
-        # data = data + np.power(grid.vs[0] - grid.vs[2], 2)
-        # data = data + np.power(grid.vs[1] - grid.vs[3], 2)
-        # # data = np.sqrt(data) - radius
-        # if mode == "capture":
-        #     return np.sqrt(data) - capture_radius
-        # if mode == "escape":
-        #     return capture_radius - np.sqrt(data)
-
     def capture_set2(self, grid, capture_radius, mode):
-        ## todo: need to rewrite this function depending on the meshgrid
-        # using meshgrid
-        # xa1, ya1, xa2, ya2, xd, yd = np.meshgrid(grid.grid_points[0], grid.grid_points[1],
-        #                              grid.grid_points[2], grid.grid_points[3],
-        #                              grid.grid_points[4], grid.grid_points[5], indexing='ij')
-        # data = np.power(xa2 - xd, 2) + np.power(ya2 - yd, 2)
-        # if mode == "capture":
-        #     return np.sqrt(data) - capture_radius
-        # if mode == "escape":
-        #     return capture_radius - np.sqrt(data)
-
         data = np.power(grid.vs[2] - grid.vs[4], 2) + np.power(grid.vs[3] -grid.vs[5], 2)
         if mode == "capture":
             return np.sqrt(data) - capture_radius

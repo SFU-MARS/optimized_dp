@@ -17,17 +17,20 @@ import os, psutil
 
 
 """ USER INTERFACES
-- Define grid
-- Generate initial values for grid using shape functions
-- Time length for computations
-- Initialize plotting option
-- Call HJSolver function
+- 1. Initialize the grids
+- 2. Initialize the dynamics
+- 3. Instruct the avoid set and reach set
+- 4. Set the look-back length and time step
+- 5. Call HJSolver function
+- 6. Save the value function
 """
 
-##################################################### EXAMPLE 4 2v1AttackerDefender ####################################
+##################################################### EXAMPLE 6 2v1AttackerDefender ####################################
 # Record the time of whole process
 start_time = time.time()
 print("The start time is {}".format(start_time))
+
+# 1. Initialize the grids
 # grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
             #  6, np.array([25, 25, 25, 25, 25, 25]))  # grid = 25
 # grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
@@ -43,12 +46,15 @@ print("The start time is {}".format(start_time))
 grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
              6, np.array([36, 36, 36, 36, 36, 36]))  # grid = 36
 
-
-
 process = psutil.Process(os.getpid())
 print("1. Gigabytes consumed by the grids is {}".format(process.memory_info().rss/(1e9)))  # in bytes
 
-# First load the 6D reach-avoid set
+
+# 2. Initialize the dynamics
+agents_2v1 = AttackerDefender2v1(uMode="min", dMode="max")  # 2v1 (6 dim dynamics)
+
+# 3. Instruct the avoid set and reach set
+# 3.0 First load the 6D reach-avoid set
 # RA_1V1 = np.load("1v1AttackDefend_g25_speed15.npy")  # grid = 25
 # RA_1V1 = np.load("1v1AttackDefend_g27_speed15.npy")  # grid = 27
 # RA_1V1 = np.load("1v1AttackDefend_g29_speed15.npy")  # grid = 29
@@ -57,10 +63,7 @@ print("1. Gigabytes consumed by the grids is {}".format(process.memory_info().rs
 # RA_1V1 = np.load("1v1AttackDefend_g35_speed15.npy")  # grid = 35
 RA_1V1 = np.load("1v1AttackDefend_g36_speed15.npy")  # grid = 36
 
-
-# Define my object dynamics
-agents_2v1 = AttackerDefender2v1(uMode="min", dMode="max")  # 2v1 (6 dim dynamics)
-# Avoid set, no constraint means inf
+# 3.1 Avoid set, no constraint means inf
 obs1_a1 = ShapeRectangle(grids, [-0.1, -1.0, -1000, -1000, -1000, -1000], [0.1, -0.3, 1000, 1000, 1000, 1000])  # a1 get stuck in the obs1
 obs1_a1 = np.array(obs1_a1, dtype='float32')
 process = psutil.Process(os.getpid())
@@ -83,7 +86,6 @@ capture_a1 = np.array(capture_a1, dtype='float32')
 a1_captured = np.minimum(capture_a1, obs_a1)
 a1_captured = np.array(a1_captured, dtype='float32')
 
-# TODO: check the axis is right
 # Backproject 4D reach-avoid array to 6D
 # The losing conditions is complement of winning conditions of attacker 2
 # a2_lose_after_a1 = -(np.zeros((25, 25, 25, 25, 25, 25)) + np.expand_dims(RA_1V1, axis = (0, 1)))  # grid = 25
@@ -93,8 +95,8 @@ a1_captured = np.array(a1_captured, dtype='float32')
 # a2_lose_after_a1 = -(np.zeros((33, 33, 33, 33, 33, 33)) + np.expand_dims(RA_1V1, axis = (0, 1)))  # grid = 33
 # a2_lose_after_a1 = -(np.zeros((35, 35, 35, 35, 35, 35)) + np.expand_dims(RA_1V1, axis = (0, 1)))  # grid = 35
 a2_lose_after_a1 = -(np.zeros((36, 36, 36, 36, 36, 36)) + np.expand_dims(RA_1V1, axis = (0, 1)))  # grid = 36
-
 a2_lose_after_a1 = np.array(a2_lose_after_a1, dtype='float32')
+
 process = psutil.Process(os.getpid())
 print("4. Gigabytes consumed of the losing conditions {}".format(process.memory_info().rss/(1e9)))  # in bytes
 
@@ -121,7 +123,6 @@ process = psutil.Process(os.getpid())
 print("7. Gigabytes consumed {}".format(process.memory_info().rss/(1e9)))  # in bytes
 
 capture_a2 = agents_2v1.capture_set2(grids, 0.1, "capture")  # a2 is captured
-# Convert to float 32
 capture_a2 = np.array(capture_a2, dtype='float32')
 process = psutil.Process(os.getpid())
 
@@ -155,7 +156,7 @@ del a1_captured_then_a2_lose
 
 print("9. Gigabytes consumed {}".format(process.memory_info().rss/(1e9)))  # in bytes
 
-# Reach set, at least one of them manage to reach the target
+# 3.2 Reach set, at least one of them manage to reach the target
 # goal1_destination = ShapeRectangle(grids, [0.6, 0.1, 0.6, 0.1, -1000, -1000],
 #                                    [0.8, 0.3, 0.8, 0.3, 1000, 1000])  # a1 and a2 both arrive the goal
 # np.save('goal1_destination.npy', goal1_destination)
@@ -204,7 +205,7 @@ process = psutil.Process(os.getpid())
 print("11. Gigabytes consumed {}".format(process.memory_info().rss/(1e9)))  # in bytes
 
 
-# Look-back length and time step
+# 4. Set the look-back length and time step
 lookback_length = 4.5  # try 1.5, 2.0, 2.5, 3.0, 5.0, 6.0, 8.0
 t_step = 0.025
 
@@ -215,7 +216,7 @@ tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)
 # while plotting make sure the len(slicesCut) + len(plotDims) = grid.dims
 po = PlotOptions(do_plot=False, plot_type="2d_plot", plotDims=[0, 1], slicesCut=[22, 22])
 
-# In this example, we compute a Reach-Avoid Tube
+# 5. Call HJSolver function
 compMethods = {"TargetSetMode": "minVWithVTarget", "ObstacleSetMode": "maxVWithObstacle"} # original one
 solve_start_time = time.time()
 result = HJSolver(agents_2v1, grids, [reach_set, avoid_set], tau, compMethods, po, saveAllTimeSteps=False) # original one
@@ -227,12 +228,11 @@ solve_end_time = time.time()
 print(f'The shape of the value function is {result.shape} \n')
 print(f"The size of the value function is {result.nbytes / (1e9): .2f} GB or {result.nbytes/(1e6)} MB.")
 print(f"The time of solving HJ is {solve_end_time - solve_start_time} seconds.")
-
 print(f'The shape of the value function is {result.shape} \n')
-# save the value function
 
-# np.save('2v1AttackDefend.npy', result)
 print("The calculation is done! \n")
+
+# 6. Save the value function
 # np.save('2v1AttackDefend_g25_speed15.npy', result)
 # np.save('2v1AttackDefend_g27_speed15.npy', result)
 # np.save('2v1AttackDefend_g29_speed15.npy', result)

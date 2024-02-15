@@ -295,17 +295,6 @@ class AttackerDefender1v3:
         return (opt_d1, opt_d2, opt_d3, opt_d4, opt_d5, opt_d6)
 
     def capture_set1(self, grid, capture_radius, mode):
-        ## todo: not sure whether this works or not
-        # Meshgrid is too expensive for 6D. So gotta be more cheap with our memory usage
-        # xa1, ya1, xa2, ya2, xd, yd = np.meshgrid(grid.grid_points[0], grid.grid_points[1],
-        #                              grid.grid_points[2], grid.grid_points[3],
-        #                              grid.grid_points[4], grid.grid_points[5], indexing='ij')
-        # data = np.power(xa1 - xd, 2) + np.power(ya1 - yd, 2)
-        # if mode == "capture":
-        #     return np.sqrt(data) - capture_radius
-        # if mode == "escape":
-        #     return capture_radius - np.sqrt(data)
-
         data = np.power(grid.vs[0] - grid.vs[2], 2) + np.power(grid.vs[1] -grid.vs[3], 2)
         if mode == "capture":
             return np.sqrt(data) - capture_radius
@@ -313,17 +302,6 @@ class AttackerDefender1v3:
             return capture_radius - np.sqrt(data)
 
     def capture_set2(self, grid, capture_radius, mode):
-        ## todo: need to rewrite this function depending on the meshgrid
-        # using meshgrid
-        # xa1, ya1, xa2, ya2, xd, yd = np.meshgrid(grid.grid_points[0], grid.grid_points[1],
-        #                              grid.grid_points[2], grid.grid_points[3],
-        #                              grid.grid_points[4], grid.grid_points[5], indexing='ij')
-        # data = np.power(xa2 - xd, 2) + np.power(ya2 - yd, 2)
-        # if mode == "capture":
-        #     return np.sqrt(data) - capture_radius
-        # if mode == "escape":
-        #     return capture_radius - np.sqrt(data)
-
         data = np.power(grid.vs[0] - grid.vs[4], 2) + np.power(grid.vs[1] -grid.vs[5], 2)
         if mode == "capture":
             return np.sqrt(data) - capture_radius
@@ -331,17 +309,6 @@ class AttackerDefender1v3:
             return capture_radius - np.sqrt(data)
     
     def capture_set3(self, grid, capture_radius, mode):
-        ## todo: need to rewrite this function depending on the meshgrid
-        # using meshgrid
-        # xa1, ya1, xa2, ya2, xd, yd = np.meshgrid(grid.grid_points[0], grid.grid_points[1],
-        #                              grid.grid_points[2], grid.grid_points[3],
-        #                              grid.grid_points[4], grid.grid_points[5], indexing='ij')
-        # data = np.power(xa2 - xd, 2) + np.power(ya2 - yd, 2)
-        # if mode == "capture":
-        #     return np.sqrt(data) - capture_radius
-        # if mode == "escape":
-        #     return capture_radius - np.sqrt(data)
-
         data = np.power(grid.vs[0] - grid.vs[6], 2) + np.power(grid.vs[1] -grid.vs[7], 2)
         if mode == "capture":
             return np.sqrt(data) - capture_radius
