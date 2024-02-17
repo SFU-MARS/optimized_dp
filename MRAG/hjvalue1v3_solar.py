@@ -77,7 +77,8 @@ gc.collect()
 
 
 # 4. Set the look-back length and time step
-lookback_length = 4.5  # try 1.5, 2.0, 2.5, 3.0, 5.0, 6.0, 8.0
+#TODO: also compare the lookback length with the same grid size
+lookback_length = 1.0  # try 1.5, 2.0, 2.5, 3.0, 5.0, 6.0, 8.0  
 t_step = 0.025
 
 # Actual calculation process, needs to add new plot function to draw a 2D figure

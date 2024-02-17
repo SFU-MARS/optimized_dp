@@ -5,7 +5,7 @@ import time
 from odp.Plots import plot_isosurface
 
 # Backward reachable set computation library
-from odp.computeGraphs import graph_2D, graph_3D, graph_4D, graph_5D, graph_6D
+from odp.computeGraphs import graph_2D, graph_3D, graph_4D, graph_5D, graph_6D, graph_8D_test
 from odp.TimeToReach import TTR_3D, TTR_4D, TTR_5D 
 
 # Value Iteration library
@@ -151,6 +151,10 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
         list_x5 = np.reshape(grid.vs[4], grid.pts_each_dim[4])
     if grid.dims >= 6:
         list_x6 = np.reshape(grid.vs[5], grid.pts_each_dim[5])
+    if grid.dims >= 7:
+        list_x7 = np.reshape(grid.vs[6], grid.pts_each_dim[6])
+    if grid.dims >= 8:
+        list_x8 = np.reshape(grid.vs[7], grid.pts_each_dim[7])
 
     # Convert state arrays to hcl array type
     list_x1 = hcl.asarray(list_x1)
@@ -163,6 +167,10 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
         list_x5 = hcl.asarray(list_x5)
     if grid.dims >= 6:
         list_x6 = hcl.asarray(list_x6)
+    if grid.dims >= 7:
+        list_x7 = hcl.asarray(list_x7)
+    if grid.dims >= 8:
+        list_x8 = hcl.asarray(list_x8)
 
     # Get executable, obstacle check intial value function
     if grid.dims == 2:
@@ -179,6 +187,9 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
 
     if grid.dims == 6:
         solve_pde = graph_6D(dynamics_obj, grid, compMethod["TargetSetMode"], accuracy)
+    
+    if grid.dims == 8:
+        solve_pde = graph_8D_test(dynamics_obj, grid, compMethod["TargetSetMode"], accuracy)
 
     """ Be careful, for high-dimensional array (5D or higher), saving value arrays at all the time steps may 
     cause your computer to run out of memory """
@@ -225,6 +236,8 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
                 solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, list_x5 ,t_minh, l0)
             if grid.dims == 6:
                 solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6, t_minh, l0)
+            if grid.dims == 8:
+                solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6, list_x7, list_x8, t_minh, l0)
 
             tNow = t_minh.asnumpy()[0]
             process = psutil.Process(os.getpid())
@@ -382,6 +395,9 @@ def computeSpatDerivArray(grid, V, deriv_dim, accuracy="low"):
                                      generate_SpatDeriv=True, deriv_dim=deriv_dim)
     if grid.dims == 6:
         compute_SpatDeriv = graph_6D(None, grid, "None", accuracy,
+                                     generate_SpatDeriv=True, deriv_dim=deriv_dim)
+    if grid.dims == 8:
+        compute_SpatDeriv = graph_8D_test(None, grid, "None", accuracy,
                                      generate_SpatDeriv=True, deriv_dim=deriv_dim)
 
     compute_SpatDeriv(V_0, spatial_deriv)
