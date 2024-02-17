@@ -1,5 +1,5 @@
 import heterocl as hcl 
-from computeGraphs.CustomGraphFunctions import *
+from odp.computeGraphs.CustomGraphFunctions import *
 
 def spa_derivX0_8d(i0, i1, i2, i3, i4, i5, i6, i7, V, g):
 	left_deriv = hcl.scalar(0, "left_deriv")

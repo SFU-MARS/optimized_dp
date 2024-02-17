@@ -1,7 +1,7 @@
 import heterocl as hcl
-from computeGraphs.CustomGraphFunctions import *
+from odp.computeGraphs.CustomGraphFunctions import *
 # from spatialDerivatives.second_orderENO8D_test import *
-from spatialDerivatives.first_orderENO8D_test import *
+from odp.spatialDerivatives.first_orderENO8D_test import *
 
 ########################## 8D graph definition ######################## 
 def graph_8D(my_object, g, compMethod, accuracy):

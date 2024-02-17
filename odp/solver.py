@@ -5,7 +5,7 @@ import time
 from odp.Plots import plot_isosurface
 
 # Backward reachable set computation library
-from odp.computeGraphs import graph_2D, graph_3D, graph_4D, graph_5D, graph_6D, graph_8D_test
+from odp.computeGraphs import graph_2D, graph_3D, graph_4D, graph_5D, graph_6D, graph_8D
 from odp.TimeToReach import TTR_3D, TTR_4D, TTR_5D 
 
 # Value Iteration library
@@ -189,7 +189,7 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
         solve_pde = graph_6D(dynamics_obj, grid, compMethod["TargetSetMode"], accuracy)
     
     if grid.dims == 8:
-        solve_pde = graph_8D_test(dynamics_obj, grid, compMethod["TargetSetMode"], accuracy)
+        solve_pde = graph_8D(dynamics_obj, grid, compMethod["TargetSetMode"], accuracy)
 
     """ Be careful, for high-dimensional array (5D or higher), saving value arrays at all the time steps may 
     cause your computer to run out of memory """
@@ -397,7 +397,7 @@ def computeSpatDerivArray(grid, V, deriv_dim, accuracy="low"):
         compute_SpatDeriv = graph_6D(None, grid, "None", accuracy,
                                      generate_SpatDeriv=True, deriv_dim=deriv_dim)
     if grid.dims == 8:
-        compute_SpatDeriv = graph_8D_test(None, grid, "None", accuracy,
+        compute_SpatDeriv = graph_8D(None, grid, "None", accuracy,
                                      generate_SpatDeriv=True, deriv_dim=deriv_dim)
 
     compute_SpatDeriv(V_0, spatial_deriv)
