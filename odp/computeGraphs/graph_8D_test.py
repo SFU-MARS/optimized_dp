@@ -121,15 +121,15 @@ def graph_8D(my_object, g, compMethod, accuracy):
 												dV_dx_L5[0], dV_dx_R5[0] = spa_derivX5_8d(i0, i1, i2, i3, i4, i5, i6, i7, V_init, g)
 												dV_dx_L6[0], dV_dx_R6[0] = spa_derivX6_8d(i0, i1, i2, i3, i4, i5, i6, i7, V_init, g)
 												dV_dx_L7[0], dV_dx_R7[0] = spa_derivX7_8d(i0, i1, i2, i3, i4, i5, i6, i7, V_init, g)
-											# if accuracy == "medium":
-											# 	dV_dx_L0[0], dV_dx_R0[0] = secondOrderX0_8d(i0, i1, i2, i3, i4, i5, i6, i7, V_init, g)
-											# 	dV_dx_L1[0], dV_dx_R1[0] = secondOrderX1_8d(i0, i1, i2, i3, i4, i5, i6, i7, V_init, g)
-											# 	dV_dx_L2[0], dV_dx_R2[0] = secondOrderX2_8d(i0, i1, i2, i3, i4, i5, i6, i7, V_init, g)
-											# 	dV_dx_L3[0], dV_dx_R3[0] = secondOrderX3_8d(i0, i1, i2, i3, i4, i5, i6, i7, V_init, g)
-											# 	dV_dx_L4[0], dV_dx_R4[0] = secondOrderX4_8d(i0, i1, i2, i3, i4, i5, i6, i7, V_init, g)
-											# 	dV_dx_L5[0], dV_dx_R5[0] = secondOrderX5_8d(i0, i1, i2, i3, i4, i5, i6, i7, V_init, g)
-											# 	dV_dx_L6[0], dV_dx_R6[0] = secondOrderX6_8d(i0, i1, i2, i3, i4, i5, i6, i7, V_init, g)
-											# 	dV_dx_L7[0], dV_dx_R7[0] = secondOrderX7_8d(i0, i1, i2, i3, i4, i5, i6, i7, V_init, g)
+											if accuracy == "medium":
+												dV_dx_L0[0], dV_dx_R0[0] = secondOrderX0_8d(i0, i1, i2, i3, i4, i5, i6, i7, V_init, g)
+												dV_dx_L1[0], dV_dx_R1[0] = secondOrderX1_8d(i0, i1, i2, i3, i4, i5, i6, i7, V_init, g)
+												dV_dx_L2[0], dV_dx_R2[0] = secondOrderX2_8d(i0, i1, i2, i3, i4, i5, i6, i7, V_init, g)
+												dV_dx_L3[0], dV_dx_R3[0] = secondOrderX3_8d(i0, i1, i2, i3, i4, i5, i6, i7, V_init, g)
+												dV_dx_L4[0], dV_dx_R4[0] = secondOrderX4_8d(i0, i1, i2, i3, i4, i5, i6, i7, V_init, g)
+												dV_dx_L5[0], dV_dx_R5[0] = secondOrderX5_8d(i0, i1, i2, i3, i4, i5, i6, i7, V_init, g)
+												dV_dx_L6[0], dV_dx_R6[0] = secondOrderX6_8d(i0, i1, i2, i3, i4, i5, i6, i7, V_init, g)
+												dV_dx_L7[0], dV_dx_R7[0] = secondOrderX7_8d(i0, i1, i2, i3, i4, i5, i6, i7, V_init, g)
 											deriv_diff0[i0, i1, i2, i3, i4, i5, i6, i7] = dV_dx_R0[0] - dV_dx_L0[0]
 											deriv_diff1[i0, i1, i2, i3, i4, i5, i6, i7] = dV_dx_R1[0] - dV_dx_L1[0]
 											deriv_diff2[i0, i1, i2, i3, i4, i5, i6, i7] = dV_dx_R2[0] - dV_dx_L2[0]
@@ -222,18 +222,34 @@ def graph_8D(my_object, g, compMethod, accuracy):
 			uOptL1 = hcl.scalar(0, "uOptL1")
 			uOptL2 = hcl.scalar(0, "uOptL2")
 			uOptL3 = hcl.scalar(0, "uOptL3")
+			uOptL4 = hcl.scalar(0, "uOptL4")
+			uOptL5 = hcl.scalar(0, "uOptL5")
+			uOptL6 = hcl.scalar(0, "uOptL6")
+			uOptL7 = hcl.scalar(0, "uOptL7")
 			uOptU0 = hcl.scalar(0, "uOptU0")
 			uOptU1 = hcl.scalar(0, "uOptU1")
 			uOptU2 = hcl.scalar(0, "uOptU2")
 			uOptU3 = hcl.scalar(0, "uOptU3")
+			uOptU4 = hcl.scalar(0, "uOptU4")
+			uOptU5 = hcl.scalar(0, "uOptU5")
+			uOptU6 = hcl.scalar(0, "uOptU6")
+			uOptU7 = hcl.scalar(0, "uOptU7")
 			dOptL0 = hcl.scalar(0, "dOptL0")
 			dOptL1 = hcl.scalar(0, "dOptL1")
 			dOptL2 = hcl.scalar(0, "dOptL2")
 			dOptL3 = hcl.scalar(0, "dOptL3")
+			dOptL4 = hcl.scalar(0, "dOptL4")
+			dOptL5 = hcl.scalar(0, "dOptL5")
+			dOptL6 = hcl.scalar(0, "dOptL6")
+			dOptL7 = hcl.scalar(0, "dOptL7")
 			dOptU0 = hcl.scalar(0, "dOptU0")
 			dOptU1 = hcl.scalar(0, "dOptU1")
 			dOptU2 = hcl.scalar(0, "dOptU2")
 			dOptU3 = hcl.scalar(0, "dOptU3")
+			dOptU4 = hcl.scalar(0, "dOptU4")
+			dOptU5 = hcl.scalar(0, "dOptU5")
+			dOptU6 = hcl.scalar(0, "dOptU6")
+			dOptU7 = hcl.scalar(0, "dOptU7")
 			alpha0 = hcl.scalar(0, "alpha0")
 			alpha1 = hcl.scalar(0, "alpha1")
 			alpha2 = hcl.scalar(0, "alpha2")
@@ -283,17 +299,17 @@ def graph_8D(my_object, g, compMethod, accuracy):
 											dx_LL6 = hcl.scalar(0, "dx_LL6")
 											dx_LL7 = hcl.scalar(0, "dx_LL7")
 
-											dOptL0[0], dOptL1[0], dOptL2[0], dOptL3[0] = my_object.opt_dstb(t, (x0[i0], x1[i1], x2[i2], x3[i3], x4[i4], x5[i5], x6[i6], x7[i7]), 
+											dOptL0[0], dOptL1[0], dOptL2[0], dOptL3[0], dOptL4[0], dOptL5[0], dOptL6[0], dOptL7[0] = my_object.opt_dstb(t, (x0[i0], x1[i1], x2[i2], x3[i3], x4[i4], x5[i5], x6[i6], x7[i7]), 
 (min_deriv0[0], min_deriv1[0], min_deriv2[0], min_deriv3[0], min_deriv4[0], min_deriv5[0], min_deriv6[0], min_deriv7[0]) )
-											dOptU0[0], dOptU1[0], dOptU2[0], dOptU3[0] = my_object.opt_dstb(t, (x0[i0], x1[i1], x2[i2], x3[i3], x4[i4], x5[i5], x6[i6], x7[i7]), 
+											dOptU0[0], dOptU1[0], dOptU2[0], dOptU3[0], dOptU4[0], dOptU5[0], dOptU6[0], dOptU7[0] = my_object.opt_dstb(t, (x0[i0], x1[i1], x2[i2], x3[i3], x4[i4], x5[i5], x6[i6], x7[i7]), 
 (max_deriv0[0], max_deriv1[0], max_deriv2[0], max_deriv3[0], max_deriv4[0], max_deriv5[0], max_deriv6[0], max_deriv7[0]) )
-											uOptL0[0], uOptL1[0], uOptL2[0], uOptL3[0] = my_object.opt_ctrl(t, (x0[i0], x1[i1], x2[i2], x3[i3], x4[i4], x5[i5], x6[i6], x7[i7]), 
+											uOptL0[0], uOptL1[0], uOptL2[0], uOptL3[0], uOptL4[0], uOptL5[0], uOptL6[0], uOptL7[0] = my_object.opt_ctrl(t, (x0[i0], x1[i1], x2[i2], x3[i3], x4[i4], x5[i5], x6[i6], x7[i7]), 
 (min_deriv0[0], min_deriv1[0], min_deriv2[0], min_deriv3[0], min_deriv4[0], min_deriv5[0], min_deriv6[0], min_deriv7[0]) )
-											uOptU0[0], uOptU1[0], uOptU2[0], uOptU3[0] = my_object.opt_ctrl(t, (x0[i0], x1[i1], x2[i2], x3[i3], x4[i4], x5[i5], x6[i6], x7[i7]), 
+											uOptU0[0], uOptU1[0], uOptU2[0], uOptU3[0], uOptU4[0], uOptU5[0], uOptU6[0], uOptU7[0] = my_object.opt_ctrl(t, (x0[i0], x1[i1], x2[i2], x3[i3], x4[i4], x5[i5], x6[i6], x7[i7]), 
 (max_deriv0[0], max_deriv1[0], max_deriv2[0], max_deriv3[0], max_deriv4[0], max_deriv5[0], max_deriv6[0], max_deriv7[0]) )
 											dx_LL0[0], dx_LL1[0], dx_LL2[0], dx_LL3[0], dx_LL4[0], dx_LL5[0], dx_LL6[0], dx_LL7[0] = my_object.dynamics(t, (x0[i0], x1[i1], x2[i2], x3[i3], x4[i4], x5[i5], x6[i6], x7[i7]), 
-(uOptL0[0], uOptL1[0], uOptL2[0], uOptL3[0]), 
-(dOptL0[0], dOptL1[0], dOptL2[0], dOptL3[0]))
+(uOptL0[0], uOptL1[0], uOptL2[0], uOptL3[0], uOptL4[0], uOptL5[0], uOptL6[0], uOptL7[0]), 
+(dOptL0[0], dOptL1[0], dOptL2[0], dOptL3[0], dOptL4[0], dOptL5[0], dOptL6[0], dOptL7[0]))
 											dx_LL0[0] = my_abs(dx_LL0[0])
 											dx_LL1[0] = my_abs(dx_LL1[0])
 											dx_LL2[0] = my_abs(dx_LL2[0])
@@ -303,8 +319,8 @@ def graph_8D(my_object, g, compMethod, accuracy):
 											dx_LL6[0] = my_abs(dx_LL6[0])
 											dx_LL7[0] = my_abs(dx_LL7[0])
 											dx_UL0[0], dx_UL1[0], dx_UL2[0], dx_UL3[0], dx_UL4[0], dx_UL5[0], dx_UL6[0], dx_UL7[0] = my_object.dynamics(t, (x0[i0], x1[i1], x2[i2], x3[i3], x4[i4], x5[i5], x6[i6], x7[i7]), 
-(uOptU0[0], uOptU1[0], uOptU2[0], uOptU3[0]), 
-(dOptL0[0], dOptL1[0], dOptL2[0], dOptL3[0]))
+(uOptU0[0], uOptU1[0], uOptU2[0], uOptU3[0], uOptU4[0], uOptU5[0], uOptU6[0], uOptU7[0]), 
+(dOptL0[0], dOptL1[0], dOptL2[0], dOptL3[0], dOptL4[0], dOptL5[0], dOptL6[0], dOptL7[0]))
 											dx_UL0[0] = my_abs(dx_UL0[0])
 											dx_UL1[0] = my_abs(dx_UL1[0])
 											dx_UL2[0] = my_abs(dx_UL2[0])
@@ -322,8 +338,8 @@ def graph_8D(my_object, g, compMethod, accuracy):
 											alpha6[0] = my_max(dx_UL6[0], dx_LL6[0])
 											alpha7[0] = my_max(dx_UL7[0], dx_LL7[0])
 											dx_LU0[0], dx_LU1[0], dx_LU2[0], dx_LU3[0], dx_LU4[0], dx_LU5[0], dx_LU6[0], dx_LU7[0] = my_object.dynamics(t, (x0[i0], x1[i1], x2[i2], x3[i3], x4[i4], x5[i5], x6[i6], x7[i7]), 
-(uOptL0[0], uOptL1[0], uOptL2[0], uOptL3[0]), 
-(dOptU0[0], dOptU1[0], dOptU2[0], dOptU3[0]))
+(uOptL0[0], uOptL1[0], uOptL2[0], uOptL3[0], uOptL4[0], uOptL5[0], uOptL6[0], uOptL7[0]), 
+(dOptU0[0], dOptU1[0], dOptU2[0], dOptU3[0], dOptU4[0], dOptU5[0], dOptU6[0], dOptU7[0]))
 											dx_LU0[0] = my_abs(dx_LU0[0])
 											dx_LU1[0] = my_abs(dx_LU1[0])
 											dx_LU2[0] = my_abs(dx_LU2[0])
@@ -341,8 +357,8 @@ def graph_8D(my_object, g, compMethod, accuracy):
 											alpha6[0] = my_max(alpha6[0], dx_LU6[0])
 											alpha7[0] = my_max(alpha7[0], dx_LU7[0])
 											dx_UU0[0], dx_UU1[0], dx_UU2[0], dx_UU3[0], dx_UU4[0], dx_UU5[0], dx_UU6[0], dx_UU7[0] = my_object.dynamics(t, (x0[i0], x1[i1], x2[i2], x3[i3], x4[i4], x5[i5], x6[i6], x7[i7]), 
-(uOptU0[0], uOptU1[0], uOptU2[0], uOptU3[0]), 
-(dOptU0[0], dOptU1[0], dOptU2[0], dOptU3[0]))
+(uOptU0[0], uOptU1[0], uOptU2[0], uOptU3[0], uOptU4[0], uOptU5[0], uOptU6[0], uOptU7[0]), 
+(dOptU0[0], dOptU1[0], dOptU2[0], dOptU3[0], dOptU4[0], dOptU5[0], dOptU6[0], dOptU7[0]))
 											dx_UU0[0] = my_abs(dx_UU0[0])
 											dx_UU1[0] = my_abs(dx_UU1[0])
 											dx_UU2[0] = my_abs(dx_UU2[0])

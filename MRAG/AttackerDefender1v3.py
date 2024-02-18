@@ -86,7 +86,13 @@ class AttackerDefender1v3:
         # In 1v3 AttackerDefender, a(t) = [a1, a2]^T
         opt_a1 = hcl.scalar(0, "opt_a1")
         opt_a2 = hcl.scalar(0, "opt_a2")      
-
+        # Just create and pass back, even though they're not used
+        in3 = hcl.scalar(0, "in3")
+        in4 = hcl.scalar(0, "in4")
+        in5 = hcl.scalar(0, "in5")
+        in6 = hcl.scalar(0, "in6")
+        in7 = hcl.scalar(0, "in7")
+        in8 = hcl.scalar(0, "in8")
         # declare the hcl scalars for relevant spat_derivs
         deriv1 = hcl.scalar(0, "deriv1")
         deriv2 = hcl.scalar(0, "deriv2")
@@ -112,7 +118,7 @@ class AttackerDefender1v3:
                 opt_a1[0] = deriv1[0] / ctrl_len1
                 opt_a2[0] = deriv2[0] / ctrl_len1
             
-        return opt_a1[0], opt_a2[0]
+        return opt_a1[0], opt_a2[0], in3[0], in4[0], in5[0], in6[0], in7[0], in8[0]
 
     def opt_dstb(self, t, state, spat_deriv):
         """
@@ -126,7 +132,10 @@ class AttackerDefender1v3:
         d4 = hcl.scalar(0, "d4")
         d5 = hcl.scalar(0, "d5")
         d6 = hcl.scalar(0, "d6")
-        # the same procedure in opt_ctrl
+        # Just create and pass back, even though they're not used
+        d7 = hcl.scalar(0, "d7")
+        d8 = hcl.scalar(0, "d8")
+
         deriv1 = hcl.scalar(0, "deriv1")
         deriv2 = hcl.scalar(0, "deriv2")
         deriv3 = hcl.scalar(0, "deriv3")
@@ -188,7 +197,7 @@ class AttackerDefender1v3:
                 d5[0] = -deriv5[0]/ dstb_len3
                 d6[0] = -deriv6[0] / dstb_len3
 
-        return d1[0], d2[0], d3[0], d4[0], d5[0], d6[0]
+        return d1[0], d2[0], d3[0], d4[0], d5[0], d6[0], d7[0], d8[0]
 
         # The below function can have whatever form or parameters users want
         # These functions are not used in HeteroCL program, hence is pure Python code and

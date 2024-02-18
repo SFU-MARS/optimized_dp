@@ -30,11 +30,11 @@ start_time = time.time()
 print("The start time is {}".format(start_time))
 
 # 1. Initialize the grids
-grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
-             8, np.array([2, 2, 2, 2, 2, 2, 2, 2]))  # for local test
-
 # grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
-#              8, np.array([10, 10, 10, 10, 10, 10, 10, 10]))  # grid = 10
+#              8, np.array([2, 2, 2, 2, 2, 2, 2, 2]))  # for local test
+
+grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
+             8, np.array([10, 10, 10, 10, 10, 10, 10, 10]))  # grid = 10
 
 
 process = psutil.Process(os.getpid())
@@ -81,7 +81,7 @@ gc.collect()
 
 # 4. Set the look-back length and time step
 #TODO: also compare the lookback length with the same grid size
-lookback_length = 0.2  # try 1.5, 2.0, 2.5, 3.0, 5.0, 6.0, 8.0  
+lookback_length = 1.0  # try 1.5, 2.0, 2.5, 3.0, 5.0, 6.0, 8.0  
 t_step = 0.025
 
 # Actual calculation process, needs to add new plot function to draw a 2D figure
