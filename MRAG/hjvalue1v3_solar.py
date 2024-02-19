@@ -33,8 +33,11 @@ print("The start time is {}".format(start_time))
 # grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
 #              8, np.array([2, 2, 2, 2, 2, 2, 2, 2]))  # for local test
 
+# grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
+#              8, np.array([10, 10, 10, 10, 10, 10, 10, 10]))  # grid = 10
+
 grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
-             8, np.array([10, 10, 10, 10, 10, 10, 10, 10]))  # grid = 10
+             8, np.array([12, 12, 12, 12, 12, 12, 12, 12]))  # grid = 12
 
 
 process = psutil.Process(os.getpid())
