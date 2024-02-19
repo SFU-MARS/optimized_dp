@@ -30,6 +30,7 @@ start_time = time.time()
 print("The start time is {}".format(start_time))
 
 # 1. Initialize the grids
+grid_size = 12
 # grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
 #              8, np.array([2, 2, 2, 2, 2, 2, 2, 2]))  # for local test
 
@@ -37,7 +38,7 @@ print("The start time is {}".format(start_time))
 #              8, np.array([10, 10, 10, 10, 10, 10, 10, 10]))  # grid = 10
 
 grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
-             8, np.array([12, 12, 12, 12, 12, 12, 12, 12]))  # grid = 12
+             8, np.array([grid_size, grid_size, grid_size, grid_size, grid_size, grid_size, grid_size, grid_size])) 
 
 
 process = psutil.Process(os.getpid())
@@ -111,7 +112,7 @@ print(f'The shape of the value function is {result.shape} \n')
 print("The calculation is done! \n")
 
 # 6. Save the value function
-np.save(f'1v3AttackDefend_g10_T{lookback_length}_speed15.npy', result)
+np.save(f'1v3AttackDefend_g{grid_size}_T{lookback_length}_speed15.npy', result)
 
 print(f"The value function has been saved successfully.")
 
