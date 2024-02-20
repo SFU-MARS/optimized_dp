@@ -1,5 +1,5 @@
 import heterocl as hcl 
-from computeGraphs.CustomGraphFunctions import *
+from odp.computeGraphs.CustomGraphFunctions import *
 
 def spa_derivX0_7d(i0, i1, i2, i3, i4, i5, i6, V, g):
 	left_deriv = hcl.scalar(0, "left_deriv")
@@ -232,8 +232,6 @@ def spa_derivX6_7d(i0, i1, i2, i3, i4, i5, i6, V, g):
 			left_deriv[0] = (V[i0, i1, i2, i3, i4, i5, i6] - V[i0, i1, i2, i3, i4, i5, i6-1])/g.dx[6]
 			right_deriv[0] = (V[i0, i1, i2, i3, i4, i5, i6+1] - V[i0, i1, i2, i3, i4, i5, i6])/g.dx[6]
 		return left_deriv[0], right_deriv[0]
-import heterocl as hcl 
-from computeGraphs.CustomGraphFunctions import *
 
 def spa_derivX0_7d(i0, i1, i2, i3, i4, i5, i6, V, g):
 	left_deriv = hcl.scalar(0, "left_deriv")
@@ -466,8 +464,7 @@ def spa_derivX6_7d(i0, i1, i2, i3, i4, i5, i6, V, g):
 			left_deriv[0] = (V[i0, i1, i2, i3, i4, i5, i6] - V[i0, i1, i2, i3, i4, i5, i6-1])/g.dx[6]
 			right_deriv[0] = (V[i0, i1, i2, i3, i4, i5, i6+1] - V[i0, i1, i2, i3, i4, i5, i6])/g.dx[6]
 		return left_deriv[0], right_deriv[0]
-import heterocl as hcl 
-from computeGraphs.CustomGraphFunctions import *
+
 
 def spa_derivX0_7d(i0, i1, i2, i3, i4, i5, i6, V, g):
 	left_deriv = hcl.scalar(0, "left_deriv")

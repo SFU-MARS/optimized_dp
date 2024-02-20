@@ -5,7 +5,7 @@ import time
 from odp.Plots import plot_isosurface
 
 # Backward reachable set computation library
-from odp.computeGraphs import graph_2D, graph_3D, graph_4D, graph_5D, graph_6D, graph_8D
+from odp.computeGraphs import graph_2D, graph_3D, graph_4D, graph_5D, graph_6D, graph_7D, graph_8D
 from odp.TimeToReach import TTR_3D, TTR_4D, TTR_5D 
 
 # Value Iteration library
@@ -188,6 +188,9 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
     if grid.dims == 6:
         solve_pde = graph_6D(dynamics_obj, grid, compMethod["TargetSetMode"], accuracy)
     
+    if grid.dims == 7:
+        solve_pde = graph_7D(dynamics_obj, grid, compMethod["TargetSetMode"], accuracy)
+    
     if grid.dims == 8:
         solve_pde = graph_8D(dynamics_obj, grid, compMethod["TargetSetMode"], accuracy)
 
@@ -236,6 +239,8 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
                 solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, list_x5 ,t_minh, l0)
             if grid.dims == 6:
                 solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6, t_minh, l0)
+            if grid.dims == 7:
+                solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6, list_x7, t_minh, l0)
             if grid.dims == 8:
                 solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6, list_x7, list_x8, t_minh, l0)
 

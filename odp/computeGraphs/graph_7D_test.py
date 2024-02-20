@@ -380,10 +380,7 @@ def graph_7D(my_object, g, compMethod, accuracy):
 	s[s_D].parallel(s_D.i0)
 
 	return (hcl.build(s))
-import heterocl as hcl
-from computeGraphs.CustomGraphFunctions import *
-from spatialDerivatives.second_orderENO7D_test import *
-from spatialDerivatives.first_orderENO7D_test import *
+
 
 ########################## 7D graph definition ######################## 
 def graph_7D(my_object, g, compMethod, accuracy):
