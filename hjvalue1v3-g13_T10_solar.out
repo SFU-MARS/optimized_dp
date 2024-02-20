@@ -1,4 +1,0 @@
-Start to compile the sh file now!
-]2;conda activate odp]1;]2;cd /localscratch/hha160/MARAG]1;]2;echo 'Start to run the main code now!']1;Start to run the main code now!
-]2;python MRAG/hjvalue1v3_solar.py]1;terminate called after throwing an instance of 'std::bad_alloc'
-  what():  std::bad_alloc
