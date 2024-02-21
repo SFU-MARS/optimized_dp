@@ -30,7 +30,7 @@ start_time = time.time()
 print("The start time is {}".format(start_time))
 
 # 1. Initialize the grids
-grid_size = 20
+grid_size = 18
 
 grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
              7, np.array([grid_size, grid_size, grid_size, grid_size, grid_size, grid_size, grid_size])) 
