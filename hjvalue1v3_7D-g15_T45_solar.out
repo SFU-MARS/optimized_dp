@@ -1,0 +1,26 @@
+Start to compile the sh file now!
+]2;conda activate odp]1;]2;cd /localscratch/hha160/MARAG]1;]2;echo 'Start to run the main code now!']1;Start to run the main code now!
+]2;python MRAG/hjvalue1v3_7D_solar.py]1;The start time is 1708540670.8568187
+1. Gigabytes consumed by the grids is 0.095744
+2. Gigabytes consumed of the avoid set is 0.780742656
+3. Gigabytes consumed of the reach set is 2.837786624
+Initializing
+
+Obstacles set exists !
+Started running
+
+Total kernel time (s): 2082.89979
+Finished solving
+
+The CPU memory used during the calculation of the value function is  8.33 GB.
+The shape of the value function is (15, 15, 15, 15, 15, 15, 15) 
+
+The size of the value function is  0.68 GB or 683.4375 MB.
+The time of solving HJ is 2378.165306329727 seconds.
+The shape of the value function is (15, 15, 15, 15, 15, 15, 15) 
+
+The calculation is done! 
+
+The value function has been saved successfully.
+The end time is 1708543050.617601
+The time of whole process is 2379.7607822418213 seconds.
