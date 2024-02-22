@@ -30,7 +30,7 @@ start_time = time.time()
 print("The start time is {}".format(start_time))
 
 # 1. Initialize the grids
-grid_size = 17
+grid_size = 25
 
 grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
              7, np.array([grid_size, grid_size, grid_size, grid_size, grid_size, grid_size, grid_size])) 
@@ -93,21 +93,21 @@ po = PlotOptions(do_plot=False, plot_type="2d_plot", plotDims=[0, 1], slicesCut=
 # 5. Call HJSolver function
 compMethods = {"TargetSetMode": "minVWithVTarget", "ObstacleSetMode": "maxVWithObstacle"} # original one
 solve_start_time = time.time()
-result = HJSolver(agents_1v3_7D, grids, [reach_set, avoid_set], tau, compMethods, po, saveAllTimeSteps=False) # original one
+# result = HJSolver(agents_1v3_7D, grids, [reach_set, avoid_set], tau, compMethods, po, saveAllTimeSteps=False) # original one
 
 process = psutil.Process(os.getpid())
 print(f"The CPU memory used during the calculation of the value function is {process.memory_info().rss/(1e9): .2f} GB.")  # in bytes
 
 solve_end_time = time.time()
-print(f'The shape of the value function is {result.shape} \n')
-print(f"The size of the value function is {result.nbytes / (1e9): .2f} GB or {result.nbytes/(1e6)} MB.")
-print(f"The time of solving HJ is {solve_end_time - solve_start_time} seconds.")
-print(f'The shape of the value function is {result.shape} \n')
+# print(f'The shape of the value function is {result.shape} \n')
+# print(f"The size of the value function is {result.nbytes / (1e9): .2f} GB or {result.nbytes/(1e6)} MB.")
+# print(f"The time of solving HJ is {solve_end_time - solve_start_time} seconds.")
+# print(f'The shape of the value function is {result.shape} \n')
 
-print("The calculation is done! \n")
+# print("The calculation is done! \n")
 
-# 6. Save the value function
-np.save(f'1v3_7DAttackDefend_g{grid_size}_T{lookback_length}_speed15.npy', result)
+# # 6. Save the value function
+# np.save(f'1v3_7DAttackDefend_g{grid_size}_T{lookback_length}_speed15.npy', result)
 
 print(f"The value function has been saved successfully.")
 
