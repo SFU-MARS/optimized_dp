@@ -127,14 +127,21 @@ def graph_7D(my_object, g, compMethod, accuracy):
 										# deriv_diff4[i0, i1, i2, i3, i4, i5, i6] = dV_dx_R4[0] - dV_dx_L4[0]
 										# deriv_diff5[i0, i1, i2, i3, i4, i5, i6] = dV_dx_R5[0] - dV_dx_L5[0]
 										# deriv_diff6[i0, i1, i2, i3, i4, i5, i6] = dV_dx_R6[0] - dV_dx_L6[0]
+										deriv_diff0 = hcl.scalar(0, "deriv_diff0")
+										deriv_diff1 = hcl.scalar(0, "deriv_diff1")
+										deriv_diff2 = hcl.scalar(0, "deriv_diff2")
+										deriv_diff3 = hcl.scalar(0, "deriv_diff3")
+										deriv_diff4 = hcl.scalar(0, "deriv_diff4")
+										deriv_diff5 = hcl.scalar(0, "deriv_diff5")
+										deriv_diff6 = hcl.scalar(0, "deriv_diff6")
 
-										deriv_diff0[0] = dV_dx0_R[0] - dV_dx0_L[0]
-										deriv_diff1[0] = dV_dx1_R[0] - dV_dx1_L[0]
-										deriv_diff2[0] = dV_dx2_R[0] - dV_dx2_L[0]
-										deriv_diff3[0] = dV_dx3_R[0] - dV_dx3_L[0]
-										deriv_diff4[0] = dV_dx4_R[0] - dV_dx4_L[0]
-										deriv_diff5[0] = dV_dx5_R[0] - dV_dx5_L[0]
-										deriv_diff6[0] = dV_dx6_R[0] - dV_dx6_L[0]
+										deriv_diff0[0] = dV_dx_R0[0] - dV_dx_L0[0]
+										deriv_diff1[0] = dV_dx_R1[0] - dV_dx_L1[0]
+										deriv_diff2[0] = dV_dx_R2[0] - dV_dx_L2[0]
+										deriv_diff3[0] = dV_dx_R3[0] - dV_dx_L3[0]
+										deriv_diff4[0] = dV_dx_R4[0] - dV_dx_L4[0]
+										deriv_diff5[0] = dV_dx_R5[0] - dV_dx_L5[0]
+										deriv_diff6[0] = dV_dx_R6[0] - dV_dx_L6[0]
 
 										dV_dx0[0] = (dV_dx_L0 + dV_dx_R0) / 2
 										dV_dx1[0] = (dV_dx_L1 + dV_dx_R1) / 2
@@ -402,9 +409,9 @@ def graph_7D(my_object, g, compMethod, accuracy):
 	#Optimizing
 
 	s_H = graph_create.Hamiltonian
-	s_D = graph_create.Dissipation
+	# s_D = graph_create.Dissipation
 
 	s[s_H].parallel(s_H.i0)
-	s[s_D].parallel(s_D.i0)
+	# s[s_D].parallel(s_D.i0)
 
 	return (hcl.build(s))
