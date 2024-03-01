@@ -9,6 +9,7 @@ def graph_7D(my_object, g, compMethod, accuracy):
 	V_init = hcl.placeholder(tuple(g.pts_each_dim), name="V_init", dtype=hcl.Float())
 	l0 = hcl.placeholder(tuple(g.pts_each_dim), name="l0", dtype=hcl.Float())
 	t = hcl.placeholder((2,), name="t", dtype=hcl.Float())
+	
 	x0 = hcl.placeholder((g.pts_each_dim[0],), name="x0", dtype=hcl.Float())
 	x1 = hcl.placeholder((g.pts_each_dim[1],), name="x1", dtype=hcl.Float())
 	x2 = hcl.placeholder((g.pts_each_dim[2],), name="x2", dtype=hcl.Float())
@@ -16,6 +17,7 @@ def graph_7D(my_object, g, compMethod, accuracy):
 	x4 = hcl.placeholder((g.pts_each_dim[4],), name="x4", dtype=hcl.Float())
 	x5 = hcl.placeholder((g.pts_each_dim[5],), name="x5", dtype=hcl.Float())
 	x6 = hcl.placeholder((g.pts_each_dim[6],), name="x6", dtype=hcl.Float())
+
 	def graph_create(V_new, V_init, x0, x1, x2, x3, x4, x5, x6, t, l0):
 		# deriv_diff0 = hcl.compute(V_init.shape, lambda *x: 0, "deriv_diff0")
 		# deriv_diff1 = hcl.compute(V_init.shape, lambda *x: 0, "deriv_diff1")
