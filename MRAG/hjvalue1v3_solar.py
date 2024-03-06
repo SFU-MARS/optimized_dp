@@ -104,15 +104,15 @@ process = psutil.Process(os.getpid())
 print(f"The CPU memory used during the calculation of the value function is {process.memory_info().rss/(1e9): .2f} GB.")  # in bytes
 
 solve_end_time = time.time()
-# print(f'The shape of the value function is {result.shape} \n')
-# print(f"The size of the value function is {result.nbytes / (1e9): .2f} GB or {result.nbytes/(1e6)} MB.")
-# print(f"The time of solving HJ is {solve_end_time - solve_start_time} seconds.")
-# print(f'The shape of the value function is {result.shape} \n')
+print(f'The shape of the value function is {result.shape} \n')
+print(f"The size of the value function is {result.nbytes / (1e9): .2f} GB or {result.nbytes/(1e6)} MB.")
+print(f"The time of solving HJ is {solve_end_time - solve_start_time} seconds.")
+print(f'The shape of the value function is {result.shape} \n')
 
 print("The calculation is done! \n")
 
 # 6. Save the value function
-# np.save(f'1v3AttackDefend_g{grid_size}_T{lookback_length}_speed15.npy', result)
+np.save(f'1v3AttackDefend_g{grid_size}_T{lookback_length}_speed15.npy', result)
 
 print(f"The value function has been saved successfully.")
 
