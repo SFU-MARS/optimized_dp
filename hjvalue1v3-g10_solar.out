@@ -1,11 +1,3 @@
 Start to compile the sh file now!
 ]2;conda activate odp]1;]2;cd /localscratch/hha160/MARAG]1;]2;echo 'Start to run the main code now!']1;Start to run the main code now!
-]2;python MRAG/hjvalue1v3_solar.py]1;The start time is 1709751960.9587667
-1. Gigabytes consumed by the grids is 0.09580544
-2. Gigabytes consumed of the avoid set is 0.496345088
-3. Gigabytes consumed of the reach set is 1.704476672
-The CPU memory used during the calculation of the value function is  1.70 GB.
-Traceback (most recent call last):
-  File "MRAG/hjvalue1v3_solar.py", line 107, in <module>
-    print(f'The shape of the value function is {result.shape} \n')
-NameError: name 'result' is not defined
+]2;python MRAG/hjvalue1v3_solar.py]1;slurmstepd-cs-venus-06: error: *** JOB 69932 ON cs-venus-06 CANCELLED AT 2024-03-07T10:25:10 ***
