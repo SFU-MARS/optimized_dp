@@ -1,3 +1,26 @@
 Start to compile the sh file now!
 ]2;conda activate odp]1;]2;cd /localscratch/hha160/MARAG]1;]2;echo 'Start to run the main code now!']1;Start to run the main code now!
-]2;python MRAG/hjvalue1v3_solar.py]1;slurmstepd-cs-venus-06: error: *** JOB 69932 ON cs-venus-06 CANCELLED AT 2024-03-07T10:25:10 ***
+]2;python MRAG/hjvalue1v3_solar.py]1;The start time is 1709836449.2960982
+1. Gigabytes consumed by the grids is 0.095670272
+2. Gigabytes consumed of the avoid set is 0.496128
+3. Gigabytes consumed of the reach set is 1.704255488
+Initializing
+
+Obstacles set exists !
+Started running
+
+Total kernel time (s): 85.97913
+Finished solving
+
+The CPU memory used during the calculation of the value function is  2.14 GB.
+The shape of the value function is (10, 10, 10, 10, 10, 10, 10, 10) 
+
+The size of the value function is  0.40 GB or 400.0 MB.
+The time of solving HJ is 126.14215087890625 seconds.
+The shape of the value function is (10, 10, 10, 10, 10, 10, 10, 10) 
+
+The calculation is done! 
+
+The value function has been saved successfully.
+The end time is 1709836576.4442122
+The time of whole process is 127.14811396598816 seconds.
