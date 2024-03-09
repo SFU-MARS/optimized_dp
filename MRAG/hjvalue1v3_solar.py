@@ -37,8 +37,11 @@ grid_size = 15
 # grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
 #              8, np.array([10, 10, 10, 10, 10, 10, 10, 10]))  # grid = 10
 
+# grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
+#              8, np.array([grid_size, grid_size, grid_size, grid_size, grid_size, grid_size, grid_size, grid_size])) 
+
 grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
-             8, np.array([grid_size, grid_size, grid_size, grid_size, grid_size, grid_size, grid_size, grid_size])) 
+             8, np.array([14, 14, 14, 14, 15, 15, 15, 15])) 
 
 
 process = psutil.Process(os.getpid())
