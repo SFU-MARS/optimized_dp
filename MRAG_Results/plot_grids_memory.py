@@ -1,0 +1,53 @@
+import numpy as numpy
+import matplotlib.pyplot as plt
+
+# plotting data
+grids_7D = [17**7, 18**7, 19**7, 20**7, 21**7, 21**6*23]  # unit: 1
+memory_7D = [8.34, 12.38, 18.02, 25.75, 36.18, 39.58] # unit: GB
+time_7D = [3097.58, 4573.42, 6855.89, 9793.90, 13962.47, 20378.97] # unit: s
+
+grids_8D = [10**8, 11**8, 12**8, 13**8, 14**8, 14**4*15**4]  # unit: 1
+memory_8D = [2.14, 4.42, 8.74, 16.45, 29.65, 39.03] # unit: GB
+time_8D = [126.14, 270.27, 534.50, 1516.57, 2782.50, 3722.27] # unit: s
+
+
+# Plotting memory usage
+plt.figure(figsize=(10, 5))
+plt.scatter(grids_7D, memory_7D, label='7D', marker='o', color='b')
+plt.scatter(grids_8D, memory_8D, label='8D', marker='o', color='r')
+
+plt.xlabel('Grids')
+plt.ylabel('Memory (GB)')
+plt.title('Memory Usage')
+plt.legend()
+plt.grid(True)
+plt.savefig('MRAG_Results/CalculationMemory_7D8D.png')
+plt.show()
+
+
+# plt.figure(figsize=(10, 5))
+# plt.scatter(grids_7D, memory_7D, label='7D', marker='o')
+# plt.scatter(grids_8D, memory_8D, label='8D', marker='o')
+# # Connecting points with dashed lines
+# for i in range(len(grids_7D)):
+#     plt.plot([grids_7D[i], grids_8D[i]], [memory_7D[i], memory_8D[i]], 'k--')
+
+# plt.xlabel('Grids')
+# plt.ylabel('Memory (GB)')
+# plt.title('Memory Usage')
+# plt.legend()
+# plt.grid(True)
+# plt.show()
+
+
+# Plotting time consumption
+plt.figure(figsize=(10, 5))
+plt.plot(grids_7D, time_7D, marker='o', label='7D')
+plt.plot(grids_8D, time_8D, marker='o', label='8D')
+plt.xlabel('Grids')
+plt.ylabel('Time (s)')
+plt.title('Time Consumption')
+plt.legend()
+plt.grid(True)
+plt.savefig('MRAG_Results/CalculationTime_7D8D.png')
+plt.show()
