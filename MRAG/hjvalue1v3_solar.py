@@ -30,18 +30,18 @@ start_time = time.time()
 print("The start time is {}".format(start_time))
 
 # 1. Initialize the grids
-grid_size = 15
+grid_size = 9
 # grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
 #              8, np.array([2, 2, 2, 2, 2, 2, 2, 2]))  # for local test
 
 # grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
 #              8, np.array([10, 10, 10, 10, 10, 10, 10, 10]))  # grid = 10
 
-# grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
-#              8, np.array([grid_size, grid_size, grid_size, grid_size, grid_size, grid_size, grid_size, grid_size])) 
-
 grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
-             8, np.array([14, 14, 14, 14, 15, 15, 15, 15])) 
+             8, np.array([grid_size, grid_size, grid_size, grid_size, grid_size, grid_size, grid_size, grid_size])) 
+
+# grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
+#              8, np.array([14, 14, 14, 14, 15, 15, 15, 15])) 
 
 
 process = psutil.Process(os.getpid())
