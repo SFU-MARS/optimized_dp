@@ -36,7 +36,7 @@ grid_size = 21
 #              7, np.array([grid_size, grid_size, grid_size, grid_size, grid_size, grid_size, grid_size])) 
 
 grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
-             7, np.array([grid_size, grid_size, grid_size, grid_size, grid_size, grid_size, 23])) 
+             7, np.array([grid_size, grid_size, grid_size, grid_size, grid_size, grid_size, 22])) 
 
 process = psutil.Process(os.getpid())
 print("1. Gigabytes consumed by the grids is {}".format(process.memory_info().rss/(1e9)))  # in bytes
