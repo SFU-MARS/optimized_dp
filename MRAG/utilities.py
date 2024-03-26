@@ -58,7 +58,7 @@ def check1v1(value1v1, joint_states1v1):
     a1x_slice, a1y_slice, d1x_slice, d1y_slice = lo2slice1v1(joint_states1v1, slices=45)
     flag = value1v1[a1x_slice, a1y_slice, d1x_slice, d1y_slice]
     if flag > 0:
-        return 1  # d1 could capture (a1, a2)
+        return 1  # d1 could capture (a1)
     else:
         return 0
 
@@ -96,7 +96,7 @@ def check2v1(value2v1, joint_states2v1):
     flag = value2v1[a1x_slice, a1y_slice, a2x_slice, a2y_slice, d1x_slice, d1y_slice]
     # print("2v1 value is {}".format(flag))
     if flag > 0:
-        return 1, flag  # d1 could capture (a1, a2)
+        return 1, flag  # d1 could capture (a1, a2) simutaneously
     else:
         return 0, flag
 
