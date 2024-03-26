@@ -1,0 +1,27 @@
+Start to compile the sh file now!
+]2;conda activate odp]1;]2;cd /localscratch/hha160/MARAG]1;]2;echo 'Start to run the main code now!']1;Start to run the main code now!
+]2;python MRAG/hjvalue1v3_solar.py]1;The start time is 1711453775.5112998
+1. Gigabytes consumed by the grids is 0.095924224
+2. Gigabytes consumed of the avoid set is 2.465943552
+3. Gigabytes consumed of the reach set is 9.576751104
+Initializing
+
+Obstacles set exists !
+Started running
+
+Total kernel time (s): 495.94887
+Finished solving
+
+The CPU memory used during the calculation of the value function is  11.98 GB.
+The shape of the value function is (12, 12, 12, 12, 13, 13, 13, 13) 
+
+The size of the value function is  2.37 GB or 2368.963584 MB.
+The time of solving HJ is 699.8087570667267 seconds.
+The shape of the value function is (12, 12, 12, 12, 13, 13, 13, 13) 
+
+The calculation is done! 
+
+Traceback (most recent call last):
+  File "MRAG/hjvalue1v3_solar.py", line 122, in <module>
+    np.save(f'1v3AttackDefend_g{grid_size}_T{lookback_length}_speed15.npy', result)
+NameError: name 'grid_size' is not defined
