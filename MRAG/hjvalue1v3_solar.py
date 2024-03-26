@@ -39,7 +39,7 @@ grid_size2 = 14
 #              8, np.array([9, 9, 9, 9, 10, 10, 10, 10]))  # grid = 9^4*10^4
 
 grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
-             8, np.array([grid_size1, grid_size1, grid_size1, grid_size1, grid_size2, grid_size2, grid_size2, grid_size2]))  # grid = 9^4*10^4
+             8, np.array([grid_size1, grid_size1, grid_size1, grid_size1, grid_size1, grid_size1, grid_size2, grid_size2]))  # grid = 9^4*10^4
 
 # grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
 #              8, np.array([grid_size, grid_size, grid_size, grid_size, grid_size, grid_size, grid_size, grid_size])) 
