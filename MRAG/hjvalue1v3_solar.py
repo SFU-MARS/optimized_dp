@@ -119,7 +119,9 @@ print(f'The shape of the value function is {result.shape} \n')
 print("The calculation is done! \n")
 
 # 6. Save the value function
-np.save(f'1v3AttackDefend_g{grid_size}_T{lookback_length}_speed15.npy', result)
+# np.save(f'1v3AttackDefend_g{grid_size}_T{lookback_length}_speed15.npy', result)
+np.save(f'1v3AttackDefend_g{grid_size1}{grid_size2}_T{lookback_length}_speed15.npy', result)
+
 
 print(f"The value function has been saved successfully.")
 
