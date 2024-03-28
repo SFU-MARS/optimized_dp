@@ -6,22 +6,28 @@ grids_7D = [17**7, 18**7, 19**7, 20**7, 21**7, 21**6*22, 21**6*23]  # unit: 1
 memory_7D = [8.34, 12.38, 18.02, 25.75, 36.18, 37.87, 39.58] # unit: GB
 time_7D = [661.43, 977.06, 1450.93, 2088.49, 2972.76, 3066.04, 4353.03] # unit: s
 
-grids_8D = [9**8, 9**4*10**4, 10**8, 11**8, 12**8, 13**8, 14**8, 14**4*15**4]  # unit: 1
-memory_8D = [0.99, 1.45, 2.14, 4.42, 8.74, 16.45, 29.65, 39.03] # unit: GB
-time_8D = [53.44, 82.32, 126.14, 270.27, 534.50, 1516.57, 2782.50, 3722.27] # unit: s
+grids_8D = [9**8, 9**4*10**4, 10**8, 11**8, 12**8, 12**4*13**4, 13**8, 13**6*14**2, 13**4*14**4, 14**8, 14**6*15**2, 14**4*15**4]  # unit: 1
+grids_8D_short = [12**8, 12**4*13**4, 13**8, 13**6*14**2, 13**4*14**4, 14**8, 14**6*15**2, 14**4*15**4]  # unit: 1
+
+memory_8D = [0.99, 1.45, 2.14, 4.42, 8.74, 11.98, 16.45, 19.06, 22.08, 29.65, 34.02, 39.03] # unit: GB
+memory_8D_short = [8.74, 11.98, 16.45, 19.06, 22.08, 29.65, 34.02, 39.03] # unit: GB
+
+time_8D = [53.44, 82.32, 126.14, 270.27, 534.50, 699.81, 1516.57, 2712.03, 1988.96, 2782.50, 5019.11, 3722.27] # unit: s
+time_8D_short = [534.50, 699.81, 1516.57, 2712.03, 1988.96, 2782.50, 5019.11, 3722.27] # unit: s
+
 
 
 # Plotting memory usage
 plt.figure(figsize=(10, 5))
 plt.scatter(grids_7D, memory_7D, label='7D', marker='o', color='b')
-plt.scatter(grids_8D, memory_8D, label='8D', marker='o', color='r')
-
+# plt.scatter(grids_8D, memory_8D, label='8D', marker='o', color='r')
+plt.scatter(grids_8D_short, memory_8D_short, label='8D_short', marker='o', color='r')
 plt.xlabel('Grids')
 plt.ylabel('Memory (GB)')
 plt.title('Memory Usage')
 plt.legend()
 plt.grid(True)
-plt.savefig('MRAG_Results/CalculationMemory_7D8D.png')
+# plt.savefig('MRAG_Results/CalculationMemory_7D8D.png')
 plt.show()
 
 
@@ -41,14 +47,15 @@ plt.show()
 # plt.show()
 
 
-# # Plotting time consumption
-# plt.figure(figsize=(10, 5))
-# plt.plot(grids_7D, time_7D, marker='o', label='7D')
+# Plotting time consumption
+plt.figure(figsize=(10, 5))
+plt.plot(grids_7D, time_7D, marker='o', label='7D')
 # plt.plot(grids_8D, time_8D, marker='o', label='8D')
-# plt.xlabel('Grids')
-# plt.ylabel('Time (s)')
-# plt.title('Time Consumption')
-# plt.legend()
-# plt.grid(True)
-# # plt.savefig('MRAG_Results/CalculationTime_7D8D.png')
-# plt.show()
+plt.plot(grids_8D_short, time_8D_short, marker='o', label='8D_short')
+plt.xlabel('Grids')
+plt.ylabel('Time (s)')
+plt.title('Time Consumption')
+plt.legend()
+plt.grid(True)
+# plt.savefig('MRAG_Results/CalculationTime_7D8D.png')
+plt.show()
