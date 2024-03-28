@@ -1,0 +1,24 @@
+Start to compile the sh file now!
+Start to run the main code now!
+1. Gigabytes consumed 0.09549824
+2. Gigabytes consumed 3.012149248
+3. Gigabytes consumed 14.708457472
+Initializing
+
+Obstacles set exists !
+Optimizing
+
+Started running
+
+Total kernel time (s): 5282.15837
+Finished solving
+
+The CPU memory used during the calculation of the value function is  16.44 GB.
+The shape of the value function is (30, 30, 30, 30, 30, 30) 
+
+The size of the value function is  2.72 GB or 2780.914306640625 MB.
+The time of solving HJ is 10467.273910522461 seconds.
+The shape of the value function is (30, 30, 30, 30, 30, 30) 
+
+The value function has been saved successfully.
+The time of whole process is 10520.193328142166 seconds.

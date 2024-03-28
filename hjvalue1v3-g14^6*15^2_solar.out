@@ -1,0 +1,26 @@
+Start to compile the sh file now!
+Start to run the main code now!
+The start time is 1711588726.8616564
+1. Gigabytes consumed by the grids is 0.095772672
+2. Gigabytes consumed of the avoid set is 6.873944064
+3. Gigabytes consumed of the reach set is 27.204927488
+Initializing
+
+Obstacles set exists !
+Started running
+
+Total kernel time (s): 2974.30032
+Finished solving
+
+The CPU memory used during the calculation of the value function is  34.02 GB.
+The shape of the value function is (14, 14, 14, 14, 14, 14, 15, 15) 
+
+The size of the value function is  6.78 GB or 6776.5824 MB.
+The time of solving HJ is 5019.110459566116 seconds.
+The shape of the value function is (14, 14, 14, 14, 14, 14, 15, 15) 
+
+The calculation is done! 
+
+The value function has been saved successfully.
+The end time is 1711593774.2064505
+The time of whole process is 5047.344794034958 seconds.
