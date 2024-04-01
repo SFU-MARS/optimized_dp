@@ -12,23 +12,23 @@ grids_8D_short = [12**8, 12**4*13**4, 13**8, 13**6*14**2, 13**4*14**4, 14**8, 14
 memory_8D = [0.99, 1.45, 2.14, 4.42, 8.74, 11.98, 16.45, 19.06, 22.08, 29.65, 34.02, 39.03] # unit: GB
 memory_8D_short = [8.74, 11.98, 16.45, 19.06, 22.08, 29.65, 34.02, 39.03] # unit: GB
 
-time_8D = [53.44, 82.32, 126.14, 270.27, 534.50, 699.81, 1516.57, 2712.03, 1988.96, 2782.50, 5019.11, 3722.27] # unit: s
-time_8D_short = [534.50, 699.81, 1516.57, 2712.03, 1988.96, 2782.50, 5019.11, 3722.27] # unit: s
+time_8D = [53.44, 82.32, 126.14, 270.27, 534.50, 887.33, 1516.57, 1715.52, 1988.96, 2782.50, 3127.69, 3722.27] # unit: s
+time_8D_short = [534.50, 887.33, 1516.57, 1715.52, 1988.96, 2782.50, 3127.69, 3722.27] # unit: s
 
 
 
-# Plotting memory usage
-plt.figure(figsize=(10, 5))
-plt.scatter(grids_7D, memory_7D, label='7D', marker='o', color='b')
-# plt.scatter(grids_8D, memory_8D, label='8D', marker='o', color='r')
-plt.scatter(grids_8D_short, memory_8D_short, label='8D_short', marker='o', color='r')
-plt.xlabel('Grids')
-plt.ylabel('Memory (GB)')
-plt.title('Memory Usage')
-plt.legend()
-plt.grid(True)
-# plt.savefig('MRAG_Results/CalculationMemory_7D8D.png')
-plt.show()
+# # Plotting memory usage
+# plt.figure(figsize=(10, 5))
+# plt.scatter(grids_7D, memory_7D, label='7D', marker='o', color='b')
+# # plt.scatter(grids_8D, memory_8D, label='8D', marker='o', color='r')
+# plt.scatter(grids_8D_short, memory_8D_short, label='8D_short', marker='o', color='r')
+# plt.xlabel('Grids')
+# plt.ylabel('Memory (GB)')
+# plt.title('Memory Usage')
+# plt.legend()
+# plt.grid(True)
+# # plt.savefig('MRAG_Results/CalculationMemory_7D8D.png')
+# plt.show()
 
 
 # plt.figure(figsize=(10, 5))
@@ -57,5 +57,5 @@ plt.ylabel('Time (s)')
 plt.title('Time Consumption')
 plt.legend()
 plt.grid(True)
-# plt.savefig('MRAG_Results/CalculationTime_7D8D.png')
+plt.savefig('MRAG_Results/CalculationTime_7D8D.png')
 plt.show()
