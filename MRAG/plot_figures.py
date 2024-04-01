@@ -130,3 +130,5 @@ plot_game2v1_2(grid2v1, value_function2v1_2, attackers_plot2, defenders_plot2, n
 # attackers = [(a1x, a1y)]
 # # plot_game(grids1v0, value_function1v0, attackers, defenders)
 # plot_original(grids1v0, value_function1v0)
+
+# 1 vs. 2 value function check by plotting
