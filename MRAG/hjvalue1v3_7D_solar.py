@@ -30,13 +30,18 @@ start_time = time.time()
 print("The start time is {}".format(start_time))
 
 # 1. Initialize the grids
-grid_size = 21
+# grid_size = 21
+grid_size1 = 19
+grid_size2 = 20
 
 # grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
 #              7, np.array([grid_size, grid_size, grid_size, grid_size, grid_size, grid_size, grid_size])) 
 
-grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
-             7, np.array([grid_size, grid_size, grid_size, grid_size, grid_size, grid_size, 22])) 
+grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
+             8, np.array([grid_size1, grid_size1, grid_size1, grid_size1, grid_size2, grid_size2, grid_size2, grid_size2]))  # grid = 9^4*10^4
+
+# grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
+#              7, np.array([grid_size, grid_size, grid_size, grid_size, grid_size, grid_size, 22])) 
 
 process = psutil.Process(os.getpid())
 print("1. Gigabytes consumed by the grids is {}".format(process.memory_info().rss/(1e9)))  # in bytes
@@ -79,9 +84,7 @@ process = psutil.Process(os.getpid())
 print("3. Gigabytes consumed of the reach set is {}".format(process.memory_info().rss/(1e9)))  # in bytes
 gc.collect()
 
-
 # 4. Set the look-back length and time step
-#TODO: also compare the lookback length with the same grid size
 lookback_length = 1.0  # try 1.5, 2.0, 2.5, 3.0, 5.0, 6.0, 8.0  
 t_step = 0.025
 
@@ -109,7 +112,8 @@ print(f'The shape of the value function is {result.shape} \n')
 print("The calculation is done! \n")
 
 # # 6. Save the value function
-np.save(f'1v3_7DAttackDefend_g{grid_size}_T{lookback_length}_speed15.npy', result)
+# np.save(f'1v3_7DAttackDefend_g{grid_size}_T{lookback_length}_speed15.npy', result)
+np.save(f'1v3AttackDefend_g{grid_size1}{grid_size2}_T{lookback_length}_speed15.npy', result)
 
 print(f"The value function has been saved successfully.")
 
