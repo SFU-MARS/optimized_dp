@@ -28,7 +28,7 @@ from odp.solver import HJSolver, computeSpatDerivArray
 start_time = time.time()
 
 # 1. Define grid
-grid_size = 5
+grid_size = 36
 
 grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
              6, np.array([grid_size, grid_size, grid_size, grid_size, grid_size, grid_size])) 
