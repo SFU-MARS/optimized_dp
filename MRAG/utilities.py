@@ -177,8 +177,22 @@ def capture_pair2(attackers, defenders, value2v1, stops):
 
 
 def capture_1v2(attackers, defenders, value1v2):
+    num_attacker, num_defender = len(attackers), len(defenders)
+    RA1v2 = []
+    # generate RA1v2
+    for j in range(num_defender):
+        RA1v2.append([])
+        djx, djy = defenders[j]
+        for k in range(j+1, num_defender):
+            dkx, dky = defenders[k]
+            for i in range(num_attacker):
+                aix, aiy = attackers[i]
+                joint_states = (aix, aiy, djx, djy, dkx, dky)
+                flag, val = check1v2(value1v2, joint_states)
+                if not flag:
+                    RA1v2[j].append(i)
 
-    pass
+    return RA1v2
 
 # generate the capture individual list I and the capture individual complement list Ic
 def capture_individual(attackers, defenders, value1v1):
@@ -278,6 +292,72 @@ def mip_solver(num_attacker, num_defender, Pc, Ic):
                 if e[i][j].x >= 0.9:
                     selected[j].append(i)
         print(selected)
+    return selected
+
+
+def extend_mip_solver(num_attacker, num_defender, RA1v1, RA1v2, RA2v1):
+    """ Returns a list selected that contains all allocated attackers that the defender could capture, [[a1, a3], ...]
+
+    Args:
+        num_attackers (int): the number of attackers
+        num_defenders (int): the number of defenders
+        RA1v1 (list): the single indexes of attackers that will win the 1 vs. 1 game for each defender
+        RA1v2 (list): the single indexes of attackers that will win the 1 vs. 2 game for each defender
+        RA2v1 (list): the pair indexes of attackers that will not be captured together in the 2 vs. 1 game for each defender
+    """
+    # initialize the solver
+    model = Model(solver_name=CBC) # use GRB for Gurobi, CBC default
+    e = [[model.add_var(var_type=BINARY) for j in range(num_defender)] for i in range(num_attacker)] # e[attacker index][defender index]
+    # initialize the weakly defend edges set W and their weights for each defender
+    Weakly = [[] for _ in range(num_defender)]
+    weights = np.ones((num_attacker, num_defender))
+    # add constraints
+    # add constraint 1: upper bound for attackers to be captured based on the 2 vs. 1 game
+    for j in range(num_defender):
+        model += xsum(e[i][j] for i in range(num_attacker)) <= 2
+    # add constraint 2: upper bound for defenders to be assgined based on the 1 vs. 2 game
+    for i in range(num_attacker):
+        model += xsum(e[i][j] for j in range(num_defender)) <= 2
+    # add constraint 3: the attacker i could not be captured by the defender j in both 1 vs. 1 and 1 vs. 2 games
+    for j in range(num_defender):
+        for attacker in RA1v1[j]:
+            if attacker in RA1v2[j]:
+                model += e[attacker][j] == 0
+            else:
+                Weakly[j].append(attacker)
+                weights[attacker][j] = 0.5
+    # add constraint 4: upper bound for attackers to be captured based on the 2 vs. 1 game result
+    for j in range(num_defender):
+        for pairs in (RA2v1[j]):
+            # print(pairs)
+            model += e[pairs[0]][j] + e[pairs[1]][j] <= 1
+    # add constraint 5: upper bound for weakly defended attackers
+    for j in range(num_defender):
+        for indiv in (Weakly[j]):
+            # print(indiv)
+            model += e[indiv][j] <= xsum(e[indiv][k] for k in range(num_defender))
+    # set up objective functions
+    model.objective = maximize(xsum(weights[i][j] * e[i][j] for j in range(num_defender) for i in range(num_attacker)))
+    # problem solving
+    model.max_gap = 0.05
+    # log_status = []
+    status = model.optimize(max_seconds=300)
+    if status == OptimizationStatus.OPTIMAL:
+        print('optimal solution cost {} found'.format(model.objective_value))
+    elif status == OptimizationStatus.FEASIBLE:
+        print('sol.cost {} found, best possible: {} '.format(model.objective_value, model.objective_bound))
+    elif status == OptimizationStatus.NO_SOLUTION_FOUND:
+        print('no feasible solution found, lower bound is: {} '.format(model.objective_bound))
+    if status == OptimizationStatus.OPTIMAL or status == OptimizationStatus.FEASIBLE:
+        print('Solution:')
+        selected = []
+        for j in range(num_defender):
+            selected.append([])
+            for i in range(num_attacker):
+                if e[i][j].x >= 0.9:
+                    selected[j].append(i)
+        print(selected)
+
     return selected
 
 # def add_trajectory(trajectories, next_positions):

@@ -7,6 +7,7 @@ from copy import deepcopy
 from MRAG.AttackerDefender1v0 import AttackerDefender1v0
 from MRAG.AttackerDefender1v1 import AttackerDefender1v1 
 from MRAG.AttackerDefender2v1 import AttackerDefender2v1
+from MRAG.AttackerDefender1v2 import AttackerDefender1v2
 
 
 
@@ -25,22 +26,26 @@ v1v1 = np.load('MRAG/1v1AttackDefend_speed15.npy')
 value1v1 = v1v1[..., np.newaxis]  # value1v1.shape = [45, 45, 45, 45, 1]
 # v2v1 = np.load('MRAG/2v1AttackDefend.npy')
 # v2v1 = np.load('2v1AttackDefend_speed15.npy') # grid = 30
-v2v1 = np.load('2v1AttackDefend_speed15.npy')
+v2v1 = np.load('MRAG/2v1AttackDefend_speed15.npy')
 print(f"The shape of the 2v1 value function is {v2v1.shape}. \n")
 value2v1 = v2v1[..., np.newaxis]  # value2v1.shape = [30, 30, 30, 30, 30, 30, 1]
+v1v2 = np.load('MRAG/1v2AttackDefend_speed15.npy')
+
 grid1v0 = Grid(np.array([-1.0, -1.0]), np.array([1.0, 1.0]), 2, np.array([100, 100])) # original 45
 grid1v1 = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([45, 45, 45, 45])) # original 45
 grid2v1 = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 6, np.array([30, 30, 30, 30, 30, 30])) # [36, 36, 36, 36, 36, 36] [30, 30, 30, 30, 30, 30]
 agents_1v0 = AttackerDefender1v0(uMode="min", dMode="max")
 agents_1v1 = AttackerDefender1v1(uMode="min", dMode="max")  # 1v1 (4 dims dynamics)
+agents_1v2 = AttackerDefender1v2(uMode="min", dMode="max")  # 1v2 (6 dim dynamics)
 agents_2v1 = AttackerDefender2v1(uMode="min", dMode="max")  # 2v1 (6 dim dynamics)
 tau1v0 = np.arange(start=0, stop=2.5 + 1e-5, step=0.025)
 tau1v1 = np.arange(start=0, stop=4.5 + 1e-5, step=0.025)
+tau1v2 = np.arange(start=0, stop=4.5 + 1e-5, step=0.025)
 tau2v1 = np.arange(start=0, stop=4.5 + 1e-5, step=0.025)
 
 # initialize positions of attackers and defenders
-attackers_initials = [(-0.5, 0.0), (0.0, 0.8)]  # [(0.0, 0.0), (0.0, 0.8)], [(-0.5, 0.0), (0.0, 0.8)],  [(-0.5, 0.5), (-0.3, -0.8)] [(-0.5, -0.3), (0.8, -0.5)], 
-defenders_initials = [(0.3, -0.3)] # [(0.3, -0.3)], [(0.3, 0.5)], [(0.0, 0.0)]
+attackers_initials =[(0.0, 0.0)]  # [(0.0, 0.0), (0.0, 0.8)], [(-0.5, 0.0), (0.0, 0.8)],  [(-0.5, 0.5), (-0.3, -0.8)] [(-0.5, -0.3), (0.8, -0.5)], 
+defenders_initials = [(-0.5, 0.0), (0.0, 0.8)]   #  [(-0.5, 0.0), (0.0, 0.8)]  [(-0.6, 0.8), (-0.6, -0.8)]
 
 num_attacker = len(attackers_initials)
 num_defender = len(defenders_initials)
@@ -79,9 +84,12 @@ print("The simulation starts: \n")
 for _ in range(0, times):
 
     # MIP Optimization
-    Ic = capture_individual2(current_attackers, current_defenders, v1v1, stops_index)  # attacker will win the 1 vs. 1 game
-    Pc, value_list = capture_pair(current_attackers, current_defenders, v2v1)  # defender can not capture both attackers in 2 vs. 1 game
-    selected = mip_solver(num_attacker, num_defender, Pc, Ic)
+    RA1v1 = capture_individual2(current_attackers, current_defenders, v1v1, stops_index)  # attacker will win the 1 vs. 1 game
+    RA2v1, value_list = capture_pair(current_attackers, current_defenders, v2v1)  # defender can not capture both attackers in 2 vs. 1 game
+    RA1v2 = capture_1v2(current_attackers, current_defenders, v1v2)  # attacker will win the 1 vs. 2 game
+    selected = extend_mip_solver(num_attacker, num_defender, RA1v1, RA1v2, RA2v1)
+    
+    # selected = mip_solver(num_attacker, num_defender, RA2v1, RA1v1)
     capture_decisions.append(selected)  # document the capture results
 
     # calculate the current controls of defenders
@@ -142,7 +150,7 @@ print(f"The results of the selected is {capture_decisions}. \n")
 print(f"The final captured_status of all attackers is {attackers_status_logs[-1]}. \n")
 
 # Play the animation
-animation_2v1(attackers_trajectory, defenders_trajectory, attackers_status_logs, T)
+# animation_2v1(attackers_trajectory, defenders_trajectory, attackers_status_logs, T)
 
 # # plot the trajectories seperately T = [0.475s (95 A1 by D0), 0.69s (138 A0 by D0)]
 # if T == 0.475:
