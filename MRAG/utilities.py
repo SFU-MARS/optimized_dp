@@ -100,6 +100,21 @@ def check2v1(value2v1, joint_states2v1):
     else:
         return 0, flag
 
+def check1v2(value1v2, joint_states1v2):
+    """ Returns a binary value, True means the attacker would be captured by two defenders
+
+        Args:
+            value1v2 (ndarray): 1v2 HJ value function
+            joint_states1v2 (tuple): state of (ax, ay, d1x, d1y, d2x, d2y)
+    """
+    ax_slice, ay_slice, d1x_slice, d1y_slice, d2x_slice, d2y_slice = lo2slice2v1(joint_states1v2)
+    flag = value1v2[ax_slice, ay_slice, d1x_slice, d1y_slice, d2x_slice, d2y_slice]
+
+    if flag > 0:  # d1 and d2 could capture a
+        return 1, flag
+    else:  # d1 and d2 could not capture a
+        return 0, flag
+
 # generate the capture pair list P and the capture pair complement list Pc
 def capture_pair(attackers, defenders, value2v1):
     """ Returns a list Pc that contains all pairs of attackers that the defender couldn't capture, [[(a1, a2), (a2, a3)], ...]
@@ -158,6 +173,12 @@ def capture_pair2(attackers, defenders, value2v1, stops):
                         if not check2v1(value2v1, joint_states):
                             Pc[j].append((i, k))
     return Pc
+
+
+
+def capture_1v2(attackers, defenders, value1v2):
+
+    pass
 
 # generate the capture individual list I and the capture individual complement list Ic
 def capture_individual(attackers, defenders, value1v1):

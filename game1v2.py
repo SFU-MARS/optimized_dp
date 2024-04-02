@@ -1,7 +1,7 @@
 from odp.Plots.plotting_utilities import *
-from utilities import *
+from MRAG.utilities import *
 from odp.Grid import Grid
-from compute_opt_traj import compute_opt_traj1v0
+from MRAG.compute_opt_traj import compute_opt_traj1v0
 from odp.solver import HJSolver, computeSpatDerivArray
 from copy import deepcopy
 from MRAG.AttackerDefender1v0 import AttackerDefender1v0
@@ -79,8 +79,8 @@ print("The simulation starts: \n")
 for _ in range(0, times):
 
     # MIP Optimization
-    Ic = capture_individual2(current_attackers, current_defenders, v1v1, stops_index)
-    Pc, value_list = capture_pair(current_attackers, current_defenders, v2v1)
+    Ic = capture_individual2(current_attackers, current_defenders, v1v1, stops_index)  # attacker will win the 1 vs. 1 game
+    Pc, value_list = capture_pair(current_attackers, current_defenders, v2v1)  # defender can not capture both attackers in 2 vs. 1 game
     selected = mip_solver(num_attacker, num_defender, Pc, Ic)
     capture_decisions.append(selected)  # document the capture results
 
