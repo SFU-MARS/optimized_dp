@@ -31,14 +31,14 @@ print("The start time is {}".format(start_time))
 
 # 1. Initialize the grids
 # grid_size = 21
-grid_size1 = 19
-grid_size2 = 20
+grid_size1 = 21
+grid_size2 = 23
 
 # grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
 #              7, np.array([grid_size, grid_size, grid_size, grid_size, grid_size, grid_size, grid_size])) 
 
-grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
-             8, np.array([grid_size1, grid_size1, grid_size1, grid_size1, grid_size2, grid_size2, grid_size2, grid_size2]))  # grid = 9^4*10^4
+grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
+             7, np.array([grid_size1, grid_size1, grid_size1, grid_size1, grid_size1, grid_size1, grid_size2]))  # grid = 9^4*10^4
 
 # grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
 #              7, np.array([grid_size, grid_size, grid_size, grid_size, grid_size, grid_size, 22])) 
