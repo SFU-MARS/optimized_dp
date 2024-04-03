@@ -315,9 +315,11 @@ def extend_mip_solver(num_attacker, num_defender, RA1v1, RA1v2, RA2v1):
     # add constraint 1: upper bound for attackers to be captured based on the 2 vs. 1 game
     for j in range(num_defender):
         model += xsum(e[i][j] for i in range(num_attacker)) <= 2
+
     # add constraint 2: upper bound for defenders to be assgined based on the 1 vs. 2 game
     for i in range(num_attacker):
         model += xsum(e[i][j] for j in range(num_defender)) <= 2
+
     # add constraint 3: the attacker i could not be captured by the defender j in both 1 vs. 1 and 1 vs. 2 games
     for j in range(num_defender):
         for attacker in RA1v1[j]:
@@ -326,16 +328,19 @@ def extend_mip_solver(num_attacker, num_defender, RA1v1, RA1v2, RA2v1):
             else:
                 Weakly[j].append(attacker)
                 weights[attacker][j] = 0.5
+
     # add constraint 4: upper bound for attackers to be captured based on the 2 vs. 1 game result
     for j in range(num_defender):
         for pairs in (RA2v1[j]):
             # print(pairs)
             model += e[pairs[0]][j] + e[pairs[1]][j] <= 1
+
     # add constraint 5: upper bound for weakly defended attackers
     for j in range(num_defender):
         for indiv in (Weakly[j]):
             # print(indiv)
             model += e[indiv][j] <= xsum(e[indiv][k] for k in range(num_defender))
+            
     # set up objective functions
     model.objective = maximize(xsum(weights[i][j] * e[i][j] for j in range(num_defender) for i in range(num_attacker)))
     # problem solving
