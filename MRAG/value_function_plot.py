@@ -5,18 +5,21 @@ from odp.Grid import Grid
 from utilities import lo2slice1v1, lo2slice2v1, lo2slice1v0
 
 # load reach-avoid value functions
+value1v1 = np.load('MRAG/1v1AttackDefend_speed15.npy')
 value1v2 = np.load('MRAG/1v2AttackDefend_speed15.npy')
-print(f'The shape of the 1v2 value function is {value1v2.shape} \n')
+# value2v1 = np.load('MRAG/2v1AttackDefend_speed15.npy')
+# print(f'The shape of the 1v2 value function is {value1v2.shape} \n')
 
+grid1v1 = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([45, 45, 45, 45]))  # original 45
 grid1v2 = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 6, np.array([30, 30, 30, 30, 30, 30]))  # [30, 30, 30, 30, 30, 30][36, 36, 36, 36, 36, 36]
-
+# grid2v1 = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 6, np.array([30, 30, 30, 30, 30, 30]))  # [30, 30, 30, 30, 30, 30][36, 36, 36, 36, 36, 36]
 
 # 2v1 simulation
 # initial positions
 #attackers = [(0.0, 0.8), (0.2, 0.5)]  # [(-0.5, 0.0), (0.0, 0.8)], [(-0.5, 0.5), (-0.3, -0.8)], [(-0.5, -0.3), (0.8, -0.5)]
 #defenders = [(-0.3, -0.3)] # [(0.3, -0.3)], [(0.0, 0.0)], [(0.3, 0.5)]
-attackers = [(0.0, 0.0)] # [(-0.5, 0.0), (0.0, 0.8)]
-defenders = [(-0.5, 0.0), (0.0, 0.8)]  #  [(-0.8, -0.3)]
+attackers = [(-0.2, 0.0)] # [(-0.5, 0.0), (0.0, 0.8)]
+defenders = [(-0.8, -0.5), (-0.8, 0.5)]  #  [(-0.8, -0.3)]
 
 ax = attackers[0][0]
 ay = attackers[0][1]
@@ -25,7 +28,16 @@ d1y = defenders[0][1]
 d2x = defenders[1][0]
 d2y = defenders[1][1]
 
-# plot 1v2 reach-avoid set
+# plot 1v1 reach-avoid tube
+jointstates1v1_1 = (ax, ay, d1x, d1y)
+jointstates1v1_2 = (ax, ay, d2x, d2y)
+ax_slice_1v1_1, ay_slice_1v1_1, d1x_slice_1v1_1, d1y_slice_1v1_1 = lo2slice1v1(jointstates1v1_1, slices=30)
+ax_slice_1v1_2, ay_slice_1v1_2, d2x_slice_1v1_2, d2y_slice_1v1_2 = lo2slice1v1(jointstates1v1_2, slices=30)
+value_function1v1_1 = value1v1[:, :, d1x_slice_1v1_1, d1y_slice_1v1_1]
+value_function1v1_2 = value1v1[:, :, d2x_slice_1v1_2, d2y_slice_1v1_2]
+
+
+# plot 1v2 reach-avoid tube
 jointstates2v1 = (ax, ay, d1x, d1y, d2x, d2y)
 ax_slice, ay_slice, d1x_slice, d1y_slice, d2x_slice, d2y_slice = lo2slice2v1(jointstates2v1, slices=30)
 # value_function2v1 = value2v1[:, :, a2x_slice, a2y_slice, d1x_slice, d1y_slice]
@@ -36,7 +48,11 @@ value_function1v2_3 = value1v2[:, :, d1x_slice, d1y_slice, d2x_slice, d2y_slice]
 # plotting players
 attackers_plot2 = [(ax, ay)]
 defenders_plot2 = [(d1x, d1y), (d2x, d2y)]
+defenders_1v1_1 = [(d1x, d1y)]
+defenders_1v1_2 = [(d2x, d2y)]
 # plot_game2v1_1(grid1v2, value_function2v1_1, attackers_plot2, defenders_plot2, name="$\mathcal{RA}^{21}_{\infty}$")
 # plot_game2v1_2(grid1v2, value_function2v1_2, attackers_plot2, defenders_plot2, name="$\mathcal{RA}^{21}_{\infty}$")
 plot_game1v2(grid1v2, value_function1v2_3, attackers_plot2, defenders_plot2, name="$\mathcal{RA}^{12}_{\infty}$")
 # plot_game0(grid2v1, value_function2v1, attackers_plot2, defenders_plot2, name="$\mathcal{RA}^{21}_{\infty}$")
+plot_game1v1(grid1v1, value_function1v1_1, attackers_plot2, defenders_1v1_1, name="$\mathcal{RA}^{11}_{\infty}$")
+plot_game1v1(grid1v1, value_function1v1_2, attackers_plot2, defenders_1v1_2, name="$\mathcal{RA}^{11}_{\infty}$")

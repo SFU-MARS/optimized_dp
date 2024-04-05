@@ -177,8 +177,10 @@ def capture_pair2(attackers, defenders, value2v1, stops):
 
 
 def capture_1v2(attackers, defenders, value1v2):
+    #TODO: not finished, should not use dictionary or it will overwrite the former results
     num_attacker, num_defender = len(attackers), len(defenders)
     RA1v2 = []
+    # RA1v2C = []
     # generate RA1v2
     for j in range(num_defender):
         RA1v2.append([])
@@ -191,6 +193,9 @@ def capture_1v2(attackers, defenders, value1v2):
                 flag, val = check1v2(value1v2, joint_states)
                 if not flag:
                     RA1v2[j].append(i)
+                # else:
+                #     RA1v2C.append({i: (j, k)})
+                    # RA1v2C.append((i, j, k))
 
     return RA1v2
 
@@ -356,14 +361,16 @@ def extend_mip_solver(num_attacker, num_defender, RA1v1, RA1v2, RA2v1):
     if status == OptimizationStatus.OPTIMAL or status == OptimizationStatus.FEASIBLE:
         print('Solution:')
         selected = []
+        assigned = [[] for _ in range(num_attacker)]
         for j in range(num_defender):
             selected.append([])
             for i in range(num_attacker):
                 if e[i][j].x >= 0.9:
                     selected[j].append(i)
-        print(selected)
+                    assigned[i].append(j)
+        # print(f"The selected results in the extend_mip_solver is {selected}.")
 
-    return selected
+    return selected, weights, assigned
 
 # def add_trajectory(trajectories, next_positions):
 #     """Return a updated trajectories (list) that contain trajectories of agents (attackers or defenders)
@@ -387,29 +394,17 @@ def next_positions(current_positions, controls, tstep):
         temp.append((current_positions[i][0]+controls[i][0]*tstep, current_positions[i][1]+controls[i][1]*tstep))
     return temp
 
-def next_positions_d(current_positions, controls, tstep, selected, captured):
+def next_positions_d(current_positions, controls, tstep):
     """Return the next positions (list) of attackers or defenders
 
     Arg:
     current_positions (list): [(), (),...]
-    controls (list): [(), (),...]
+    controls (list): [[(a, b)], [()],...]
     """
     temp = []
     num = len(controls)
-    for j in range(num):
-        num_attacker = len(selected[j])
-        if num_attacker == 1:
-            if captured[selected[j][0]] == 1:
-                temp.append((current_positions[j][0], current_positions[j][1]))
-            else:
-                temp.append((current_positions[j][0]+controls[j][0]*tstep, current_positions[j][1]+controls[j][1]*tstep))
-        elif num_attacker == 2:
-            if captured[selected[j][0]] == 1 and captured[selected[j][1]] == 1:
-                temp.append((current_positions[j][0], current_positions[j][1]))
-            else:
-                temp.append((current_positions[j][0]+controls[j][0]*tstep, current_positions[j][1]+controls[j][1]*tstep))
-        else:
-            temp.append((current_positions[j][0]+controls[j][0]*tstep, current_positions[j][1]+controls[j][1]*tstep))
+    for i in range(num):
+        temp.append((current_positions[i][0]+controls[i][0][0]*tstep, current_positions[i][1]+controls[i][0][1]*tstep))
     return temp
 
 def next_positions_a(current_positions, controls, tstep, captured):
@@ -836,7 +831,7 @@ def defender_control2v1_1slice(agents_2v1, grid2v1, value2v1, tau2v1, jointstate
     grid2v1 (class): the corresponding Grid instance
     value2v1 (ndarray): 1v1 HJ reachability value function with only final slice
     agents_2v1 (class): the corresponding AttackerDefender instance
-    joint_states2v1 (tuple): the corresponding positions of (A1, D1)
+    joint_states2v1 (tuple): the corresponding positions of (A1, A2, D)
     """
     # calculate the derivatives
     start_time = datetime.datetime.now()
@@ -846,6 +841,24 @@ def defender_control2v1_1slice(agents_2v1, grid2v1, value2v1, tau2v1, jointstate
     end_time = datetime.datetime.now()
     # print(f"The calculation of 6D spatial derivative vector is {end_time-start_time}. \n")
     return (opt_d1, opt_d2)
+
+def defender_control1v2_slice(agents_1v2, grid1v2, value1v2, tau1v2, jointstate1v2):
+    """Return a list of 2-dimensional control inputs of one defender based on the value function
+    
+    Args:
+    grid1v2 (class): the corresponding Grid instance
+    value1v2 (ndarray): 1v2 HJ reachability value function with only final slice
+    agents_1v2 (class): the corresponding AttackerDefender instance
+    joint_states1v2 (tuple): the corresponding positions of (A, D1, D2)
+    """
+    # calculate the derivatives
+    start_time = datetime.datetime.now()
+    # print(f"The shape of the input value1v2 of defender is {value1v2.shape}. \n")
+    spat_deriv_vector = spa_deriv(grid1v2.get_index(jointstate1v2), value1v2, grid1v2)
+    opt_d1, opt_d2, opt_d3, opt_d4  = agents_1v2.optDstb_inPython(spat_deriv_vector)
+    end_time = datetime.datetime.now()
+    # print(f"The calculation of 6D spatial derivative vector is {end_time-start_time}. \n")
+    return (opt_d1, opt_d2, opt_d3, opt_d4)
 
 def capture_check(current_attackers, current_defenders, selected, last_captured):
     """

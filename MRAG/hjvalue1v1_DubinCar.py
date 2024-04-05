@@ -27,8 +27,9 @@ from odp.solver import HJSolver
 start_time = time.time()
 
 # 1. Initialize the grids
+grid_size = 5
 grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]),
-             6, np.array([30, 30, 30, 30, 30, 30]))
+             6, np.array([grid_size, grid_size, grid_size, grid_size, grid_size, grid_size]))
 process = psutil.Process(os.getpid())
 print("1. Gigabytes consumed of the grids initialization {}".format(process.memory_info().rss/1e9))  # in bytes
 

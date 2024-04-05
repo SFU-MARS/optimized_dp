@@ -713,6 +713,10 @@ def animation_2v1(attackers_traj, defenders_traj, capture_status, T):
     fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
     fig.show()
 
+def animation(attacker_trajs, defender_trajs, capture_status):
+    pass
+
+
 def plot_simulation2v1_b1(attackers_x, attackers_y, defenders_x, defenders_y):  
     # for 2v1 baseline
     print("Plotting beautiful 2D plots. Please wait\n")
