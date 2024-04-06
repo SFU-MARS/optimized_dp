@@ -264,8 +264,8 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
                 V_0 = hcl.asarray(tmp_val)
 
             # Some information printin
-            # print(t_minh)
-            # print("Computational time to integrate (s): {:.5f}".format(time.time() - start))
+            print(t_minh)
+            print("Computational time to integrate (s): {:.5f}".format(time.time() - start))
             process = psutil.Process(os.getpid())
             # print("Gigabytes consumed {}".format(process.memory_info().rss/1e9))  # in bytes
 
