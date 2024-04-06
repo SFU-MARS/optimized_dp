@@ -656,6 +656,7 @@ def animation_2v1(attackers_traj, defenders_traj, capture_status, T):
     defender_x_list = [defenders_traj[i, :, 0] for i in range(num_defenders)]
     defender_y_list = [defenders_traj[i, :, 1] for i in range(num_defenders)]
 
+    # Make sure the length of all trajectories are the same
     assert attacker_x_list[0].shape[0] == N
     assert attacker_x_list[0].shape[0] == attacker_x_list[1].shape[0]
     assert attacker_x_list[1].shape[0] == defender_x_list[0].shape[0]
@@ -664,7 +665,7 @@ def animation_2v1(attackers_traj, defenders_traj, capture_status, T):
     frames= [] # All the frames
     for t in range(0, N):
         # Data for each frame
-        frame_data = []
+        # frame_data = []
         x_list = []
         y_list = []
         symbol_list = []
@@ -713,9 +714,58 @@ def animation_2v1(attackers_traj, defenders_traj, capture_status, T):
     fig.update_yaxes(showline = True, linecolor = 'black', linewidth = 2.0, griddash = 'dot', zeroline=False, gridcolor = 'Lightgrey', mirror=True, ticks='outside') # showgrid=False,
     fig.show()
 
-def animation(attacker_trajs, defender_trajs, capture_status):
-    pass
 
+def animation_MvsN(attacker_trajs, defender_trajs, capture_status, T):
+    num_attackers = len(attacker_trajs)
+    num_defenders = len(defender_trajs)
+
+    N = len(attacker_trajs[0])
+    for traj in attacker_trajs + defender_trajs:
+        assert len(traj) == N
+
+    frames = []
+    for t in range(N):
+        x_list = []
+        y_list = []
+        symbol_list = []
+        color_list = []
+
+        for i_d in range(num_defenders):
+            for j in range(len(defender_trajs[i_d])):
+                x_list.append(defender_trajs[i_d][j][t][0])
+                y_list.append(defender_trajs[i_d][j][t][1])
+                symbol_list.append("square")
+                color_list.append("blue")
+
+        for i_a in range(num_attackers):
+            for j in range(len(attacker_trajs[i_a])):
+                x_list.append(attacker_trajs[i_a][j][t][0])
+                y_list.append(attacker_trajs[i_a][j][t][1])
+                if capture_status[t][i_a]:
+                    symbol_list.append("cross-open")
+                else:
+                    symbol_list.append("triangle-up")
+                color_list.append("red")
+
+        frames.append(go.Frame(data=go.Scatter(x=x_list, y=y_list, mode="markers", name="Agents trajectory",
+                                               marker=dict(symbol=symbol_list, size=4, color=color_list), showlegend=False)))
+
+    fig = go.Figure(data=go.Scatter(x=[0.6, 0.8], y=[0.1, 0.1], mode='lines', name='Target', line=dict(color='purple')),
+                    layout=Layout(plot_bgcolor='rgba(0,0,0,0)', updatemenus=[dict(type="buttons",
+                                                                                buttons=[dict(label="Play", method="animate",
+                                                                                              args=[None, {"frame": {"duration": 30, "redraw": True},
+                                                                                                           "fromcurrent": True, "transition": {"duration": 0}}])])]), frames=frames)
+
+    fig.add_shape(type='rect', x0=0.6, y0=0.1, x1=0.8, y1=0.3, line=dict(color='purple', width=3.0), name="Target")
+    fig.add_shape(type='rect', x0=-0.1, y0=0.3, x1=0.1, y1=0.6, line=dict(color='black', width=3.0), name="Obstacle")
+    fig.add_shape(type='rect', x0=-0.1, y0=-1.0, x1=0.1, y1=-0.3, line=dict(color='black', width=3.0))
+    fig.add_trace(go.Scatter(x=[-0.1, 0.1], y=[0.3, 0.3], mode='lines', name='Obstacle', line=dict(color='black')))
+
+    fig.update_layout(autosize=False, width=560, height=500, margin=dict(l=50, r=50, b=100, t=100, pad=0),
+                      title={'text': "<b>Our method, t={}s<b>".format(T), 'y':0.85, 'x':0.4, 'xanchor': 'center','yanchor': 'top', 'font_size': 20}, paper_bgcolor="White", xaxis_range=[-1, 1], yaxis_range=[-1, 1], font=dict(size=20))
+    fig.update_xaxes(showline=True, linecolor='black', linewidth=2.0, griddash='dot', zeroline=False, gridcolor='Lightgrey', mirror=True, ticks='outside')
+    fig.update_yaxes(showline=True, linecolor='black', linewidth=2.0, griddash='dot', zeroline=False, gridcolor='Lightgrey', mirror=True, ticks='outside')
+    fig.show()
 
 def plot_simulation2v1_b1(attackers_x, attackers_y, defenders_x, defenders_y):  
     # for 2v1 baseline

@@ -182,7 +182,7 @@ print(f"The results of the selected is {capture_decisions}. \n")
 print(f"The final captured_status of all attackers is {attackers_status_logs[-1]}. \n")
 
 # Play the animation
-animation_2v1(attackers_trajectory, defenders_trajectory, attackers_status_logs)
+animation_2v1(attackers_trajectory, defenders_trajectory, attackers_status_logs, T)
 
 
 
