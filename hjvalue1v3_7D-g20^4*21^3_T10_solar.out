@@ -1,0 +1,266 @@
+Start to compile the sh file now!
+]2;conda activate odp]1;]2;cd /localscratch/hha160/MARAG]1;]2;echo 'Start to run the main code now!']1;Start to run the main code now!
+]2;python MRAG/hjvalue1v3_7D_solar.py]1;The start time is 1712458331.7518754
+1. Gigabytes consumed by the grids is 0.095830016
+2. Gigabytes consumed of the avoid set is 6.025007104
+3. Gigabytes consumed of the reach set is 23.811248128
+Initializing
+
+Obstacles set exists !
+Started running
+
+[0.00864865 0.025     ]
+Computational time to integrate (s): 17.95662
+[0.0172973 0.025    ]
+Computational time to integrate (s): 19.17074
+[0.025 0.025]
+Computational time to integrate (s): 20.02295
+[0.03364865 0.05      ]
+Computational time to integrate (s): 17.83313
+[0.0422973 0.05     ]
+Computational time to integrate (s): 19.96795
+[0.05 0.05]
+Computational time to integrate (s): 17.87760
+[0.05864865 0.075     ]
+Computational time to integrate (s): 19.10722
+[0.06729729 0.075     ]
+Computational time to integrate (s): 17.88866
+[0.075 0.075]
+Computational time to integrate (s): 19.24067
+[0.08364865 0.1       ]
+Computational time to integrate (s): 18.36398
+[0.0922973 0.1      ]
+Computational time to integrate (s): 20.05072
+[0.1 0.1]
+Computational time to integrate (s): 17.98890
+[0.10864865 0.125     ]
+Computational time to integrate (s): 19.35250
+[0.1172973 0.125    ]
+Computational time to integrate (s): 18.21438
+[0.125 0.125]
+Computational time to integrate (s): 18.64668
+[0.13364865 0.15      ]
+Computational time to integrate (s): 18.96882
+[0.1422973 0.15     ]
+Computational time to integrate (s): 18.89351
+[0.15 0.15]
+Computational time to integrate (s): 19.14641
+[0.15864865 0.175     ]
+Computational time to integrate (s): 18.73454
+[0.1672973 0.175    ]
+Computational time to integrate (s): 20.23156
+[0.175 0.175]
+Computational time to integrate (s): 18.11367
+[0.18364865 0.2       ]
+Computational time to integrate (s): 19.38284
+[0.1922973 0.2      ]
+Computational time to integrate (s): 20.36847
+[0.2 0.2]
+Computational time to integrate (s): 18.17120
+[0.20864865 0.225     ]
+Computational time to integrate (s): 19.96187
+[0.2172973 0.225    ]
+Computational time to integrate (s): 18.13144
+[0.225 0.225]
+Computational time to integrate (s): 20.23770
+[0.23364864 0.25      ]
+Computational time to integrate (s): 18.11613
+[0.24229729 0.25      ]
+Computational time to integrate (s): 19.35457
+[0.25 0.25]
+Computational time to integrate (s): 18.73671
+[0.25864863 0.275     ]
+Computational time to integrate (s): 18.81521
+[0.26729727 0.275     ]
+Computational time to integrate (s): 19.33536
+[0.275 0.275]
+Computational time to integrate (s): 19.27696
+[0.28364867 0.3       ]
+Computational time to integrate (s): 19.50095
+[0.2922973 0.3      ]
+Computational time to integrate (s): 19.15726
+[0.3 0.3]
+Computational time to integrate (s): 19.12012
+[0.30864865 0.325     ]
+Computational time to integrate (s): 19.20567
+[0.31729728 0.325     ]
+Computational time to integrate (s): 19.51793
+[0.325 0.325]
+Computational time to integrate (s): 19.12464
+[0.33364862 0.35      ]
+Computational time to integrate (s): 19.17114
+[0.34229726 0.35      ]
+Computational time to integrate (s): 19.15647
+[0.35 0.35]
+Computational time to integrate (s): 19.60099
+[0.35864866 0.375     ]
+Computational time to integrate (s): 19.94340
+[0.3672973 0.375    ]
+Computational time to integrate (s): 18.31775
+[0.375 0.375]
+Computational time to integrate (s): 19.80389
+[0.38364863 0.4       ]
+Computational time to integrate (s): 18.61060
+[0.39229727 0.4       ]
+Computational time to integrate (s): 19.22050
+[0.4 0.4]
+Computational time to integrate (s): 19.20197
+[0.40864867 0.425     ]
+Computational time to integrate (s): 19.36546
+[0.4172973 0.425    ]
+Computational time to integrate (s): 19.44903
+[0.425 0.425]
+Computational time to integrate (s): 19.33005
+[0.43364865 0.45      ]
+Computational time to integrate (s): 19.23846
+[0.44229728 0.45      ]
+Computational time to integrate (s): 19.52538
+[0.45 0.45]
+Computational time to integrate (s): 19.52268
+[0.45864862 0.475     ]
+Computational time to integrate (s): 19.31527
+[0.46729726 0.475     ]
+Computational time to integrate (s): 19.20452
+[0.475 0.475]
+Computational time to integrate (s): 19.38496
+[0.48364866 0.5       ]
+Computational time to integrate (s): 19.65946
+[0.4922973 0.5      ]
+Computational time to integrate (s): 19.54334
+[0.5 0.5]
+Computational time to integrate (s): 19.13312
+[0.50864863 0.525     ]
+Computational time to integrate (s): 19.44726
+[0.51729727 0.525     ]
+Computational time to integrate (s): 19.63503
+[0.525 0.525]
+Computational time to integrate (s): 19.92970
+[0.5336486 0.55     ]
+Computational time to integrate (s): 18.46283
+[0.54229724 0.55      ]
+Computational time to integrate (s): 19.88410
+[0.55 0.55]
+Computational time to integrate (s): 18.85670
+[0.55864865 0.575     ]
+Computational time to integrate (s): 19.57211
+[0.5672973 0.575    ]
+Computational time to integrate (s): 19.18884
+[0.575 0.575]
+Computational time to integrate (s): 19.54972
+[0.5836486 0.6      ]
+Computational time to integrate (s): 19.65533
+[0.59229726 0.6       ]
+Computational time to integrate (s): 19.41746
+[0.6 0.6]
+Computational time to integrate (s): 19.32895
+[0.60864866 0.625     ]
+Computational time to integrate (s): 19.64343
+[0.6172973 0.625    ]
+Computational time to integrate (s): 19.41582
+[0.625 0.625]
+Computational time to integrate (s): 19.44541
+[0.63364863 0.65      ]
+Computational time to integrate (s): 19.26686
+[0.64229727 0.65      ]
+Computational time to integrate (s): 19.77723
+[0.65 0.65]
+Computational time to integrate (s): 19.18767
+[0.6586486 0.675    ]
+Computational time to integrate (s): 19.62058
+[0.66729724 0.675     ]
+Computational time to integrate (s): 18.60578
+[0.675 0.675]
+Computational time to integrate (s): 20.12708
+[0.68364865 0.7       ]
+Computational time to integrate (s): 18.81675
+[0.6922973 0.7      ]
+Computational time to integrate (s): 20.51595
+[0.7 0.7]
+Computational time to integrate (s): 18.56052
+[0.7086486 0.725    ]
+Computational time to integrate (s): 19.85672
+[0.71729726 0.725     ]
+Computational time to integrate (s): 18.82956
+[0.725 0.725]
+Computational time to integrate (s): 19.37589
+[0.73364866 0.75      ]
+Computational time to integrate (s): 19.33045
+[0.7422973 0.75     ]
+Computational time to integrate (s): 19.53335
+[0.75 0.75]
+Computational time to integrate (s): 19.62638
+[0.75864863 0.775     ]
+Computational time to integrate (s): 19.45255
+[0.76729727 0.775     ]
+Computational time to integrate (s): 19.33610
+[0.775 0.775]
+Computational time to integrate (s): 19.57474
+[0.7836486 0.8      ]
+Computational time to integrate (s): 19.60298
+[0.79229724 0.8       ]
+Computational time to integrate (s): 19.45031
+[0.8 0.8]
+Computational time to integrate (s): 19.44839
+[0.80864865 0.825     ]
+Computational time to integrate (s): 19.76017
+[0.8172973 0.825    ]
+Computational time to integrate (s): 19.06800
+[0.825 0.825]
+Computational time to integrate (s): 20.61597
+[0.8336486 0.85     ]
+Computational time to integrate (s): 18.53514
+[0.84229726 0.85      ]
+Computational time to integrate (s): 20.31621
+[0.85 0.85]
+Computational time to integrate (s): 18.67973
+[0.85864866 0.875     ]
+Computational time to integrate (s): 19.42983
+[0.8672973 0.875    ]
+Computational time to integrate (s): 19.32481
+[0.875 0.875]
+Computational time to integrate (s): 19.39300
+[0.88364863 0.9       ]
+Computational time to integrate (s): 19.77457
+[0.89229727 0.9       ]
+Computational time to integrate (s): 18.94281
+[0.9 0.9]
+Computational time to integrate (s): 21.28054
+[0.9086486 0.925    ]
+Computational time to integrate (s): 18.98582
+[0.91729724 0.925     ]
+Computational time to integrate (s): 19.69023
+[0.925 0.925]
+Computational time to integrate (s): 18.63085
+[0.93364865 0.95      ]
+Computational time to integrate (s): 18.85880
+[0.9422973 0.95     ]
+Computational time to integrate (s): 19.40715
+[0.95 0.95]
+Computational time to integrate (s): 19.41248
+[0.9586486 0.975    ]
+Computational time to integrate (s): 20.45610
+[0.96729726 0.975     ]
+Computational time to integrate (s): 18.44705
+[0.975 0.975]
+Computational time to integrate (s): 19.95688
+[0.98364866 1.        ]
+Computational time to integrate (s): 18.71935
+[0.9922973 1.       ]
+Computational time to integrate (s): 19.59459
+[1. 1.]
+Computational time to integrate (s): 19.23820
+Total kernel time (s): 1647.04783
+Finished solving
+
+The CPU memory used during the calculation of the value function is  29.77 GB.
+The shape of the value function is (20, 20, 20, 20, 21, 21, 21) 
+
+The size of the value function is  5.93 GB or 5927.04 MB.
+The time of solving HJ is 2413.232793569565 seconds.
+The shape of the value function is (20, 20, 20, 20, 21, 21, 21) 
+
+The calculation is done! 
+
+The value function has been saved successfully.
+The end time is 1712460757.200788
+The time of whole process is 2425.4489126205444 seconds.
