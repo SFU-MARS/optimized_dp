@@ -31,8 +31,8 @@ print("The start time is {}".format(start_time))
 
 # 1. Initialize the grids
 # grid_size = 21
-grid_size1 = 19
-grid_size2 = 20
+grid_size1 = 20
+grid_size2 = 21
 
 # grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
 #              7, np.array([grid_size, grid_size, grid_size, grid_size, grid_size, grid_size, grid_size])) 
@@ -44,7 +44,7 @@ grid_size2 = 20
 #              7, np.array([grid_size, grid_size, grid_size, grid_size, grid_size, grid_size, 22])) 
 
 grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
-             7, np.array([grid_size1, grid_size1, grid_size1, grid_size2, grid_size2, grid_size2, grid_size2]))  # 
+             7, np.array([grid_size1, grid_size1, grid_size1, grid_size1, grid_size2, grid_size2, grid_size2]))  # 
 
 process = psutil.Process(os.getpid())
 print("1. Gigabytes consumed by the grids is {}".format(process.memory_info().rss/(1e9)))  # in bytes
