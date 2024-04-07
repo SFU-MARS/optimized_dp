@@ -328,9 +328,9 @@ def extend_mip_solver(num_attacker, num_defender, RA1v1, RA1v2, RA2v1):
     # add constraint 3: the attacker i could not be captured by the defender j in both 1 vs. 1 and 1 vs. 2 games
     for j in range(num_defender):
         for attacker in RA1v1[j]:
-            if attacker in RA1v2[j]:
+            if attacker in RA1v2[j]:  # the attacker could win the defender in both 1 vs. 1 and 1 vs. 2 games
                 model += e[attacker][j] == 0
-            else:
+            else:  # the attacker could win the defender in 1 vs. 1 game but not in 1 vs. 2 game
                 Weakly[j].append(attacker)
                 weights[attacker][j] = 0.5
 
