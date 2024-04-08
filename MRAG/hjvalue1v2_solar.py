@@ -36,7 +36,7 @@ process = psutil.Process(os.getpid())
 print("1. Gigabytes consumed {}".format(process.memory_info().rss/1e9))  # in bytes
 
 # 2. Instantiate the dynamics of the agent
-agents_1v2 = AttackerDefender1v2(uMode="min", dMode="max")  # 1v1 (4 dims dynamics)
+agents_1v2 = AttackerDefender1v2(uMode="min", dMode="max")  
 
 # 3. Avoid set, no constraint means inf
 obs1_attack = ShapeRectangle(grids, [-0.1, -1.0, -1000, -1000, -1000, -1000], [0.1, -0.3, 1000, 1000, 1000, 1000])  # attacker stuck in obs1
@@ -74,7 +74,7 @@ goal2_escape = np.maximum(goal2_escape1, goal2_escape2)
 goal2_escape = np.array(goal2_escape, dtype='float32')
 
 # Defender 1 gets stuck in obs 
-obs1_defend1 = ShapeRectangle(grids, [-1000, -1000, -0.1, -1000, -1000, -1000], [1000, 1000, 0.1, -0.3, 1000, 1000])  # defender 1 stuck in obs1
+obs1_defend1 = ShapeRectangle(grids, [-1000, -1000, -0.1, -1.0, -1000, -1000], [1000, 1000, 0.1, -0.3, 1000, 1000])  # defender 1 stuck in obs1
 obs2_defend1 = ShapeRectangle(grids, [-1000, -1000, -0.1, 0.30, -1000, -1000], [1000, 1000, 0.1, 0.60, 1000, 1000])  # defender 1 stuck in obs2
 obs_defender1 = np.minimum(obs1_defend1, obs2_defend1)
 obs_defender1 = np.array(obs_defender1, dtype='float32')
@@ -82,7 +82,7 @@ del obs1_defend1
 del obs2_defend1
 
 # Defender 2 gets stuck in obs 
-obs1_defend2 = ShapeRectangle(grids, [-1000, -1000, -1000, -1000, -0.1, -1000], [1000, 1000, 1000, 1000, 0.1, -0.3])  # defender 2 stuck in obs1
+obs1_defend2 = ShapeRectangle(grids, [-1000, -1000, -1000, -1000, -0.1, -1.0], [1000, 1000, 1000, 1000, 0.1, -0.3])  # defender 2 stuck in obs1
 obs2_defend2 = ShapeRectangle(grids, [-1000, -1000, -1000, -1000, -0.1, 0.30], [1000, 1000, 1000, 1000, 0.1, 0.60])  # defender 2 stuck in obs2
 obs_defender2 = np.minimum(obs1_defend2, obs2_defend2)
 obs_defender2 = np.array(obs_defender2, dtype='float32')
