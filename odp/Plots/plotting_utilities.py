@@ -658,8 +658,8 @@ def animation_2v1(attackers_traj, defenders_traj, capture_status, T):
 
     # Make sure the length of all trajectories are the same
     assert attacker_x_list[0].shape[0] == N
-    assert attacker_x_list[0].shape[0] == attacker_x_list[1].shape[0]
-    assert attacker_x_list[1].shape[0] == defender_x_list[0].shape[0]
+    # assert attacker_x_list[0].shape[0] == attacker_x_list[1].shape[0]
+    # assert attacker_x_list[1].shape[0] == defender_x_list[0].shape[0]
 
     # First generate the frames
     frames= [] # All the frames

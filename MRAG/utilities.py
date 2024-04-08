@@ -59,7 +59,7 @@ def check1v1(value1v1, joint_states1v1):
     flag = value1v1[a1x_slice, a1y_slice, d1x_slice, d1y_slice]
     if flag > 0:
         return 1  # d1 could capture (a1)
-    else:
+    else:  # d1 could not capture a1
         return 0
 
 # localizations to silces in 2v1 game
@@ -116,7 +116,7 @@ def check1v2(value1v2, joint_states1v2):
         return 0, flag
 
 # generate the capture pair list P and the capture pair complement list Pc
-def capture_pair(attackers, defenders, value2v1):
+def capture_2vs1(attackers, defenders, value2v1):
     """ Returns a list Pc that contains all pairs of attackers that the defender couldn't capture, [[(a1, a2), (a2, a3)], ...]
 
     Args:
@@ -176,14 +176,13 @@ def capture_pair2(attackers, defenders, value2v1, stops):
 
 
 
-def capture_1v2(attackers, defenders, value1v2):
+def capture_1vs2(attackers, defenders, value1v2):
     #TODO: not finished, should not use dictionary or it will overwrite the former results
     num_attacker, num_defender = len(attackers), len(defenders)
-    RA1v2 = []
+    RA1v2 = [[] for _ in range(num_defender)]
     # RA1v2C = []
     # generate RA1v2
     for j in range(num_defender):
-        RA1v2.append([])
         djx, djy = defenders[j]
         for k in range(j+1, num_defender):
             dkx, dky = defenders[k]
@@ -191,8 +190,9 @@ def capture_1v2(attackers, defenders, value1v2):
                 aix, aiy = attackers[i]
                 joint_states = (aix, aiy, djx, djy, dkx, dky)
                 flag, val = check1v2(value1v2, joint_states)
-                if not flag:
+                if not flag:  # attacker i will win the 1 vs. 2 game
                     RA1v2[j].append(i)
+                    RA1v2[k].append(i)
                 # else:
                 #     RA1v2C.append({i: (j, k)})
                     # RA1v2C.append((i, j, k))
@@ -221,7 +221,7 @@ def capture_individual(attackers, defenders, value1v1):
                 Ic[j].append(i)
     return Ic
 
-def capture_individual2(attackers, defenders, value1v1, stops):
+def capture_1vs1(attackers, defenders, value1v1, stops):
     """ Returns a list Ic that contains all attackers that the defender couldn't capture, [[a1, a3], ...]
 
     Args:
@@ -842,7 +842,7 @@ def defender_control2v1_1slice(agents_2v1, grid2v1, value2v1, tau2v1, jointstate
     # print(f"The calculation of 6D spatial derivative vector is {end_time-start_time}. \n")
     return (opt_d1, opt_d2)
 
-def defender_control1v2_slice(agents_1v2, grid1v2, value1v2, tau1v2, jointstate1v2):
+def defender_control1vs2_slice(agents_1v2, grid1v2, value1v2, tau1v2, jointstate1v2):
     """Return a list of 2-dimensional control inputs of one defender based on the value function
     
     Args:

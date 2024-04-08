@@ -82,22 +82,29 @@ attackers_status = [0 for _ in range(num_attacker)]
 stops_index = []  # the list stores the indexes of attackers that has been captured or arrived
 attackers_status_logs.append(deepcopy(attackers_status))
 
-# # log the attackers be assigned defenders
-# attacker_assigneds = []
+# log the attackers be assigned defenders
+attacker_assigneds = []
+RA1v1s = []
+RA1v2s = []
 
 print("The simulation starts: \n")
 # simulation starts
 for _ in range(0, times):
 
     # MIP Optimization
-    RA1v1 = capture_individual2(current_attackers, current_defenders, v1v1, stops_index)  # attacker will win the 1 vs. 1 game
-    RA2v1, value_list = capture_pair(current_attackers, current_defenders, v2v1)  # defender can not capture both attackers in 2 vs. 1 game
-    RA1v2 = capture_1v2(current_attackers, current_defenders, v1v2)  # attacker will win the 1 vs. 2 game
+    RA1v1 = capture_1vs1(current_attackers, current_defenders, v1v1, stops_index)  # attacker will win the 1 vs. 1 game
+    RA2v1, value_list = capture_2vs1(current_attackers, current_defenders, v2v1)  # defender can not capture both attackers in 2 vs. 1 game
+    RA1v2 = capture_1vs2(current_attackers, current_defenders, v1v2)  # attacker will win the 1 vs. 2 game
+    
+    RA1v1s.append(RA1v1)
+    RA1v2s.append(RA1v2)
     # print(f"The current step {_} RA1v2C is {RA1v2C}.")
     # Hanyang: first big change
+    # selected = mip_solver(num_attacker, num_defender, RA2v1, RA1v1)
     selected, weights, assigned = extend_mip_solver(num_attacker, num_defender, RA1v1, RA1v2, RA2v1)
     # print(f"In current step {_} the shape of weights is {weights.shape}.")
-    print(f"In current step {_} the assigned from attackers' views is {assigned}.")
+    # print(f"In current step {_} the assigned from attackers' views is {assigned}.")
+    attacker_assigneds.append(assigned)
     # print(f"The current step {_} assignment weights is {weights}. \n")
     # print(f"The current step {_} e is {e}")
     
@@ -127,7 +134,7 @@ for _ in range(0, times):
                 collaborate_defender = assigned[selected[j][0]][-1]  # the index of another defender
                 d2x, d2y = current_defenders[collaborate_defender]
                 joint_state1v2 = (a1x, a1y, d1x, d1y, d2x, d2y)
-                opt_d1, opt_d2, opt_d3, opt_d4 = defender_control1v2_slice(agents_1v2, grid1v2, value1v2, tau1v2, joint_state1v2)
+                opt_d1, opt_d2, opt_d3, opt_d4 = defender_control1vs2_slice(agents_1v2, grid1v2, value1v2, tau1v2, joint_state1v2)
                 control_defenders[j].append((opt_d1, opt_d2))
                 control_defenders[collaborate_defender].append((opt_d3, opt_d4))
                 calculated_defenders.append(collaborate_defender)
@@ -178,9 +185,13 @@ for _ in range(0, times):
 
 print("The game is over. \n")
 
-print(f"The results of the selected is {capture_decisions}. \n")
+# print(f"The results of the selected is {capture_decisions}. \n")
 print(f"The final captured_status of all attackers is {attackers_status_logs[-1]}. \n")
 
+# print(f"The log of attackers assigned is {attacker_assigneds}. \n")
+print(f"The MIP assignment result is {capture_decisions}. \n")
+# print(f"The log of RA1v2 is {RA1v2s}. \n")
+# print(f"The log of RA1v1 is {RA1v1s}. \n")
 # Play the animation
 animation_2v1(attackers_trajectory, defenders_trajectory, attackers_status_logs, T)
 

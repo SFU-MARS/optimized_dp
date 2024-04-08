@@ -27,7 +27,7 @@ from odp.solver import HJSolver
 start_time = time.time()
 
 # 1. Initialize the grids
-grid_size = 5
+grid_size = 30
 grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]),
              6, np.array([grid_size, grid_size, grid_size, grid_size, grid_size, grid_size]))
 process = psutil.Process(os.getpid())
@@ -90,7 +90,7 @@ process = psutil.Process(os.getpid())
 print("3. Gigabytes consumed of the reach_set {}".format(process.memory_info().rss/1e9))  # in bytes
 
 # 4. Set the look-back length and time step
-lookback_length = 10  # the same as 2014Mo
+lookback_length = 2.5  
 t_step = 0.025
 
 # Actual calculation process, needs to add new plot function to draw a 2D figure
@@ -117,7 +117,7 @@ print(f"The time of solving HJ is {solve_end_time - solve_start_time} seconds.")
 print(f'The shape of the value function is {result.shape} \n')
 
 # 6. Save the value function
-np.save('MRAG/DubinCar1v1.npy', result)
+np.save(f'MRAG/DubinCar1v1_grid{grid_size}.npy', result)
 
 print(f"The value function has been saved successfully.")
 

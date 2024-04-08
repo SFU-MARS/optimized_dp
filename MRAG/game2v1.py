@@ -79,8 +79,8 @@ print("The simulation starts: \n")
 for _ in range(0, times):
 
     # MIP Optimization
-    Ic = capture_individual2(current_attackers, current_defenders, v1v1, stops_index)
-    Pc, value_list = capture_pair(current_attackers, current_defenders, v2v1)
+    Ic = capture_1vs1(current_attackers, current_defenders, v1v1, stops_index)
+    Pc, value_list = capture_2vs1(current_attackers, current_defenders, v2v1)
     selected = mip_solver(num_attacker, num_defender, Pc, Ic)
     capture_decisions.append(selected)  # document the capture results
 
