@@ -1,10 +1,20 @@
 from abc import ABC, abstractmethod
 
-class Model(ABC):
+__all__ = ['DynamicsBase']
 
-    state_dims: int
-    ctrl_dims: int
-    dstb_dims: int
+class DynamicsBase(ABC):
+
+    @property
+    @abstractmethod
+    def state_dims(self) -> int: pass
+
+    @property
+    @abstractmethod
+    def ctrl_dims(self) -> int: pass
+
+    @property
+    @abstractmethod
+    def dstb_dims(self) -> int: pass
 
     @abstractmethod
     def opt_dstb(self, d, dv, t, x): 

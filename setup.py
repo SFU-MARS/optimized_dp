@@ -6,6 +6,6 @@ setup(
     description="Optimized Dynamic Programming-Based Algorithms Solver",
     author="Minh Bui",
     author_email='buiminhb@sfu.ca',
-    packages=['odp', 'odp2'],
+    packages=['odp'],
     license="MIT"
 )

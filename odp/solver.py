@@ -2,360 +2,361 @@ import heterocl as hcl
 import numpy as np
 import time
 
-from odp.Plots import plot_isosurface
+from . import math as hcl_math
+from .derivatives import spatial_derivative
+from .grid import Grid
+from .shapes import *
 
-# Backward reachable set computation library
-from odp.computeGraphs import graph_3D, graph_4D, graph_5D, graph_6D
-from odp.TimeToReach import TTR_3D, TTR_4D, TTR_5D 
+class Solver: 
 
-# Value Iteration library
-from odp.valueIteration import value_iteration_3D, value_iteration_4D, value_iteration_5D, value_iteration_6D
-
-def solveValueIteration(MDP_obj):
-    print("Welcome to optimized_dp \n")
-    # Initialize the HCL environment
-    hcl.init()
-    hcl.config.init_dtype = hcl.Float(32)
-
-    ########################################## INITIALIZE ##########################################
-
-    # Convert the python array to hcl type array
-    V_opt = hcl.asarray(np.zeros(MDP_obj._ptsEachDim))
-    intermeds = hcl.asarray(np.ones(MDP_obj._actions.shape[0]))
-    trans = hcl.asarray(MDP_obj._trans)
-    gamma = hcl.asarray(MDP_obj._gamma)
-    epsilon = hcl.asarray(MDP_obj._epsilon)
-    count = hcl.asarray(np.zeros(1))
-    maxIters = hcl.asarray(MDP_obj._maxIters)
-    actions = hcl.asarray(MDP_obj._actions)
-    bounds = hcl.asarray(MDP_obj._bounds)
-    goal = hcl.asarray(MDP_obj._goal)
-    ptsEachDim = hcl.asarray(MDP_obj._ptsEachDim)
-    sVals = hcl.asarray(np.zeros([MDP_obj._bounds.shape[0]]))
-    iVals = hcl.asarray(np.zeros([MDP_obj._bounds.shape[0]]))
-    interpV = hcl.asarray(np.zeros([1]))
-    useNN = hcl.asarray(MDP_obj._useNN)
-
-    print(MDP_obj._bounds.shape[0])
-    print(np.zeros([MDP_obj._bounds.shape[0]]))
-    if MDP_obj._bounds.shape[0] == 3:
-        fillVal = hcl.asarray(MDP_obj._fillVal)
-        f = value_iteration_3D(MDP_obj)
-    if MDP_obj._bounds.shape[0] == 4:
-        f = value_iteration_4D(MDP_obj)
-    if MDP_obj._bounds.shape[0] == 5:
-        f = value_iteration_5D(MDP_obj)
-    if MDP_obj._bounds.shape[0] == 6:
-        f = value_iteration_6D(MDP_obj)
-
-    # Build the graph and use the executable
-    # Now use the executable
-    t_s = time.time()
-    if MDP_obj._bounds.shape[0] == 3:
-        iter = 0
-        resweep = 1
-        while iter < MDP_obj._maxIters and resweep == 1:
-            reSweep = hcl.asarray(np.zeros([1]))
-            print("Currently at iteration {}".format(iter))
-            f(V_opt, actions, intermeds, trans, interpV, gamma, epsilon, reSweep, iVals, sVals, bounds, goal, ptsEachDim, count,
-                maxIters, useNN, fillVal)
-            iter += 1
-            resweep = reSweep.asnumpy()[0]
-    else:
-        f(V_opt, actions, intermeds, trans, interpV, gamma, epsilon, iVals, sVals, bounds, goal, ptsEachDim, count,
-          maxIters, useNN)
-    t_e = time.time()
-
-    V = V_opt.asnumpy()
-    c = count.asnumpy()
-    print("Finished in ", int(c[0]), " iterations")
-    print("Took        ", t_e - t_s, " seconds")
-
-    # # Write results to file
-    # if (MDP_obj.dir_path):
-    #     dir_path = MDP_obj.dir_path
-    # else:
-    #     dir_path = "./hcl_value_matrix_test/"
-    #
-    # if (MDP_obj.file_name):
-    #     file_name = MDP_obj.file_name
-    # else:
-    #     file_name = "hcl_value_iteration_" + str(int(c[0])) + "_iterations_by" + (
-    #         "_Interpolation" if MDP_obj._useNN[0] == 0 else "_NN")
-    # MDP_obj.writeResults(V, dir_path, file_name, just_values=True)
-    return V
-
-def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
-             plot_option, saveAllTimeSteps=False,
-             accuracy="low", untilConvergent=False, epsilon=2e-3):
-
-    print("Welcome to optimized_dp \n")
-    if type(multiple_value) == list:
-        # We have both goal and obstacle set
-        target = multiple_value[0] # Target set
-        constraint = multiple_value[1] # Obstacle set
-    else:
-        target = multiple_value
-        constraint = None
+    debug = False
+    interactive = False
     
-    hcl.init()
-    hcl.config.init_dtype = hcl.Float(32)
+    accuracy = 'low'
+    
+    _executable = None
 
-    ################# INITIALIZE DATA TO BE INPUT INTO EXECUTABLE ##########################
+    def __init__(self, grid, model, *, 
+                 interactive=True,
+                 debug=False,
+                 accuracy='low',
+                 dtype=hcl.Float()):
 
-    print("Initializing\n")
+        # Solver options
+        self.interactive = interactive
+        self.debug = debug
 
-    if constraint is None:
-        print("No obstacles set !")
-        init_value = target
-    else: 
-        print("Obstacles set exists !")
-        constraint_dim = constraint.ndim
+        if self.interactive:
+            print("== Welcome to optimized_dp ==")
 
-        # Time-varying obstacle sets
-        if constraint_dim > grid.dims:
-            constraint_i = constraint[...,0]
-        else:
-            # Time-invariant obstacle set
-            constraint_i = constraint
+        # Initialize the HCL environment
+        hcl.init(hcl.Float(32))
 
-        init_value = np.maximum(target, -constraint_i)
+        self.accuracy = accuracy
+        assert self.accuracy == 'low', 'This modification to odp only supports low accuracy'
 
-    # Tensors input to our computation graph
-    V_0 = hcl.asarray(init_value)
-    V_1 = hcl.asarray(np.zeros(tuple(grid.pts_each_dim)))
+        self.dtype = dtype
 
-    # Check which target set or initial value set
-    if compMethod["TargetSetMode"] != "minVWithVTarget" and compMethod["TargetSetMode"] != "maxVWithVTarget":
-        l0 = hcl.asarray(init_value)
-    else:
-        l0 = hcl.asarray(target)
+        self.grid = grid
+        self.model = model
 
-    # For debugging purposes
-    probe = hcl.asarray(np.zeros(tuple(grid.pts_each_dim)))
+        self.state_shape = (self.model.state_dims,)
+        self.ctrl_shape = (self.model.ctrl_dims,)
+        self.dstb_shape = (self.model.dstb_dims,)
 
-    # Array for each state values
-    list_x1 = np.reshape(grid.vs[0], grid.pts_each_dim[0])
-    list_x2 = np.reshape(grid.vs[1], grid.pts_each_dim[1])
-    list_x3 = np.reshape(grid.vs[2], grid.pts_each_dim[2])
-    if grid.dims >= 4:
-        list_x4 = np.reshape(grid.vs[3], grid.pts_each_dim[3])
-    if grid.dims >= 5:
-        list_x5 = np.reshape(grid.vs[4], grid.pts_each_dim[4])
-    if grid.dims >= 6:
-        list_x6 = np.reshape(grid.vs[5], grid.pts_each_dim[5])
-
-    # Convert state arrays to hcl array type
-    list_x1 = hcl.asarray(list_x1)
-    list_x2 = hcl.asarray(list_x2)
-    list_x3 = hcl.asarray(list_x3)
-    if grid.dims >= 4:
-        list_x4 = hcl.asarray(list_x4)
-    if grid.dims >= 5:
-        list_x5 = hcl.asarray(list_x5)
-    if grid.dims >= 6:
-        list_x6 = hcl.asarray(list_x6)
-
-    # Get executable, obstacle check intial value function
-    if grid.dims == 3:
-        solve_pde = graph_3D(dynamics_obj, grid, compMethod["TargetSetMode"], accuracy)
-
-    if grid.dims == 4:
-        solve_pde = graph_4D(dynamics_obj, grid, compMethod["TargetSetMode"], accuracy)
-
-    if grid.dims == 5:
-        solve_pde = graph_5D(dynamics_obj, grid, compMethod["TargetSetMode"], accuracy)
-
-    if grid.dims == 6:
-        solve_pde = graph_6D(dynamics_obj, grid, compMethod["TargetSetMode"], accuracy)
-
-    """ Be careful, for high-dimensional array (5D or higher), saving value arrays at all the time steps may 
-    cause your computer to run out of memory """
-    if saveAllTimeSteps is True:
-        valfuncs = np.zeros(np.insert(tuple(grid.pts_each_dim), grid.dims, len(tau)))
-        valfuncs[..., -1 ] = V_0.asnumpy()
-        print(valfuncs.shape)
-
-
-    ################ USE THE EXECUTABLE ############
-    # Variables used for timing
-    execution_time = 0
-    iter = 0
-    tNow = tau[0]
-    print("Started running\n")
-
-    # Backward reachable set/tube will be computed over the specified time horizon
-    # Or until convergent ( which ever happens first )
-    for i in range (1, len(tau)):
-        #tNow = tau[i-1]
-        t_minh= hcl.asarray(np.array((tNow, tau[i])))
+        self.build()
         
-        # taking obstacle at each timestep
-        if "ObstacleSetMode" in compMethod and constraint_dim > grid.dims:
-            constraint_i = constraint[...,i]
+    def __call__(self, *args):
+        """
+        Run the solver.
+        
+        This method is intended to be overloaded.
+        """
 
-        while tNow <= tau[i] - 1e-4:
-            prev_arr = V_0.asnumpy()
-            # Start timing
-            iter += 1
-            start = time.time()
+        # Run the executable
+        self._executable(*args)
+        
+    def build(self):
 
-            # Run the execution and pass input into graph
-            if grid.dims == 3:
-                solve_pde(V_1, V_0, list_x1, list_x2, list_x3, t_minh, l0)
-            if grid.dims == 4:
-                solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, t_minh, l0, probe)
-            if grid.dims == 5:
-                solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, list_x5 ,t_minh, l0)
-            if grid.dims == 6:
-                solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6, t_minh, l0)
+        if self.interactive:
+            print('Building...')
 
-            tNow = t_minh.asnumpy()[0]
+        vf = hcl.placeholder(self.grid.shape, name="vf", dtype=self.dtype)
+        t = hcl.placeholder((2,), name="t", dtype=self.dtype)
+        xs = [hcl.placeholder((axlen,), dtype=self.dtype, name=f'x_{i}')
+              for i, axlen in enumerate(self.grid.shape)]
+        args = [vf, t, *xs]
 
-            # Calculate computation time
-            execution_time += time.time() - start
+        if self.debug:
+            h = hcl.placeholder(self.grid.shape, name='h', dtype=self.dtype)
+            args = [h] + args
 
-            # If ObstacleSetMode is specified by user
-            if "ObstacleSetMode" in compMethod:
-                if compMethod["ObstacleSetMode"] == "maxVWithObstacle":
-                    tmp_val = np.maximum(V_0.asnumpy(), -constraint_i)
-                elif compMethod["ObstacleSetMode"] == "minVWithObstacle":
-                    tmp_val = np.minimum(V_0.asnumpy(), -constraint_i)
-                # Update final result
-                V_1 = hcl.asarray(tmp_val)
-                # Update input for next iteration
-                V_0 = hcl.asarray(tmp_val)
+        # lambda is necessary so that hcl can modify properties of the function object
+        program = lambda *args: self.entrypoint(*args)
+        self._sched = hcl.create_schedule(args, program)
 
-            # Some information printin
-            print(t_minh)
-            print("Computational time to integrate (s): {:.5f}".format(time.time() - start))
+        if not self.debug:
 
-            if untilConvergent is True:
-                # Compare difference between V_{t-1} and V_{t} and choose the max changes
-                diff = np.amax(np.abs(V_1.asnumpy() - prev_arr))
-                print("Max difference between V_old and V_new : {:.5f}".format(diff))
-                if diff < epsilon:
-                    print("Result converged ! Exiting the compute loop. Have a good day.")
-                    break
-        else: # if it didn't break because of convergent condition
-            if saveAllTimeSteps is True:
-                valfuncs[..., -1-i] = V_1.asnumpy()
-            continue
-        break # only if convergent condition is achieved
+            # Accessing the hamiltonian and dissipation stage
+            stage_hamiltonian = program.Hamiltonian
+            stage_dissipation = program.Dissipation
+
+            # Thread parallelize hamiltonian and dissipation computation
+            self._sched[stage_hamiltonian].parallel(stage_hamiltonian.axis[0])
+            self._sched[stage_dissipation].parallel(stage_dissipation.axis[0])
+
+        self._executable = hcl.build(self._sched)
+
+        if self.interactive:
+            print(f'> {type(self).__name__} built!\n')
+
+    def entrypoint(self, *args):
+
+        if self.debug:
+            h_dbg, vf, t, *xs = args
+        else:
+            vf, t, *xs = args
+
+        # Initialize intermediate tensors
+        dv_diff = hcl.compute(self.grid.shape + self.state_shape, lambda *_: 0, name='dv_diff')
+        dv_max = hcl.compute(self.state_shape, lambda _: -1e9, name='dv_max')
+        dv_min = hcl.compute(self.state_shape, lambda _: +1e9, name='dv_min')
+        max_alpha = hcl.compute(self.state_shape, lambda _: -1e9, name='max_alpha')
+
+        # Initialize the Hamiltonian tensor
+        h = hcl.compute(self.grid.shape, lambda *idxs: vf[idxs], name='h')
+
+        # Compute Hamiltonian term, max and min derivative
+        self.hamiltonian_stage(h, vf, t, xs,
+                               dv_min=dv_min, dv_max=dv_max, dv_diff=dv_diff)
+        
+        if self.debug:
+            hcl.update(h_dbg, lambda *idxs: h[idxs])
+
+        # Compute artificial dissipation
+        self.dissipation_stage(h, t, xs,
+                               dv_min=dv_min, dv_max=dv_max, dv_diff=dv_diff,
+                               max_alpha=max_alpha)
+
+        # Compute integration time step
+        delta_t = hcl.compute((1,), lambda _: self.time_step(t, max_alpha=max_alpha))
+
+        # First order Runge-Kutta (RK) integrator
+        hcl.update(vf, lambda *idxs: vf[idxs] + h[idxs] * delta_t.v)
 
 
-    # Time info printing
-    print("Total kernel time (s): {:.5f}".format(execution_time))
-    print("Finished solving\n")
+    def hamiltonian_stage(self, h, vf, t, xs, *,
+                          dv_min, dv_max, dv_diff):
+        """Calculate Hamiltonian for every grid point in V_init"""
 
-    ##################### PLOTTING #####################
-    if plot_option.do_plot :
-        # Only plots last value array for now
-        plot_isosurface(grid, V_1.asnumpy(), plot_option)
+        def body(*idxs):
 
-    if saveAllTimeSteps is True:
-        valfuncs[..., 0] = V_1.asnumpy()
-        return valfuncs
+            u = hcl.compute(self.ctrl_shape, lambda _: 0, name='u')
+            d = hcl.compute(self.dstb_shape, lambda _: 0, name='d')
+            x = hcl.compute(self.state_shape, lambda _: 0, name='x')
+            dx = hcl.compute(self.state_shape, lambda _: 0, name='dx')
+            dv = hcl.compute(self.state_shape, lambda _: 0, name='dv_avg')
 
-    return V_1.asnumpy()
+            # x_n = X_{n,i} where 
+            #   x = `x` The state tensor,
+            #   X = `xs` The list of state space arrays,
+            #   n = Current state dimension (in updating x),
+            #   i = `idxs[n]` Index of current grid point in dimension `n`,
+            for n, i in enumerate(idxs):
+                x[n] = xs[n][i]
 
-def TTRSolver(dynamics_obj, grid, init_value, epsilon, plot_option):
-    print("Welcome to optimized_dp \n")
-    ################# INITIALIZE DATA TO BE INPUT INTO EXECUTABLE ##########################
+            for axis in range(self.grid.ndims):
 
-    print("Initializing\n")
-    hcl.init()
-    hcl.config.init_dtype = hcl.Float(32)
+                left = hcl.scalar(0, 'left')
+                right = hcl.scalar(0, 'right')
 
-    # Convert initial distance value function to initial time-to-reach value function
-    init_value[init_value < 0] = 0
-    init_value[init_value > 0] = 1000
-    V_0 = hcl.asarray(init_value)
-    prev_val = np.zeros(init_value.shape)
+                # Compute the spatial derivative of the value function (dV/dx)
+                spatial_derivative(left, right, axis, vf, self.grid, *idxs)
 
-    # Re-shape states vector
-    list_x1 = np.reshape(grid.vs[0], grid.pts_each_dim[0])
-    list_x2 = np.reshape(grid.vs[1], grid.pts_each_dim[1])
-    list_x3 = np.reshape(grid.vs[2], grid.pts_each_dim[2])
-    if grid.dims >= 4:
-        list_x4 = np.reshape(grid.vs[3], grid.pts_each_dim[3])
-    if grid.dims >= 5:
-        list_x5 = np.reshape(grid.vs[4], grid.pts_each_dim[4])
-    if grid.dims >= 6:
-        list_x6 = np.reshape(grid.vs[5], grid.pts_each_dim[5])
+                # do for both left/right derivatives
+                for deriv in (left, right):
+                    with hcl.if_(deriv.v < dv_min[axis]):
+                        dv_min[axis] = deriv.v
+                    with hcl.if_(dv_max[axis] < deriv.v):
+                        dv_max[axis] = deriv.v
+                
+                dv[axis] = (left.v + right.v) / 2
+                
+                dv_diff[idxs + (axis,)] = right.v - left.v
 
-    # Convert states vector to hcl array type
-    list_x1 = hcl.asarray(list_x1)
-    list_x2 = hcl.asarray(list_x2)
-    list_x3 = hcl.asarray(list_x3)
-    if grid.dims >= 4:
-        list_x4 = hcl.asarray(list_x4)
-    if grid.dims >= 5:
-        list_x5 = hcl.asarray(list_x5)
-    if grid.dims >= 6:
-        list_x6 = hcl.asarray(list_x6)
+            # Use the model's methods to solve optimal control
+            self.model.opt_ctrl(u, dv, t, x)
+            self.model.opt_dstb(d, dv, t, x)
 
-    # Get executable
+            # Calculate dynamical rates of changes
+            self.model.dynamics(dx, t, x, u, d)
 
-    if grid.dims == 3:
-        solve_TTR = TTR_3D(dynamics_obj, grid)
-    if grid.dims == 4:
-        solve_TTR = TTR_4D(dynamics_obj, grid)
-    if grid.dims == 5:
-        solve_TTR = TTR_5D(dynamics_obj, grid)
-    if grid.dims == 6:
-        solve_TTR = TTR_6D(dynamics_obj, grid)
-    print("Got Executable\n")
+            # Calculate Hamiltonian terms
+            h[idxs] = -hcl_math.dot(dv, dx)
 
-    # Print out code for different backend
-    # print(solve_pde)
+        hcl.mutate(vf.shape, body, name='Hamiltonian')
 
-    ################ USE THE EXECUTABLE ############
-    error = 10000
-    count = 0
-    start = time.time()
-    while error > epsilon:
-        print("Iteration: {} Error: {}".format(count, error))
-        count += 1
-        if grid.dims == 3:
-            solve_TTR(V_0, list_x1, list_x2, list_x3)
-        if grid.dims == 4:
-            solve_TTR(V_0, list_x1, list_x2, list_x3, list_x4)
-        if grid.dims == 5:
-            solve_TTR(V_0, list_x1, list_x2, list_x3, list_x4, list_x5)
-        if grid.dims == 6:
-            solve_TTR(V_0, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6 )
+    def dissipation_stage(self, h, t, xs, *,
+                          dv_min, dv_max, dv_diff, 
+                          max_alpha):
+        """Calculate the dissipation"""
 
-        error = np.max(np.abs(prev_val - V_0.asnumpy()))
-        prev_val = V_0.asnumpy()
-    print("Total TTR computation time (s): {:.5f}".format(time.time() - start))
-    print("Finished solving\n")
+        def body(*idxs):
 
-    ##################### PLOTTING #####################
-    plot_isosurface(grid, V_0.asnumpy(), plot_option)
-    return V_0.asnumpy()
+            x = hcl.compute(self.state_shape, lambda _: 0, name='x')
 
-def computeSpatDerivArray(grid, V, deriv_dim, accuracy="low"):
-    # Return a tensor same size as V that contains spatial derivatives at every state in V
-    hcl.init()
-    hcl.config.init_dtype = hcl.Float(32)
+            # Each has a combination of lower/upper bound on control and disturbance
+            dx_ll = hcl.compute(self.state_shape, lambda _: 0, name='dx_ll')
+            dx_lu = hcl.compute(self.state_shape, lambda _: 0, name='dx_lu')
+            dx_ul = hcl.compute(self.state_shape, lambda _: 0, name='dx_ul')
+            dx_uu = hcl.compute(self.state_shape, lambda _: 0, name='dx_uu')
 
-    # Need to make sure that value array has the same size as grid
-    assert list(V.shape) == list(grid.pts_each_dim)
+            lower_opt_ctrl = hcl.compute(self.ctrl_shape, lambda _: 0, name='lower_opt_ctrl')
+            upper_opt_ctrl = hcl.compute(self.ctrl_shape, lambda _: 0, name='upper_opt_ctrl')
+            lower_opt_dstb = hcl.compute(self.dstb_shape, lambda _: 0, name='lower_opt_dstb')
+            upper_opt_dstb = hcl.compute(self.dstb_shape, lambda _: 0, name='upper_opt_dstb')
 
-    V_0 = hcl.asarray(V)
-    spatial_deriv = hcl.asarray(np.zeros(tuple(grid.pts_each_dim)))
+            for n, i in enumerate(idxs):
+                x[n] = xs[n][i]
 
-    # Get executable, obstacle check intial value function
-    if grid.dims == 3:
-        compute_SpatDeriv = graph_3D(None, grid, "None", accuracy,
-                                     generate_SpatDeriv=True, deriv_dim=deriv_dim)
-    if grid.dims == 4:
-        compute_SpatDeriv = graph_4D(None, grid, "None", accuracy,
-                                     generate_SpatDeriv=True, deriv_dim=deriv_dim)
-    if grid.dims == 5:
-        compute_SpatDeriv = graph_5D(None, grid, "None", accuracy,
-                                     generate_SpatDeriv=True, deriv_dim=deriv_dim)
+            # Find LOWER BOUND optimal disturbance
+            self.model.opt_dstb(lower_opt_dstb, dv_min, t, x)
 
-    compute_SpatDeriv(V_0, spatial_deriv)
-    return spatial_deriv.asnumpy()
+            # Find UPPER BOUND optimal disturbance
+            self.model.opt_dstb(upper_opt_dstb, dv_max, t, x)
+
+            # Find LOWER BOUND optimal control
+            self.model.opt_ctrl(lower_opt_ctrl, dv_min, t, x)
+
+            # Find UPPER BOUND optimal control
+            self.model.opt_ctrl(upper_opt_ctrl, dv_max, t, x)
+
+            # Find magnitude of rates of changes
+            self.model.dynamics(dx_ll, t, x, lower_opt_ctrl, lower_opt_dstb)
+            hcl.update(dx_ll, lambda i: hcl_math.abs(dx_ll[i]))
+
+            self.model.dynamics(dx_lu, t, x, lower_opt_ctrl, upper_opt_dstb)
+            hcl.update(dx_lu, lambda i: hcl_math.abs(dx_lu[i]))
+
+            self.model.dynamics(dx_ul, t, x, upper_opt_ctrl, lower_opt_dstb)
+            hcl.update(dx_ul, lambda i: hcl_math.abs(dx_ul[i]))
+
+            self.model.dynamics(dx_uu, t, x, upper_opt_ctrl, upper_opt_dstb)
+            hcl.update(dx_uu, lambda i: hcl_math.abs(dx_uu[i]))
+
+            # Calulate alpha
+            alpha = hcl.compute(self.state_shape, 
+                                lambda i: hcl_math.max(dx_ll[i], dx_lu[i], 
+                                                       dx_ul[i], dx_uu[i]), 
+                                name='alpha')
+
+            hcl.update(max_alpha, lambda i: hcl_math.max(max_alpha[i], alpha[i]))
+
+            # Finally we update the hamiltonian
+            # dv_diff has shape <grid...> x <states>. Here we use dv_diff at the current grid point.
+            dv_diff_here = hcl.compute(self.state_shape, lambda n: dv_diff[idxs + (n,)])
+            dissipation_v = hcl_math.dot(dv_diff_here, alpha) / 2
+            h[idxs] = -(h[idxs] - dissipation_v)
+
+        hcl.mutate(h.shape, body, name='Dissipation')
+
+    def time_step(self, t, *, 
+                  max_alpha):
+
+        step_bound = hcl.scalar(0, 'step_bound')
+
+        tmp = hcl.scalar(0)
+        for i, res in enumerate(self.grid.dx):
+            tmp.v += max_alpha[i] / res
+        step_bound.v = 0.8 / tmp.v
+
+        with hcl.if_(t[1] - t[0] < step_bound.v):
+            step_bound.v = t[1] - t[0]
+
+        t[0] += step_bound.v
+
+        return step_bound.v
+
+
+class HJSolver(Solver):
+
+    def __init__(self, grid, tau, model, **kwargs):
+        
+
+        super().__init__(grid, model, **kwargs)
+
+    def __call__(self, tau, *,
+                 target, target_mode='min',
+                 constraint=None, constraint_mode='max'):
+
+        target_invariant = target.shape == self.grid.shape
+        assert target_invariant or target.shape == self.grid.shape + tau.shape
+        assert target_mode in ('max', 'min')
+
+        if constraint is not None:
+            constraint_invariant = constraint.shape == self.grid.shape
+            assert constraint_invariant or constraint.shape == self.grid.shape + tau.shape
+            assert constraint_mode in ('max', 'min')
+
+        # Tensor input to our computation graph
+        vf = target if target_invariant else target[..., -1]
+        t = np.flip(tau)
+        xs = [ax.flatten() for ax in self.grid.vs]
+
+        # Extend over time axis
+        out = np.zeros(vf.shape + (len(t),))
+        out[..., -1] = vf
+
+        ################ USE THE EXECUTABLE ############
+        # Variables used for timing
+        execution_time = 0
+        now = t[-1]
+
+        if self.interactive:
+            print("Running...")
+            line_length = 0
+
+        # Backward reachable set/tube will be computed over the specified time horizon
+        # Or until convergent ( which ever happens first )
+        for i in reversed(range(0, len(t)-1)):
+
+            vf = out[..., i+1].copy()
+
+            pde_args = [vf, np.array([now, t[i]]), *xs]
+            pde_args = list(map(hcl.asarray, pde_args))
+
+            if self.debug:
+                h = hcl.asarray(np.zeros_like(vf))
+                pde_args = [h] + pde_args
+
+            while now <= t[i] - 1e-4:
+
+                # Start timing
+                start = time.time()
+
+                # Run the execution and pass input into graph
+                self._executable(*pde_args)
+
+                # End timing
+                end = time.time()
+
+                # Calculate computation time
+                execution_time += end - start
+
+                # Get current time from within solver
+                if self.debug:
+                    now = pde_args[2].asnumpy()[0]
+                else:
+                    now = pde_args[1].asnumpy()[0]
+
+                # Some information printing
+                if self.interactive:
+                    line = f"> [{execution_time:.2f}: {i}] Integration time: {end - start:.5f} s - Now: {now:.5f}"
+                    line_length = max(line_length, len(line))
+                    print(line, end="\r", flush=True)
+
+            if self.debug:
+                h = pde_args[0].asnumpy()
+                vf = pde_args[1].asnumpy()
+            else:
+                vf = pde_args[0].asnumpy()
+
+            op = np.minimum if target_mode == 'min' else np.maximum
+            vf = op(vf, target) if target_invariant else op(vf, target[..., i])
+
+            if constraint is not None:
+                op = np.minimum if constraint_mode == 'min' else np.maximum
+                vf = op(vf, -constraint) if constraint_invariant else op(vf, -constraint[..., i])
+
+            out[..., i] = vf
+
+        # Time info printing
+        if self.interactive:
+            line = f"> Total kernel time: {execution_time:.2f} s"
+            line = line.ljust(line_length)
+            print(line, end="\n\n")
+
+        # Flip time axis so that earliest time is first
+        # out = np.flip(out, axis=-1)
+
+        return out
