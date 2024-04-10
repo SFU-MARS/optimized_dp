@@ -129,7 +129,7 @@ print(f'The shape of the value function is {result.shape} \n')
 # save the value function
 # np.save('/localhome/hha160/optimized_dp/MRAG/1v1AttackDefend_speed15.npy', result)  # grid = 45
 # np.save(f'1v2AttackDefend_g{grid_size}_speed15.npy', result)  # grid = 30
-np.save(f'1v2AttackDefend_g{grid_size}_T{lookback_length}_speed15.npy', result)
+np.save(f'1v2AttackDefend_speed15.npy', result)
 
 print(f"The value function has been saved successfully.")
 # Record the time of whole process
