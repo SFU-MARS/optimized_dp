@@ -89,7 +89,7 @@ obs_defender2 = np.array(obs_defender2, dtype='float32')
 del obs1_defend2
 del obs2_defend2 
 
-obs_defends = np.maximum(obs_defender1, obs_defender2)  # the intersection of defender 1 and 2 stuck in obs
+obs_defends = np.minimum(obs_defender1, obs_defender2)  # Michael: change this to union 
 obs_defends = np.array(obs_defends, dtype='float32')
 
 reach_set = np.minimum(obs_defends, np.maximum(goal1_destination, goal2_escape))
@@ -129,7 +129,7 @@ print(f'The shape of the value function is {result.shape} \n')
 # save the value function
 # np.save('/localhome/hha160/optimized_dp/MRAG/1v1AttackDefend_speed15.npy', result)  # grid = 45
 # np.save(f'1v2AttackDefend_g{grid_size}_speed15.npy', result)  # grid = 30
-np.save(f'1v2AttackDefend_g{grid_size}_T{lookback_length}_speed15.npy', result)
+np.save(f'1v2AttackDefend_Michael_speed15.npy', result)
 
 print(f"The value function has been saved successfully.")
 # Record the time of whole process
