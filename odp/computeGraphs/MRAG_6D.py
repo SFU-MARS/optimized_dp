@@ -32,8 +32,10 @@ def graph_6D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
         # These variables are used to dissipation calculation
         max_alpha1 = hcl.scalar(my_object.speed_a, "max_alpha1")
         max_alpha2 = hcl.scalar(my_object.speed_a, "max_alpha2")
-        max_alpha3 = hcl.scalar(my_object.speed_a, "max_alpha3")
-        max_alpha4 = hcl.scalar(my_object.speed_a, "max_alpha4")
+        max_alpha3 = hcl.scalar(my_object.speed_d, "max_alpha3")  #Hanyang: modify this to be consistent with dynamics 
+        max_alpha4 = hcl.scalar(my_object.speed_d, "max_alpha4")
+        # max_alpha3 = hcl.scalar(my_object.speed_a, "max_alpha3")  
+        # max_alpha4 = hcl.scalar(my_object.speed_a, "max_alpha4")
         max_alpha5 = hcl.scalar(my_object.speed_d, "max_alpha5")
         max_alpha6 = hcl.scalar(my_object.speed_d, "max_alpha6")
 
@@ -158,9 +160,11 @@ def graph_6D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
 
                                     # Directly add the dissipation here
                                     alpha1 = hcl.scalar(my_object.speed_a, "alpha1")
-                                    alpha2 = hcl.scalar(my_object.speed_a, "alpha2")
-                                    alpha3 = hcl.scalar(my_object.speed_a, "alpha3")
-                                    alpha4 = hcl.scalar(my_object.speed_a, "alpha4")
+                                    alpha2 = hcl.scalar(my_object.speed_a, "alpha2")  
+                                    alpha3 = hcl.scalar(my_object.speed_d, "alpha3")  # Hanyang: modify this to be consistent with dynamics
+                                    alpha4 = hcl.scalar(my_object.speed_d, "alpha4")
+                                    # alpha3 = hcl.scalar(my_object.speed_a, "alpha3")
+                                    # alpha4 = hcl.scalar(my_object.speed_a, "alpha4")
                                     alpha5 = hcl.scalar(my_object.speed_d, "alpha5")
                                     alpha6 = hcl.scalar(my_object.speed_d, "alpha6")
 

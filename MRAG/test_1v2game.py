@@ -49,12 +49,12 @@ tau1v2 = np.arange(start=0, stop=4.5 + 1e-5, step=0.025)
 
 # initialize positions of attackers and defenders
 # not work:
-# attackers_initials =[(-0.2, 0.0)]  # [(-0.2, 0.0)] 
-# defenders_initials = [(-0.8, 0.5), (-0.8, -0.5)]   #  [(-0.8, 0.5), (-0.8, -0.5)]
+attackers_initials =[(-0.2, 0.0)]  # [(-0.2, 0.0)] 
+defenders_initials = [(-0.8, 0.5), (-0.8, -0.5)]   #  [(-0.8, 0.5), (-0.8, -0.5)]
 
 # work but cross obs:
-attackers_initials =[(-0.15, 0.5)]  # [(-0.15, 0.5)]
-defenders_initials = [(-0.5, 0.5), (0.0, 0.2)]  # [(-0.5, 0.5), (0.0, 0.2)]
+# attackers_initials =[(-0.15, 0.5)]  # [(-0.15, 0.5)]
+# defenders_initials = [(-0.5, 0.5), (0.0, 0.2)]  # [(-0.5, 0.5), (0.0, 0.2)]
 
 ax = attackers_initials[0][0]
 ay = attackers_initials[0][1]
@@ -107,7 +107,7 @@ print("The simulation starts: \n")
 for _ in range(0, times):
 
     RA1v1 = capture_1vs1(current_attackers, current_defenders, v1v1, stops_index)  # attacker will win the 1 vs. 1 game
-    RA1v2 = capture_1vs2(current_attackers, current_defenders, v1v2)  # attacker will win the 1 vs. 2 game
+    RA1v2, RA1v2_ = capture_1vs2(current_attackers, current_defenders, v1v2)  # attacker will win the 1 vs. 2 game
     RA1v1s.append(RA1v1)
     RA1v2s.append(RA1v2)
 
