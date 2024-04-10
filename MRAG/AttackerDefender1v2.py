@@ -179,16 +179,16 @@ class AttackerDefender1v2:
         deriv2 = spat_deriv[1]
         # deriv3 = spat_deriv[2]
         # deriv4 = spat_deriv[3]
-        ctrl_len1 = np.sqrt(deriv1*deriv1 + deriv2*deriv2)
+        ctrl_len = np.sqrt(deriv1*deriv1 + deriv2*deriv2)
         # ctrl_len2 = np.sqrt(deriv3*deriv3 + deriv4*deriv4)
         # The initialized control only change sign in the following cases
         if self.uMode == "min":
-            if ctrl_len1 == 0:
+            if ctrl_len == 0:
                 opt_a1 = 0.0
                 opt_a2 = 0.0
             else:
-                opt_a1 = -deriv1 / ctrl_len1
-                opt_a2 = -deriv2 / ctrl_len1
+                opt_a1 = -deriv1 / ctrl_len
+                opt_a2 = -deriv2 / ctrl_len
             # if ctrl_len2 == 0:
             #     opt_a3 = 0.0 
             #     opt_a4 = 0.0
@@ -196,12 +196,12 @@ class AttackerDefender1v2:
             #     opt_a3 = -deriv3 / ctrl_len2
             #     opt_a4 = -deriv4 / ctrl_len2
         else:
-            if ctrl_len1 == 0:
+            if ctrl_len == 0:
                 opt_a1 = 0.0
                 opt_a2 = 0.0
             else:
-                opt_a1 = deriv1 / ctrl_len1
-                opt_a2 = deriv2 / ctrl_len1
+                opt_a1 = deriv1 / ctrl_len
+                opt_a2 = deriv2 / ctrl_len
             # if ctrl_len2 == 0:
             #     opt_a3 = 0.0 
             #     opt_a4 = 0.0
@@ -256,47 +256,13 @@ class AttackerDefender1v2:
         return (opt_d1, opt_d2, opt_d3, opt_d4)
 
     def capture_set1(self, grid, capture_radius, mode):
-        ## Hanyang: the attacker A is captured by the first defender D1
-        # Meshgrid is too expensive for 6D. So gotta be more cheap with our memory usage
-        # xa1, ya1, xa2, ya2, xd, yd = np.meshgrid(grid.grid_points[0], grid.grid_points[1],
-        #                              grid.grid_points[2], grid.grid_points[3],
-        #                              grid.grid_points[4], grid.grid_points[5], indexing='ij')
-        # data = np.power(xa1 - xd, 2) + np.power(ya1 - yd, 2)
-        # if mode == "capture":
-        #     return np.sqrt(data) - capture_radius
-        # if mode == "escape":
-        #     return capture_radius - np.sqrt(data)
-
         data = np.power(grid.vs[0] - grid.vs[2], 2) + np.power(grid.vs[1] -grid.vs[3], 2)
         if mode == "capture":
             return np.sqrt(data) - capture_radius
         if mode == "escape":
             return capture_radius - np.sqrt(data)
 
-
-        # this function is the distance between 1 attacker and 1 defender
-        # data = np.zeros(grid.pts_each_dim)
-        #
-        # data = data + np.power(grid.vs[0] - grid.vs[2], 2)
-        # data = data + np.power(grid.vs[1] - grid.vs[3], 2)
-        # # data = np.sqrt(data) - radius
-        # if mode == "capture":
-        #     return np.sqrt(data) - capture_radius
-        # if mode == "escape":
-        #     return capture_radius - np.sqrt(data)
-
     def capture_set2(self, grid, capture_radius, mode):
-        ## Hanyang: the attacker A is captured by the first defender D2
-        # using meshgrid
-        # xa1, ya1, xa2, ya2, xd, yd = np.meshgrid(grid.grid_points[0], grid.grid_points[1],
-        #                              grid.grid_points[2], grid.grid_points[3],
-        #                              grid.grid_points[4], grid.grid_points[5], indexing='ij')
-        # data = np.power(xa2 - xd, 2) + np.power(ya2 - yd, 2)
-        # if mode == "capture":
-        #     return np.sqrt(data) - capture_radius
-        # if mode == "escape":
-        #     return capture_radius - np.sqrt(data)
-
         data = np.power(grid.vs[0] - grid.vs[4], 2) + np.power(grid.vs[1] -grid.vs[5], 2)
         if mode == "capture":
             return np.sqrt(data) - capture_radius

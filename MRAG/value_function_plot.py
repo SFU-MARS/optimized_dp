@@ -18,8 +18,8 @@ grid1v2 = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.
 # initial positions
 #attackers = [(0.0, 0.8), (0.2, 0.5)]  # [(-0.5, 0.0), (0.0, 0.8)], [(-0.5, 0.5), (-0.3, -0.8)], [(-0.5, -0.3), (0.8, -0.5)]
 #defenders = [(-0.3, -0.3)] # [(0.3, -0.3)], [(0.0, 0.0)], [(0.3, 0.5)]
-attackers = [(-0.2, 0.0)] # [(-0.5, 0.0), (0.0, 0.8)]
-defenders = [(-0.8, -0.5), (-0.8, 0.5)]  #  [(-0.8, -0.3)]
+attackers = [(-0.4, 0.0)] # [(-0.5, 0.0), (0.0, 0.8)]
+defenders = [(-0.8, -0.8), (-0.8, 0.3)]  #  [(-0.8, -0.3)]
 
 ax = attackers[0][0]
 ay = attackers[0][1]
@@ -41,8 +41,8 @@ value_function1v1_2 = value1v1[:, :, d2x_slice_1v1_2, d2y_slice_1v1_2]
 jointstates2v1 = (ax, ay, d1x, d1y, d2x, d2y)
 ax_slice, ay_slice, d1x_slice, d1y_slice, d2x_slice, d2y_slice = lo2slice2v1(jointstates2v1, slices=30)
 # value_function2v1 = value2v1[:, :, a2x_slice, a2y_slice, d1x_slice, d1y_slice]
-value_function1v2_1 = value1v2[ax_slice, ay_slice, :, :, d2x_slice, d2y_slice]
-value_function1v2_2 = value1v2[ax_slice, ay_slice, d1x_slice, d1y_slice, :, :]
+# value_function1v2_1 = value1v2[ax_slice, ay_slice, :, :, d2x_slice, d2y_slice]
+# value_function1v2_2 = value1v2[ax_slice, ay_slice, d1x_slice, d1y_slice, :, :]
 value_function1v2_3 = value1v2[:, :, d1x_slice, d1y_slice, d2x_slice, d2y_slice]
 
 # plotting players

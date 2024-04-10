@@ -47,8 +47,15 @@ tau1v2 = np.arange(start=0, stop=4.5 + 1e-5, step=0.025)
 tau2v1 = np.arange(start=0, stop=4.5 + 1e-5, step=0.025)
 
 # initialize positions of attackers and defenders
-attackers_initials =[(-0.2, 0.0)]  # [(0.0, 0.0), (0.0, 0.8)], [(-0.5, 0.0), (0.0, 0.8)],  [(-0.5, 0.5), (-0.3, -0.8)] [(-0.5, -0.3), (0.8, -0.5)], 
-defenders_initials = [(-0.8, -0.5), (-0.8, 0.5)]   #  [(-0.5, 0.0), (0.0, 0.8)]  [(-0.6, 0.8), (-0.6, -0.8)]
+# ## not work:
+# attackers_initials =[(-0.2, 0.0)]  # [(-0.2, 0.0)] 
+# defenders_initials = [(-0.8, 0.5), (-0.8, -0.5)]   #  [(-0.8, 0.5), (-0.8, -0.5)]
+# work but not due to 1vs2
+# attackers_initials =[(-0.15, 0.5)]  # [(-0.15, 0.5)]
+# defenders_initials = [(-0.5, 0.5), (0.0, 0.2)]  # [(-0.5, 0.5), (0.0, 0.2)]
+
+attackers_initials = [(-0.4, 0.0)] # [(-0.5, 0.0), (0.0, 0.8)]
+defenders_initials = [(-0.8, -0.8), (-0.8, 0.3)]  #  [(-0.8, -0.3)]
 
 num_attacker = len(attackers_initials)
 num_defender = len(defenders_initials)
@@ -86,6 +93,8 @@ attackers_status_logs.append(deepcopy(attackers_status))
 attacker_assigneds = []
 RA1v1s = []
 RA1v2s = []
+controls_defender0 = []
+controls_defender1 = []
 
 print("The simulation starts: \n")
 # simulation starts
@@ -94,14 +103,15 @@ for _ in range(0, times):
     # MIP Optimization
     RA1v1 = capture_1vs1(current_attackers, current_defenders, v1v1, stops_index)  # attacker will win the 1 vs. 1 game
     RA2v1, value_list = capture_2vs1(current_attackers, current_defenders, v2v1)  # defender can not capture both attackers in 2 vs. 1 game
-    RA1v2 = capture_1vs2(current_attackers, current_defenders, v1v2)  # attacker will win the 1 vs. 2 game
+    RA1v2, RA1v2_ = capture_1vs2(current_attackers, current_defenders, v1v2)  # attacker will win the 1 vs. 2 game
     
     RA1v1s.append(RA1v1)
     RA1v2s.append(RA1v2)
     # print(f"The current step {_} RA1v2C is {RA1v2C}.")
     # Hanyang: first big change
     # selected = mip_solver(num_attacker, num_defender, RA2v1, RA1v1)
-    selected, weights, assigned = extend_mip_solver(num_attacker, num_defender, RA1v1, RA1v2, RA2v1)
+    # selected, weights, assigned = extend_mip_solver(num_attacker, num_defender, RA1v1, RA1v2, RA2v1)
+    selected, weights, assigned = extend_mip_solver1(num_attacker, num_defender, RA1v1, RA1v2, RA1v2_, RA2v1)
     # print(f"In current step {_} the shape of weights is {weights.shape}.")
     # print(f"In current step {_} the assigned from attackers' views is {assigned}.")
     attacker_assigneds.append(assigned)
@@ -131,6 +141,7 @@ for _ in range(0, times):
             a1x, a1y = current_attackers[selected[j][0]]
 
             if weights[selected[j], j] == 0.5:  # use 1 vs. 2 game based control
+                print(f"Use 1vs2 control in the current step {_}. \n")
                 collaborate_defender = assigned[selected[j][0]][-1]  # the index of another defender
                 d2x, d2y = current_defenders[collaborate_defender]
                 joint_state1v2 = (a1x, a1y, d1x, d1y, d2x, d2y)
@@ -138,10 +149,12 @@ for _ in range(0, times):
                 control_defenders[j].append((opt_d1, opt_d2))
                 control_defenders[collaborate_defender].append((opt_d3, opt_d4))
                 calculated_defenders.append(collaborate_defender)
+                controls_defender0.append((opt_d1, opt_d2))  
+                controls_defender1.append((opt_d3, opt_d4))
                 
             else:  # use 1 vs. 1 game based control
                 joint_states1v1 = (a1x, a1y, d1x, d1y)
-                control_defenders.append(defender_control1v1_1slice(agents_1v1, grid1v1, value1v1, tau1v1, joint_states1v1))
+                control_defenders[j].append(defender_control1v1_1slice(agents_1v1, grid1v1, value1v1, tau1v1, joint_states1v1))
 
         else:  # defender j could not capture any of attackers
             attacker_index = select_attacker2(d1x, d1y, current_attackers, stops_index)  # choose the nearest attacker
@@ -185,7 +198,7 @@ for _ in range(0, times):
 
 print("The game is over. \n")
 
-# print(f"The results of the selected is {capture_decisions}. \n")
+print(f"The results of the selected is {capture_decisions}. \n")
 print(f"The final captured_status of all attackers is {attackers_status_logs[-1]}. \n")
 
 # print(f"The log of attackers assigned is {attacker_assigneds}. \n")
@@ -195,7 +208,8 @@ print(f"The MIP assignment result is {capture_decisions}. \n")
 # Play the animation
 animation_2v1(attackers_trajectory, defenders_trajectory, attackers_status_logs, T)
 
-
+# print(f"The controls of defender0 is {controls_defender0}. \n")
+# print(f"The controls of defender1 is {controls_defender1}. \n")
 
 # # plot the trajectories seperately T = [0.475s (95 A1 by D0), 0.69s (138 A0 by D0)]
 # if T == 0.475:

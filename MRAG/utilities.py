@@ -180,6 +180,7 @@ def capture_1vs2(attackers, defenders, value1v2):
     #TODO: not finished, should not use dictionary or it will overwrite the former results
     num_attacker, num_defender = len(attackers), len(defenders)
     RA1v2 = [[] for _ in range(num_defender)]
+    RA1v2_ = []
     # RA1v2C = []
     # generate RA1v2
     for j in range(num_defender):
@@ -193,11 +194,12 @@ def capture_1vs2(attackers, defenders, value1v2):
                 if not flag:  # attacker i will win the 1 vs. 2 game
                     RA1v2[j].append(i)
                     RA1v2[k].append(i)
+                    RA1v2_.append((i, j, k))
                 # else:
                 #     RA1v2C.append({i: (j, k)})
                     # RA1v2C.append((i, j, k))
 
-    return RA1v2
+    return RA1v2, RA1v2_
 
 # generate the capture individual list I and the capture individual complement list Ic
 def capture_individual(attackers, defenders, value1v1):
@@ -372,14 +374,83 @@ def extend_mip_solver(num_attacker, num_defender, RA1v1, RA1v2, RA2v1):
 
     return selected, weights, assigned
 
-# def add_trajectory(trajectories, next_positions):
-#     """Return a updated trajectories (list) that contain trajectories of agents (attackers or defenders)
+def extend_mip_solver1(num_attacker, num_defender, RA1v1, RA1v2, RA1v2_, RA2v1):
+    """ Returns a list selected that contains all allocated attackers that the defender could capture, [[a1, a3], ...]
 
-#     Args: 
-#         trajectories (list): [[(a1x1, a1y1), ...], ...]
-#         next_positions (list): [(a1xi, a1yi), ...]
-#     """
-#     pass
+    Args:
+        num_attackers (int): the number of attackers
+        num_defenders (int): the number of defenders
+        RA1v1 (list): the single indexes of attackers that will win the 1 vs. 1 game for each defender
+        RA1v2 (list): the single indexes of attackers that will win the 1 vs. 2 game for each defender
+        RA2v1 (list): the pair indexes of attackers that will not be captured together in the 2 vs. 1 game for each defender
+    """
+    # initialize the solver
+    model = Model(solver_name=CBC) # use GRB for Gurobi, CBC default
+    e = [[model.add_var(var_type=BINARY) for j in range(num_defender)] for i in range(num_attacker)] # e[attacker index][defender index]
+    # initialize the weakly defend edges set W and their weights for each defender
+    Weakly = [[] for _ in range(num_defender)]
+    weights = np.ones((num_attacker, num_defender))
+    # add constraints
+    # add constraint 1: upper bound for attackers to be captured based on the 2 vs. 1 game
+    for j in range(num_defender):
+        model += xsum(e[i][j] for i in range(num_attacker)) <= 2
+
+    # add constraint 2: upper bound for defenders to be assgined based on the 1 vs. 2 game
+    for i in range(num_attacker):
+        model += xsum(e[i][j] for j in range(num_defender)) <= 2
+    for add in RA1v2_:
+        model += xsum(e[add[0]][j] for j in range(num_defender)) <= 1
+    #     model += e[add[0]][add[1]] + e[add[0]][add[2]] <= 1
+    # for i in range(num_attacker):
+    #     model += xsum(e[i][j] for j in range(num_defender)) <= 2
+
+    # add constraint 3: the attacker i could not be captured by the defender j in both 1 vs. 1 and 1 vs. 2 games
+    for j in range(num_defender):
+        for attacker in RA1v1[j]:
+            if attacker in RA1v2[j]:  # the attacker could win the defender in both 1 vs. 1 and 1 vs. 2 games
+                model += e[attacker][j] == 0
+            else:  # the attacker could win the defender in 1 vs. 1 game but not in 1 vs. 2 game
+                Weakly[j].append(attacker)
+                weights[attacker][j] = 0.5
+
+    # add constraint 4: upper bound for attackers to be captured based on the 2 vs. 1 game result
+    for j in range(num_defender):
+        for pairs in (RA2v1[j]):
+            # print(pairs)
+            model += e[pairs[0]][j] + e[pairs[1]][j] <= 1
+
+    # add constraint 5: upper bound for weakly defended attackers
+    for j in range(num_defender):
+        for indiv in (Weakly[j]):
+            # print(indiv)
+            model += e[indiv][j] <= xsum(e[indiv][k] for k in range(num_defender))
+            
+    # set up objective functions
+    model.objective = maximize(xsum(weights[i][j] * e[i][j] for j in range(num_defender) for i in range(num_attacker)))
+    # problem solving
+    model.max_gap = 0.05
+    # log_status = []
+    status = model.optimize(max_seconds=300)
+    if status == OptimizationStatus.OPTIMAL:
+        print('optimal solution cost {} found'.format(model.objective_value))
+    elif status == OptimizationStatus.FEASIBLE:
+        print('sol.cost {} found, best possible: {} '.format(model.objective_value, model.objective_bound))
+    elif status == OptimizationStatus.NO_SOLUTION_FOUND:
+        print('no feasible solution found, lower bound is: {} '.format(model.objective_bound))
+    if status == OptimizationStatus.OPTIMAL or status == OptimizationStatus.FEASIBLE:
+        print('Solution:')
+        selected = []
+        assigned = [[] for _ in range(num_attacker)]
+        for j in range(num_defender):
+            selected.append([])
+            for i in range(num_attacker):
+                if e[i][j].x >= 0.9:
+                    selected[j].append(i)
+                    assigned[i].append(j)
+        # print(f"The selected results in the extend_mip_solver is {selected}.")
+
+    return selected, weights, assigned
+
 
 def next_positions(current_positions, controls, tstep):
     """Return the next positions (list) of attackers or defenders
@@ -817,7 +888,7 @@ def defender_control1v1_1slice(agents_1v1, grid1v1, value1v1, tau1v1, jointstate
     # calculate the derivatives
     # v = value1v1[...] # Minh: v = value1v0[..., neg2pos[0]]
     start_time = datetime.datetime.now()
-    print(f"The shape of the input value1v1 of defender is {value1v1.shape}. \n")
+    # print(f"The shape of the input value1v1 of defender is {value1v1.shape}. \n")
     spat_deriv_vector = spa_deriv(grid1v1.get_index(jointstate1v1), value1v1, grid1v1)
     opt_d1, opt_d2 = agents_1v1.optDstb_inPython(spat_deriv_vector)
     end_time = datetime.datetime.now()
