@@ -36,7 +36,7 @@ process = psutil.Process(os.getpid())
 print("1. Gigabytes consumed {}".format(process.memory_info().rss/1e9))  # in bytes
 
 RA_1v1 = np.load("MRAG/1v1AttackDefend_g36_speed15.npy")  # grid = 36
-
+print("The 1vs1 value function has been loaded successfully.")
 
 # 2. Instantiate the dynamics of the agent
 agents_1v2 = AttackerDefender1v2(uMode="min", dMode="max")  
