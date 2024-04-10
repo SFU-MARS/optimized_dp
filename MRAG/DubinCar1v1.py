@@ -10,7 +10,7 @@ import numpy as np
  thetaD_dot = uD
  """
 
-#TODO: Hanyang: need to check the correctness of the dynamics
+#TODO: Hanyang: remember to change the 6D computation graph!!!
 class DubinsCar1v1:
     def __init__(self, x=[0, 0, 0, 0, 0, 0], uMin=-1, uMax=1, dMin=-1, 
                  dMax=1, uMode="min", dMode="max", speed_a=1.0, speed_d=1.5):

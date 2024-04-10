@@ -87,9 +87,8 @@ print(f'The shape of the value function is {result.shape} \n')
 # np.save('1v1AttackDefend_g31_speed15.npy', result)  # grid = 31
 # np.save('1v1AttackDefend_g33_speed15.npy', result)  # grid = 33
 # np.save('1v1AttackDefend_g35_speed15.npy', result)  # grid = 35
-np.save('1v1AttackDefend_g36_speed15.npy', result)  # grid = 36
-
-print(f"The value function has been saved successfully.")
+np.save(f'MRAG/1v1AttackDefend_g36_speed15.npy', result)  # grid = 36
+print("The value function has been saved successfully.")
 
 # Record the time of whole process
 end_time = time.time()
