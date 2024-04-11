@@ -28,14 +28,14 @@ from odp.solver import HJSolver, computeSpatDerivArray
 start_time = time.time()
 
 # 1. Define grid
-grid_size = 36
+grid_size = 30
 
 grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
              6, np.array([grid_size, grid_size, grid_size, grid_size, grid_size, grid_size])) 
 process = psutil.Process(os.getpid())
 print("1. Gigabytes consumed {}".format(process.memory_info().rss/1e9))  # in bytes
 
-RA_1v1 = np.load("MRAG/1v1AttackDefend_g36_speed15.npy")  # grid = 36
+RA_1v1 = np.load(f"MRAG/1v1AttackDefend_g{grid_size}_speed15.npy")  # grid = 36
 print("The 1vs1 value function has been loaded successfully.")
 
 # 2. Instantiate the dynamics of the agent
