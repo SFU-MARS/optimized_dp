@@ -28,7 +28,7 @@ from odp.solver import HJSolver, computeSpatDerivArray
 start_time = time.time()
 
 # 1. Define grid
-grid_size = 30
+grid_size = 6
 
 grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 
              6, np.array([grid_size, grid_size, grid_size, grid_size, grid_size, grid_size])) 
@@ -146,7 +146,7 @@ print(f'The shape of the value function is {result.shape} \n')
 # save the value function
 # np.save('/localhome/hha160/optimized_dp/MRAG/1v1AttackDefend_speed15.npy', result)  # grid = 45
 # np.save(f'1v2AttackDefend_g{grid_size}_speed15.npy', result)  # grid = 30
-np.save(f'1v2AttackDefend_Hanyang_speed15.npy', result)
+np.save(f'1v2AttackDefend_Hanyang_g{grid_size}_speed15.npy', result)
 
 print(f"The value function has been saved successfully.")
 # Record the time of whole process

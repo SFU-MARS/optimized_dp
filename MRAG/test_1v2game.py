@@ -30,7 +30,10 @@ value1v1 = v1v1[..., np.newaxis]  # value1v1.shape = [45, 45, 45, 45, 1]
 # print(f"The shape of the 2v1 value function is {v2v1.shape}. \n")
 # value2v1 = v2v1[..., np.newaxis]  # value2v1.shape = [30, 30, 30, 30, 30, 30, 1]
 #TODO: Hanyang: check why
-v1v2 = np.load('MRAG/1v2AttackDefend_speed15.npy')
+# v1v2 = np.load('MRAG/1v2AttackDefend_speed15.npy')
+# v1v2 = np.load('MRAG/1v2AttackDefend_Michael_speed15.npy')
+v1v2 = np.load('MRAG/1v2AttackDefend_Hanyang_speed15.npy')
+
 print(f"The shape of the 1v2 value function is {v1v2.shape}. \n")
 value1v2 = v1v2[..., np.newaxis]  # value1v2.shape = [30, 30, 30, 30, 30, 30, 1]
 
@@ -48,13 +51,15 @@ tau1v2 = np.arange(start=0, stop=4.5 + 1e-5, step=0.025)
 # tau2v1 = np.arange(start=0, stop=4.5 + 1e-5, step=0.025)
 
 # initialize positions of attackers and defenders
-# not work:
-attackers_initials =[(-0.2, 0.0)]  # [(-0.2, 0.0)] 
-defenders_initials = [(-0.8, 0.5), (-0.8, -0.5)]   #  [(-0.8, 0.5), (-0.8, -0.5)]
+# # not work:
+# attackers_initials =[(-0.2, 0.0)]  # [(-0.2, 0.0)] 
+# defenders_initials = [(-0.8, 0.5), (-0.8, -0.5)]   #  [(-0.8, 0.5), (-0.8, -0.5)]
 
-# work but cross obs:
-# attackers_initials =[(-0.15, 0.5)]  # [(-0.15, 0.5)]
-# defenders_initials = [(-0.5, 0.5), (0.0, 0.2)]  # [(-0.5, 0.5), (0.0, 0.2)]
+# # not work:
+attackers_initials =[(0.0, 0.0)]  
+defenders_initials = [(-0.5, 0.5), (-0.5, -0.1)]  
+
+
 
 ax = attackers_initials[0][0]
 ay = attackers_initials[0][1]

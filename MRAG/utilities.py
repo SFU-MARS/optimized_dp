@@ -244,7 +244,7 @@ def capture_1vs1(attackers, defenders, value1v1, stops):
             else:
                 aix, aiy = attackers[i]
                 joint_states = (aix, aiy, djx, djy)
-                if not check1v1(value1v1, joint_states):
+                if not check1v1(value1v1, joint_states):  # defender j could not capture attacker i
                     Ic[j].append(i)
     return Ic
 
