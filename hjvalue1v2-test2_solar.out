@@ -1,3 +1,3225 @@
 Start to compile the sh file now!
 ]2;conda activate odp]1;]2;cd /localscratch/hha160/MARAG]1;]2;echo 'Start to run the main code now!']1;Start to run the main code now!
-]2;python MRAG/hjvalue1v2_solar_test2.py]1;
+]2;python MRAG/hjvalue1v2_solar_test2.py]1;1. Gigabytes consumed 0.095879168
+The 1vs1 value function has been loaded successfully.
+2. Gigabytes consumed 3.015954432
+3. Gigabytes consumed 14.712242176
+Initializing
+
+Obstacles set exists !
+Optimizing
+
+Started running
+
+[0.00689655 0.025     ]
+Computational time to integrate (s): 8.14704
+[0.0137931 0.025    ]
+Computational time to integrate (s): 8.10497
+[0.02068966 0.025     ]
+Computational time to integrate (s): 8.11985
+[0.025 0.025]
+Computational time to integrate (s): 8.63655
+[0.03189655 0.05      ]
+Computational time to integrate (s): 8.01300
+[0.03879311 0.05      ]
+Computational time to integrate (s): 8.61406
+[0.04568966 0.05      ]
+Computational time to integrate (s): 8.01776
+[0.05 0.05]
+Computational time to integrate (s): 8.39029
+[0.05689655 0.075     ]
+Computational time to integrate (s): 8.86203
+[0.06379311 0.075     ]
+Computational time to integrate (s): 8.23852
+[0.07068966 0.075     ]
+Computational time to integrate (s): 8.39113
+[0.075 0.075]
+Computational time to integrate (s): 8.70771
+[0.08189656 0.1       ]
+Computational time to integrate (s): 8.04992
+[0.08879311 0.1       ]
+Computational time to integrate (s): 8.27322
+[0.09568967 0.1       ]
+Computational time to integrate (s): 8.44556
+[0.1 0.1]
+Computational time to integrate (s): 8.66298
+[0.10689655 0.125     ]
+Computational time to integrate (s): 8.48554
+[0.1137931 0.125    ]
+Computational time to integrate (s): 8.05845
+[0.12068966 0.125     ]
+Computational time to integrate (s): 8.33234
+[0.125 0.125]
+Computational time to integrate (s): 8.54394
+[0.13189656 0.15      ]
+Computational time to integrate (s): 8.28000
+[0.13879311 0.15      ]
+Computational time to integrate (s): 8.01366
+[0.14568967 0.15      ]
+Computational time to integrate (s): 8.05576
+[0.15 0.15]
+Computational time to integrate (s): 8.04662
+[0.15689656 0.175     ]
+Computational time to integrate (s): 8.03813
+[0.16379312 0.175     ]
+Computational time to integrate (s): 8.54940
+[0.17068967 0.175     ]
+Computational time to integrate (s): 8.20043
+[0.175 0.175]
+Computational time to integrate (s): 8.35558
+[0.18189655 0.2       ]
+Computational time to integrate (s): 8.09383
+[0.18879311 0.2       ]
+Computational time to integrate (s): 8.16133
+[0.19568966 0.2       ]
+Computational time to integrate (s): 8.31843
+[0.2 0.2]
+Computational time to integrate (s): 8.48654
+[0.20689656 0.225     ]
+Computational time to integrate (s): 8.29257
+[0.21379311 0.225     ]
+Computational time to integrate (s): 8.04736
+[0.22068967 0.225     ]
+Computational time to integrate (s): 8.05012
+[0.225 0.225]
+Computational time to integrate (s): 8.06145
+[0.23189655 0.25      ]
+Computational time to integrate (s): 8.10591
+[0.2387931 0.25     ]
+Computational time to integrate (s): 8.59069
+[0.24568966 0.25      ]
+Computational time to integrate (s): 8.21432
+[0.25 0.25]
+Computational time to integrate (s): 8.40788
+[0.25689656 0.275     ]
+Computational time to integrate (s): 8.12550
+[0.2637931 0.275    ]
+Computational time to integrate (s): 8.24659
+[0.27068967 0.275     ]
+Computational time to integrate (s): 8.75071
+[0.275 0.275]
+Computational time to integrate (s): 8.33259
+[0.28189656 0.3       ]
+Computational time to integrate (s): 8.12824
+[0.28879312 0.3       ]
+Computational time to integrate (s): 8.15598
+[0.29568967 0.3       ]
+Computational time to integrate (s): 8.39886
+[0.3 0.3]
+Computational time to integrate (s): 8.71850
+[0.30689657 0.325     ]
+Computational time to integrate (s): 8.33917
+[0.31379312 0.325     ]
+Computational time to integrate (s): 8.10972
+[0.32068968 0.325     ]
+Computational time to integrate (s): 8.10509
+[0.325 0.325]
+Computational time to integrate (s): 8.23488
+[0.33189654 0.35      ]
+Computational time to integrate (s): 8.46218
+[0.3387931 0.35     ]
+Computational time to integrate (s): 8.44399
+[0.34568965 0.35      ]
+Computational time to integrate (s): 8.11068
+[0.35 0.35]
+Computational time to integrate (s): 8.09435
+[0.35689655 0.375     ]
+Computational time to integrate (s): 8.11711
+[0.3637931 0.375    ]
+Computational time to integrate (s): 8.60329
+[0.37068966 0.375     ]
+Computational time to integrate (s): 8.25541
+[0.375 0.375]
+Computational time to integrate (s): 8.38753
+[0.38189656 0.4       ]
+Computational time to integrate (s): 8.11080
+[0.3887931 0.4      ]
+Computational time to integrate (s): 8.23325
+[0.39568967 0.4       ]
+Computational time to integrate (s): 8.41170
+[0.4 0.4]
+Computational time to integrate (s): 8.76283
+[0.40689656 0.425     ]
+Computational time to integrate (s): 8.35614
+[0.41379312 0.425     ]
+Computational time to integrate (s): 8.13406
+[0.42068967 0.425     ]
+Computational time to integrate (s): 8.12261
+[0.425 0.425]
+Computational time to integrate (s): 8.39384
+[0.43189657 0.45      ]
+Computational time to integrate (s): 8.65716
+[0.43879312 0.45      ]
+Computational time to integrate (s): 8.43484
+[0.44568968 0.45      ]
+Computational time to integrate (s): 8.10898
+[0.45 0.45]
+Computational time to integrate (s): 8.13762
+[0.45689654 0.475     ]
+Computational time to integrate (s): 8.11992
+[0.4637931 0.475    ]
+Computational time to integrate (s): 8.51042
+[0.47068965 0.475     ]
+Computational time to integrate (s): 8.43417
+[0.475 0.475]
+Computational time to integrate (s): 8.44345
+[0.48189655 0.5       ]
+Computational time to integrate (s): 8.15812
+[0.4887931 0.5      ]
+Computational time to integrate (s): 8.31114
+[0.49568966 0.5       ]
+Computational time to integrate (s): 8.39956
+[0.5 0.5]
+Computational time to integrate (s): 8.71822
+[0.50689656 0.525     ]
+Computational time to integrate (s): 8.49958
+[0.5137931 0.525    ]
+Computational time to integrate (s): 8.13147
+[0.52068967 0.525     ]
+Computational time to integrate (s): 8.27942
+[0.525 0.525]
+Computational time to integrate (s): 8.50633
+[0.53189653 0.55      ]
+Computational time to integrate (s): 8.81735
+[0.5387931 0.55     ]
+Computational time to integrate (s): 8.41506
+[0.54568964 0.55      ]
+Computational time to integrate (s): 8.18306
+[0.55 0.55]
+Computational time to integrate (s): 8.16150
+[0.55689657 0.575     ]
+Computational time to integrate (s): 8.18151
+[0.5637931 0.575    ]
+Computational time to integrate (s): 8.62292
+[0.5706897 0.575    ]
+Computational time to integrate (s): 8.34170
+[0.575 0.575]
+Computational time to integrate (s): 8.43071
+[0.58189654 0.6       ]
+Computational time to integrate (s): 8.15696
+[0.5887931 0.6      ]
+Computational time to integrate (s): 8.26519
+[0.59568965 0.6       ]
+Computational time to integrate (s): 8.50963
+[0.6 0.6]
+Computational time to integrate (s): 8.81694
+[0.6068966 0.625    ]
+Computational time to integrate (s): 8.48490
+[0.61379313 0.625     ]
+Computational time to integrate (s): 8.12866
+[0.6206897 0.625    ]
+Computational time to integrate (s): 8.44773
+[0.625 0.625]
+Computational time to integrate (s): 8.59203
+[0.63189656 0.65      ]
+Computational time to integrate (s): 8.43184
+[0.6387931 0.65     ]
+Computational time to integrate (s): 8.23406
+[0.64568967 0.65      ]
+Computational time to integrate (s): 8.18661
+[0.65 0.65]
+Computational time to integrate (s): 8.13933
+[0.65689653 0.675     ]
+Computational time to integrate (s): 8.19365
+[0.6637931 0.675    ]
+Computational time to integrate (s): 8.54672
+[0.67068964 0.675     ]
+Computational time to integrate (s): 8.41341
+[0.675 0.675]
+Computational time to integrate (s): 8.47303
+[0.68189657 0.7       ]
+Computational time to integrate (s): 8.13775
+[0.6887931 0.7      ]
+Computational time to integrate (s): 8.28722
+[0.6956897 0.7      ]
+Computational time to integrate (s): 8.48889
+[0.7 0.7]
+Computational time to integrate (s): 8.81087
+[0.70689654 0.725     ]
+Computational time to integrate (s): 8.38175
+[0.7137931 0.725    ]
+Computational time to integrate (s): 8.17938
+[0.72068965 0.725     ]
+Computational time to integrate (s): 8.18752
+[0.725 0.725]
+Computational time to integrate (s): 8.35044
+[0.7318966 0.75     ]
+Computational time to integrate (s): 8.55882
+[0.73879313 0.75      ]
+Computational time to integrate (s): 8.45437
+[0.7456897 0.75     ]
+Computational time to integrate (s): 8.18148
+[0.75 0.75]
+Computational time to integrate (s): 8.20899
+[0.75689656 0.775     ]
+Computational time to integrate (s): 8.17131
+[0.7637931 0.775    ]
+Computational time to integrate (s): 8.66958
+[0.77068967 0.775     ]
+Computational time to integrate (s): 8.40974
+[0.775 0.775]
+Computational time to integrate (s): 8.50149
+[0.78189653 0.8       ]
+Computational time to integrate (s): 8.18242
+[0.7887931 0.8      ]
+Computational time to integrate (s): 8.22474
+[0.79568964 0.8       ]
+Computational time to integrate (s): 8.52072
+[0.8 0.8]
+Computational time to integrate (s): 8.76737
+[0.80689657 0.825     ]
+Computational time to integrate (s): 8.47528
+[0.8137931 0.825    ]
+Computational time to integrate (s): 8.17405
+[0.8206897 0.825    ]
+Computational time to integrate (s): 8.18114
+[0.825 0.825]
+Computational time to integrate (s): 8.23664
+[0.83189654 0.85      ]
+Computational time to integrate (s): 8.29153
+[0.8387931 0.85     ]
+Computational time to integrate (s): 8.73370
+[0.84568965 0.85      ]
+Computational time to integrate (s): 8.21152
+[0.85 0.85]
+Computational time to integrate (s): 8.28100
+[0.8568966 0.875    ]
+Computational time to integrate (s): 8.24716
+[0.86379313 0.875     ]
+Computational time to integrate (s): 8.78064
+[0.8706897 0.875    ]
+Computational time to integrate (s): 8.26592
+[0.875 0.875]
+Computational time to integrate (s): 8.49109
+[0.88189656 0.9       ]
+Computational time to integrate (s): 8.22352
+[0.8887931 0.9      ]
+Computational time to integrate (s): 8.43403
+[0.89568967 0.9       ]
+Computational time to integrate (s): 8.76129
+[0.9 0.9]
+Computational time to integrate (s): 8.52245
+[0.90689653 0.925     ]
+Computational time to integrate (s): 8.24744
+[0.9137931 0.925    ]
+Computational time to integrate (s): 8.28873
+[0.92068964 0.925     ]
+Computational time to integrate (s): 8.44691
+[0.925 0.925]
+Computational time to integrate (s): 8.57545
+[0.93189657 0.95      ]
+Computational time to integrate (s): 8.46916
+[0.9387931 0.95     ]
+Computational time to integrate (s): 8.23347
+[0.9456897 0.95     ]
+Computational time to integrate (s): 8.26225
+[0.95 0.95]
+Computational time to integrate (s): 8.22048
+[0.95689654 0.975     ]
+Computational time to integrate (s): 8.25638
+[0.9637931 0.975    ]
+Computational time to integrate (s): 8.66602
+[0.97068965 0.975     ]
+Computational time to integrate (s): 8.41065
+[0.975 0.975]
+Computational time to integrate (s): 8.52268
+[0.9818966 1.       ]
+Computational time to integrate (s): 8.22007
+[0.98879313 1.        ]
+Computational time to integrate (s): 8.29528
+[0.9956897 1.       ]
+Computational time to integrate (s): 8.56510
+[1. 1.]
+Computational time to integrate (s): 8.80889
+[1.0068965 1.025    ]
+Computational time to integrate (s): 8.46847
+[1.013793 1.025   ]
+Computational time to integrate (s): 8.26797
+[1.0206895 1.025    ]
+Computational time to integrate (s): 8.23410
+[1.025 1.025]
+Computational time to integrate (s): 8.28055
+[1.0318965 1.05     ]
+Computational time to integrate (s): 8.29536
+[1.038793 1.05    ]
+Computational time to integrate (s): 8.82836
+[1.0456895 1.05     ]
+Computational time to integrate (s): 8.22598
+[1.05 1.05]
+Computational time to integrate (s): 8.27075
+[1.0568964 1.075    ]
+Computational time to integrate (s): 8.24991
+[1.063793 1.075   ]
+Computational time to integrate (s): 8.80141
+[1.0706894 1.075    ]
+Computational time to integrate (s): 8.32222
+[1.075 1.075]
+Computational time to integrate (s): 8.52492
+[1.0818965 1.1      ]
+Computational time to integrate (s): 8.25334
+[1.088793 1.1     ]
+Computational time to integrate (s): 8.31467
+[1.0956895 1.1      ]
+Computational time to integrate (s): 8.52815
+[1.1 1.1]
+Computational time to integrate (s): 8.67385
+[1.1068965 1.125    ]
+Computational time to integrate (s): 8.67133
+[1.113793 1.125   ]
+Computational time to integrate (s): 8.25556
+[1.1206895 1.125    ]
+Computational time to integrate (s): 8.23063
+[1.125 1.125]
+Computational time to integrate (s): 8.31905
+[1.1318965 1.15     ]
+Computational time to integrate (s): 8.37487
+[1.138793 1.15    ]
+Computational time to integrate (s): 8.76455
+[1.1456895 1.15     ]
+Computational time to integrate (s): 8.27142
+[1.15 1.15]
+Computational time to integrate (s): 8.21755
+[1.1568965 1.175    ]
+Computational time to integrate (s): 8.21431
+[1.163793 1.175   ]
+Computational time to integrate (s): 8.82209
+[1.1706895 1.175    ]
+Computational time to integrate (s): 8.30085
+[1.175 1.175]
+Computational time to integrate (s): 8.56232
+[1.1818964 1.2      ]
+Computational time to integrate (s): 8.27447
+[1.188793 1.2     ]
+Computational time to integrate (s): 8.44788
+[1.1956894 1.2      ]
+Computational time to integrate (s): 8.73520
+[1.2 1.2]
+Computational time to integrate (s): 8.62123
+[1.2068965 1.225    ]
+Computational time to integrate (s): 8.23490
+[1.213793 1.225   ]
+Computational time to integrate (s): 8.58515
+[1.2206895 1.225    ]
+Computational time to integrate (s): 8.57886
+[1.225 1.225]
+Computational time to integrate (s): 8.55138
+[1.2318965 1.25     ]
+Computational time to integrate (s): 8.24860
+[1.238793 1.25    ]
+Computational time to integrate (s): 8.49711
+[1.2456895 1.25     ]
+Computational time to integrate (s): 8.82779
+[1.25 1.25]
+Computational time to integrate (s): 8.48755
+[1.2568965 1.275    ]
+Computational time to integrate (s): 8.27180
+[1.263793 1.275   ]
+Computational time to integrate (s): 8.23609
+[1.2706895 1.275    ]
+Computational time to integrate (s): 8.47085
+[1.275 1.275]
+Computational time to integrate (s): 8.60853
+[1.2818965 1.3      ]
+Computational time to integrate (s): 8.58228
+[1.288793 1.3     ]
+Computational time to integrate (s): 8.22347
+[1.2956895 1.3      ]
+Computational time to integrate (s): 8.32620
+[1.3 1.3]
+Computational time to integrate (s): 8.54356
+[1.3068964 1.325    ]
+Computational time to integrate (s): 8.92843
+[1.313793 1.325   ]
+Computational time to integrate (s): 8.56638
+[1.3206894 1.325    ]
+Computational time to integrate (s): 8.26092
+[1.325 1.325]
+Computational time to integrate (s): 8.21725
+[1.3318965 1.35     ]
+Computational time to integrate (s): 8.27873
+[1.338793 1.35    ]
+Computational time to integrate (s): 8.71588
+[1.3456895 1.35     ]
+Computational time to integrate (s): 8.45734
+[1.35 1.35]
+Computational time to integrate (s): 8.60351
+[1.3568965 1.375    ]
+Computational time to integrate (s): 8.26679
+[1.363793 1.375   ]
+Computational time to integrate (s): 8.48637
+[1.3706895 1.375    ]
+Computational time to integrate (s): 8.48498
+[1.375 1.375]
+Computational time to integrate (s): 8.78569
+[1.3818965 1.4      ]
+Computational time to integrate (s): 8.61472
+[1.388793 1.4     ]
+Computational time to integrate (s): 8.27684
+[1.3956895 1.4      ]
+Computational time to integrate (s): 8.56354
+[1.4 1.4]
+Computational time to integrate (s): 8.77053
+[1.4068965 1.425    ]
+Computational time to integrate (s): 8.49124
+[1.413793 1.425   ]
+Computational time to integrate (s): 8.26368
+[1.4206895 1.425    ]
+Computational time to integrate (s): 8.23788
+[1.425 1.425]
+Computational time to integrate (s): 8.24227
+[1.4318964 1.45     ]
+Computational time to integrate (s): 8.25542
+[1.438793 1.45    ]
+Computational time to integrate (s): 8.73702
+[1.4456894 1.45     ]
+Computational time to integrate (s): 8.47163
+[1.45 1.45]
+Computational time to integrate (s): 8.58955
+[1.4568965 1.475    ]
+Computational time to integrate (s): 8.25899
+[1.463793 1.475   ]
+Computational time to integrate (s): 8.46311
+[1.4706895 1.475    ]
+Computational time to integrate (s): 8.64716
+[1.475 1.475]
+Computational time to integrate (s): 8.90217
+[1.4818965 1.5      ]
+Computational time to integrate (s): 8.53559
+[1.488793 1.5     ]
+Computational time to integrate (s): 8.24056
+[1.4956895 1.5      ]
+Computational time to integrate (s): 8.27054
+[1.5 1.5]
+Computational time to integrate (s): 8.27083
+[1.5068965 1.525    ]
+Computational time to integrate (s): 8.27571
+[1.513793 1.525   ]
+Computational time to integrate (s): 8.79759
+[1.5206895 1.525    ]
+Computational time to integrate (s): 8.45187
+[1.525 1.525]
+Computational time to integrate (s): 8.62193
+[1.5318965 1.55     ]
+Computational time to integrate (s): 8.28434
+[1.538793 1.55    ]
+Computational time to integrate (s): 8.33953
+[1.5456895 1.55     ]
+Computational time to integrate (s): 8.89850
+[1.55 1.55]
+Computational time to integrate (s): 8.55533
+[1.5568964 1.575    ]
+Computational time to integrate (s): 8.29218
+[1.563793 1.575   ]
+Computational time to integrate (s): 8.61693
+[1.5706894 1.575    ]
+Computational time to integrate (s): 8.56192
+[1.575 1.575]
+Computational time to integrate (s): 8.58769
+[1.5818965 1.6      ]
+Computational time to integrate (s): 8.28292
+[1.588793 1.6     ]
+Computational time to integrate (s): 8.49086
+[1.5956895 1.6      ]
+Computational time to integrate (s): 8.92675
+[1.6 1.6]
+Computational time to integrate (s): 8.48828
+[1.6068965 1.625    ]
+Computational time to integrate (s): 8.32725
+[1.613793 1.625   ]
+Computational time to integrate (s): 8.39932
+[1.6206895 1.625    ]
+Computational time to integrate (s): 8.58465
+[1.625 1.625]
+Computational time to integrate (s): 8.73233
+[1.6318965 1.65     ]
+Computational time to integrate (s): 8.61973
+[1.638793 1.65    ]
+Computational time to integrate (s): 8.30075
+[1.6456895 1.65     ]
+Computational time to integrate (s): 8.29141
+[1.65 1.65]
+Computational time to integrate (s): 8.29699
+[1.6568965 1.675    ]
+Computational time to integrate (s): 8.28739
+[1.663793 1.675   ]
+Computational time to integrate (s): 8.81597
+[1.6706895 1.675    ]
+Computational time to integrate (s): 8.40495
+[1.675 1.675]
+Computational time to integrate (s): 8.53839
+[1.6818964 1.7      ]
+Computational time to integrate (s): 8.29961
+[1.688793 1.7     ]
+Computational time to integrate (s): 8.39641
+[1.6956894 1.7      ]
+Computational time to integrate (s): 8.56852
+[1.7 1.7]
+Computational time to integrate (s): 8.65528
+[1.7068965 1.725    ]
+Computational time to integrate (s): 8.66464
+[1.713793 1.725   ]
+Computational time to integrate (s): 8.29815
+[1.7206895 1.725    ]
+Computational time to integrate (s): 8.32562
+[1.725 1.725]
+Computational time to integrate (s): 8.44467
+[1.7318965 1.75     ]
+Computational time to integrate (s): 8.73718
+[1.738793 1.75    ]
+Computational time to integrate (s): 8.57139
+[1.7456895 1.75     ]
+Computational time to integrate (s): 8.27555
+[1.75 1.75]
+Computational time to integrate (s): 8.27082
+[1.7568965 1.775    ]
+Computational time to integrate (s): 8.26784
+[1.763793 1.775   ]
+Computational time to integrate (s): 8.79916
+[1.7706895 1.775    ]
+Computational time to integrate (s): 8.40163
+[1.775 1.775]
+Computational time to integrate (s): 8.60548
+[1.7818965 1.8      ]
+Computational time to integrate (s): 8.31998
+[1.788793 1.8     ]
+Computational time to integrate (s): 8.51085
+[1.7956895 1.8      ]
+Computational time to integrate (s): 8.92899
+[1.8 1.8]
+Computational time to integrate (s): 8.58880
+[1.8068964 1.825    ]
+Computational time to integrate (s): 8.32007
+[1.813793 1.825   ]
+Computational time to integrate (s): 8.40584
+[1.8206894 1.825    ]
+Computational time to integrate (s): 8.55514
+[1.825 1.825]
+Computational time to integrate (s): 8.96523
+[1.8318965 1.85     ]
+Computational time to integrate (s): 8.53283
+[1.838793 1.85    ]
+Computational time to integrate (s): 8.25815
+[1.8456895 1.85     ]
+Computational time to integrate (s): 8.36227
+[1.85 1.85]
+Computational time to integrate (s): 8.61008
+[1.8568965 1.875    ]
+Computational time to integrate (s): 9.01939
+[1.863793 1.875   ]
+Computational time to integrate (s): 8.60960
+[1.8706895 1.875    ]
+Computational time to integrate (s): 8.29473
+[1.875 1.875]
+Computational time to integrate (s): 8.28101
+[1.8818965 1.9      ]
+Computational time to integrate (s): 8.28909
+[1.888793 1.9     ]
+Computational time to integrate (s): 8.74942
+[1.8956895 1.9      ]
+Computational time to integrate (s): 8.49125
+[1.9 1.9]
+Computational time to integrate (s): 8.56333
+[1.9068965 1.925    ]
+Computational time to integrate (s): 8.29649
+[1.913793 1.925   ]
+Computational time to integrate (s): 8.39468
+[1.9206895 1.925    ]
+Computational time to integrate (s): 8.58685
+[1.925 1.925]
+Computational time to integrate (s): 8.94878
+[1.9318964 1.95     ]
+Computational time to integrate (s): 8.58861
+[1.938793 1.95    ]
+Computational time to integrate (s): 8.27324
+[1.9456894 1.95     ]
+Computational time to integrate (s): 8.36682
+[1.95 1.95]
+Computational time to integrate (s): 8.63226
+[1.9568965 1.975    ]
+Computational time to integrate (s): 8.96467
+[1.963793 1.975   ]
+Computational time to integrate (s): 8.59089
+[1.9706895 1.975    ]
+Computational time to integrate (s): 8.28660
+[1.975 1.975]
+Computational time to integrate (s): 8.26346
+[1.9818965 2.       ]
+Computational time to integrate (s): 8.31659
+[1.988793 2.      ]
+Computational time to integrate (s): 8.76675
+[1.9956895 2.       ]
+Computational time to integrate (s): 8.50624
+[2. 2.]
+Computational time to integrate (s): 8.64614
+[2.0068965 2.025    ]
+Computational time to integrate (s): 8.27841
+[2.013793 2.025   ]
+Computational time to integrate (s): 8.43426
+[2.0206895 2.025    ]
+Computational time to integrate (s): 8.95290
+[2.025 2.025]
+Computational time to integrate (s): 8.58813
+[2.0318966 2.05     ]
+Computational time to integrate (s): 8.29751
+[2.038793 2.05    ]
+Computational time to integrate (s): 8.29766
+[2.0456896 2.05     ]
+Computational time to integrate (s): 8.59595
+[2.05 2.05]
+Computational time to integrate (s): 8.72160
+[2.0568964 2.075    ]
+Computational time to integrate (s): 8.58983
+[2.063793 2.075   ]
+Computational time to integrate (s): 8.27882
+[2.0706894 2.075    ]
+Computational time to integrate (s): 8.28857
+[2.075 2.075]
+Computational time to integrate (s): 8.38727
+[2.0818965 2.1      ]
+Computational time to integrate (s): 8.71578
+[2.088793 2.1     ]
+Computational time to integrate (s): 8.59213
+[2.0956895 2.1      ]
+Computational time to integrate (s): 8.28031
+[2.1 2.1]
+Computational time to integrate (s): 8.31055
+[2.1068964 2.125    ]
+Computational time to integrate (s): 8.31930
+[2.113793 2.125   ]
+Computational time to integrate (s): 8.77420
+[2.1206894 2.125    ]
+Computational time to integrate (s): 8.42671
+[2.125 2.125]
+Computational time to integrate (s): 8.63406
+[2.1318965 2.15     ]
+Computational time to integrate (s): 8.26461
+[2.138793 2.15    ]
+Computational time to integrate (s): 8.41443
+[2.1456895 2.15     ]
+Computational time to integrate (s): 8.62644
+[2.15 2.15]
+Computational time to integrate (s): 8.94769
+[2.1568966 2.175    ]
+Computational time to integrate (s): 8.56000
+[2.163793 2.175   ]
+Computational time to integrate (s): 8.26814
+[2.1706896 2.175    ]
+Computational time to integrate (s): 8.29177
+[2.175 2.175]
+Computational time to integrate (s): 8.29751
+[2.1818964 2.2      ]
+Computational time to integrate (s): 8.30928
+[2.188793 2.2     ]
+Computational time to integrate (s): 8.82031
+[2.1956894 2.2      ]
+Computational time to integrate (s): 8.42862
+[2.2 2.2]
+Computational time to integrate (s): 8.66154
+[2.2068965 2.225    ]
+Computational time to integrate (s): 8.28516
+[2.213793 2.225   ]
+Computational time to integrate (s): 8.68494
+[2.2206895 2.225    ]
+Computational time to integrate (s): 8.60291
+[2.225 2.225]
+Computational time to integrate (s): 8.66065
+[2.2318964 2.25     ]
+Computational time to integrate (s): 8.31113
+[2.238793 2.25    ]
+Computational time to integrate (s): 8.69485
+[2.2456894 2.25     ]
+Computational time to integrate (s): 8.58443
+[2.25 2.25]
+Computational time to integrate (s): 8.64582
+[2.2568965 2.275    ]
+Computational time to integrate (s): 8.27699
+[2.263793 2.275   ]
+Computational time to integrate (s): 8.52561
+[2.2706895 2.275    ]
+Computational time to integrate (s): 8.91023
+[2.275 2.275]
+Computational time to integrate (s): 8.47207
+[2.2818966 2.3      ]
+Computational time to integrate (s): 8.28790
+[2.288793 2.3     ]
+Computational time to integrate (s): 8.36097
+[2.2956896 2.3      ]
+Computational time to integrate (s): 8.53281
+[2.3 2.3]
+Computational time to integrate (s): 8.68896
+[2.3068964 2.325    ]
+Computational time to integrate (s): 8.64088
+[2.313793 2.325   ]
+Computational time to integrate (s): 8.29520
+[2.3206894 2.325    ]
+Computational time to integrate (s): 8.30326
+[2.325 2.325]
+Computational time to integrate (s): 8.30135
+[2.3318965 2.35     ]
+Computational time to integrate (s): 8.32258
+[2.338793 2.35    ]
+Computational time to integrate (s): 8.86669
+[2.3456895 2.35     ]
+Computational time to integrate (s): 8.39355
+[2.35 2.35]
+Computational time to integrate (s): 8.64991
+[2.3568964 2.375    ]
+Computational time to integrate (s): 8.28712
+[2.363793 2.375   ]
+Computational time to integrate (s): 8.48073
+[2.3706894 2.375    ]
+Computational time to integrate (s): 8.63533
+[2.375 2.375]
+Computational time to integrate (s): 8.92890
+[2.3818965 2.4      ]
+Computational time to integrate (s): 8.62174
+[2.388793 2.4     ]
+Computational time to integrate (s): 8.28884
+[2.3956895 2.4      ]
+Computational time to integrate (s): 8.37813
+[2.4 2.4]
+Computational time to integrate (s): 8.59103
+[2.4068966 2.425    ]
+Computational time to integrate (s): 8.94294
+[2.413793 2.425   ]
+Computational time to integrate (s): 8.57839
+[2.4206896 2.425    ]
+Computational time to integrate (s): 8.30603
+[2.425 2.425]
+Computational time to integrate (s): 8.28392
+[2.4318964 2.45     ]
+Computational time to integrate (s): 8.31992
+[2.438793 2.45    ]
+Computational time to integrate (s): 8.83498
+[2.4456894 2.45     ]
+Computational time to integrate (s): 8.42598
+[2.45 2.45]
+Computational time to integrate (s): 8.63733
+[2.4568965 2.475    ]
+Computational time to integrate (s): 8.29605
+[2.463793 2.475   ]
+Computational time to integrate (s): 8.54236
+[2.4706895 2.475    ]
+Computational time to integrate (s): 8.95322
+[2.475 2.475]
+Computational time to integrate (s): 8.58761
+[2.4818964 2.5      ]
+Computational time to integrate (s): 8.29177
+[2.488793 2.5     ]
+Computational time to integrate (s): 8.37335
+[2.4956894 2.5      ]
+Computational time to integrate (s): 8.55410
+[2.5 2.5]
+Computational time to integrate (s): 8.71014
+[2.5068965 2.525    ]
+Computational time to integrate (s): 8.68339
+[2.513793 2.525   ]
+Computational time to integrate (s): 8.27600
+[2.5206895 2.525    ]
+Computational time to integrate (s): 8.28481
+[2.525 2.525]
+Computational time to integrate (s): 8.27889
+[2.5318966 2.55     ]
+Computational time to integrate (s): 8.28147
+[2.538793 2.55    ]
+Computational time to integrate (s): 8.89980
+[2.5456896 2.55     ]
+Computational time to integrate (s): 8.32572
+[2.55 2.55]
+Computational time to integrate (s): 8.66822
+[2.5568964 2.575    ]
+Computational time to integrate (s): 8.27372
+[2.563793 2.575   ]
+Computational time to integrate (s): 8.42138
+[2.5706894 2.575    ]
+Computational time to integrate (s): 9.00839
+[2.575 2.575]
+Computational time to integrate (s): 8.67941
+[2.5818965 2.6      ]
+Computational time to integrate (s): 8.29669
+[2.588793 2.6     ]
+Computational time to integrate (s): 8.60423
+[2.5956895 2.6      ]
+Computational time to integrate (s): 8.56051
+[2.6 2.6]
+Computational time to integrate (s): 8.72685
+[2.6068964 2.625    ]
+Computational time to integrate (s): 8.62562
+[2.613793 2.625   ]
+Computational time to integrate (s): 8.30819
+[2.6206894 2.625    ]
+Computational time to integrate (s): 8.48092
+[2.625 2.625]
+Computational time to integrate (s): 8.64933
+[2.6318965 2.65     ]
+Computational time to integrate (s): 8.62553
+[2.638793 2.65    ]
+Computational time to integrate (s): 8.31237
+[2.6456895 2.65     ]
+Computational time to integrate (s): 8.32619
+[2.65 2.65]
+Computational time to integrate (s): 8.30285
+[2.6568966 2.675    ]
+Computational time to integrate (s): 8.29374
+[2.663793 2.675   ]
+Computational time to integrate (s): 8.76535
+[2.6706896 2.675    ]
+Computational time to integrate (s): 8.46955
+[2.675 2.675]
+Computational time to integrate (s): 8.59477
+[2.6818964 2.7      ]
+Computational time to integrate (s): 8.31817
+[2.688793 2.7     ]
+Computational time to integrate (s): 8.35163
+[2.6956894 2.7      ]
+Computational time to integrate (s): 8.69808
+[2.7 2.7]
+Computational time to integrate (s): 8.98622
+[2.7068965 2.725    ]
+Computational time to integrate (s): 8.63099
+[2.713793 2.725   ]
+Computational time to integrate (s): 8.24547
+[2.7206895 2.725    ]
+Computational time to integrate (s): 8.37635
+[2.725 2.725]
+Computational time to integrate (s): 8.57714
+[2.7318964 2.75     ]
+Computational time to integrate (s): 8.87114
+[2.738793 2.75    ]
+Computational time to integrate (s): 8.63314
+[2.7456894 2.75     ]
+Computational time to integrate (s): 8.29646
+[2.75 2.75]
+Computational time to integrate (s): 8.26717
+[2.7568965 2.775    ]
+Computational time to integrate (s): 8.33237
+[2.763793 2.775   ]
+Computational time to integrate (s): 8.78861
+[2.7706895 2.775    ]
+Computational time to integrate (s): 8.44279
+[2.775 2.775]
+Computational time to integrate (s): 8.61809
+[2.7818966 2.8      ]
+Computational time to integrate (s): 8.30463
+[2.788793 2.8     ]
+Computational time to integrate (s): 8.37809
+[2.7956896 2.8      ]
+Computational time to integrate (s): 8.59272
+[2.8 2.8]
+Computational time to integrate (s): 8.71823
+[2.8068964 2.825    ]
+Computational time to integrate (s): 8.62895
+[2.813793 2.825   ]
+Computational time to integrate (s): 8.27759
+[2.8206894 2.825    ]
+Computational time to integrate (s): 8.39087
+[2.825 2.825]
+Computational time to integrate (s): 8.60416
+[2.8318965 2.85     ]
+Computational time to integrate (s): 8.97674
+[2.838793 2.85    ]
+Computational time to integrate (s): 8.62764
+[2.8456895 2.85     ]
+Computational time to integrate (s): 8.24485
+[2.85 2.85]
+Computational time to integrate (s): 8.33146
+[2.8568964 2.875    ]
+Computational time to integrate (s): 8.31022
+[2.863793 2.875   ]
+Computational time to integrate (s): 8.75146
+[2.8706894 2.875    ]
+Computational time to integrate (s): 8.52114
+[2.875 2.875]
+Computational time to integrate (s): 8.65173
+[2.8818965 2.9      ]
+Computational time to integrate (s): 8.27259
+[2.888793 2.9     ]
+Computational time to integrate (s): 8.38942
+[2.8956895 2.9      ]
+Computational time to integrate (s): 8.99904
+[2.9 2.9]
+Computational time to integrate (s): 8.59823
+[2.9068966 2.925    ]
+Computational time to integrate (s): 8.31902
+[2.913793 2.925   ]
+Computational time to integrate (s): 8.48115
+[2.9206896 2.925    ]
+Computational time to integrate (s): 8.95802
+[2.925 2.925]
+Computational time to integrate (s): 8.60969
+[2.9318964 2.95     ]
+Computational time to integrate (s): 8.28327
+[2.938793 2.95    ]
+Computational time to integrate (s): 8.51712
+[2.9456894 2.95     ]
+Computational time to integrate (s): 8.97556
+[2.95 2.95]
+Computational time to integrate (s): 8.51072
+[2.9568965 2.975    ]
+Computational time to integrate (s): 8.31852
+[2.963793 2.975   ]
+Computational time to integrate (s): 8.30401
+[2.9706895 2.975    ]
+Computational time to integrate (s): 8.54802
+[2.975 2.975]
+Computational time to integrate (s): 8.69026
+[2.9818964 3.       ]
+Computational time to integrate (s): 8.59205
+[2.988793 3.      ]
+Computational time to integrate (s): 8.30346
+[2.9956894 3.       ]
+Computational time to integrate (s): 8.29788
+[3. 3.]
+Computational time to integrate (s): 8.30578
+[3.0068965 3.025    ]
+Computational time to integrate (s): 8.29396
+[3.013793 3.025   ]
+Computational time to integrate (s): 8.71768
+[3.0206895 3.025    ]
+Computational time to integrate (s): 8.52100
+[3.025 3.025]
+Computational time to integrate (s): 8.58000
+[3.0318966 3.05     ]
+Computational time to integrate (s): 8.28544
+[3.038793 3.05    ]
+Computational time to integrate (s): 8.38989
+[3.0456896 3.05     ]
+Computational time to integrate (s): 8.68697
+[3.05 3.05]
+Computational time to integrate (s): 8.92629
+[3.0568964 3.075    ]
+Computational time to integrate (s): 8.65603
+[3.063793 3.075   ]
+Computational time to integrate (s): 8.27061
+[3.0706894 3.075    ]
+Computational time to integrate (s): 8.41080
+[3.075 3.075]
+Computational time to integrate (s): 8.51883
+[3.0818965 3.1      ]
+Computational time to integrate (s): 8.82687
+[3.088793 3.1     ]
+Computational time to integrate (s): 8.55409
+[3.0956895 3.1      ]
+Computational time to integrate (s): 8.26291
+[3.1 3.1]
+Computational time to integrate (s): 8.25813
+[3.1068964 3.125    ]
+Computational time to integrate (s): 8.31850
+[3.113793 3.125   ]
+Computational time to integrate (s): 8.76721
+[3.1206894 3.125    ]
+Computational time to integrate (s): 8.50603
+[3.125 3.125]
+Computational time to integrate (s): 8.55916
+[3.1318965 3.15     ]
+Computational time to integrate (s): 8.28005
+[3.138793 3.15    ]
+Computational time to integrate (s): 8.36214
+[3.1456895 3.15     ]
+Computational time to integrate (s): 8.61985
+[3.15 3.15]
+Computational time to integrate (s): 8.93568
+[3.1568966 3.175    ]
+Computational time to integrate (s): 8.61800
+[3.163793 3.175   ]
+Computational time to integrate (s): 8.28947
+[3.1706896 3.175    ]
+Computational time to integrate (s): 8.53426
+[3.175 3.175]
+Computational time to integrate (s): 8.70975
+[3.1818964 3.2      ]
+Computational time to integrate (s): 8.59933
+[3.188793 3.2     ]
+Computational time to integrate (s): 8.32161
+[3.1956894 3.2      ]
+Computational time to integrate (s): 8.26118
+[3.2 3.2]
+Computational time to integrate (s): 8.30071
+[3.2068965 3.225    ]
+Computational time to integrate (s): 8.29631
+[3.213793 3.225   ]
+Computational time to integrate (s): 8.77796
+[3.2206895 3.225    ]
+Computational time to integrate (s): 8.41819
+[3.225 3.225]
+Computational time to integrate (s): 8.55957
+[3.2318964 3.25     ]
+Computational time to integrate (s): 8.27181
+[3.238793 3.25    ]
+Computational time to integrate (s): 8.34186
+[3.2456894 3.25     ]
+Computational time to integrate (s): 8.57167
+[3.25 3.25]
+Computational time to integrate (s): 8.91736
+[3.2568965 3.275    ]
+Computational time to integrate (s): 8.54722
+[3.263793 3.275   ]
+Computational time to integrate (s): 8.28002
+[3.2706895 3.275    ]
+Computational time to integrate (s): 8.25762
+[3.275 3.275]
+Computational time to integrate (s): 8.25272
+[3.2818966 3.3      ]
+Computational time to integrate (s): 8.31227
+[3.288793 3.3     ]
+Computational time to integrate (s): 8.81381
+[3.2956896 3.3      ]
+Computational time to integrate (s): 8.39864
+[3.3 3.3]
+Computational time to integrate (s): 8.64582
+[3.3068964 3.325    ]
+Computational time to integrate (s): 8.28530
+[3.313793 3.325   ]
+Computational time to integrate (s): 8.61611
+[3.3206894 3.325    ]
+Computational time to integrate (s): 8.61081
+[3.325 3.325]
+Computational time to integrate (s): 8.64718
+[3.3318965 3.35     ]
+Computational time to integrate (s): 8.27970
+[3.338793 3.35    ]
+Computational time to integrate (s): 8.72632
+[3.3456895 3.35     ]
+Computational time to integrate (s): 8.55230
+[3.35 3.35]
+Computational time to integrate (s): 8.58732
+[3.3568964 3.375    ]
+Computational time to integrate (s): 8.30741
+[3.363793 3.375   ]
+Computational time to integrate (s): 8.63491
+[3.3706894 3.375    ]
+Computational time to integrate (s): 8.62046
+[3.375 3.375]
+Computational time to integrate (s): 8.64022
+[3.3818965 3.4      ]
+Computational time to integrate (s): 8.30284
+[3.388793 3.4     ]
+Computational time to integrate (s): 8.63017
+[3.3956895 3.4      ]
+Computational time to integrate (s): 8.63323
+[3.4 3.4]
+Computational time to integrate (s): 8.61084
+[3.4068966 3.425    ]
+Computational time to integrate (s): 8.31518
+[3.413793 3.425   ]
+Computational time to integrate (s): 8.48900
+[3.4206896 3.425    ]
+Computational time to integrate (s): 8.93992
+[3.425 3.425]
+Computational time to integrate (s): 8.59665
+[3.4318964 3.45     ]
+Computational time to integrate (s): 8.31130
+[3.438793 3.45    ]
+Computational time to integrate (s): 8.41910
+[3.4456894 3.45     ]
+Computational time to integrate (s): 8.63119
+[3.45 3.45]
+Computational time to integrate (s): 8.96049
+[3.4568965 3.475    ]
+Computational time to integrate (s): 8.51741
+[3.463793 3.475   ]
+Computational time to integrate (s): 8.30075
+[3.4706895 3.475    ]
+Computational time to integrate (s): 8.40246
+[3.475 3.475]
+Computational time to integrate (s): 8.42472
+[3.4818964 3.5      ]
+Computational time to integrate (s): 8.72885
+[3.488793 3.5     ]
+Computational time to integrate (s): 8.63221
+[3.4956894 3.5      ]
+Computational time to integrate (s): 8.27571
+[3.5 3.5]
+Computational time to integrate (s): 8.23332
+[3.5068965 3.525    ]
+Computational time to integrate (s): 8.27422
+[3.513793 3.525   ]
+Computational time to integrate (s): 8.75104
+[3.5206895 3.525    ]
+Computational time to integrate (s): 8.49225
+[3.525 3.525]
+Computational time to integrate (s): 8.70298
+[3.5318966 3.55     ]
+Computational time to integrate (s): 8.29217
+[3.538793 3.55    ]
+Computational time to integrate (s): 8.55254
+[3.5456896 3.55     ]
+Computational time to integrate (s): 8.75077
+[3.55 3.55]
+Computational time to integrate (s): 8.68509
+[3.5568964 3.575    ]
+Computational time to integrate (s): 8.26761
+[3.563793 3.575   ]
+Computational time to integrate (s): 8.70686
+[3.5706894 3.575    ]
+Computational time to integrate (s): 8.54513
+[3.575 3.575]
+Computational time to integrate (s): 8.59344
+[3.5818965 3.6      ]
+Computational time to integrate (s): 8.29704
+[3.588793 3.6     ]
+Computational time to integrate (s): 8.40682
+[3.5956895 3.6      ]
+Computational time to integrate (s): 8.95080
+[3.6 3.6]
+Computational time to integrate (s): 8.64387
+[3.6068964 3.625    ]
+Computational time to integrate (s): 8.30813
+[3.613793 3.625   ]
+Computational time to integrate (s): 8.52139
+[3.6206894 3.625    ]
+Computational time to integrate (s): 8.75151
+[3.625 3.625]
+Computational time to integrate (s): 8.62182
+[3.6318965 3.65     ]
+Computational time to integrate (s): 8.30113
+[3.638793 3.65    ]
+Computational time to integrate (s): 8.43031
+[3.6456895 3.65     ]
+Computational time to integrate (s): 8.94874
+[3.65 3.65]
+Computational time to integrate (s): 8.54790
+[3.6568966 3.675    ]
+Computational time to integrate (s): 8.31567
+[3.663793 3.675   ]
+Computational time to integrate (s): 8.28961
+[3.6706896 3.675    ]
+Computational time to integrate (s): 8.50803
+[3.675 3.675]
+Computational time to integrate (s): 8.70831
+[3.6818964 3.7      ]
+Computational time to integrate (s): 8.58476
+[3.688793 3.7     ]
+Computational time to integrate (s): 8.32946
+[3.6956894 3.7      ]
+Computational time to integrate (s): 8.29116
+[3.7 3.7]
+Computational time to integrate (s): 8.24669
+[3.7068965 3.725    ]
+Computational time to integrate (s): 8.31228
+[3.713793 3.725   ]
+Computational time to integrate (s): 8.86960
+[3.7206895 3.725    ]
+Computational time to integrate (s): 8.35450
+[3.725 3.725]
+Computational time to integrate (s): 8.52513
+[3.7318964 3.75     ]
+Computational time to integrate (s): 8.32184
+[3.738793 3.75    ]
+Computational time to integrate (s): 8.43396
+[3.7456894 3.75     ]
+Computational time to integrate (s): 8.58786
+[3.75 3.75]
+Computational time to integrate (s): 8.76473
+[3.7568965 3.775    ]
+Computational time to integrate (s): 8.55103
+[3.763793 3.775   ]
+Computational time to integrate (s): 8.28279
+[3.7706895 3.775    ]
+Computational time to integrate (s): 8.26292
+[3.775 3.775]
+Computational time to integrate (s): 8.28052
+[3.7818966 3.8      ]
+Computational time to integrate (s): 8.26289
+[3.788793 3.8     ]
+Computational time to integrate (s): 8.80511
+[3.7956896 3.8      ]
+Computational time to integrate (s): 8.37718
+[3.8 3.8]
+Computational time to integrate (s): 8.59182
+[3.8068964 3.825    ]
+Computational time to integrate (s): 8.27651
+[3.813793 3.825   ]
+Computational time to integrate (s): 8.40130
+[3.8206894 3.825    ]
+Computational time to integrate (s): 8.58497
+[3.825 3.825]
+Computational time to integrate (s): 8.90074
+[3.8318965 3.85     ]
+Computational time to integrate (s): 8.48662
+[3.838793 3.85    ]
+Computational time to integrate (s): 8.27219
+[3.8456895 3.85     ]
+Computational time to integrate (s): 8.24511
+[3.85 3.85]
+Computational time to integrate (s): 8.52354
+[3.8568964 3.875    ]
+Computational time to integrate (s): 8.78688
+[3.863793 3.875   ]
+Computational time to integrate (s): 8.61622
+[3.8706894 3.875    ]
+Computational time to integrate (s): 8.20545
+[3.875 3.875]
+Computational time to integrate (s): 8.22492
+[3.8818965 3.9      ]
+Computational time to integrate (s): 8.30339
+[3.888793 3.9     ]
+Computational time to integrate (s): 8.70560
+[3.8956895 3.9      ]
+Computational time to integrate (s): 8.53768
+[3.9 3.9]
+Computational time to integrate (s): 8.55440
+[3.9068966 3.925    ]
+Computational time to integrate (s): 8.27534
+[3.913793 3.925   ]
+Computational time to integrate (s): 8.36049
+[3.9206896 3.925    ]
+Computational time to integrate (s): 8.55268
+[3.925 3.925]
+Computational time to integrate (s): 8.72406
+[3.9318964 3.95     ]
+Computational time to integrate (s): 8.61863
+[3.938793 3.95    ]
+Computational time to integrate (s): 8.28812
+[3.9456894 3.95     ]
+Computational time to integrate (s): 8.25876
+[3.95 3.95]
+Computational time to integrate (s): 8.25386
+[3.9568965 3.975    ]
+Computational time to integrate (s): 8.29651
+[3.963793 3.975   ]
+Computational time to integrate (s): 8.79624
+[3.9706895 3.975    ]
+Computational time to integrate (s): 8.39864
+[3.975 3.975]
+Computational time to integrate (s): 8.64053
+[3.9818964 4.       ]
+Computational time to integrate (s): 8.30783
+[3.988793 4.      ]
+Computational time to integrate (s): 8.57937
+[3.9956894 4.       ]
+Computational time to integrate (s): 8.62753
+[4. 4.]
+Computational time to integrate (s): 8.57050
+[4.0068965 4.025    ]
+Computational time to integrate (s): 8.31296
+[4.013793 4.025   ]
+Computational time to integrate (s): 8.46807
+[4.0206895 4.025    ]
+Computational time to integrate (s): 8.60021
+[4.025 4.025]
+Computational time to integrate (s): 8.95819
+[4.0318966 4.05     ]
+Computational time to integrate (s): 8.53921
+[4.038793 4.05    ]
+Computational time to integrate (s): 8.28454
+[4.0456896 4.05     ]
+Computational time to integrate (s): 8.34328
+[4.05 4.05]
+Computational time to integrate (s): 8.46353
+[4.0568967 4.075    ]
+Computational time to integrate (s): 8.67693
+[4.063793 4.075   ]
+Computational time to integrate (s): 8.53889
+[4.0706897 4.075    ]
+Computational time to integrate (s): 8.26757
+[4.075 4.075]
+Computational time to integrate (s): 8.28789
+[4.0818963 4.1      ]
+Computational time to integrate (s): 8.26317
+[4.088793 4.1     ]
+Computational time to integrate (s): 8.81646
+[4.0956893 4.1      ]
+Computational time to integrate (s): 8.41960
+[4.1 4.1]
+Computational time to integrate (s): 8.59564
+[4.1068964 4.125    ]
+Computational time to integrate (s): 8.29210
+[4.113793 4.125   ]
+Computational time to integrate (s): 8.32770
+[4.1206894 4.125    ]
+Computational time to integrate (s): 8.57730
+[4.125 4.125]
+Computational time to integrate (s): 8.75525
+[4.1318965 4.15     ]
+Computational time to integrate (s): 8.59802
+[4.138793 4.15    ]
+Computational time to integrate (s): 8.25918
+[4.1456895 4.15     ]
+Computational time to integrate (s): 8.30736
+[4.15 4.15]
+Computational time to integrate (s): 8.33712
+[4.1568966 4.175    ]
+Computational time to integrate (s): 8.56895
+[4.163793 4.175   ]
+Computational time to integrate (s): 8.62106
+[4.1706896 4.175    ]
+Computational time to integrate (s): 8.26983
+[4.175 4.175]
+Computational time to integrate (s): 8.23100
+[4.1818967 4.2      ]
+Computational time to integrate (s): 8.28577
+[4.188793 4.2     ]
+Computational time to integrate (s): 8.72541
+[4.1956897 4.2      ]
+Computational time to integrate (s): 8.46918
+[4.2 4.2]
+Computational time to integrate (s): 8.64060
+[4.2068963 4.225    ]
+Computational time to integrate (s): 8.26245
+[4.213793 4.225   ]
+Computational time to integrate (s): 8.42283
+[4.2206893 4.225    ]
+Computational time to integrate (s): 8.93280
+[4.225 4.225]
+Computational time to integrate (s): 8.62957
+[4.2318964 4.25     ]
+Computational time to integrate (s): 8.25798
+[4.238793 4.25    ]
+Computational time to integrate (s): 8.47027
+[4.2456894 4.25     ]
+Computational time to integrate (s): 8.91211
+[4.25 4.25]
+Computational time to integrate (s): 8.59519
+[4.2568965 4.275    ]
+Computational time to integrate (s): 8.29455
+[4.263793 4.275   ]
+Computational time to integrate (s): 8.57660
+[4.2706895 4.275    ]
+Computational time to integrate (s): 8.65721
+[4.275 4.275]
+Computational time to integrate (s): 8.60797
+[4.2818966 4.3      ]
+Computational time to integrate (s): 8.24847
+[4.288793 4.3     ]
+Computational time to integrate (s): 8.60714
+[4.2956896 4.3      ]
+Computational time to integrate (s): 8.59708
+[4.3 4.3]
+Computational time to integrate (s): 8.62187
+[4.3068967 4.325    ]
+Computational time to integrate (s): 8.27968
+[4.313793 4.325   ]
+Computational time to integrate (s): 8.55238
+[4.3206897 4.325    ]
+Computational time to integrate (s): 8.85023
+[4.325 4.325]
+Computational time to integrate (s): 8.54631
+[4.3318963 4.35     ]
+Computational time to integrate (s): 8.29460
+[4.338793 4.35    ]
+Computational time to integrate (s): 8.32865
+[4.3456893 4.35     ]
+Computational time to integrate (s): 8.54294
+[4.35 4.35]
+Computational time to integrate (s): 8.91650
+[4.3568964 4.375    ]
+Computational time to integrate (s): 8.60752
+[4.363793 4.375   ]
+Computational time to integrate (s): 8.26358
+[4.3706894 4.375    ]
+Computational time to integrate (s): 8.28963
+[4.375 4.375]
+Computational time to integrate (s): 8.24223
+[4.3818965 4.4      ]
+Computational time to integrate (s): 8.68225
+[4.388793 4.4     ]
+Computational time to integrate (s): 8.52161
+[4.3956895 4.4      ]
+Computational time to integrate (s): 8.25526
+[4.4 4.4]
+Computational time to integrate (s): 8.23832
+[4.4068966 4.425    ]
+Computational time to integrate (s): 8.28479
+[4.413793 4.425   ]
+Computational time to integrate (s): 8.80962
+[4.4206896 4.425    ]
+Computational time to integrate (s): 8.38873
+[4.425 4.425]
+Computational time to integrate (s): 8.51881
+[4.4318967 4.45     ]
+Computational time to integrate (s): 8.26861
+[4.438793 4.45    ]
+Computational time to integrate (s): 8.26480
+[4.4456897 4.45     ]
+Computational time to integrate (s): 8.71065
+[4.45 4.45]
+Computational time to integrate (s): 8.93862
+[4.4568963 4.475    ]
+Computational time to integrate (s): 8.59632
+[4.463793 4.475   ]
+Computational time to integrate (s): 8.29490
+[4.4706893 4.475    ]
+Computational time to integrate (s): 8.35924
+[4.475 4.475]
+Computational time to integrate (s): 8.63072
+[4.4818964 4.5      ]
+Computational time to integrate (s): 8.97747
+[4.488793 4.5     ]
+Computational time to integrate (s): 8.60985
+[4.4956894 4.5      ]
+Computational time to integrate (s): 8.26114
+[4.5 4.5]
+Computational time to integrate (s): 8.28460
+[4.5068965 4.525    ]
+Computational time to integrate (s): 8.25817
+[4.513793 4.525   ]
+Computational time to integrate (s): 8.70382
+[4.5206895 4.525    ]
+Computational time to integrate (s): 8.48743
+[4.525 4.525]
+Computational time to integrate (s): 8.62129
+[4.5318966 4.55     ]
+Computational time to integrate (s): 8.26445
+[4.538793 4.55    ]
+Computational time to integrate (s): 8.36539
+[4.5456896 4.55     ]
+Computational time to integrate (s): 8.58729
+[4.55 4.55]
+Computational time to integrate (s): 8.74137
+[4.5568967 4.575    ]
+Computational time to integrate (s): 8.60934
+[4.563793 4.575   ]
+Computational time to integrate (s): 8.21271
+[4.5706897 4.575    ]
+Computational time to integrate (s): 8.25325
+[4.575 4.575]
+Computational time to integrate (s): 8.30348
+[4.5818963 4.6      ]
+Computational time to integrate (s): 8.28427
+[4.588793 4.6     ]
+Computational time to integrate (s): 8.87545
+[4.5956893 4.6      ]
+Computational time to integrate (s): 8.29624
+[4.6 4.6]
+Computational time to integrate (s): 8.51783
+[4.6068964 4.625    ]
+Computational time to integrate (s): 8.29420
+[4.613793 4.625   ]
+Computational time to integrate (s): 8.28231
+[4.6206894 4.625    ]
+Computational time to integrate (s): 8.62401
+[4.625 4.625]
+Computational time to integrate (s): 8.84241
+[4.6318965 4.65     ]
+Computational time to integrate (s): 8.54970
+[4.638793 4.65    ]
+Computational time to integrate (s): 8.26402
+[4.6456895 4.65     ]
+Computational time to integrate (s): 8.29957
+[4.65 4.65]
+Computational time to integrate (s): 8.33975
+[4.6568966 4.675    ]
+Computational time to integrate (s): 8.27409
+[4.663793 4.675   ]
+Computational time to integrate (s): 8.74270
+[4.6706896 4.675    ]
+Computational time to integrate (s): 8.46157
+[4.675 4.675]
+Computational time to integrate (s): 8.61311
+[4.6818967 4.7      ]
+Computational time to integrate (s): 8.28893
+[4.688793 4.7     ]
+Computational time to integrate (s): 8.66468
+[4.6956897 4.7      ]
+Computational time to integrate (s): 8.61134
+[4.7 4.7]
+Computational time to integrate (s): 8.58147
+[4.7068963 4.725    ]
+Computational time to integrate (s): 8.31094
+[4.713793 4.725   ]
+Computational time to integrate (s): 8.38852
+[4.7206893 4.725    ]
+Computational time to integrate (s): 8.93110
+[4.725 4.725]
+Computational time to integrate (s): 8.62144
+[4.7318964 4.75     ]
+Computational time to integrate (s): 8.31874
+[4.738793 4.75    ]
+Computational time to integrate (s): 8.56817
+[4.7456894 4.75     ]
+Computational time to integrate (s): 8.57460
+[4.75 4.75]
+Computational time to integrate (s): 8.55370
+[4.7568965 4.775    ]
+Computational time to integrate (s): 8.29442
+[4.763793 4.775   ]
+Computational time to integrate (s): 8.42552
+[4.7706895 4.775    ]
+Computational time to integrate (s): 8.58969
+[4.775 4.775]
+Computational time to integrate (s): 8.92111
+[4.7818966 4.8      ]
+Computational time to integrate (s): 8.50455
+[4.788793 4.8     ]
+Computational time to integrate (s): 8.28028
+[4.7956896 4.8      ]
+Computational time to integrate (s): 8.25930
+[4.8 4.8]
+Computational time to integrate (s): 8.40148
+[4.8068967 4.825    ]
+Computational time to integrate (s): 8.68157
+[4.813793 4.825   ]
+Computational time to integrate (s): 8.57152
+[4.8206897 4.825    ]
+Computational time to integrate (s): 8.30848
+[4.825 4.825]
+Computational time to integrate (s): 8.27315
+[4.8318963 4.85     ]
+Computational time to integrate (s): 8.32839
+[4.838793 4.85    ]
+Computational time to integrate (s): 8.73578
+[4.8456893 4.85     ]
+Computational time to integrate (s): 8.46527
+[4.85 4.85]
+Computational time to integrate (s): 8.55236
+[4.8568964 4.875    ]
+Computational time to integrate (s): 8.29980
+[4.863793 4.875   ]
+Computational time to integrate (s): 8.28678
+[4.8706894 4.875    ]
+Computational time to integrate (s): 8.59162
+[4.875 4.875]
+Computational time to integrate (s): 8.93812
+[4.8818965 4.9      ]
+Computational time to integrate (s): 8.57814
+[4.888793 4.9     ]
+Computational time to integrate (s): 8.24464
+[4.8956895 4.9      ]
+Computational time to integrate (s): 8.52281
+[4.9 4.9]
+Computational time to integrate (s): 8.46904
+[4.9068966 4.925    ]
+Computational time to integrate (s): 8.77947
+[4.913793 4.925   ]
+Computational time to integrate (s): 8.48201
+[4.9206896 4.925    ]
+Computational time to integrate (s): 8.27987
+[4.925 4.925]
+Computational time to integrate (s): 8.26390
+[4.9318967 4.95     ]
+Computational time to integrate (s): 8.27604
+[4.938793 4.95    ]
+Computational time to integrate (s): 8.78464
+[4.9456897 4.95     ]
+Computational time to integrate (s): 8.39700
+[4.95 4.95]
+Computational time to integrate (s): 8.61700
+[4.9568963 4.975    ]
+Computational time to integrate (s): 8.25319
+[4.963793 4.975   ]
+Computational time to integrate (s): 8.25784
+[4.9706893 4.975    ]
+Computational time to integrate (s): 8.54545
+[4.975 4.975]
+Computational time to integrate (s): 8.70757
+[4.9818964 5.       ]
+Computational time to integrate (s): 8.59211
+[4.988793 5.      ]
+Computational time to integrate (s): 8.32512
+[4.9956894 5.       ]
+Computational time to integrate (s): 8.25466
+[5. 5.]
+Computational time to integrate (s): 8.25201
+[5.0068965 5.025    ]
+Computational time to integrate (s): 8.27521
+[5.013793 5.025   ]
+Computational time to integrate (s): 8.79977
+[5.0206895 5.025    ]
+Computational time to integrate (s): 8.41664
+[5.025 5.025]
+Computational time to integrate (s): 8.63172
+[5.0318966 5.05     ]
+Computational time to integrate (s): 8.27488
+[5.038793 5.05    ]
+Computational time to integrate (s): 8.33069
+[5.0456896 5.05     ]
+Computational time to integrate (s): 8.89807
+[5.05 5.05]
+Computational time to integrate (s): 8.58982
+[5.0568967 5.075    ]
+Computational time to integrate (s): 8.25888
+[5.063793 5.075   ]
+Computational time to integrate (s): 8.41238
+[5.0706897 5.075    ]
+Computational time to integrate (s): 8.62494
+[5.075 5.075]
+Computational time to integrate (s): 8.86232
+[5.0818963 5.1      ]
+Computational time to integrate (s): 8.57517
+[5.088793 5.1     ]
+Computational time to integrate (s): 8.22388
+[5.0956893 5.1      ]
+Computational time to integrate (s): 8.31234
+[5.1 5.1]
+Computational time to integrate (s): 8.46936
+[5.1068964 5.125    ]
+Computational time to integrate (s): 8.69380
+[5.113793 5.125   ]
+Computational time to integrate (s): 8.61583
+[5.1206894 5.125    ]
+Computational time to integrate (s): 8.27855
+[5.125 5.125]
+Computational time to integrate (s): 8.27176
+[5.1318965 5.15     ]
+Computational time to integrate (s): 8.26317
+[5.138793 5.15    ]
+Computational time to integrate (s): 8.66874
+[5.1456895 5.15     ]
+Computational time to integrate (s): 8.52430
+[5.15 5.15]
+Computational time to integrate (s): 8.58447
+[5.1568966 5.175    ]
+Computational time to integrate (s): 8.29152
+[5.163793 5.175   ]
+Computational time to integrate (s): 8.49538
+[5.1706896 5.175    ]
+Computational time to integrate (s): 8.92201
+[5.175 5.175]
+Computational time to integrate (s): 8.47833
+[5.1818967 5.2      ]
+Computational time to integrate (s): 8.27718
+[5.188793 5.2     ]
+Computational time to integrate (s): 8.30966
+[5.1956897 5.2      ]
+Computational time to integrate (s): 8.52087
+[5.2 5.2]
+Computational time to integrate (s): 8.54049
+[5.2068963 5.225    ]
+Computational time to integrate (s): 8.63372
+[5.213793 5.225   ]
+Computational time to integrate (s): 8.28407
+[5.2206893 5.225    ]
+Computational time to integrate (s): 8.27999
+[5.225 5.225]
+Computational time to integrate (s): 8.26228
+[5.2318964 5.25     ]
+Computational time to integrate (s): 8.28237
+[5.238793 5.25    ]
+Computational time to integrate (s): 8.77828
+[5.2456894 5.25     ]
+Computational time to integrate (s): 8.39017
+[5.25 5.25]
+Computational time to integrate (s): 8.63877
+[5.2568965 5.275    ]
+Computational time to integrate (s): 8.28157
+[5.263793 5.275   ]
+Computational time to integrate (s): 8.56847
+[5.2706895 5.275    ]
+Computational time to integrate (s): 8.67298
+[5.275 5.275]
+Computational time to integrate (s): 8.60079
+[5.2818966 5.3      ]
+Computational time to integrate (s): 8.27388
+[5.288793 5.3     ]
+Computational time to integrate (s): 8.49435
+[5.2956896 5.3      ]
+Computational time to integrate (s): 8.93903
+[5.3 5.3]
+Computational time to integrate (s): 8.56292
+[5.3068967 5.325    ]
+Computational time to integrate (s): 8.28913
+[5.313793 5.325   ]
+Computational time to integrate (s): 8.29014
+[5.3206897 5.325    ]
+Computational time to integrate (s): 8.54464
+[5.325 5.325]
+Computational time to integrate (s): 8.73857
+[5.3318963 5.35     ]
+Computational time to integrate (s): 8.52589
+[5.338793 5.35    ]
+Computational time to integrate (s): 8.28292
+[5.3456893 5.35     ]
+Computational time to integrate (s): 8.29886
+[5.35 5.35]
+Computational time to integrate (s): 8.24611
+[5.3568964 5.375    ]
+Computational time to integrate (s): 8.30336
+[5.363793 5.375   ]
+Computational time to integrate (s): 8.74993
+[5.3706894 5.375    ]
+Computational time to integrate (s): 8.45096
+[5.375 5.375]
+Computational time to integrate (s): 8.64737
+[5.3818965 5.4      ]
+Computational time to integrate (s): 8.28481
+[5.388793 5.4     ]
+Computational time to integrate (s): 8.33319
+[5.3956895 5.4      ]
+Computational time to integrate (s): 8.69472
+[5.4 5.4]
+Computational time to integrate (s): 8.96901
+[5.4068966 5.425    ]
+Computational time to integrate (s): 8.56074
+[5.413793 5.425   ]
+Computational time to integrate (s): 8.27199
+[5.4206896 5.425    ]
+Computational time to integrate (s): 8.55287
+[5.425 5.425]
+Computational time to integrate (s): 8.69249
+[5.4318967 5.45     ]
+Computational time to integrate (s): 8.55951
+[5.438793 5.45    ]
+Computational time to integrate (s): 8.30775
+[5.4456897 5.45     ]
+Computational time to integrate (s): 8.31059
+[5.45 5.45]
+Computational time to integrate (s): 8.58533
+[5.4568963 5.475    ]
+Computational time to integrate (s): 8.94406
+[5.463793 5.475   ]
+Computational time to integrate (s): 8.63690
+[5.4706893 5.475    ]
+Computational time to integrate (s): 8.23477
+[5.475 5.475]
+Computational time to integrate (s): 8.29306
+[5.4818964 5.5      ]
+Computational time to integrate (s): 8.24456
+[5.488793 5.5     ]
+Computational time to integrate (s): 8.84524
+[5.4956894 5.5      ]
+Computational time to integrate (s): 8.34349
+[5.5 5.5]
+Computational time to integrate (s): 8.55876
+[5.5068965 5.525    ]
+Computational time to integrate (s): 8.26755
+[5.513793 5.525   ]
+Computational time to integrate (s): 8.27865
+[5.5206895 5.525    ]
+Computational time to integrate (s): 8.49232
+[5.525 5.525]
+Computational time to integrate (s): 8.72169
+[5.5318966 5.55     ]
+Computational time to integrate (s): 8.57828
+[5.538793 5.55    ]
+Computational time to integrate (s): 8.26291
+[5.5456896 5.55     ]
+Computational time to integrate (s): 8.28002
+[5.55 5.55]
+Computational time to integrate (s): 8.41947
+[5.5568967 5.575    ]
+Computational time to integrate (s): 8.67280
+[5.563793 5.575   ]
+Computational time to integrate (s): 8.54402
+[5.5706897 5.575    ]
+Computational time to integrate (s): 8.26477
+[5.575 5.575]
+Computational time to integrate (s): 8.24945
+[5.5818963 5.6      ]
+Computational time to integrate (s): 8.27048
+[5.588793 5.6     ]
+Computational time to integrate (s): 8.67714
+[5.5956893 5.6      ]
+Computational time to integrate (s): 8.54308
+[5.6 5.6]
+Computational time to integrate (s): 8.57932
+[5.6068964 5.625    ]
+Computational time to integrate (s): 8.29349
+[5.613793 5.625   ]
+Computational time to integrate (s): 8.39775
+[5.6206894 5.625    ]
+Computational time to integrate (s): 8.60952
+[5.625 5.625]
+Computational time to integrate (s): 8.86008
+[5.6318965 5.65     ]
+Computational time to integrate (s): 8.52323
+[5.638793 5.65    ]
+Computational time to integrate (s): 8.25505
+[5.6456895 5.65     ]
+Computational time to integrate (s): 8.31412
+[5.65 5.65]
+Computational time to integrate (s): 8.25898
+[5.6568966 5.675    ]
+Computational time to integrate (s): 8.29596
+[5.663793 5.675   ]
+Computational time to integrate (s): 8.97707
+[5.6706896 5.675    ]
+Computational time to integrate (s): 8.29740
+[5.675 5.675]
+Computational time to integrate (s): 8.63802
+[5.6818967 5.7      ]
+Computational time to integrate (s): 8.28830
+[5.688793 5.7     ]
+Computational time to integrate (s): 8.65063
+[5.6956897 5.7      ]
+Computational time to integrate (s): 8.48546
+[5.7 5.7]
+Computational time to integrate (s): 8.64655
+[5.7068963 5.725    ]
+Computational time to integrate (s): 8.25390
+[5.713793 5.725   ]
+Computational time to integrate (s): 8.41033
+[5.7206893 5.725    ]
+Computational time to integrate (s): 8.55130
+[5.725 5.725]
+Computational time to integrate (s): 8.64537
+[5.7318964 5.75     ]
+Computational time to integrate (s): 8.52787
+[5.738793 5.75    ]
+Computational time to integrate (s): 8.37922
+[5.7456894 5.75     ]
+Computational time to integrate (s): 8.26182
+[5.75 5.75]
+Computational time to integrate (s): 8.27079
+[5.7568965 5.775    ]
+Computational time to integrate (s): 8.29701
+[5.763793 5.775   ]
+Computational time to integrate (s): 8.73970
+[5.7706895 5.775    ]
+Computational time to integrate (s): 8.46116
+[5.775 5.775]
+Computational time to integrate (s): 8.65105
+[5.7818966 5.8      ]
+Computational time to integrate (s): 8.29455
+[5.788793 5.8     ]
+Computational time to integrate (s): 8.37000
+[5.7956896 5.8      ]
+Computational time to integrate (s): 8.92436
+[5.8 5.8]
+Computational time to integrate (s): 8.59481
+[5.8068967 5.825    ]
+Computational time to integrate (s): 8.28165
+[5.813793 5.825   ]
+Computational time to integrate (s): 8.28836
+[5.8206897 5.825    ]
+Computational time to integrate (s): 8.48897
+[5.825 5.825]
+Computational time to integrate (s): 8.77329
+[5.8318963 5.85     ]
+Computational time to integrate (s): 8.63127
+[5.838793 5.85    ]
+Computational time to integrate (s): 8.33340
+[5.8456893 5.85     ]
+Computational time to integrate (s): 8.24954
+[5.85 5.85]
+Computational time to integrate (s): 8.26725
+[5.8568964 5.875    ]
+Computational time to integrate (s): 8.27312
+[5.863793 5.875   ]
+Computational time to integrate (s): 8.72483
+[5.8706894 5.875    ]
+Computational time to integrate (s): 8.49462
+[5.875 5.875]
+Computational time to integrate (s): 8.54465
+[5.8818965 5.9      ]
+Computational time to integrate (s): 8.27714
+[5.888793 5.9     ]
+Computational time to integrate (s): 8.45336
+[5.8956895 5.9      ]
+Computational time to integrate (s): 8.54473
+[5.9 5.9]
+Computational time to integrate (s): 8.93112
+[5.9068966 5.925    ]
+Computational time to integrate (s): 8.50893
+[5.913793 5.925   ]
+Computational time to integrate (s): 8.24748
+[5.9206896 5.925    ]
+Computational time to integrate (s): 8.32202
+[5.925 5.925]
+Computational time to integrate (s): 8.56524
+[5.9318967 5.95     ]
+Computational time to integrate (s): 8.80730
+[5.938793 5.95    ]
+Computational time to integrate (s): 8.56403
+[5.9456897 5.95     ]
+Computational time to integrate (s): 8.26758
+[5.95 5.95]
+Computational time to integrate (s): 8.26176
+[5.9568963 5.975    ]
+Computational time to integrate (s): 8.26232
+[5.963793 5.975   ]
+Computational time to integrate (s): 8.80359
+[5.9706893 5.975    ]
+Computational time to integrate (s): 8.41706
+[5.975 5.975]
+Computational time to integrate (s): 8.65962
+[5.9818964 6.       ]
+Computational time to integrate (s): 8.32990
+[5.988793 6.      ]
+Computational time to integrate (s): 8.38826
+[5.9956894 6.       ]
+Computational time to integrate (s): 8.95632
+[6. 6.]
+Computational time to integrate (s): 8.60627
+[6.0068965 6.025    ]
+Computational time to integrate (s): 8.28054
+[6.013793 6.025   ]
+Computational time to integrate (s): 8.55344
+[6.0206895 6.025    ]
+Computational time to integrate (s): 8.68063
+[6.025 6.025]
+Computational time to integrate (s): 8.62482
+[6.0318966 6.05     ]
+Computational time to integrate (s): 8.25589
+[6.038793 6.05    ]
+Computational time to integrate (s): 8.62548
+[6.0456896 6.05     ]
+Computational time to integrate (s): 8.60315
+[6.05 6.05]
+Computational time to integrate (s): 8.62464
+[6.0568967 6.075    ]
+Computational time to integrate (s): 8.34795
+[6.063793 6.075   ]
+Computational time to integrate (s): 8.64904
+[6.0706897 6.075    ]
+Computational time to integrate (s): 8.60880
+[6.075 6.075]
+Computational time to integrate (s): 8.65140
+[6.0818963 6.1      ]
+Computational time to integrate (s): 8.26936
+[6.088793 6.1     ]
+Computational time to integrate (s): 8.65331
+[6.0956893 6.1      ]
+Computational time to integrate (s): 8.57214
+[6.1 6.1]
+Computational time to integrate (s): 8.67968
+[6.1068964 6.125    ]
+Computational time to integrate (s): 8.30266
+[6.113793 6.125   ]
+Computational time to integrate (s): 8.70181
+[6.1206894 6.125    ]
+Computational time to integrate (s): 8.50104
+[6.125 6.125]
+Computational time to integrate (s): 8.60713
+[6.1318965 6.15     ]
+Computational time to integrate (s): 8.29077
+[6.138793 6.15    ]
+Computational time to integrate (s): 8.45632
+[6.1456895 6.15     ]
+Computational time to integrate (s): 8.65697
+[6.15 6.15]
+Computational time to integrate (s): 8.94311
+[6.1568966 6.175    ]
+Computational time to integrate (s): 8.54931
+[6.163793 6.175   ]
+Computational time to integrate (s): 8.24537
+[6.1706896 6.175    ]
+Computational time to integrate (s): 8.32785
+[6.175 6.175]
+Computational time to integrate (s): 8.58299
+[6.1818967 6.2      ]
+Computational time to integrate (s): 8.92610
+[6.188793 6.2     ]
+Computational time to integrate (s): 8.56633
+[6.1956897 6.2      ]
+Computational time to integrate (s): 8.28958
+[6.2 6.2]
+Computational time to integrate (s): 8.27824
+[6.2068963 6.225    ]
+Computational time to integrate (s): 8.30051
+[6.213793 6.225   ]
+Computational time to integrate (s): 8.79779
+[6.2206893 6.225    ]
+Computational time to integrate (s): 8.40373
+[6.225 6.225]
+Computational time to integrate (s): 8.56750
+[6.2318964 6.25     ]
+Computational time to integrate (s): 8.28194
+[6.238793 6.25    ]
+Computational time to integrate (s): 8.33873
+[6.2456894 6.25     ]
+Computational time to integrate (s): 8.69620
+[6.25 6.25]
+Computational time to integrate (s): 8.90044
+[6.2568965 6.275    ]
+Computational time to integrate (s): 8.55590
+[6.263793 6.275   ]
+Computational time to integrate (s): 8.29983
+[6.2706895 6.275    ]
+Computational time to integrate (s): 8.32389
+[6.275 6.275]
+Computational time to integrate (s): 8.59513
+[6.2818966 6.3      ]
+Computational time to integrate (s): 8.98076
+[6.288793 6.3     ]
+Computational time to integrate (s): 8.54703
+[6.2956896 6.3      ]
+Computational time to integrate (s): 8.28239
+[6.3 6.3]
+Computational time to integrate (s): 8.25792
+[6.3068967 6.325    ]
+Computational time to integrate (s): 8.25291
+[6.313793 6.325   ]
+Computational time to integrate (s): 8.79705
+[6.3206897 6.325    ]
+Computational time to integrate (s): 8.41127
+[6.325 6.325]
+Computational time to integrate (s): 8.61525
+[6.3318963 6.35     ]
+Computational time to integrate (s): 8.27635
+[6.338793 6.35    ]
+Computational time to integrate (s): 8.68897
+[6.3456893 6.35     ]
+Computational time to integrate (s): 8.50876
+[6.35 6.35]
+Computational time to integrate (s): 8.58817
+[6.3568964 6.375    ]
+Computational time to integrate (s): 8.27928
+[6.363793 6.375   ]
+Computational time to integrate (s): 8.40699
+[6.3706894 6.375    ]
+Computational time to integrate (s): 8.92741
+[6.375 6.375]
+Computational time to integrate (s): 8.59099
+[6.3818965 6.4      ]
+Computational time to integrate (s): 8.27860
+[6.388793 6.4     ]
+Computational time to integrate (s): 8.47550
+[6.3956895 6.4      ]
+Computational time to integrate (s): 8.90389
+[6.4 6.4]
+Computational time to integrate (s): 8.54642
+[6.4068966 6.425    ]
+Computational time to integrate (s): 8.29482
+[6.413793 6.425   ]
+Computational time to integrate (s): 8.33880
+[6.4206896 6.425    ]
+Computational time to integrate (s): 8.54068
+[6.425 6.425]
+Computational time to integrate (s): 8.73797
+[6.4318967 6.45     ]
+Computational time to integrate (s): 8.62501
+[6.438793 6.45    ]
+Computational time to integrate (s): 8.28270
+[6.4456897 6.45     ]
+Computational time to integrate (s): 8.28833
+[6.45 6.45]
+Computational time to integrate (s): 8.27384
+[6.4568963 6.475    ]
+Computational time to integrate (s): 8.25450
+[6.463793 6.475   ]
+Computational time to integrate (s): 8.69987
+[6.4706893 6.475    ]
+Computational time to integrate (s): 8.47391
+[6.475 6.475]
+Computational time to integrate (s): 8.60155
+[6.4818964 6.5      ]
+Computational time to integrate (s): 8.26096
+[6.488793 6.5     ]
+Computational time to integrate (s): 8.39793
+[6.4956894 6.5      ]
+Computational time to integrate (s): 8.50311
+[6.5 6.5]
+Computational time to integrate (s): 8.61304
+[6.5068965 6.525    ]
+Computational time to integrate (s): 8.63413
+[6.513793 6.525   ]
+Computational time to integrate (s): 8.26724
+[6.5206895 6.525    ]
+Computational time to integrate (s): 8.29770
+[6.525 6.525]
+Computational time to integrate (s): 8.57928
+[6.5318966 6.55     ]
+Computational time to integrate (s): 8.97374
+[6.538793 6.55    ]
+Computational time to integrate (s): 8.60603
+[6.5456896 6.55     ]
+Computational time to integrate (s): 8.28489
+[6.55 6.55]
+Computational time to integrate (s): 8.27842
+[6.5568967 6.575    ]
+Computational time to integrate (s): 8.31220
+[6.563793 6.575   ]
+Computational time to integrate (s): 8.83590
+[6.5706897 6.575    ]
+Computational time to integrate (s): 8.40613
+[6.575 6.575]
+Computational time to integrate (s): 8.54422
+[6.5818963 6.6      ]
+Computational time to integrate (s): 8.27057
+[6.588793 6.6     ]
+Computational time to integrate (s): 8.35560
+[6.5956893 6.6      ]
+Computational time to integrate (s): 8.60091
+[6.6 6.6]
+Computational time to integrate (s): 8.86905
+[6.6068964 6.625    ]
+Computational time to integrate (s): 8.58657
+[6.613793 6.625   ]
+Computational time to integrate (s): 8.27337
+[6.6206894 6.625    ]
+Computational time to integrate (s): 8.31127
+[6.625 6.625]
+Computational time to integrate (s): 8.46522
+[6.6318965 6.65     ]
+Computational time to integrate (s): 8.68926
+[6.638793 6.65    ]
+Computational time to integrate (s): 8.59100
+[6.6456895 6.65     ]
+Computational time to integrate (s): 8.28016
+[6.65 6.65]
+Computational time to integrate (s): 8.23430
+[6.6568966 6.675    ]
+Computational time to integrate (s): 8.29873
+[6.663793 6.675   ]
+Computational time to integrate (s): 8.64719
+[6.6706896 6.675    ]
+Computational time to integrate (s): 8.51203
+[6.675 6.675]
+Computational time to integrate (s): 8.57256
+[6.6818967 6.7      ]
+Computational time to integrate (s): 8.27614
+[6.688793 6.7     ]
+Computational time to integrate (s): 8.32644
+[6.6956897 6.7      ]
+Computational time to integrate (s): 8.62298
+[6.7 6.7]
+Computational time to integrate (s): 8.72357
+[6.7068963 6.725    ]
+Computational time to integrate (s): 8.57303
+[6.713793 6.725   ]
+Computational time to integrate (s): 8.29546
+[6.7206893 6.725    ]
+Computational time to integrate (s): 8.24825
+[6.725 6.725]
+Computational time to integrate (s): 8.24033
+[6.7318964 6.75     ]
+Computational time to integrate (s): 8.24898
+[6.738793 6.75    ]
+Computational time to integrate (s): 8.78899
+[6.7456894 6.75     ]
+Computational time to integrate (s): 8.41800
+[6.75 6.75]
+Computational time to integrate (s): 8.62473
+[6.7568965 6.775    ]
+Computational time to integrate (s): 8.28598
+[6.763793 6.775   ]
+Computational time to integrate (s): 8.55084
+[6.7706895 6.775    ]
+Computational time to integrate (s): 8.66634
+[6.775 6.775]
+Computational time to integrate (s): 8.58531
+[6.7818966 6.8      ]
+Computational time to integrate (s): 8.27501
+[6.788793 6.8     ]
+Computational time to integrate (s): 8.33133
+[6.7956896 6.8      ]
+Computational time to integrate (s): 8.45802
+[6.8 6.8]
+Computational time to integrate (s): 8.79252
+[6.8068967 6.825    ]
+Computational time to integrate (s): 8.55568
+[6.813793 6.825   ]
+Computational time to integrate (s): 8.27646
+[6.8206897 6.825    ]
+Computational time to integrate (s): 8.26505
+[6.825 6.825]
+Computational time to integrate (s): 8.25977
+[6.8318963 6.85     ]
+Computational time to integrate (s): 8.26047
+[6.838793 6.85    ]
+Computational time to integrate (s): 8.66712
+[6.8456893 6.85     ]
+Computational time to integrate (s): 8.55344
+[6.85 6.85]
+Computational time to integrate (s): 8.57507
+[6.8568964 6.875    ]
+Computational time to integrate (s): 8.28056
+[6.863793 6.875   ]
+Computational time to integrate (s): 8.35361
+[6.8706894 6.875    ]
+Computational time to integrate (s): 8.92498
+[6.875 6.875]
+Computational time to integrate (s): 8.52325
+[6.8818965 6.9      ]
+Computational time to integrate (s): 8.26587
+[6.888793 6.9     ]
+Computational time to integrate (s): 8.47747
+[6.8956895 6.9      ]
+Computational time to integrate (s): 8.81438
+[6.9 6.9]
+Computational time to integrate (s): 8.49134
+[6.9068966 6.925    ]
+Computational time to integrate (s): 8.30907
+[6.913793 6.925   ]
+Computational time to integrate (s): 8.27388
+[6.9206896 6.925    ]
+Computational time to integrate (s): 8.63051
+[6.925 6.925]
+Computational time to integrate (s): 8.84021
+[6.9318967 6.95     ]
+Computational time to integrate (s): 8.51413
+[6.938793 6.95    ]
+Computational time to integrate (s): 8.27230
+[6.9456897 6.95     ]
+Computational time to integrate (s): 8.26329
+[6.95 6.95]
+Computational time to integrate (s): 8.27292
+[6.9568963 6.975    ]
+Computational time to integrate (s): 8.28558
+[6.963793 6.975   ]
+Computational time to integrate (s): 8.89934
+[6.9706893 6.975    ]
+Computational time to integrate (s): 8.27243
+[6.975 6.975]
+Computational time to integrate (s): 8.64437
+[6.9818964 7.       ]
+Computational time to integrate (s): 8.28202
+[6.988793 7.      ]
+Computational time to integrate (s): 8.42487
+[6.9956894 7.       ]
+Computational time to integrate (s): 8.95564
+[7. 7.]
+Computational time to integrate (s): 8.58727
+[7.0068965 7.025    ]
+Computational time to integrate (s): 8.28115
+[7.013793 7.025   ]
+Computational time to integrate (s): 8.37507
+[7.0206895 7.025    ]
+Computational time to integrate (s): 8.55836
+[7.025 7.025]
+Computational time to integrate (s): 8.63205
+[7.0318966 7.05     ]
+Computational time to integrate (s): 8.55175
+[7.038793 7.05    ]
+Computational time to integrate (s): 8.26890
+[7.0456896 7.05     ]
+Computational time to integrate (s): 8.28860
+[7.05 7.05]
+Computational time to integrate (s): 8.29262
+[7.0568967 7.075    ]
+Computational time to integrate (s): 8.31005
+[7.063793 7.075   ]
+Computational time to integrate (s): 8.72832
+[7.0706897 7.075    ]
+Computational time to integrate (s): 8.46431
+[7.075 7.075]
+Computational time to integrate (s): 8.66216
+[7.0818963 7.1      ]
+Computational time to integrate (s): 8.26898
+[7.088793 7.1     ]
+Computational time to integrate (s): 8.40306
+[7.0956893 7.1      ]
+Computational time to integrate (s): 8.52789
+[7.1 7.1]
+Computational time to integrate (s): 8.90009
+[7.1068964 7.125    ]
+Computational time to integrate (s): 8.48843
+[7.113793 7.125   ]
+Computational time to integrate (s): 8.26768
+[7.1206894 7.125    ]
+Computational time to integrate (s): 8.36627
+[7.125 7.125]
+Computational time to integrate (s): 8.43126
+[7.1318965 7.15     ]
+Computational time to integrate (s): 8.67087
+[7.138793 7.15    ]
+Computational time to integrate (s): 8.58326
+[7.1456895 7.15     ]
+Computational time to integrate (s): 8.27354
+[7.15 7.15]
+Computational time to integrate (s): 8.23704
+[7.1568966 7.175    ]
+Computational time to integrate (s): 8.24274
+[7.163793 7.175   ]
+Computational time to integrate (s): 8.68118
+[7.1706896 7.175    ]
+Computational time to integrate (s): 8.48886
+[7.175 7.175]
+Computational time to integrate (s): 8.58485
+[7.1818967 7.2      ]
+Computational time to integrate (s): 8.28984
+[7.188793 7.2     ]
+Computational time to integrate (s): 8.33175
+[7.1956897 7.2      ]
+Computational time to integrate (s): 8.55819
+[7.2 7.2]
+Computational time to integrate (s): 8.67785
+[7.2068963 7.225    ]
+Computational time to integrate (s): 8.62275
+[7.213793 7.225   ]
+Computational time to integrate (s): 8.26924
+[7.2206893 7.225    ]
+Computational time to integrate (s): 8.30599
+[7.225 7.225]
+Computational time to integrate (s): 8.37613
+[7.2318964 7.25     ]
+Computational time to integrate (s): 8.46137
+[7.238793 7.25    ]
+Computational time to integrate (s): 8.82703
+[7.2456894 7.25     ]
+Computational time to integrate (s): 8.26450
+[7.25 7.25]
+Computational time to integrate (s): 8.26803
+[7.2568965 7.275    ]
+Computational time to integrate (s): 8.28453
+[7.263793 7.275   ]
+Computational time to integrate (s): 8.77586
+[7.2706895 7.275    ]
+Computational time to integrate (s): 8.39170
+[7.275 7.275]
+Computational time to integrate (s): 8.62956
+[7.2818966 7.3      ]
+Computational time to integrate (s): 8.26724
+[7.288793 7.3     ]
+Computational time to integrate (s): 8.44105
+[7.2956896 7.3      ]
+Computational time to integrate (s): 8.57855
+[7.3 7.3]
+Computational time to integrate (s): 8.79272
+[7.3068967 7.325    ]
+Computational time to integrate (s): 8.51847
+[7.313793 7.325   ]
+Computational time to integrate (s): 8.26844
+[7.3206897 7.325    ]
+Computational time to integrate (s): 8.27699
+[7.325 7.325]
+Computational time to integrate (s): 8.58801
+[7.3318963 7.35     ]
+Computational time to integrate (s): 9.00427
+[7.338793 7.35    ]
+Computational time to integrate (s): 8.52393
+[7.3456893 7.35     ]
+Computational time to integrate (s): 8.30584
+[7.35 7.35]
+Computational time to integrate (s): 8.27275
+[7.3568964 7.375    ]
+Computational time to integrate (s): 8.30437
+[7.363793 7.375   ]
+Computational time to integrate (s): 8.71370
+[7.3706894 7.375    ]
+Computational time to integrate (s): 8.47684
+[7.375 7.375]
+Computational time to integrate (s): 8.56031
+[7.3818965 7.4      ]
+Computational time to integrate (s): 8.26868
+[7.388793 7.4     ]
+Computational time to integrate (s): 8.41257
+[7.3956895 7.4      ]
+Computational time to integrate (s): 8.55327
+[7.4 7.4]
+Computational time to integrate (s): 8.83483
+[7.4068966 7.425    ]
+Computational time to integrate (s): 8.57221
+[7.413793 7.425   ]
+Computational time to integrate (s): 8.28441
+[7.4206896 7.425    ]
+Computational time to integrate (s): 8.38717
+[7.425 7.425]
+Computational time to integrate (s): 8.54434
+[7.4318967 7.45     ]
+Computational time to integrate (s): 8.88457
+[7.438793 7.45    ]
+Computational time to integrate (s): 8.52791
+[7.4456897 7.45     ]
+Computational time to integrate (s): 8.28394
+[7.45 7.45]
+Computational time to integrate (s): 8.25344
+[7.4568963 7.475    ]
+Computational time to integrate (s): 8.27788
+[7.463793 7.475   ]
+Computational time to integrate (s): 8.74537
+[7.4706893 7.475    ]
+Computational time to integrate (s): 8.47713
+[7.475 7.475]
+Computational time to integrate (s): 8.55225
+[7.4818964 7.5      ]
+Computational time to integrate (s): 8.32850
+[7.488793 7.5     ]
+Computational time to integrate (s): 8.31886
+[7.4956894 7.5      ]
+Computational time to integrate (s): 8.53370
+[7.5 7.5]
+Computational time to integrate (s): 8.87859
+[7.5068965 7.525    ]
+Computational time to integrate (s): 8.47270
+[7.513793 7.525   ]
+Computational time to integrate (s): 8.25936
+[7.5206895 7.525    ]
+Computational time to integrate (s): 8.37554
+[7.525 7.525]
+Computational time to integrate (s): 8.52902
+[7.5318966 7.55     ]
+Computational time to integrate (s): 8.93668
+[7.538793 7.55    ]
+Computational time to integrate (s): 8.52047
+[7.5456896 7.55     ]
+Computational time to integrate (s): 8.25724
+[7.55 7.55]
+Computational time to integrate (s): 8.25306
+[7.5568967 7.575    ]
+Computational time to integrate (s): 8.27997
+[7.563793 7.575   ]
+Computational time to integrate (s): 8.69562
+[7.5706897 7.575    ]
+Computational time to integrate (s): 8.55421
+[7.575 7.575]
+Computational time to integrate (s): 8.61909
+[7.5818963 7.6      ]
+Computational time to integrate (s): 8.26136
+[7.588793 7.6     ]
+Computational time to integrate (s): 8.41383
+[7.5956893 7.6      ]
+Computational time to integrate (s): 8.95096
+[7.6 7.6]
+Computational time to integrate (s): 8.55301
+[7.6068964 7.625    ]
+Computational time to integrate (s): 8.24598
+[7.613793 7.625   ]
+Computational time to integrate (s): 8.29016
+[7.6206894 7.625    ]
+Computational time to integrate (s): 8.61043
+[7.625 7.625]
+Computational time to integrate (s): 8.88035
+[7.6318965 7.65     ]
+Computational time to integrate (s): 8.54369
+[7.638793 7.65    ]
+Computational time to integrate (s): 8.23428
+[7.6456895 7.65     ]
+Computational time to integrate (s): 8.25338
+[7.65 7.65]
+Computational time to integrate (s): 8.25116
+[7.6568966 7.675    ]
+Computational time to integrate (s): 8.24428
+[7.663793 7.675   ]
+Computational time to integrate (s): 8.76937
+[7.6706896 7.675    ]
+Computational time to integrate (s): 8.49197
+[7.675 7.675]
+Computational time to integrate (s): 8.63853
+[7.6818967 7.7      ]
+Computational time to integrate (s): 8.26771
+[7.688793 7.7     ]
+Computational time to integrate (s): 8.72444
+[7.6956897 7.7      ]
+Computational time to integrate (s): 8.53806
+[7.7 7.7]
+Computational time to integrate (s): 8.58924
+[7.7068963 7.725    ]
+Computational time to integrate (s): 8.31066
+[7.713793 7.725   ]
+Computational time to integrate (s): 8.55212
+[7.7206893 7.725    ]
+Computational time to integrate (s): 8.92943
+[7.725 7.725]
+Computational time to integrate (s): 8.52309
+[7.7318964 7.75     ]
+Computational time to integrate (s): 8.30885
+[7.738793 7.75    ]
+Computational time to integrate (s): 8.27686
+[7.7456894 7.75     ]
+Computational time to integrate (s): 8.60849
+[7.75 7.75]
+Computational time to integrate (s): 8.79437
+[7.7568965 7.775    ]
+Computational time to integrate (s): 8.49401
+[7.763793 7.775   ]
+Computational time to integrate (s): 8.34400
+[7.7706895 7.775    ]
+Computational time to integrate (s): 8.30134
+[7.775 7.775]
+Computational time to integrate (s): 8.25954
+[7.7818966 7.8      ]
+Computational time to integrate (s): 8.28974
+[7.788793 7.8     ]
+Computational time to integrate (s): 8.72220
+[7.7956896 7.8      ]
+Computational time to integrate (s): 8.46916
+[7.8 7.8]
+Computational time to integrate (s): 8.56505
+[7.8068967 7.825    ]
+Computational time to integrate (s): 8.27832
+[7.813793 7.825   ]
+Computational time to integrate (s): 8.38967
+[7.8206897 7.825    ]
+Computational time to integrate (s): 8.63897
+[7.825 7.825]
+Computational time to integrate (s): 8.89702
+[7.8318963 7.85     ]
+Computational time to integrate (s): 8.61870
+[7.838793 7.85    ]
+Computational time to integrate (s): 8.30368
+[7.8456893 7.85     ]
+Computational time to integrate (s): 8.36042
+[7.85 7.85]
+Computational time to integrate (s): 8.49034
+[7.8568964 7.875    ]
+Computational time to integrate (s): 8.74291
+[7.863793 7.875   ]
+Computational time to integrate (s): 8.61686
+[7.8706894 7.875    ]
+Computational time to integrate (s): 8.29303
+[7.875 7.875]
+Computational time to integrate (s): 8.28911
+[7.8818965 7.9      ]
+Computational time to integrate (s): 8.26385
+[7.888793 7.9     ]
+Computational time to integrate (s): 8.76834
+[7.8956895 7.9      ]
+Computational time to integrate (s): 8.43759
+[7.9 7.9]
+Computational time to integrate (s): 8.58453
+[7.9068966 7.925    ]
+Computational time to integrate (s): 8.28148
+[7.913793 7.925   ]
+Computational time to integrate (s): 8.52598
+[7.9206896 7.925    ]
+Computational time to integrate (s): 8.93431
+[7.925 7.925]
+Computational time to integrate (s): 8.48837
+[7.9318967 7.95     ]
+Computational time to integrate (s): 8.27157
+[7.938793 7.95    ]
+Computational time to integrate (s): 8.32350
+[7.9456897 7.95     ]
+Computational time to integrate (s): 8.53383
+[7.95 7.95]
+Computational time to integrate (s): 8.75386
+[7.9568963 7.975    ]
+Computational time to integrate (s): 8.60685
+[7.963793 7.975   ]
+Computational time to integrate (s): 8.25194
+[7.9706893 7.975    ]
+Computational time to integrate (s): 8.34567
+[7.975 7.975]
+Computational time to integrate (s): 8.43980
+[7.9818964 8.       ]
+Computational time to integrate (s): 8.71362
+[7.988793 8.      ]
+Computational time to integrate (s): 8.50365
+[7.9956894 8.       ]
+Computational time to integrate (s): 8.25737
+[8. 8.]
+Computational time to integrate (s): 8.25980
+[8.006897 8.025   ]
+Computational time to integrate (s): 8.29216
+[8.013794 8.025   ]
+Computational time to integrate (s): 8.87770
+[8.020691 8.025   ]
+Computational time to integrate (s): 8.30878
+[8.025 8.025]
+Computational time to integrate (s): 8.63163
+[8.031897 8.05    ]
+Computational time to integrate (s): 8.24157
+[8.038794 8.05    ]
+Computational time to integrate (s): 8.39203
+[8.045691 8.05    ]
+Computational time to integrate (s): 8.60456
+[8.05 8.05]
+Computational time to integrate (s): 8.90747
+[8.056897 8.075   ]
+Computational time to integrate (s): 8.61649
+[8.063794 8.075   ]
+Computational time to integrate (s): 8.26104
+[8.070691 8.075   ]
+Computational time to integrate (s): 8.63179
+[8.075 8.075]
+Computational time to integrate (s): 8.96211
+[8.081897 8.1     ]
+Computational time to integrate (s): 8.57002
+[8.088794 8.1     ]
+Computational time to integrate (s): 8.25792
+[8.095691 8.1     ]
+Computational time to integrate (s): 8.27623
+[8.1 8.1]
+Computational time to integrate (s): 8.25991
+[8.106897 8.125   ]
+Computational time to integrate (s): 8.26437
+[8.113794 8.125   ]
+Computational time to integrate (s): 8.79339
+[8.120691 8.125   ]
+Computational time to integrate (s): 8.41777
+[8.125 8.125]
+Computational time to integrate (s): 8.58674
+[8.131897 8.15    ]
+Computational time to integrate (s): 8.28659
+[8.138794 8.15    ]
+Computational time to integrate (s): 8.55790
+[8.145691 8.15    ]
+Computational time to integrate (s): 8.63328
+[8.15 8.15]
+Computational time to integrate (s): 8.59967
+[8.156897 8.175   ]
+Computational time to integrate (s): 8.32204
+[8.163794 8.175   ]
+Computational time to integrate (s): 8.49907
+[8.170691 8.175   ]
+Computational time to integrate (s): 8.54661
+[8.175 8.175]
+Computational time to integrate (s): 8.71248
+[8.181897 8.2     ]
+Computational time to integrate (s): 8.62114
+[8.188794 8.2     ]
+Computational time to integrate (s): 8.27105
+[8.195691 8.2     ]
+Computational time to integrate (s): 8.49868
+[8.2 8.2]
+Computational time to integrate (s): 8.51543
+[8.206897 8.225   ]
+Computational time to integrate (s): 8.75043
+[8.213794 8.225   ]
+Computational time to integrate (s): 8.32673
+[8.220691 8.225   ]
+Computational time to integrate (s): 8.25629
+[8.225 8.225]
+Computational time to integrate (s): 8.25414
+[8.231897 8.25    ]
+Computational time to integrate (s): 8.27150
+[8.238794 8.25    ]
+Computational time to integrate (s): 8.84598
+[8.245691 8.25    ]
+Computational time to integrate (s): 8.35680
+[8.25 8.25]
+Computational time to integrate (s): 8.61764
+[8.256897 8.275   ]
+Computational time to integrate (s): 8.26507
+[8.263794 8.275   ]
+Computational time to integrate (s): 8.49624
+[8.270691 8.275   ]
+Computational time to integrate (s): 8.95412
+[8.275 8.275]
+Computational time to integrate (s): 8.53510
+[8.281897 8.3     ]
+Computational time to integrate (s): 8.27851
+[8.288794 8.3     ]
+Computational time to integrate (s): 8.37185
+[8.295691 8.3     ]
+Computational time to integrate (s): 8.54132
+[8.3 8.3]
+Computational time to integrate (s): 8.86315
+[8.306897 8.325   ]
+Computational time to integrate (s): 8.58611
+[8.313794 8.325   ]
+Computational time to integrate (s): 8.27125
+[8.320691 8.325   ]
+Computational time to integrate (s): 8.27360
+[8.325 8.325]
+Computational time to integrate (s): 8.39827
+[8.331897 8.35    ]
+Computational time to integrate (s): 8.69815
+[8.338794 8.35    ]
+Computational time to integrate (s): 8.63375
+[8.345691 8.35    ]
+Computational time to integrate (s): 8.28628
+[8.35 8.35]
+Computational time to integrate (s): 8.26664
+[8.356897 8.375   ]
+Computational time to integrate (s): 8.27751
+[8.363794 8.375   ]
+Computational time to integrate (s): 8.80517
+[8.370691 8.375   ]
+Computational time to integrate (s): 8.37956
+[8.375 8.375]
+Computational time to integrate (s): 8.55818
+[8.381897 8.4     ]
+Computational time to integrate (s): 8.30285
+[8.388794 8.4     ]
+Computational time to integrate (s): 8.39181
+[8.395691 8.4     ]
+Computational time to integrate (s): 8.56704
+[8.4 8.4]
+Computational time to integrate (s): 8.69686
+[8.406897 8.425   ]
+Computational time to integrate (s): 8.59947
+[8.413794 8.425   ]
+Computational time to integrate (s): 8.25567
+[8.420691 8.425   ]
+Computational time to integrate (s): 8.29459
+[8.425 8.425]
+Computational time to integrate (s): 8.47560
+[8.431897 8.45    ]
+Computational time to integrate (s): 8.74501
+[8.438794 8.45    ]
+Computational time to integrate (s): 8.58263
+[8.445691 8.45    ]
+Computational time to integrate (s): 8.28148
+[8.45 8.45]
+Computational time to integrate (s): 8.23254
+[8.456897 8.475   ]
+Computational time to integrate (s): 8.26422
+[8.463794 8.475   ]
+Computational time to integrate (s): 8.66090
+[8.470691 8.475   ]
+Computational time to integrate (s): 8.50976
+[8.475 8.475]
+Computational time to integrate (s): 8.56548
+[8.481897 8.5     ]
+Computational time to integrate (s): 8.25632
+[8.488794 8.5     ]
+Computational time to integrate (s): 8.39307
+[8.495691 8.5     ]
+Computational time to integrate (s): 8.66469
+[8.5 8.5]
+Computational time to integrate (s): 8.92745
+[8.506897 8.525   ]
+Computational time to integrate (s): 8.60008
+[8.513794 8.525   ]
+Computational time to integrate (s): 8.28408
+[8.520691 8.525   ]
+Computational time to integrate (s): 8.55848
+[8.525 8.525]
+Computational time to integrate (s): 8.94351
+[8.531897 8.55    ]
+Computational time to integrate (s): 8.46900
+[8.538794 8.55    ]
+Computational time to integrate (s): 8.28509
+[8.545691 8.55    ]
+Computational time to integrate (s): 8.24767
+[8.55 8.55]
+Computational time to integrate (s): 8.28606
+[8.556897 8.575   ]
+Computational time to integrate (s): 8.26462
+[8.563794 8.575   ]
+Computational time to integrate (s): 8.73169
+[8.570691 8.575   ]
+Computational time to integrate (s): 8.48094
+[8.575 8.575]
+Computational time to integrate (s): 8.62217
+[8.581897 8.6     ]
+Computational time to integrate (s): 8.28532
+[8.588794 8.6     ]
+Computational time to integrate (s): 8.35826
+[8.595691 8.6     ]
+Computational time to integrate (s): 8.95055
+[8.6 8.6]
+Computational time to integrate (s): 8.59897
+[8.606897 8.625   ]
+Computational time to integrate (s): 8.28658
+[8.613794 8.625   ]
+Computational time to integrate (s): 8.50496
+[8.620691 8.625   ]
+Computational time to integrate (s): 8.49189
+[8.625 8.625]
+Computational time to integrate (s): 8.78721
+[8.631897 8.65    ]
+Computational time to integrate (s): 8.70305
+[8.638794 8.65    ]
+Computational time to integrate (s): 8.26122
+[8.645691 8.65    ]
+Computational time to integrate (s): 8.61943
+[8.65 8.65]
+Computational time to integrate (s): 8.78438
+[8.656897 8.675   ]
+Computational time to integrate (s): 8.50311
+[8.663794 8.675   ]
+Computational time to integrate (s): 8.33074
+[8.670691 8.675   ]
+Computational time to integrate (s): 8.27339
+[8.675 8.675]
+Computational time to integrate (s): 8.25776
+[8.681897 8.7     ]
+Computational time to integrate (s): 8.27875
+[8.688794 8.7     ]
+Computational time to integrate (s): 8.78798
+[8.695691 8.7     ]
+Computational time to integrate (s): 8.47062
+[8.7 8.7]
+Computational time to integrate (s): 8.62667
+[8.706897 8.725   ]
+Computational time to integrate (s): 8.28753
+[8.713794 8.725   ]
+Computational time to integrate (s): 8.46044
+[8.720691 8.725   ]
+Computational time to integrate (s): 8.82895
+[8.725 8.725]
+Computational time to integrate (s): 8.68144
+[8.731897 8.75    ]
+Computational time to integrate (s): 8.27760
+[8.738794 8.75    ]
+Computational time to integrate (s): 8.60747
+[8.745691 8.75    ]
+Computational time to integrate (s): 8.59222
+[8.75 8.75]
+Computational time to integrate (s): 8.63378
+[8.756897 8.775   ]
+Computational time to integrate (s): 8.32437
+[8.763794 8.775   ]
+Computational time to integrate (s): 8.60073
+[8.770691 8.775   ]
+Computational time to integrate (s): 8.67909
+[8.775 8.775]
+Computational time to integrate (s): 8.64206
+[8.781897 8.8     ]
+Computational time to integrate (s): 8.27725
+[8.788794 8.8     ]
+Computational time to integrate (s): 8.38851
+[8.795691 8.8     ]
+Computational time to integrate (s): 8.92304
+[8.8 8.8]
+Computational time to integrate (s): 8.59481
+[8.806897 8.825   ]
+Computational time to integrate (s): 8.29453
+[8.813794 8.825   ]
+Computational time to integrate (s): 8.50414
+[8.820691 8.825   ]
+Computational time to integrate (s): 8.59925
+[8.825 8.825]
+Computational time to integrate (s): 8.72571
+[8.831897 8.85    ]
+Computational time to integrate (s): 8.64224
+[8.838794 8.85    ]
+Computational time to integrate (s): 8.27161
+[8.845691 8.85    ]
+Computational time to integrate (s): 8.49656
+[8.85 8.85]
+Computational time to integrate (s): 8.51316
+[8.856897 8.875   ]
+Computational time to integrate (s): 8.72898
+[8.863794 8.875   ]
+Computational time to integrate (s): 8.32136
+[8.870691 8.875   ]
+Computational time to integrate (s): 8.26211
+[8.875 8.875]
+Computational time to integrate (s): 8.25259
+[8.881897 8.9     ]
+Computational time to integrate (s): 8.25857
+[8.888794 8.9     ]
+Computational time to integrate (s): 8.76050
+[8.895691 8.9     ]
+Computational time to integrate (s): 8.48615
+[8.9 8.9]
+Computational time to integrate (s): 8.58793
+[8.906897 8.925   ]
+Computational time to integrate (s): 8.27322
+[8.913794 8.925   ]
+Computational time to integrate (s): 8.35522
+[8.920691 8.925   ]
+Computational time to integrate (s): 8.58785
+[8.925 8.925]
+Computational time to integrate (s): 8.97153
+[8.931897 8.95    ]
+Computational time to integrate (s): 8.56802
+[8.938794 8.95    ]
+Computational time to integrate (s): 8.28838
+[8.945691 8.95    ]
+Computational time to integrate (s): 8.30265
+[8.95 8.95]
+Computational time to integrate (s): 8.57223
+[8.956897 8.975   ]
+Computational time to integrate (s): 8.93919
+[8.963794 8.975   ]
+Computational time to integrate (s): 8.65490
+[8.970691 8.975   ]
+Computational time to integrate (s): 8.28123
+[8.975 8.975]
+Computational time to integrate (s): 8.29198
+[8.981897 9.      ]
+Computational time to integrate (s): 8.28814
+[8.988794 9.      ]
+Computational time to integrate (s): 8.65631
+[8.995691 9.      ]
+Computational time to integrate (s): 8.55219
+[9. 9.]
+Computational time to integrate (s): 8.57053
+[9.006897 9.025   ]
+Computational time to integrate (s): 8.26649
+[9.013794 9.025   ]
+Computational time to integrate (s): 8.32274
+[9.020691 9.025   ]
+Computational time to integrate (s): 8.66190
+[9.025 9.025]
+Computational time to integrate (s): 8.77816
+[9.031897 9.05    ]
+Computational time to integrate (s): 8.61469
+[9.038794 9.05    ]
+Computational time to integrate (s): 8.27251
+[9.045691 9.05    ]
+Computational time to integrate (s): 8.31314
+[9.05 9.05]
+Computational time to integrate (s): 8.41696
+[9.056897 9.075   ]
+Computational time to integrate (s): 8.76091
+[9.063794 9.075   ]
+Computational time to integrate (s): 8.55216
+[9.070691 9.075   ]
+Computational time to integrate (s): 8.29219
+[9.075 9.075]
+Computational time to integrate (s): 8.28566
+[9.081897 9.1     ]
+Computational time to integrate (s): 8.28917
+[9.088794 9.1     ]
+Computational time to integrate (s): 8.82125
+[9.095691 9.1     ]
+Computational time to integrate (s): 8.41847
+[9.1 9.1]
+Computational time to integrate (s): 8.65743
+[9.106897 9.125   ]
+Computational time to integrate (s): 8.25981
+[9.113794 9.125   ]
+Computational time to integrate (s): 8.65660
+[9.120691 9.125   ]
+Computational time to integrate (s): 8.58623
+[9.125 9.125]
+Computational time to integrate (s): 8.60825
+[9.131897 9.15    ]
+Computational time to integrate (s): 8.29185
+[9.138794 9.15    ]
+Computational time to integrate (s): 8.68823
+[9.145691 9.15    ]
+Computational time to integrate (s): 8.55297
+[9.15 9.15]
+Computational time to integrate (s): 8.65124
+[9.156897 9.175   ]
+Computational time to integrate (s): 8.26982
+[9.163794 9.175   ]
+Computational time to integrate (s): 8.66623
+[9.170691 9.175   ]
+Computational time to integrate (s): 8.57977
+[9.175 9.175]
+Computational time to integrate (s): 8.60851
+[9.181897 9.2     ]
+Computational time to integrate (s): 8.30215
+[9.188794 9.2     ]
+Computational time to integrate (s): 8.34253
+[9.195691 9.2     ]
+Computational time to integrate (s): 8.54941
+[9.2 9.2]
+Computational time to integrate (s): 8.66448
+[9.206897 9.225   ]
+Computational time to integrate (s): 8.57528
+[9.213794 9.225   ]
+Computational time to integrate (s): 8.28039
+[9.220691 9.225   ]
+Computational time to integrate (s): 8.26625
+[9.225 9.225]
+Computational time to integrate (s): 8.35974
+[9.231897 9.25    ]
+Computational time to integrate (s): 8.38324
+[9.238794 9.25    ]
+Computational time to integrate (s): 8.82897
+[9.245691 9.25    ]
+Computational time to integrate (s): 8.28711
+[9.25 9.25]
+Computational time to integrate (s): 8.32622
+[9.256897 9.275   ]
+Computational time to integrate (s): 8.27431
+[9.263794 9.275   ]
+Computational time to integrate (s): 8.81949
+[9.270691 9.275   ]
+Computational time to integrate (s): 8.41115
+[9.275 9.275]
+Computational time to integrate (s): 8.50546
+[9.281897 9.3     ]
+Computational time to integrate (s): 8.30673
+[9.288794 9.3     ]
+Computational time to integrate (s): 8.32188
+[9.295691 9.3     ]
+Computational time to integrate (s): 8.63078
+[9.3 9.3]
+Computational time to integrate (s): 8.92901
+[9.306897 9.325   ]
+Computational time to integrate (s): 8.60062
+[9.313794 9.325   ]
+Computational time to integrate (s): 8.20940
+[9.320691 9.325   ]
+Computational time to integrate (s): 8.30820
+[9.325 9.325]
+Computational time to integrate (s): 8.52445
+[9.331897 9.35    ]
+Computational time to integrate (s): 8.92586
+[9.338794 9.35    ]
+Computational time to integrate (s): 8.56243
+[9.345691 9.35    ]
+Computational time to integrate (s): 8.25113
+[9.35 9.35]
+Computational time to integrate (s): 8.23176
+[9.356897 9.375   ]
+Computational time to integrate (s): 8.28597
+[9.363794 9.375   ]
+Computational time to integrate (s): 8.74861
+[9.370691 9.375   ]
+Computational time to integrate (s): 8.48394
+[9.375 9.375]
+Computational time to integrate (s): 8.64289
+[9.381897 9.4     ]
+Computational time to integrate (s): 8.28470
+[9.388794 9.4     ]
+Computational time to integrate (s): 8.40035
+[9.395691 9.4     ]
+Computational time to integrate (s): 8.61043
+[9.4 9.4]
+Computational time to integrate (s): 8.93610
+[9.406897 9.425   ]
+Computational time to integrate (s): 8.50458
+[9.413794 9.425   ]
+Computational time to integrate (s): 8.28943
+[9.420691 9.425   ]
+Computational time to integrate (s): 8.29464
+[9.425 9.425]
+Computational time to integrate (s): 8.53134
+[9.431897 9.45    ]
+Computational time to integrate (s): 8.87924
+[9.438794 9.45    ]
+Computational time to integrate (s): 8.53256
+[9.445691 9.45    ]
+Computational time to integrate (s): 8.27134
+[9.45 9.45]
+Computational time to integrate (s): 8.28426
+[9.456897 9.475   ]
+Computational time to integrate (s): 8.28767
+[9.463794 9.475   ]
+Computational time to integrate (s): 8.79247
+[9.470691 9.475   ]
+Computational time to integrate (s): 8.41077
+[9.475 9.475]
+Computational time to integrate (s): 8.52707
+[9.481897 9.5     ]
+Computational time to integrate (s): 8.27922
+[9.488794 9.5     ]
+Computational time to integrate (s): 8.40227
+[9.495691 9.5     ]
+Computational time to integrate (s): 8.57312
+[9.5 9.5]
+Computational time to integrate (s): 8.77090
+[9.506897 9.525   ]
+Computational time to integrate (s): 8.57675
+[9.513794 9.525   ]
+Computational time to integrate (s): 8.26348
+[9.520691 9.525   ]
+Computational time to integrate (s): 8.31807
+[9.525 9.525]
+Computational time to integrate (s): 8.46766
+[9.531897 9.55    ]
+Computational time to integrate (s): 8.69091
+[9.538794 9.55    ]
+Computational time to integrate (s): 8.57310
+[9.545691 9.55    ]
+Computational time to integrate (s): 8.34702
+[9.55 9.55]
+Computational time to integrate (s): 8.24270
+[9.556897 9.575   ]
+Computational time to integrate (s): 8.27257
+[9.563794 9.575   ]
+Computational time to integrate (s): 8.68573
+[9.570691 9.575   ]
+Computational time to integrate (s): 8.51834
+[9.575 9.575]
+Computational time to integrate (s): 8.55900
+[9.581897 9.6     ]
+Computational time to integrate (s): 8.29781
+[9.588794 9.6     ]
+Computational time to integrate (s): 8.39038
+[9.595691 9.6     ]
+Computational time to integrate (s): 8.64412
+[9.6 9.6]
+Computational time to integrate (s): 8.90054
+[9.606897 9.625   ]
+Computational time to integrate (s): 8.52499
+[9.613794 9.625   ]
+Computational time to integrate (s): 8.24839
+[9.620691 9.625   ]
+Computational time to integrate (s): 8.41442
+[9.625 9.625]
+Computational time to integrate (s): 8.56617
+[9.631897 9.65    ]
+Computational time to integrate (s): 8.94521
+[9.638794 9.65    ]
+Computational time to integrate (s): 8.57024
+[9.645691 9.65    ]
+Computational time to integrate (s): 8.27105
+[9.65 9.65]
+Computational time to integrate (s): 8.26211
+[9.656897 9.675   ]
+Computational time to integrate (s): 8.27239
+[9.663794 9.675   ]
+Computational time to integrate (s): 8.65582
+[9.670691 9.675   ]
+Computational time to integrate (s): 8.55215
+[9.675 9.675]
+Computational time to integrate (s): 8.59382
+[9.681897 9.7     ]
+Computational time to integrate (s): 8.24232
+[9.688794 9.7     ]
+Computational time to integrate (s): 8.34668
+[9.695691 9.7     ]
+Computational time to integrate (s): 8.56904
+[9.7 9.7]
+Computational time to integrate (s): 8.70314
+[9.706897 9.725   ]
+Computational time to integrate (s): 8.58491
+[9.713794 9.725   ]
+Computational time to integrate (s): 8.26989
+[9.720691 9.725   ]
+Computational time to integrate (s): 8.26058
+[9.725 9.725]
+Computational time to integrate (s): 8.26838
+[9.731897 9.75    ]
+Computational time to integrate (s): 8.29377
+[9.738794 9.75    ]
+Computational time to integrate (s): 8.86374
+[9.745691 9.75    ]
+Computational time to integrate (s): 8.35640
+[9.75 9.75]
+Computational time to integrate (s): 8.54107
+[9.756897 9.775   ]
+Computational time to integrate (s): 8.25788
+[9.763794 9.775   ]
+Computational time to integrate (s): 8.31050
+[9.770691 9.775   ]
+Computational time to integrate (s): 8.54299
+[9.775 9.775]
+Computational time to integrate (s): 8.95561
+[9.781897 9.8     ]
+Computational time to integrate (s): 8.52045
+[9.788794 9.8     ]
+Computational time to integrate (s): 8.30302
+[9.795691 9.8     ]
+Computational time to integrate (s): 8.34131
+[9.8 9.8]
+Computational time to integrate (s): 8.60457
+[9.806897 9.825   ]
+Computational time to integrate (s): 8.94679
+[9.813794 9.825   ]
+Computational time to integrate (s): 8.54925
+[9.820691 9.825   ]
+Computational time to integrate (s): 8.24299
+[9.825 9.825]
+Computational time to integrate (s): 8.25343
+[9.831897 9.85    ]
+Computational time to integrate (s): 8.27769
+[9.838794 9.85    ]
+Computational time to integrate (s): 8.80856
+[9.845691 9.85    ]
+Computational time to integrate (s): 8.45523
+[9.85 9.85]
+Computational time to integrate (s): 8.62724
+[9.856897 9.875   ]
+Computational time to integrate (s): 8.27522
+[9.863794 9.875   ]
+Computational time to integrate (s): 8.40395
+[9.870691 9.875   ]
+Computational time to integrate (s): 8.90900
+[9.875 9.875]
+Computational time to integrate (s): 8.56174
+[9.881897 9.9     ]
+Computational time to integrate (s): 8.29292
+[9.888794 9.9     ]
+Computational time to integrate (s): 8.56972
+[9.895691 9.9     ]
+Computational time to integrate (s): 8.87765
+[9.9 9.9]
+Computational time to integrate (s): 8.56385
+[9.906897 9.925   ]
+Computational time to integrate (s): 8.26412
+[9.913794 9.925   ]
+Computational time to integrate (s): 8.33990
+[9.920691 9.925   ]
+Computational time to integrate (s): 8.52371
+[9.925 9.925]
+Computational time to integrate (s): 8.59591
+[9.931897 9.95    ]
+Computational time to integrate (s): 8.63571
+[9.938794 9.95    ]
+Computational time to integrate (s): 8.31284
+[9.945691 9.95    ]
+Computational time to integrate (s): 8.27959
+[9.95 9.95]
+Computational time to integrate (s): 8.27227
+[9.956897 9.975   ]
+Computational time to integrate (s): 8.27937
+[9.963794 9.975   ]
+Computational time to integrate (s): 8.94111
+[9.970691 9.975   ]
+Computational time to integrate (s): 8.27678
+[9.975 9.975]
+Computational time to integrate (s): 8.54835
+[ 9.981897 10.      ]
+Computational time to integrate (s): 8.30136
+[ 9.988794 10.      ]
+Computational time to integrate (s): 8.36541
+[ 9.995691 10.      ]
+Computational time to integrate (s): 8.55196
+[10. 10.]
+Computational time to integrate (s): 8.75831
+Total kernel time (s): 9150.43114
+Finished solving
+
+The CPU memory used during the calculation of the value function is  16.44 GB.
+The shape of the value function is (30, 30, 30, 30, 30, 30) 
+
+The size of the value function is  2.72 GB or 2780.914306640625 MB.
+The time of solving HJ is 14143.655502319336 seconds.
+The shape of the value function is (30, 30, 30, 30, 30, 30) 
+
+The value function has been saved successfully.
+The time of whole process is 14172.846155166626 seconds.
