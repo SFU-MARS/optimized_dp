@@ -286,7 +286,8 @@ def TTRSolver(dynamics_obj, grid, init_value, epsilon, plot_option):
 
     # Convert initial distance value function to initial time-to-reach value function
     init_value[init_value < 0] = 0
-    init_value[init_value > 0] = 1000
+    # init_value[init_value > 0] = 1000
+    init_value[init_value > 0] = 15
     V_0 = hcl.asarray(init_value)
     prev_val = np.zeros(init_value.shape)
 
