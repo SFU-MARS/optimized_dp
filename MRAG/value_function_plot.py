@@ -8,8 +8,8 @@ from utilities import lo2slice1v1, lo2slice2v1, lo2slice1v0
 value1v1 = np.load('MRAG/1v1AttackDefend_speed15.npy')
 print(f"The shape of the 1v1 value function is {value1v1.shape} \n")
 # value1v2 = np.load('MRAG/1v2AttackDefend_speed15.npy')
-# value1v2 = np.load('MRAG/1v2AttackDefend_Michael_speed15.npy')
-value1v2 = np.load('MRAG/1v2AttackDefend_Hanyang_speed15.npy')
+value1v2 = np.load('MRAG/1v2AttackDefend_Michael_speed15.npy')
+# value1v2 = np.load('MRAG/1v2AttackDefend_Hanyang_speed15.npy')
 
 # value2v1 = np.load('MRAG/2v1AttackDefend_speed15.npy')
 print(f'The shape of the 1v2 value function is {value1v2.shape} \n')
@@ -25,12 +25,12 @@ grid1v2 = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.
 
 # # 1 vs. 2 simulation
 # initial positions
-# attackers_initials = [(-0.2, 0.0)] # 
-# defenders_initials = [(-0.8, 0.5), (-0.8, -0.5)]  #  [(-0.8, -0.8), (-0.8, 0.3)]  #  [(-0.8, -0.3)]
+attackers_initials = [(-0.3, 0.0)] # 
+defenders_initials = [(-0.8, 0.5), (-0.8, -0.5)]  #  [(-0.8, -0.8), (-0.8, 0.3)]  #  [(-0.8, -0.3)]
 
-# work but cross obs:
-attackers_initials =[(0.0, 0.0)]  
-defenders_initials = [(-0.5, 0.5), (-0.5, -0.1)]  
+# # work but cross obs:
+# attackers_initials =[(0.0, 0.0)]  
+# defenders_initials = [(-0.5, 0.5), (-0.5, -0.1)]  
 
 
 ax = attackers_initials[0][0]
