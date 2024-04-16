@@ -14,25 +14,27 @@ from MRAG.AttackerDefender1v2 import AttackerDefender1v2
 # Simulation: 1 attacker with 2 defenders
 # preparations
 print("Preparing for the simulaiton... \n")
-T = 0.9 # attackers_stop_times = [0.475s (95 A1 is captured), 0.69s (138 A0 by D0)]
+T = 2.0 # attackers_stop_times = [0.475s (95 A1 is captured), 0.69s (138 A0 by D0)]
 deltat = 0.005 # calculation time interval
 times = int(T/deltat)
 
 # load all value functions, grids and spatial derivative array
 value1v0 = np.load('MRAG/1v0AttackDefend.npy')  # value1v0.shape = [100, 100, len(tau)]
 # # print(value1v0.shape)
-v1v1 = np.load('MRAG/1v1AttackDefend_speed15.npy')
+# v1v1 = np.load('MRAG/1v1AttackDefend_speed15.npy')
+v1v1 = np.load('MRAG/1v1AttackDefend_g35_speed10.npy')
 # # v1v1 = np.load('MRAG/1v1AttackDefend.npy')
-value1v1 = v1v1[..., np.newaxis]  # value1v1.shape = [45, 45, 45, 45, 1]
+# value1v1 = v1v1[..., np.newaxis]  # value1v1.shape = [45, 45, 45, 45, 1]
 # # v2v1 = np.load('MRAG/2v1AttackDefend.npy')
 # # v2v1 = np.load('2v1AttackDefend_speed15.npy') # grid = 30
 # v2v1 = np.load('MRAG/2v1AttackDefend_speed15.npy')
 # print(f"The shape of the 2v1 value function is {v2v1.shape}. \n")
 # value2v1 = v2v1[..., np.newaxis]  # value2v1.shape = [30, 30, 30, 30, 30, 30, 1]
 #TODO: Hanyang: check why
-# v1v2 = np.load('MRAG/1v2AttackDefend_speed15.npy')
-v1v2 = np.load('MRAG/1v2AttackDefend_Michael_speed15.npy')
-# v1v2 = np.load('MRAG/1v2AttackDefend_Hanyang_speed15.npy')
+v1v2 = np.load('MRAG/1v2AttackDefend_Hanyang_speed15.npy')
+# v1v2 = np.load('MRAG/1v2AttackDefend_Michael_speed15.npy')
+# v1v2 = np.load('MRAG/1v2AttackDefend_Hanyang_g35_speed10.npy')
+
 
 print(f"The shape of the 1v2 value function is {v1v2.shape}. \n")
 value1v2 = v1v2[..., np.newaxis]  # value1v2.shape = [30, 30, 30, 30, 30, 30, 1]

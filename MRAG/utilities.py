@@ -55,7 +55,7 @@ def check1v1(value1v1, joint_states1v1):
         value1v1 (ndarray): 1v1 HJ value function
         joint_states1v1 (tuple): state of (a1x, a1y, d1x, d1y)
     """
-    a1x_slice, a1y_slice, d1x_slice, d1y_slice = lo2slice1v1(joint_states1v1, slices=45)
+    a1x_slice, a1y_slice, d1x_slice, d1y_slice = lo2slice1v1(joint_states1v1, slices=30)
     flag = value1v1[a1x_slice, a1y_slice, d1x_slice, d1y_slice]
     if flag > 0:
         return 1  # d1 could capture (a1)

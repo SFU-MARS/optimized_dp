@@ -33,11 +33,12 @@ start_time = time.time()
 # grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([31, 31, 31, 31]))
 # grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([33, 33, 33, 33]))
 # grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([35, 35, 35, 35]))
-grid_size = 35
+grid_size = 5
+speed_d = 1.5
 grids = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([grid_size, grid_size, grid_size, grid_size]))
 
 # 2. Initialize the dynamics
-agents_1v1 = AttackerDefender1v1(uMode="min", dMode="max")  # 1v1 (4 dims dynamics)
+agents_1v1 = AttackerDefender1v1(uMode="min", dMode="max", speed_a=1.0, speed_d=speed_d)  # 1v1 (4 dims dynamics)
 
 # 3. Instruct the avoid set and reach set
 # 3.1 Avoid set, no constraint means inf
@@ -88,7 +89,7 @@ print(f'The shape of the value function is {result.shape} \n')
 # np.save('1v1AttackDefend_g31_speed15.npy', result)  # grid = 31
 # np.save('1v1AttackDefend_g33_speed15.npy', result)  # grid = 33
 # np.save('1v1AttackDefend_g35_speed15.npy', result)  # grid = 35
-np.save(f'MRAG/1v1AttackDefend_g{grid_size}_speed10.npy', result) 
+np.save(f'MRAG/1v1AttackDefend_g{grid_size}_dspeed{speed_d}.npy', result) 
 print("The value function has been saved successfully.")
 
 # Record the time of whole process
