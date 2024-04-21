@@ -1,8 +1,22 @@
 from abc import ABC, abstractmethod
+import numpy as np
 
 __all__ = ['DynamicsBase']
 
 class DynamicsBase(ABC):
+
+    def __init__(self, ctrl_range, dstb_range, mode='reach'):
+        super().__init__()
+
+        self.ctrl_range = np.asarray(ctrl_range)
+        assert self.ctrl_range.shape[1] == self.ctrl_dims
+
+        self.dstb_range = np.asarray(dstb_range)
+        assert self.dstb_range.shape[1] == self.dstb_dims
+
+        modes = {'reach': {"uMode": "min", "dMode": "max"},
+                 'avoid': {"uMode": "max", "dMode": "min"}}
+        self.mode = modes[mode]
 
     @property
     @abstractmethod

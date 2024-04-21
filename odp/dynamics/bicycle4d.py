@@ -18,18 +18,9 @@ class Bicycle4D(DynamicsBase):
     STEERING, VELOCITY = range(ctrl_dims)
 
     def __init__(self, ctrl_range, dstb_range, mode='reach', *, wheelbase):
+        super().__init__(ctrl_range, dstb_range, mode)
 
         self.wheelbase = wheelbase
-
-        self.ctrl_range = np.asarray(ctrl_range)
-        assert self.ctrl_range.shape[1] == self.ctrl_dims
-
-        self.dstb_range = np.asarray(dstb_range)
-        assert self.dstb_range.shape[1] == self.dstb_dims
-
-        modes = {'reach': {"uMode": "min", "dMode": "max"},
-                 'avoid': {"uMode": "max", "dMode": "min"}}
-        self.mode = modes[mode]
 
     def dynamics(self, dx, t, x, u, d):
 
