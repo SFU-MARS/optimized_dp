@@ -14,7 +14,7 @@ import numpy as np
 
 class AttackerDefender1v2:
     def __init__(self, x=[0, 0, 0, 0, 0, 0], uMin=-1, uMax=1, dMin=-1,
-                 dMax=1, uMode="min", dMode="max", speed_a=1.0, speed_d=1.0):
+                 dMax=1, uMode="min", dMode="max", speed_a=1.0, speed_d=1.5):
         """Creates 1 Attacker and 2 Defenders with the following states:
            XA position, YA position, XD1 position, YD1 position,  XD2 position, YD2 position
            The controls are the control inputs of the Attackers.

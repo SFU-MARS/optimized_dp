@@ -14,26 +14,23 @@ from MRAG.AttackerDefender1v2 import AttackerDefender1v2
 # Simulation: 1 attacker with 2 defenders
 # preparations
 print("Preparing for the simulaiton... \n")
-T = 2.0 # attackers_stop_times = [0.475s (95 A1 is captured), 0.69s (138 A0 by D0)]
+T = 0.1 # attackers_stop_times = [0.475s (95 A1 is captured), 0.69s (138 A0 by D0)]
 deltat = 0.005 # calculation time interval
 times = int(T/deltat)
+
+grid_size1v1 = 45
+grid_size1v2 = 30
 
 # load all value functions, grids and spatial derivative array
 value1v0 = np.load('MRAG/1v0AttackDefend.npy')  # value1v0.shape = [100, 100, len(tau)]
 # # print(value1v0.shape)
+
 # v1v1 = np.load('MRAG/1v1AttackDefend_speed15.npy')
-v1v1 = np.load('MRAG/1v1AttackDefend_g35_speed10.npy')
-# # v1v1 = np.load('MRAG/1v1AttackDefend.npy')
-# value1v1 = v1v1[..., np.newaxis]  # value1v1.shape = [45, 45, 45, 45, 1]
-# # v2v1 = np.load('MRAG/2v1AttackDefend.npy')
-# # v2v1 = np.load('2v1AttackDefend_speed15.npy') # grid = 30
-# v2v1 = np.load('MRAG/2v1AttackDefend_speed15.npy')
-# print(f"The shape of the 2v1 value function is {v2v1.shape}. \n")
-# value2v1 = v2v1[..., np.newaxis]  # value2v1.shape = [30, 30, 30, 30, 30, 30, 1]
-#TODO: Hanyang: check why
-v1v2 = np.load('MRAG/1v2AttackDefend_Hanyang_speed15.npy')
-# v1v2 = np.load('MRAG/1v2AttackDefend_Michael_speed15.npy')
-# v1v2 = np.load('MRAG/1v2AttackDefend_Hanyang_g35_speed10.npy')
+v1v1 = np.load('MRAG/1v1AttackDefend_g45_dspeed1.5.npy')
+
+# v1v2 = np.load('MRAG/1v2AttackDefend_g35_dspeed1.5.npy')
+# v1v2 = np.load('MRAG/1v2AttackDefend_g35_dspeed1.0.npy')
+v1v2 = np.load('MRAG/1v2AttackDefend_g30_dspeed1.5.npy')
 
 
 print(f"The shape of the 1v2 value function is {v1v2.shape}. \n")
@@ -41,7 +38,8 @@ value1v2 = v1v2[..., np.newaxis]  # value1v2.shape = [30, 30, 30, 30, 30, 30, 1]
 
 grid1v0 = Grid(np.array([-1.0, -1.0]), np.array([1.0, 1.0]), 2, np.array([100, 100])) # original 45
 # grid1v1 = Grid(np.array([-1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0]), 4, np.array([45, 45, 45, 45])) # original 45
-grid1v2 = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 6, np.array([30, 30, 30, 30, 30, 30])) # original 45
+grid1v2 = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 6, 
+               np.array([grid_size1v2, grid_size1v2, grid_size1v2, grid_size1v2, grid_size1v2, grid_size1v2])) # original 45
 # grid2v1 = Grid(np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]), np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 6, np.array([30, 30, 30, 30, 30, 30])) # [36, 36, 36, 36, 36, 36] [30, 30, 30, 30, 30, 30]
 agents_1v0 = AttackerDefender1v0(uMode="min", dMode="max")
 # agents_1v1 = AttackerDefender1v1(uMode="min", dMode="max")  # 1v1 (4 dims dynamics)
@@ -54,14 +52,12 @@ tau1v2 = np.arange(start=0, stop=4.5 + 1e-5, step=0.025)
 
 # initialize positions of attackers and defenders
 # # not work:
-attackers_initials =[(-0.5, 0.0)]  # [(-0.2, 0.0)] 
-defenders_initials = [(-0.8, 0.5), (-0.8, -0.5)]   #  [(-0.8, 0.5), (-0.8, -0.5)]
+# attackers_initials = [(-0.4, 0.0)] # 
+# defenders_initials = [(-0.5, 0.5), (-0.5, -0.6)] 
 
 # # # not work:
-# attackers_initials =[(0.0, 0.0)]  
-# defenders_initials = [(-0.5, 0.5), (-0.5, -0.1)]  
-
-
+attackers_initials =[(-0.1, 0.0)]  
+defenders_initials = [(-0.5, 0.5), (-0.5, -0.1)]  
 
 ax = attackers_initials[0][0]
 ay = attackers_initials[0][1]
@@ -72,7 +68,7 @@ d2y = defenders_initials[1][1]
 
 # plot 1v2 reach-avoid tube
 jointstates2v1 = (ax, ay, d1x, d1y, d2x, d2y)
-ax_slice, ay_slice, d1x_slice, d1y_slice, d2x_slice, d2y_slice = lo2slice2v1(jointstates2v1, slices=30)
+ax_slice, ay_slice, d1x_slice, d1y_slice, d2x_slice, d2y_slice = lo2slice2v1(jointstates2v1, slices=grid_size1v2)
 value_function1v2_3 = value1v2[ax_slice, ay_slice, d1x_slice, d1y_slice, d2x_slice, d2y_slice]
 print(f"The initial value function of 1vs2 is {value_function1v2_3}. \n")
 
@@ -131,6 +127,12 @@ for _ in range(0, times):
 
     controls_defender0.append((opt_d1, opt_d2))  
     controls_defender1.append((opt_d3, opt_d4))
+    
+    # Plot BRT contour
+    ax_slice, ay_slice, d1x_slice, d1y_slice, d2x_slice, d2y_slice = lo2slice2v1(joint_state1v2, slices=grid_size1v2)
+    value_function_current_state = v1v2[:, :, d1x_slice, d1y_slice, d2x_slice, d2y_slice]
+    plot_game1v2(grid1v2, value_function_current_state, current_attackers, current_defenders, name="$\mathcal{RA}^{12}_{\infty}$")
+    
 
     # update the next postions of defenders
     # newd_positions = next_positions(current_defenders, control_defenders, deltat)  # , selected, current_captured

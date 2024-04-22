@@ -229,7 +229,7 @@ def capture_1vs1(attackers, defenders, value1v1, stops):
     Args:
         attackers (list): positions (set) of all attackers, [(a1x, a1y), ...]
         defenders (list): positions (set) of all defenders, [(d1x, d1y), ...]
-        value2v1 (ndarray): 1v1 HJ value function
+        value1v1 (ndarray): 1v1 HJ value function
         stops (list): the captured attackers index
     """
     num_attacker, num_defender = len(attackers), len(defenders)
