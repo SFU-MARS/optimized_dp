@@ -102,27 +102,27 @@ my_car = DubinsCar4D2()
 Initial_value_f = CylinderShape(g, [2,3], np.zeros(4), 1)
 
 # Look-back length and time step
-lookback_length = 1.0
+lookback_length = 1.5
 t_step = 0.05
 
 small_number = 1e-5
 
 tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)
 
-po = PlotOptions(do_plot=True, plot_type="value", plotDims=[0,1],
-                  slicesCut=[19, 30])
+po = PlotOptions(do_plot=True, plot_type="set", plotDims=[0,1,3],
+                  slicesCut=[10])
 
 # In this example, we compute a Backward Reachable Tube
 compMethods = { "TargetSetMode": "minVWithV0"}
-result = HJSolver(my_car, g, Initial_value_f, tau, compMethods, po, saveAllTimeSteps=True)
+result = HJSolver(my_car, g, Initial_value_f, tau, compMethods, po, saveAllTimeSteps=True, accuracy="low")
 
 last_time_step_result = result[..., 0]
 
 # Compute spatial derivatives at every state
-x_derivative = computeSpatDerivArray(g, last_time_step_result, deriv_dim=1, accuracy="low")
-y_derivative = computeSpatDerivArray(g, last_time_step_result, deriv_dim=2, accuracy="low")
-v_derivative = computeSpatDerivArray(g, last_time_step_result, deriv_dim=3, accuracy="low")
-T_derivative = computeSpatDerivArray(g, last_time_step_result, deriv_dim=4, accuracy="low")
+x_derivative = computeSpatDerivArray(g, last_time_step_result, deriv_dim=1, accuracy="medium")
+y_derivative = computeSpatDerivArray(g, last_time_step_result, deriv_dim=2, accuracy="medium")
+v_derivative = computeSpatDerivArray(g, last_time_step_result, deriv_dim=3, accuracy="medium")
+T_derivative = computeSpatDerivArray(g, last_time_step_result, deriv_dim=4, accuracy="medium")
 
 # Let's compute optimal control at some random idices
 spat_deriv_vector = (x_derivative[10,20,15,15], y_derivative[10,20,15,15],

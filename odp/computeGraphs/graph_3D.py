@@ -1,8 +1,8 @@
 import heterocl as hcl
 import numpy as np
 from odp.computeGraphs.CustomGraphFunctions import *
-from odp.spatialDerivatives.first_orderENO3D import *
-from odp.spatialDerivatives.second_orderENO3D import *
+from odp.spatialDerivatives.firstOrderENO.first_orderENO3D import *
+from odp.spatialDerivatives.secondOrderENO.second_orderENO3D import *
 
 #from user_definer import *
 #def graph_3D(dynamics_obj, grid):
@@ -88,9 +88,9 @@ def graph_3D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
                             dV_dy_L[0], dV_dy_R[0] = spa_derivY(i, j, k, V_init, g)
                             dV_dT_L[0], dV_dT_R[0] = spa_derivT(i, j, k, V_init, g)
                         if accuracy == "medium":
-                            dV_dx_L[0], dV_dx_R[0] = secondOrderX(i, j, k, V_init, g)
-                            dV_dy_L[0], dV_dy_R[0] = secondOrderY(i, j, k, V_init, g)
-                            dV_dT_L[0], dV_dT_R[0] = secondOrderT(i, j, k, V_init, g)
+                            dV_dx_L[0], dV_dx_R[0] = secondOrder_ENO3D_X0(i, j, k, V_init, g)
+                            dV_dy_L[0], dV_dy_R[0] = secondOrder_ENO3D_X1(i, j, k, V_init, g)
+                            dV_dT_L[0], dV_dT_R[0] = secondOrder_ENO3D_X2(i, j, k, V_init, g)
 
                         # Saves spatial derivative diff into tables
                         deriv_diff1[i, j, k] = dV_dx_R[0] - dV_dx_L[0]
@@ -300,11 +300,11 @@ def graph_3D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
                                 dV_dx_L[0], dV_dx_R[0] = spa_derivT(i, j, k, V_array, g)
                         if accuracy == "medium":
                             if deriv_dim == 1:
-                                dV_dx_L[0], dV_dx_R[0] = secondOrderX(i, j, k, V_array, g)
+                                dV_dx_L[0], dV_dx_R[0] = secondOrder_ENO3D_X0(i, j, k, V_array, g)
                             if deriv_dim == 2:
-                                dV_dx_L[0], dV_dx_R[0] = secondOrderY(i, j, k, V_array, g)
+                                dV_dx_L[0], dV_dx_R[0] = secondOrder_ENO3D_X1(i, j, k, V_array, g)
                             if deriv_dim == 3:
-                                dV_dx_L[0], dV_dx_R[0] = secondOrderT(i, j, k, V_array, g)
+                                dV_dx_L[0], dV_dx_R[0] = secondOrder_ENO3D_X2(i, j, k, V_array, g)
 
                         Deriv_array[i, j, k] = (dV_dx_L[0] + dV_dx_R[0]) / 2
 

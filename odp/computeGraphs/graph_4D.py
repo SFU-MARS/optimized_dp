@@ -1,8 +1,8 @@
 import heterocl as hcl
 import numpy as np
 from odp.computeGraphs.CustomGraphFunctions import *
-from odp.spatialDerivatives.first_orderENO4D import *
-from odp.spatialDerivatives.second_orderENO4D import *
+from odp.spatialDerivatives.firstOrderENO.first_orderENO4D import *
+from odp.spatialDerivatives.secondOrderENO.second_orderENO4D import *
 
 ########################## 4D Graph definition #################################
 def graph_4D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv_dim=1):
@@ -103,10 +103,10 @@ def graph_4D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
                                 dV_dx3_L[0], dV_dx3_R[0] = spa_derivX3_4d(i, j, k, l, V_init, g)
                                 dV_dx4_L[0], dV_dx4_R[0] = spa_derivX4_4d(i, j, k, l, V_init, g)
                             if accuracy == "medium":
-                                dV_dx1_L[0], dV_dx1_R[0] = secondOrderX1_4d(i, j, k, l, V_init, g)
-                                dV_dx2_L[0], dV_dx2_R[0] = secondOrderX2_4d(i, j, k, l, V_init, g)
-                                dV_dx3_L[0], dV_dx3_R[0] = secondOrderX3_4d(i, j, k, l, V_init, g)
-                                dV_dx4_L[0], dV_dx4_R[0] = secondOrderX4_4d(i, j, k, l, V_init, g)
+                                dV_dx1_L[0], dV_dx1_R[0] = secondOrder_ENO4D_X0(i, j, k, l, V_init, g)
+                                dV_dx2_L[0], dV_dx2_R[0] = secondOrder_ENO4D_X1(i, j, k, l, V_init, g)
+                                dV_dx3_L[0], dV_dx3_R[0] = secondOrder_ENO4D_X2(i, j, k, l, V_init, g)
+                                dV_dx4_L[0], dV_dx4_R[0] = secondOrder_ENO4D_X3(i, j, k, l, V_init, g)
 
                             # Saves spatial derivative diff into tables
                             deriv_diff1[i, j, k, l] = dV_dx1_R[0] - dV_dx1_L[0]
@@ -375,13 +375,13 @@ def graph_4D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
                                     dV_dx_L[0], dV_dx_R[0] = spa_derivX4_4d(i, j, k, l, V_array, g)
                             if accuracy == "medium":
                                 if deriv_dim == 1:
-                                    dV_dx_L[0], dV_dx_R[0] = secondOrderX1_4d(i, j, k, l, V_array, g)
+                                    dV_dx_L[0], dV_dx_R[0] = secondOrder_ENO4D_X0(i, j, k, l, V_array, g)
                                 if deriv_dim == 2:
-                                    dV_dx_L[0], dV_dx_R[0] = secondOrderX2_4d(i, j, k, l, V_array, g)
+                                    dV_dx_L[0], dV_dx_R[0] = secondOrder_ENO4D_X1(i, j, k, l, V_array, g)
                                 if deriv_dim == 3:
-                                    dV_dx_L[0], dV_dx_R[0] = secondOrderX3_4d(i, j, k, l, V_array, g)
+                                    dV_dx_L[0], dV_dx_R[0] = secondOrder_ENO4D_X2(i, j, k, l, V_array, g)
                                 if deriv_dim == 4:
-                                    dV_dx_L[0], dV_dx_R[0] = secondOrderX4_4d(i, j, k, l, V_array, g)
+                                    dV_dx_L[0], dV_dx_R[0] = secondOrder_ENO4D_X3(i, j, k, l, V_array, g)
 
                             Deriv_array[i, j, k, l] = (dV_dx_L[0] + dV_dx_R[0]) / 2
 

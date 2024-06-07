@@ -1,7 +1,7 @@
 import heterocl as hcl
 from odp.computeGraphs.CustomGraphFunctions import *
-from odp.spatialDerivatives.first_orderENO6D import *
-from odp.spatialDerivatives.second_orderENO6D import *
+from odp.spatialDerivatives.firstOrderENO.first_orderENO6D import *
+from odp.spatialDerivatives.secondOrderENO.second_orderENO6D import *
 
 ########################## 6D graph definition ########################
 
@@ -125,12 +125,12 @@ def graph_6D(my_object, g, compMethod, accuracy):
                                         dV_dx5_L[0], dV_dx5_R[0] = spa_derivX5_6d(i, j, k, l, m, n, V_init, g)
                                         dV_dx6_L[0], dV_dx6_R[0] = spa_derivX6_6d(i, j, k, l, m, n, V_init, g)
                                     if accuracy == "medium":
-                                        dV_dx1_L[0], dV_dx1_R[0] = secondOrderX1_6d(i, j, k, l, m, n, V_init, g)
-                                        dV_dx2_L[0], dV_dx2_R[0] = secondOrderX2_6d(i, j, k, l, m, n, V_init, g)
-                                        dV_dx3_L[0], dV_dx3_R[0] = secondOrderX3_6d(i, j, k, l, m, n, V_init, g)
-                                        dV_dx4_L[0], dV_dx4_R[0] = secondOrderX4_6d(i, j, k, l, m, n, V_init, g)
-                                        dV_dx5_L[0], dV_dx5_R[0] = secondOrderX5_6d(i, j, k, l, m, n, V_init, g)
-                                        dV_dx6_L[0], dV_dx6_R[0] = secondOrderX6_6d(i, j, k, l, m, n, V_init, g)
+                                        dV_dx1_L[0], dV_dx1_R[0] = secondOrder_ENO6D_X0(i, j, k, l, m, n, V_init, g)
+                                        dV_dx2_L[0], dV_dx2_R[0] = secondOrder_ENO6D_X1(i, j, k, l, m, n, V_init, g)
+                                        dV_dx3_L[0], dV_dx3_R[0] = secondOrder_ENO6D_X2(i, j, k, l, m, n, V_init, g)
+                                        dV_dx4_L[0], dV_dx4_R[0] = secondOrder_ENO6D_X3(i, j, k, l, m, n, V_init, g)
+                                        dV_dx5_L[0], dV_dx5_R[0] = secondOrder_ENO6D_X4(i, j, k, l, m, n, V_init, g)
+                                        dV_dx6_L[0], dV_dx6_R[0] = secondOrder_ENO6D_X5(i, j, k, l, m, n, V_init, g)
 
                                     # Saves spatial derivative diff into tables
                                     deriv_diff1[i, j, k, l, m, n] = dV_dx1_R[0] - dV_dx1_L[0]

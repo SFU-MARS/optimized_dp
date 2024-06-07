@@ -1,8 +1,8 @@
 import heterocl as hcl
 import numpy as np
 from odp.computeGraphs.CustomGraphFunctions import *
-from odp.spatialDerivatives.first_orderENO1D import *
-from odp.spatialDerivatives.second_orderENO1D import *
+from odp.spatialDerivatives.firstOrderENO.first_orderENO1D import *
+from odp.spatialDerivatives.secondOrderENO.second_orderENO1D import *
 
 #from user_definer import *
 #def graph_1D(dynamics_obj, grid):
@@ -227,7 +227,7 @@ def graph_1D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
         s[s_H].parallel(s_H.i)
         s[s_D].parallel(s_D.i)
     else:
-        print("I'm here\n")
+        #print("I'm here\n")
         s = hcl.create_schedule([V_init, V_f], returnDerivative)
 
     # Inspect IR
