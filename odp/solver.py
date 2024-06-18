@@ -87,7 +87,7 @@ def solveValueIteration(MDP_obj):
 
 def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
              plot_option, saveAllTimeSteps=False,
-             accuracy="low", untilConvergent=False, epsilon=2e-3):
+             accuracy="medium", untilConvergent=False, epsilon=2e-3):
 
     print("Welcome to optimized_dp \n")
     if type(multiple_value) == list:

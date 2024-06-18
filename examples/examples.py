@@ -114,7 +114,7 @@ po = PlotOptions(do_plot=True, plot_type="set", plotDims=[0,1,3],
 
 # In this example, we compute a Backward Reachable Tube
 compMethods = { "TargetSetMode": "minVWithV0"}
-result = HJSolver(my_car, g, Initial_value_f, tau, compMethods, po, saveAllTimeSteps=True, accuracy="low")
+result = HJSolver(my_car, g, Initial_value_f, tau, compMethods, po, saveAllTimeSteps=True, accuracy="medium")
 
 last_time_step_result = result[..., 0]
 
