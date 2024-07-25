@@ -84,7 +84,6 @@ def solveValueIteration(MDP_obj):
     #         "_Interpolation" if MDP_obj._useNN[0] == 0 else "_NN")
     # MDP_obj.writeResults(V, dir_path, file_name, just_values=True)
     return V
-
 def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
              plot_option, saveAllTimeSteps=False,
              accuracy="medium", untilConvergent=False, epsilon=2e-3):
@@ -124,6 +123,8 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
     # Tensors input to our computation graph
     V_0 = hcl.asarray(init_value)
     V_1 = hcl.asarray(np.zeros(tuple(grid.pts_each_dim)))
+    if accuracy == "medium":
+        V_2 = hcl.asarray(np.zeros(tuple(grid.pts_each_dim)))
 
     # Check which target set or initial value set
     if compMethod["TargetSetMode"] != "minVWithVTarget" and compMethod["TargetSetMode"] != "maxVWithVTarget":
@@ -210,6 +211,8 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
             iter += 1
             start = time.time()
 
+            tPrev = tNow
+
             # Run the execution and pass input into graph
             if grid.dims == 1:
                 solve_pde(V_1, V_0, list_x1, t_minh, l0)
@@ -225,20 +228,65 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
                 solve_pde(V_1, V_0, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6, t_minh, l0)
 
             tNow = t_minh.asnumpy()[0]
+            # Will be useful for accuracy >= medium
+            delta_t1 = tNow - tPrev
 
             # Calculate computation time
             execution_time += time.time() - start
 
             # If ObstacleSetMode is specified by user
             if "ObstacleSetMode" in compMethod:
+                # Convert newly computed V back to numpy for numpy operations
+                V_1 = V_1.asnumpy()
+
                 if compMethod["ObstacleSetMode"] == "maxVWithObstacle":
-                    tmp_val = np.maximum(V_0.asnumpy(), -constraint_i)
+                    V_1 = np.maximum(V_1, -constraint_i)
                 elif compMethod["ObstacleSetMode"] == "minVWithObstacle":
-                    tmp_val = np.minimum(V_0.asnumpy(), -constraint_i)
-                # Update final result
-                V_1 = hcl.asarray(tmp_val)
-                # Update input for next iteration
-                V_0 = hcl.asarray(tmp_val)
+                    V_1 = np.minimum(V_1, -constraint_i)
+                # Convert new V back into heterocl type
+                V_1 = hcl.asarray(V_1)
+
+            #if accuracy == "medium":
+                # Compute phi at t = (n + 2)
+            #    if grid.dims == 1:
+            #        solve_pde(V_2, V_1, list_x1, t_minh, l0)
+            #    if grid.dims == 2:
+            #        solve_pde(V_2, V_1, list_x1, list_x2, t_minh, l0)
+            #    if grid.dims == 3:
+            #        solve_pde(V_2, V_1, list_x1, list_x2, list_x3, t_minh, l0)
+            #    if grid.dims == 4:
+            #        solve_pde(V_2, V_1, list_x1, list_x2, list_x3, list_x4, t_minh, l0, probe)
+            #    if grid.dims == 5:
+            #        solve_pde(V_2, V_1, list_x1, list_x2, list_x3, list_x4, list_x5, t_minh, l0)
+            #    if grid.dims == 6:
+            #        solve_pde(V_2, V_1, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6, t_minh, l0)
+
+            #   if "ObstacleSetMode" in compMethod:
+            #        # Convert newly computed V back to numpy for numpy operations
+            #        V_2 = V_2.asnumpy()
+            #        if compMethod["ObstacleSetMode"] == "maxVWithObstacle":
+            #            V_2 = np.maximum(V_2.asnumpy(), -constraint_i)
+            #        elif compMethod["ObstacleSetMode"] == "minVWithObstacle":
+            #            V_2 = np.minimum(V_2.asnumpy(), -constraint_i)
+            #        # Convert new V back into heterocl type
+            #        V_2 = hcl.asarray(V_2)
+
+
+            #    delta_t2 = t_minh.asnumpy()[0] - tNow
+            #    # Convert back to numpy for averaging
+            #    V_1 = (V_2.asnumpy() + V_0.asnumpy()) / 2
+            #    V_1 = hcl.asarray(V_1)
+
+            #    print((delta_t1+delta_t2)/2)
+            #    # Update the time array computation is operated on
+            #    t_minh = t_minh.asnumpy()
+            #    t_minh[0] = tPrev + (delta_t1 + delta_t2) / 2
+            #    tNow = t_minh[0]
+            #    # Convert back to heterocl
+            #    t_minh = hcl.asarray(t_minh)
+
+            # Copy over for input next iterations
+            V_0 = hcl.asarray(V_1.asnumpy())
 
             # Some information printin
             print(t_minh)

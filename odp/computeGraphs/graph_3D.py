@@ -281,7 +281,7 @@ def graph_3D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
             result = hcl.update(V_new, lambda i, j, k: maxVWithVInit(i, j, k))
 
         # Copy V_new to V_init
-        hcl.update(V_init, lambda i, j, k: V_new[i, j, k])
+        # hcl.update(V_init, lambda i, j, k: V_new[i, j, k])
         return result
 
     def returnDerivative(V_array, Deriv_array):
