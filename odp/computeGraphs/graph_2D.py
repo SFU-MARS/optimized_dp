@@ -10,14 +10,15 @@ def graph_2D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
     V_f = hcl.placeholder(tuple(g.pts_each_dim), name="V_f", dtype=hcl.Float())
     V_init = hcl.placeholder(tuple(g.pts_each_dim), name="V_init", dtype=hcl.Float())
     l0 = hcl.placeholder(tuple(g.pts_each_dim), name="l0", dtype=hcl.Float())
-    t = hcl.placeholder((2,), name="t", dtype=hcl.Float())
+    t = hcl.placeholder((1,), name="t", dtype=hcl.Float())
+    delta_t = hcl.placeholder((1,), name="delta_t", dtype=hcl.Float())
     probe = hcl.placeholder(tuple(g.pts_each_dim), name="probe", dtype=hcl.Float())
 
     # Positions vector
     x1 = hcl.placeholder((g.pts_each_dim[0],), name="x1", dtype=hcl.Float())
     x2 = hcl.placeholder((g.pts_each_dim[1],), name="x2", dtype=hcl.Float())
 
-    def graph_create(V_new, V_init, x1, x2, t, l0):
+    def graph_create(V_new, V_init, x1, x2, delta_t, t, l0):
         # Specify intermediate tensors
         deriv_diff1 = hcl.compute(V_init.shape, lambda *x: 0, "deriv_diff1")
         deriv_diff2 = hcl.compute(V_init.shape, lambda *x: 0, "deriv_diff2")
@@ -39,27 +40,7 @@ def graph_2D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
             stepBound = hcl.scalar(0, "stepBound")
             stepBoundInv[0] = max_alpha1[0] / g.dx[0] + max_alpha2[0] / g.dx[1] 
             stepBound[0] = 0.8 / stepBoundInv[0]
-            with hcl.if_(stepBound > t[1] - t[0]):
-                stepBound[0] = t[1] - t[0]
-            t[0] = t[0] + stepBound[0]
             return stepBound[0]
-
-            # Min with V_before
-        def minVWithVInit(i, j):
-            with hcl.if_(V_new[i, j] > V_init[i, j]):
-                V_new[i, j] = V_init[i, j]
-
-        def maxVWithVInit(i, j):
-            with hcl.if_(V_new[i, j] < V_init[i, j]):
-                V_new[i, j] = V_init[i, j]
-
-        def maxVWithV0(i, j):  # Take the max
-            with hcl.if_(V_new[i, j] < l0[i, j]):
-                V_new[i, j] = l0[i, j]
-
-        def minVWithV0(i, j):
-            with hcl.if_(V_new[i, j] > l0[i, j]):
-                V_new[i, j] = l0[i, j]
 
         # Calculate Hamiltonian for every grid point in V_init
         with hcl.Stage("Hamiltonian"):
@@ -222,26 +203,8 @@ def graph_2D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
                     with hcl.if_(alpha2[0] > max_alpha2[0]):
                         max_alpha2[0] = alpha2[0]
 
-
-
-        # Determine time step
-        delta_t = hcl.compute((1,), lambda x: step_bound(), name="delta_t")
-        # Integrate
-        result = hcl.update(V_new, lambda i, j: V_init[i, j] + V_new[i, j] * delta_t[0])
-
-        # Different computation method check
-        if compMethod == 'maxVWithV0' or compMethod == 'maxVWithVTarget':
-            result = hcl.update(V_new, lambda i, j: maxVWithV0(i, j))
-        if compMethod == 'minVWithV0' or compMethod == 'minVWithVTarget':
-            result = hcl.update(V_new, lambda i, j: minVWithV0(i, j))
-        if compMethod == 'minVWithVInit':
-            result = hcl.update(V_new, lambda i, j: minVWithVInit(i, j))
-        if compMethod == 'maxVWithVInit':
-            result = hcl.update(V_new, lambda i, j: maxVWithVInit(i, j))
-
-        # Copy V_new to V_init
-        hcl.update(V_init, lambda i, j: V_new[i, j])
-        return result
+        # Update largest time step - CFL condition
+        hcl.update(delta_t, lambda x: step_bound())
 
     def returnDerivative(V_array, Deriv_array):
         with hcl.Stage("ComputeDeriv"):
@@ -263,7 +226,7 @@ def graph_2D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
                     Deriv_array[i, j] = (dV_dx_L[0] + dV_dx_R[0]) / 2
 
     if generate_SpatDeriv == False:
-        s = hcl.create_schedule([V_f, V_init, x1, x2, t, l0], graph_create)
+        s = hcl.create_schedule([V_f, V_init, x1, x2, delta_t, t, l0], graph_create)
         ##################### CODE OPTIMIZATION HERE ###########################
         print("Optimizing\n")
 

@@ -45,8 +45,8 @@ my_car = DubinsCapture(uMode="max", dMode="min")
 
 # Specify how to plot the isosurface of the value function ( for higher-than-3-dimension arrays, which slices, indices
 # we should plot if we plot at all )
-po2 = PlotOptions(do_plot=True, plot_type="set", plotDims=[0,1,2],
-                  slicesCut=[], save_fig=True, filename="test.png")
+po2 = PlotOptions(do_plot=False, plot_type="set", plotDims=[0,1,2],
+                  slicesCut=[], save_fig=True, filename="test1.png")
 
 """
 Assign one of the following strings to `TargetSetMode` to specify the characteristics of computation
@@ -55,8 +55,8 @@ Assign one of the following strings to `TargetSetMode` to specify the characteri
 "none" -> compute Backward Reachable Set,
 "minVWithV0" -> min V with V0 (compute Backward Reachable Tube),
 "maxVWithV0" -> max V with V0,
-"maxVWithVInit" -> compute max V over time,
-"minVWithVInit" -> compute min V over time,
+"maxVOverTime" -> compute max V over time,
+"minVOverTime" -> compute min V over time,
 "minVWithVTarget" -> min V with target set (if target set is different from initial V0)
 "maxVWithVTarget" -> max V with target set (if target set is different from initial V0)
 }
@@ -109,8 +109,8 @@ small_number = 1e-5
 
 tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)
 
-po = PlotOptions(do_plot=True, plot_type="set", plotDims=[0,1,3],
-                  slicesCut=[10])
+po = PlotOptions(do_plot=False, plot_type="set", plotDims=[0,1,3],
+                  slicesCut=[10], filename="test2.png")
 
 # In this example, we compute a Backward Reachable Tube
 compMethods = { "TargetSetMode": "minVWithV0"}
@@ -155,8 +155,8 @@ my_car = DubinsCapture(uMode="min", dMode="max")
 
 #po2 = PlotOptions(do_plot=True, plot_type="3d_plot", plotDims=[0,1,2],
 
-po2 = PlotOptions(do_plot=True, plot_type="set", plotDims=[0,1,2],
-                  slicesCut=[])
+po2 = PlotOptions(do_plot=False, plot_type="set", plotDims=[0,1,2],
+                  slicesCut=[], filename="test3.png")
 
 """
 Assign one of the following strings to `TargetSetMode` to specify the characteristics of computation
@@ -165,8 +165,8 @@ Assign one of the following strings to `TargetSetMode` to specify the characteri
 "none" -> compute Backward Reachable Set,
 "minVWithV0" -> min V with V0 (compute Backward Reachable Tube),
 "maxVWithV0" -> max V with V0,
-"maxVWithVInit" -> compute max V over time,
-"minVWithVInit" -> compute min V over time,
+"maxVOverTime" -> compute max V over time,
+"minVOverTime" -> compute min V over time,
 "minVWithVTarget" -> min V with target set (if target set is different from initial V0)
 "maxVWithVTarget" -> max V with target set (if target set is different from initial V0)
 }
