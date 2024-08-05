@@ -1,16 +1,17 @@
 import heterocl as hcl
 import numpy as np
 from odp.computeGraphs.CustomGraphFunctions import *
-from odp.spatialDerivatives.first_orderENO4D import *
-from odp.spatialDerivatives.second_orderENO4D import *
+from odp.spatialDerivatives.firstOrderENO.first_orderENO4D import *
+from odp.spatialDerivatives.secondOrderENO.second_orderENO4D import *
 
 ########################## 4D Graph definition #################################
 def graph_4D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv_dim=1):
     V_f = hcl.placeholder(tuple(g.pts_each_dim), name="V_f", dtype=hcl.Float())
     V_init = hcl.placeholder(tuple(g.pts_each_dim), name="V_init", dtype=hcl.Float())
     l0 = hcl.placeholder(tuple(g.pts_each_dim), name="l0", dtype=hcl.Float())
-    t = hcl.placeholder((2,), name="t", dtype=hcl.Float())
-    probe = hcl.placeholder(tuple(g.pts_each_dim), name="probe", dtype=hcl.Float())
+    t = hcl.placeholder((1,), name="t", dtype=hcl.Float())
+    delta_t = hcl.placeholder((1,), name="delta_t", dtype=hcl.Float())
+    #probe = hcl.placeholder(tuple(g.pts_each_dim), name="probe", dtype=hcl.Float())
 
     # Positions vector
     x1 = hcl.placeholder((g.pts_each_dim[0],), name="x1", dtype=hcl.Float())
@@ -18,7 +19,7 @@ def graph_4D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
     x3 = hcl.placeholder((g.pts_each_dim[2],), name="x3", dtype=hcl.Float())
     x4 = hcl.placeholder((g.pts_each_dim[3],), name="x4", dtype=hcl.Float())
 
-    def graph_create(V_new, V_init, x1, x2, x3, x4, t, l0, probe):
+    def graph_create(V_new, V_init, x1, x2, x3, x4, delta_t, t, l0):
         # Specify intermediate tensors
         deriv_diff1 = hcl.compute(V_init.shape, lambda *x:0, "deriv_diff1")
         deriv_diff2 = hcl.compute(V_init.shape, lambda *x:0, "deriv_diff2")
@@ -48,32 +49,8 @@ def graph_4D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
             stepBound = hcl.scalar(0, "stepBound")
             stepBoundInv[0] = max_alpha1[0] / g.dx[0] + max_alpha2[0] / g.dx[1] + max_alpha3[0] / g.dx[2] + max_alpha4[0] / \
                               g.dx[3]
-
             stepBound[0] = 0.8 / stepBoundInv[0]
-            with hcl.if_(stepBound > t[1] - t[0]):
-                stepBound[0] = t[1] - t[0]
-
-            # Update the lower time ranges
-            t[0] = t[0] + stepBound[0]
-            # t[0] = min_deriv2[0]
             return stepBound[0]
-
-        # Min with V_before
-        def minVWithVInit(i, j, k, l):
-            with hcl.if_(V_new[i, j, k, l] > V_init[i, j, k, l]):
-                V_new[i, j, k, l] = V_init[i, j, k, l]
-
-        def maxVWithVInit(i, j, k, l):
-            with hcl.if_(V_new[i, j, k, l] < V_init[i, j, k, l]):
-                V_new[i, j, k, l] = V_init[i, j, k, l]
-
-        def maxVWithV0(i, j, k, l):  # Take the max
-            with hcl.if_(V_new[i, j, k, l] < l0[i, j, k, l]):
-                V_new[i, j, k, l] = l0[i, j, k, l]
-
-        def minVWithV0(i, j, k, l):
-            with hcl.if_(V_new[i, j, k, l] > l0[i, j, k, l]):
-                V_new[i, j, k, l] = l0[i, j, k, l]
 
         # Calculate Hamiltonian for every grid point in V_init
         with hcl.Stage("Hamiltonian"):
@@ -103,10 +80,10 @@ def graph_4D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
                                 dV_dx3_L[0], dV_dx3_R[0] = spa_derivX3_4d(i, j, k, l, V_init, g)
                                 dV_dx4_L[0], dV_dx4_R[0] = spa_derivX4_4d(i, j, k, l, V_init, g)
                             if accuracy == "medium":
-                                dV_dx1_L[0], dV_dx1_R[0] = secondOrderX1_4d(i, j, k, l, V_init, g)
-                                dV_dx2_L[0], dV_dx2_R[0] = secondOrderX2_4d(i, j, k, l, V_init, g)
-                                dV_dx3_L[0], dV_dx3_R[0] = secondOrderX3_4d(i, j, k, l, V_init, g)
-                                dV_dx4_L[0], dV_dx4_R[0] = secondOrderX4_4d(i, j, k, l, V_init, g)
+                                dV_dx1_L[0], dV_dx1_R[0] = secondOrder_ENO4D_X0(i, j, k, l, V_init, g)
+                                dV_dx2_L[0], dV_dx2_R[0] = secondOrder_ENO4D_X1(i, j, k, l, V_init, g)
+                                dV_dx3_L[0], dV_dx3_R[0] = secondOrder_ENO4D_X2(i, j, k, l, V_init, g)
+                                dV_dx4_L[0], dV_dx4_R[0] = secondOrder_ENO4D_X3(i, j, k, l, V_init, g)
 
                             # Saves spatial derivative diff into tables
                             deriv_diff1[i, j, k, l] = dV_dx1_R[0] - dV_dx1_L[0]
@@ -137,7 +114,7 @@ def graph_4D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
                                         dx1_dt * dV_dx1[0] + dx2_dt * dV_dx2[0] + dx3_dt * dV_dx3[0] + dx4_dt * dV_dx4[0])
                             # Debugging
                             # V_new[i, j, k, l] = dV_dx2[0]
-                            probe[i, j, k, l] = V_init[i, j, k, l]
+                            #probe[i, j, k, l] = V_init[i, j, k, l]
 
                             # Get derivMin
                             with hcl.if_(dV_dx1_L[0] < min_deriv1[0]):
@@ -338,24 +315,9 @@ def graph_4D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
                             with hcl.if_(alpha4[0] > max_alpha4[0]):
                                 max_alpha4[0] = alpha4[0]
 
-        # Determine time step
-        delta_t = hcl.compute((1,), lambda x: step_bound(), name="delta_t")
-        # Integrate
-        result = hcl.update(V_new, lambda i, j, k, l: V_init[i, j, k, l] + V_new[i, j, k, l] * delta_t[0])
-        # Different computation method check
-        if compMethod == 'maxVWithV0' or compMethod == 'maxVWithVTarget':
-            result = hcl.update(V_new, lambda i, j, k, l: maxVWithV0(i, j, k, l))
-        if compMethod == 'minVWithV0' or compMethod == 'minVWithVTarget':
-            result = hcl.update(V_new, lambda i, j, k, l: minVWithV0(i, j, k, l))
-        if compMethod == 'minVWithVInit':
-            result = hcl.update(V_new, lambda i, j, k, l: minVWithVInit(i, j, k, l))
-        if compMethod == 'maxVWithVInit':
-            result = hcl.update(V_new, lambda i, j, k, l: maxVWithVInit(i, j, k, l))
-
-        # Copy V_new to V_init
-        hcl.update(V_init, lambda i, j, k, l: V_new[i, j, k, l])
-        return result
-
+        # Update largest time step - CFL condition
+        hcl.update(delta_t, lambda x: step_bound())
+        
     def returnDerivative(V_array, Deriv_array):
         with hcl.Stage("ComputeDeriv"):
             with hcl.for_(0, V_array.shape[0], name="i") as i:
@@ -375,18 +337,18 @@ def graph_4D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
                                     dV_dx_L[0], dV_dx_R[0] = spa_derivX4_4d(i, j, k, l, V_array, g)
                             if accuracy == "medium":
                                 if deriv_dim == 1:
-                                    dV_dx_L[0], dV_dx_R[0] = secondOrderX1_4d(i, j, k, l, V_array, g)
+                                    dV_dx_L[0], dV_dx_R[0] = secondOrder_ENO4D_X0(i, j, k, l, V_array, g)
                                 if deriv_dim == 2:
-                                    dV_dx_L[0], dV_dx_R[0] = secondOrderX2_4d(i, j, k, l, V_array, g)
+                                    dV_dx_L[0], dV_dx_R[0] = secondOrder_ENO4D_X1(i, j, k, l, V_array, g)
                                 if deriv_dim == 3:
-                                    dV_dx_L[0], dV_dx_R[0] = secondOrderX3_4d(i, j, k, l, V_array, g)
+                                    dV_dx_L[0], dV_dx_R[0] = secondOrder_ENO4D_X2(i, j, k, l, V_array, g)
                                 if deriv_dim == 4:
-                                    dV_dx_L[0], dV_dx_R[0] = secondOrderX4_4d(i, j, k, l, V_array, g)
+                                    dV_dx_L[0], dV_dx_R[0] = secondOrder_ENO4D_X3(i, j, k, l, V_array, g)
 
                             Deriv_array[i, j, k, l] = (dV_dx_L[0] + dV_dx_R[0]) / 2
 
     if generate_SpatDeriv == False:
-        s = hcl.create_schedule([V_f, V_init, x1, x2, x3, x4, t, l0, probe], graph_create)
+        s = hcl.create_schedule([V_f, V_init, x1, x2, x3, x4, delta_t, t, l0], graph_create)
 
         ##################### CODE OPTIMIZATION HERE ###########################
         print("Optimizing\n")

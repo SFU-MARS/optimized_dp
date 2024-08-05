@@ -15,12 +15,12 @@ def plot_isosurface(grid, V_ori, plot_option):
 
     if len(dims_plot) == 3 and len(my_V.shape) == 3:
         # Plot 3D isosurface for only one time step
-        dim1, dim2, dim3 = dims_plot[0], dims_plot[1], dims_plot[2]
-        complex_x = complex(0, grid.pts_each_dim[dim1])
-        complex_y = complex(0, grid.pts_each_dim[dim2])
-        complex_z = complex(0, grid.pts_each_dim[dim3])
-        mg_X, mg_Y, mg_Z = np.mgrid[grid.min[dim1]:grid.max[dim1]: complex_x, grid.min[dim2]:grid.max[dim2]: complex_y,
-                           grid.min[dim3]:grid.max[dim3]: complex_z]
+        
+        complex_x = complex(0, grid.pts_each_dim[0])
+        complex_y = complex(0, grid.pts_each_dim[1])
+        complex_z = complex(0, grid.pts_each_dim[2])
+        mg_X, mg_Y, mg_Z = np.mgrid[grid.min[0]:grid.max[0]: complex_x, grid.min[1]:grid.max[1]: complex_y,
+                           grid.min[2]:grid.max[2]: complex_z]
         
 
 
@@ -52,14 +52,13 @@ def plot_isosurface(grid, V_ori, plot_option):
 
     if len(dims_plot) == 3 and len(my_V.shape) == 4:
         # Plot 3D isosurface with animation
-        dim1, dim2, dim3 = dims_plot[0], dims_plot[1], dims_plot[2]
-
-        dim1, dim2, dim3 = dims_plot[0], dims_plot[1], dims_plot[2]
-        complex_x = complex(0, grid.pts_each_dim[dim1])
-        complex_y = complex(0, grid.pts_each_dim[dim2])
-        complex_z = complex(0, grid.pts_each_dim[dim3])
-        mg_X, mg_Y, mg_Z = np.mgrid[grid.min[dim1]:grid.max[dim1]: complex_x, grid.min[dim2]:grid.max[dim2]: complex_y,
-                           grid.min[dim3]:grid.max[dim3]: complex_z]
+        # dim1, dim2, dim3 = dims_plot[0], dims_plot[1], dims_plot[2]
+        
+        complex_x = complex(0, grid.pts_each_dim[0])
+        complex_y = complex(0, grid.pts_each_dim[1])
+        complex_z = complex(0, grid.pts_each_dim[2])
+        mg_X, mg_Y, mg_Z = np.mgrid[grid.min[0]:grid.max[0]: complex_x, grid.min[1]:grid.max[1]: complex_y,
+                           grid.min[2]:grid.max[2]: complex_z]
 
         N = my_V.shape[3]
         print("Plotting beautiful plots. Please wait\n")
@@ -122,10 +121,10 @@ def plot_isosurface(grid, V_ori, plot_option):
 
     if len(dims_plot) == 2 and len(my_V.shape) == 2:
         # Plot 2D isosurface for only one time step
-        dim1, dim2 = dims_plot[0], dims_plot[1]
-        complex_x = complex(0, grid.pts_each_dim[dim1])
-        complex_y = complex(0, grid.pts_each_dim[dim2])
-        mg_X, mg_Y = np.mgrid[grid.min[dim1]:grid.max[dim1]: complex_x, grid.min[dim2]:grid.max[dim2]: complex_y]
+        # dim1, dim2 = dims_plot[0], dims_plot[1]
+        complex_x = complex(0, grid.pts_each_dim[0])
+        complex_y = complex(0, grid.pts_each_dim[1])
+        mg_X, mg_Y = np.mgrid[grid.min[0]:grid.max[0]: complex_x, grid.min[1]:grid.max[1]: complex_y]
 
 
         if (my_V > 0.0).all():
@@ -150,10 +149,10 @@ def plot_isosurface(grid, V_ori, plot_option):
 
     if len(dims_plot) == 2 and len(my_V.shape) == 3:
         # Plot 2D isosurface with animation
-        dim1, dim2 = dims_plot[0], dims_plot[1]
-        complex_x = complex(0, grid.pts_each_dim[dim1])
-        complex_y = complex(0, grid.pts_each_dim[dim2])
-        mg_X, mg_Y = np.mgrid[grid.min[dim1]:grid.max[dim1]: complex_x, grid.min[dim2]:grid.max[dim2]: complex_y]
+        # dim1, dim2 = dims_plot[0], dims_plot[1]
+        complex_x = complex(0, grid.pts_each_dim[0])
+        complex_y = complex(0, grid.pts_each_dim[1])
+        mg_X, mg_Y = np.mgrid[grid.min[0]:grid.max[0]: complex_x, grid.min[1]:grid.max[1]: complex_y]
 
         N = my_V.shape[2]
 
@@ -196,9 +195,9 @@ def plot_isosurface(grid, V_ori, plot_option):
 
     if len(dims_plot) == 1 and len(my_V.shape) == 1:
         # Plot 1D isosurface for only one time step
-        dim1 = dims_plot[0]
-        complex_x = complex(0, grid.pts_each_dim[dim1])
-        mg_X = np.mgrid[grid.min[dim1]:grid.max[dim1]: complex_x]
+        # dim1 = dims_plot[0]
+        complex_x = complex(0, grid.pts_each_dim[0])
+        mg_X = np.mgrid[grid.min[0]:grid.max[0]: complex_x]
 
         if (my_V > 0.0).all():
             print("Implicit surface will not be shown since all values are positive ")
@@ -217,9 +216,9 @@ def plot_isosurface(grid, V_ori, plot_option):
 
     if len(dims_plot) == 1 and len(my_V.shape) == 2:
         # Plot 1D isosurface with animation
-        dim1 = dims_plot[0]
-        complex_x = complex(0, grid.pts_each_dim[dim1])
-        mg_X = np.mgrid[grid.min[dim1]:grid.max[dim1]: complex_x]
+        # dim1 = dims_plot[0]
+        complex_x = complex(0, grid.pts_each_dim[0])
+        mg_X = np.mgrid[grid.min[0]:grid.max[0]: complex_x]
         
         N = my_V.shape[1]
 
@@ -276,10 +275,10 @@ def plot_valuefunction(grid, V_ori, plot_option):
 
     if len(dims_plot) == 2 and len(my_V.shape) == 2:
         # Plot 3D surface for only one time step
-        dim1, dim2 = dims_plot[0], dims_plot[1]
+        # dim1, dim2 = dims_plot[0], dims_plot[1]
 
-        my_X = np.linspace(grid.min[dim1], grid.max[dim1], grid.pts_each_dim[dim1])
-        my_Y = np.linspace(grid.min[dim2], grid.max[dim2], grid.pts_each_dim[dim2])
+        my_X = np.linspace(grid.min[0], grid.max[0], grid.pts_each_dim[0])
+        my_Y = np.linspace(grid.min[1], grid.max[1], grid.pts_each_dim[1])
         my_V = my_V
 
         print("Plotting beautiful plots. Please wait\n")
@@ -300,9 +299,9 @@ def plot_valuefunction(grid, V_ori, plot_option):
     if len(dims_plot) == 2 and len(my_V.shape) == 3:
         # ref: https://plotly.com/python/visualizing-mri-volume-slices/
         # Plot 3D surface with animation
-        dim1, dim2 = dims_plot[0], dims_plot[1]
-        my_X = np.linspace(grid.min[dim1], grid.max[dim1], grid.pts_each_dim[dim1])
-        my_Y = np.linspace(grid.min[dim2], grid.max[dim2], grid.pts_each_dim[dim2])
+        # dim1, dim2 = dims_plot[0], dims_plot[1]
+        my_X = np.linspace(grid.min[0], grid.max[0], grid.pts_each_dim[0])
+        my_Y = np.linspace(grid.min[1], grid.max[1], grid.pts_each_dim[1])
         N = my_V.shape[2]
 
         print("Plotting beautiful plots. Please wait\n")
@@ -352,9 +351,9 @@ def plot_valuefunction(grid, V_ori, plot_option):
 
     if len(dims_plot) == 1 and len(my_V.shape) == 1:
         # Plot 1D isosurface for only one time step
-        dim1 = dims_plot[0]
-        complex_x = complex(0, grid.pts_each_dim[dim1])
-        mg_X = np.mgrid[grid.min[dim1]:grid.max[dim1]: complex_x]
+        # dim1 = dims_plot[0]
+        complex_x = complex(0, grid.pts_each_dim[0])
+        mg_X = np.mgrid[grid.min[0]:grid.max[0]: complex_x]
 
 
         if (my_V > 0.0).all():
@@ -376,9 +375,9 @@ def plot_valuefunction(grid, V_ori, plot_option):
 
     if len(dims_plot) == 1 and len(my_V.shape) == 2:
         # Plot 1D isosurface with animation
-        dim1 = dims_plot[0]
-        complex_x = complex(0, grid.pts_each_dim[dim1])
-        mg_X = np.mgrid[grid.min[dim1]:grid.max[dim1]: complex_x]
+        # dim1 = dims_plot[0]
+        complex_x = complex(0, grid.pts_each_dim[0])
+        mg_X = np.mgrid[grid.min[0]:grid.max[0]: complex_x]
         
         N = my_V.shape[1]
 
@@ -499,6 +498,7 @@ def pre_plot(plot_option, grid, V_ori):
 
     delete_idx = []
     dims_list = list(range(grid.dims))
+
     for i in dims_list:
         if i not in dims_plot:
             idx[i] = plot_option.slices[slice_idx]
@@ -510,6 +510,7 @@ def pre_plot(plot_option, grid, V_ori):
     grid_max = np.delete(grid_max, delete_idx)
 
     V = V_ori[tuple(idx)]
+    
     grid = Grid(grid_min, grid_max, dims, N)
 
     # Downsamping process

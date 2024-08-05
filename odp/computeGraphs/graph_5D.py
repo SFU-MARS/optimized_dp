@@ -1,7 +1,7 @@
 import heterocl as hcl
 from odp.computeGraphs.CustomGraphFunctions import *
-from odp.spatialDerivatives.second_orderENO5D import *
-from odp.spatialDerivatives.first_orderENO5D import *
+from odp.spatialDerivatives.secondOrderENO.second_orderENO5D import *
+from odp.spatialDerivatives.firstOrderENO.first_orderENO5D import *
 ########################## 5D graph definition ########################
 
 # Note that t has 2 elements t1, t2
@@ -9,7 +9,8 @@ def graph_5D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
     V_f = hcl.placeholder(tuple(g.pts_each_dim), name="V_f", dtype=hcl.Float())
     V_init = hcl.placeholder(tuple(g.pts_each_dim), name="V_init", dtype=hcl.Float())
     l0 = hcl.placeholder(tuple(g.pts_each_dim), name="l0", dtype=hcl.Float())
-    t = hcl.placeholder((2,), name="t", dtype=hcl.Float())
+    t = hcl.placeholder((1,), name="t", dtype=hcl.Float())
+    delta_t = hcl.placeholder((1,), name="delta_t", dtype=hcl.Float())
 
     # Positions vector
     x1 = hcl.placeholder((g.pts_each_dim[0],), name="x1", dtype=hcl.Float())
@@ -18,7 +19,7 @@ def graph_5D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
     x4 = hcl.placeholder((g.pts_each_dim[3],), name="x4", dtype=hcl.Float())
     x5 = hcl.placeholder((g.pts_each_dim[4],), name="x5", dtype=hcl.Float())
 
-    def graph_create(V_new, V_init, x1, x2, x3, x4, x5, t, l0):
+    def graph_create(V_new, V_init, x1, x2, x3, x4, x5, delta_t, t, l0):
         # Specify intermediate tensors
         deriv_diff1 = hcl.compute(V_init.shape, lambda *x: 0, "deriv_diff1")
         deriv_diff2 = hcl.compute(V_init.shape, lambda *x: 0, "deriv_diff2")
@@ -55,30 +56,7 @@ def graph_5D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
                               + max_alpha5[0] / g.dx[4]
 
             stepBound[0] = 0.8 / stepBoundInv[0]
-            with hcl.if_(stepBound > t[1] - t[0]):
-                stepBound[0] = t[1] - t[0]
-
-            # Update the lower time ranges
-            t[0] = t[0] + stepBound[0]
-            # t[0] = min_deriv2[0]
             return stepBound[0]
-
-        def maxVWithV0(i, j, k, l, m):  # Take the max
-            with hcl.if_(V_new[i, j, k, l, m] < l0[i, j, k, l, m]):
-                V_new[i, j, k, l, m] = l0[i, j, k, l, m]
-
-        def minVWithV0(i, j, k, l, m):  # Take the max
-            with hcl.if_(V_new[i, j, k, l, m] > l0[i, j, k, l, m]):
-                V_new[i, j, k, l, m] = l0[i, j, k, l, m]
-
-        # Min with V_before
-        def minVWithVInit(i, j, k, l, m):
-            with hcl.if_(V_new[i, j, k, l, m] > V_init[i, j, k, l, m]):
-                V_new[i, j, k, l, m] = V_init[i, j, k, l, m]
-
-        def maxVWithVInit(i, j, k, l, m):
-            with hcl.if_(V_new[i, j, k, l, m] < V_init[i, j, k, l, m]):
-                V_new[i, j, k, l, m] = V_init[i, j, k, l, m]
 
         # Calculate Hamiltonian for every grid point in V_init
         with hcl.Stage("Hamiltonian"):
@@ -113,11 +91,11 @@ def graph_5D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
                                         dV_dx4_L[0], dV_dx4_R[0] = spa_derivX4_5d(i, j, k, l, m, V_init, g)
                                         dV_dx5_L[0], dV_dx5_R[0] = spa_derivX5_5d(i, j, k, l, m, V_init, g)
                                     if accuracy == "medium":
-                                        dV_dx1_L[0], dV_dx1_R[0] = secondOrderX1_5d(i, j, k, l, m, V_init, g)
-                                        dV_dx2_L[0], dV_dx2_R[0] = secondOrderX2_5d(i, j, k, l, m, V_init, g)
-                                        dV_dx3_L[0], dV_dx3_R[0] = secondOrderX3_5d(i, j, k, l, m, V_init, g)
-                                        dV_dx4_L[0], dV_dx4_R[0] = secondOrderX4_5d(i, j, k, l, m, V_init, g)
-                                        dV_dx5_L[0], dV_dx5_R[0] = secondOrderX5_5d(i, j, k, l, m, V_init, g)
+                                        dV_dx1_L[0], dV_dx1_R[0] = secondOrder_ENO5D_X0(i, j, k, l, m, V_init, g)
+                                        dV_dx2_L[0], dV_dx2_R[0] = secondOrder_ENO5D_X1(i, j, k, l, m, V_init, g)
+                                        dV_dx3_L[0], dV_dx3_R[0] = secondOrder_ENO5D_X2(i, j, k, l, m, V_init, g)
+                                        dV_dx4_L[0], dV_dx4_R[0] = secondOrder_ENO5D_X3(i, j, k, l, m, V_init, g)
+                                        dV_dx5_L[0], dV_dx5_R[0] = secondOrder_ENO5D_X4(i, j, k, l, m, V_init, g)
 
                                     # Saves spatial derivative diff into tables
                                     deriv_diff1[i, j, k, l, m] = dV_dx1_R[0] - dV_dx1_L[0]
@@ -366,26 +344,8 @@ def graph_5D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
                                         max_alpha4[0] = alpha4[0]
                                     with hcl.if_(alpha5 > max_alpha5):
                                         max_alpha5[0] = alpha5[0]
-
-        # Determine time step
-        delta_t = hcl.compute((1,), lambda x: step_bound(), name="delta_t")
-        # hcl.update(t, lambda x: t[x] + delta_t[x])
-
-        # Integrate
-        # if compMethod == 'HJ_PDE':
-        result = hcl.update(V_new,
-                            lambda i, j, k, l, m: V_init[i, j, k, l, m] + V_new[i, j, k, l, m] * delta_t[0])
-        if compMethod == 'maxVWithV0' or compMethod == 'maxVWithVTarget':
-            result = hcl.update(V_new, lambda i, j, k, l, m: maxVWithV0(i, j, k, l, m))
-        if compMethod == 'minVWithV0' or compMethod == 'minVWithVTarget':
-            result = hcl.update(V_new, lambda i, j, k, l, m: minVWithV0(i, j, k, l, m))
-        if compMethod == 'maxVWithVInit':
-            result = hcl.update(V_new, lambda i, j, k, l, m: maxVWithVInit(i, j, k, l, m))
-        if compMethod == 'minVWithVInit':
-            result = hcl.update(V_new, lambda i, j, k, l, m: minVWithVInit(i, j, k, l, m))
-        # Copy V_new to V_init
-        hcl.update(V_init, lambda i, j, k, l, m: V_new[i, j, k, l, m])
-        return result
+        # Update largest time step - CFL condition
+        hcl.update(delta_t, lambda x: step_bound())
 
     def returnDerivative(V_array, Deriv_array):
         with hcl.Stage("ComputeDeriv"):
@@ -410,20 +370,20 @@ def graph_5D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
 
                                 if accuracy == "medium":
                                     if deriv_dim == 1:
-                                        dV_dx_L[0], dV_dx_R[0] = secondOrderX1_5d(i, j, k, l, m, V_array, g)
+                                        dV_dx_L[0], dV_dx_R[0] = secondOrder_ENO5D_X0(i, j, k, l, m, V_array, g)
                                     if deriv_dim == 2:
-                                        dV_dx_L[0], dV_dx_R[0] = secondOrderX2_5d(i, j, k, l, m, V_array, g)
+                                        dV_dx_L[0], dV_dx_R[0] = secondOrder_ENO5D_X1(i, j, k, l, m, V_array, g)
                                     if deriv_dim == 3:
-                                        dV_dx_L[0], dV_dx_R[0] = secondOrderX3_5d(i, j, k, l, m, V_array, g)
+                                        dV_dx_L[0], dV_dx_R[0] = secondOrder_ENO5D_X2(i, j, k, l, m, V_array, g)
                                     if deriv_dim == 4:
-                                        dV_dx_L[0], dV_dx_R[0] = secondOrderX4_5d(i, j, k, l, m, V_array, g)
+                                        dV_dx_L[0], dV_dx_R[0] = secondOrder_ENO5D_X3(i, j, k, l, m, V_array, g)
                                     if deriv_dim == 5:
-                                        dV_dx_L[0], dV_dx_R[0] = secondOrderX5_5d(i, j, k, l, m, V_array, g)
+                                        dV_dx_L[0], dV_dx_R[0] = secondOrder_ENO5D_X4(i, j, k, l, m, V_array, g)
 
                                 Deriv_array[i, j, k, l, m] = (dV_dx_L[0] + dV_dx_R[0]) / 2
 
     if generate_SpatDeriv == False:
-        s = hcl.create_schedule([V_f, V_init, x1, x2, x3, x4, x5, t, l0], graph_create)
+        s = hcl.create_schedule([V_f, V_init, x1, x2, x3, x4, x5, delta_t, t, l0], graph_create)
         ##################### CODE OPTIMIZATION HERE ###########################
         print("Optimizing\n")
 
