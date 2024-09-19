@@ -6,7 +6,7 @@ from odp.Plots import plot_isosurface, plot_valuefunction
 
 # Backward reachable set computation library
 from odp.computeGraphs import graph_1D, graph_2D, graph_3D, graph_4D, graph_5D, graph_6D
-from odp.TimeToReach import TTR_2D, TTR_3D, TTR_4D, TTR_5D 
+from odp.TimeToReach import TTR_2D, TTR_3D, TTR_4D, TTR_5D, TTR_3D_Dev
 
 # Value Iteration library
 from odp.valueIteration import value_iteration_3D, value_iteration_4D, value_iteration_5D, value_iteration_6D
@@ -459,3 +459,124 @@ def computeSpatDerivArray(grid, V, deriv_dim, accuracy="low"):
 
     compute_SpatDeriv(V_0, spatial_deriv)
     return spatial_deriv.asnumpy()
+
+# Hanyang: add develop version of the TTRSolver: TTRSolver_Dev
+def TTRSolver_Dev(dynamics_obj, grid, multiple_value, epsilon, plot_option):
+    #TODO: Hanyang: developing version of the TTRSolver, aim to take the obstacles into consideration
+    print("Welcome to optimized_dp TTRSolver_Dev \n")
+    ################# INITIALIZE DATA TO BE INPUT INTO EXECUTABLE ##########################
+
+    print("Initializing\n")
+    hcl.init()
+    hcl.config.init_dtype = hcl.Float(32)
+
+    # Convert initial distance value function to initial time-to-reach value function
+    if type(multiple_value) == list:
+        # We have both goal and obstacle set
+        target = multiple_value[0] # Target set
+        obstacle = multiple_value[1] # Obstacle set
+    else:
+        target = multiple_value
+        obstacle = None
+        constraint = obstacle
+    
+    if obstacle is None:
+        print("No obstacles set !")
+    else: 
+        print("Obstacles set exists !")
+        # Time-invariant obstacle set
+        obstacle_dim = obstacle.ndim
+        assert obstacle_dim == grid.dims, "Obstacle set dimension should be the same as the state dimension"
+        # Convert the obstacle to time-to-reach value function
+        obstacle[obstacle <= 0] = 10000 
+        obstacle[obstacle > 0] = 0
+        constraint = hcl.asarray(obstacle)
+    
+    # Initial value function
+    init_value = target
+    # TTR: when inside of the target set, its value is 0
+    init_value[init_value < 0] = 0
+    init_value[init_value > 0] = 1000
+    V_0 = hcl.asarray(init_value)
+    
+    prev_val = np.zeros(init_value.shape)
+
+    # Re-shape states vector
+    list_x1 = np.reshape(grid.vs[0], grid.pts_each_dim[0])
+    if grid.dims >= 2:
+        list_x2 = np.reshape(grid.vs[1], grid.pts_each_dim[1])
+    if grid.dims >= 3:
+        list_x3 = np.reshape(grid.vs[2], grid.pts_each_dim[2])
+    if grid.dims >= 4:
+        list_x4 = np.reshape(grid.vs[3], grid.pts_each_dim[3])
+    if grid.dims >= 5:
+        list_x5 = np.reshape(grid.vs[4], grid.pts_each_dim[4])
+    if grid.dims >= 6:
+        list_x6 = np.reshape(grid.vs[5], grid.pts_each_dim[5])
+
+    # Convert states vector to hcl array type
+    list_x1 = hcl.asarray(list_x1)
+    if grid.dims >= 2:
+        list_x2 = hcl.asarray(list_x2)
+    if grid.dims >= 3:
+        list_x3 = hcl.asarray(list_x3)
+    if grid.dims >= 4:
+        list_x4 = hcl.asarray(list_x4)
+    if grid.dims >= 5:
+        list_x5 = hcl.asarray(list_x5)
+    if grid.dims >= 6:
+        list_x6 = hcl.asarray(list_x6)
+
+    # Get executable
+    # if grid.dims == 1:
+    #     solve_TTR = TTR_1D(dynamics_obj, grid)
+    if grid.dims == 2:
+        solve_TTR = TTR_2D(dynamics_obj, grid)
+    if grid.dims == 3:
+        solve_TTR = TTR_3D_Dev(dynamics_obj, grid)
+    if grid.dims == 4:
+        solve_TTR = TTR_4D(dynamics_obj, grid)
+    if grid.dims == 5:
+        solve_TTR = TTR_5D(dynamics_obj, grid)
+    if grid.dims == 6:
+        solve_TTR = TTR_6D(dynamics_obj, grid)
+    print("Got Executable\n")
+
+    # Print out code for different backend
+    # print(solve_pde)
+
+    ################ USE THE EXECUTABLE ############
+    error = 10000
+    count = 0
+    start = time.time()
+    while error > epsilon:
+        print("Iteration: {} Error: {}".format(count, error))
+        count += 1
+        if grid.dims == 1:
+            solve_TTR(V_0, list_x1)
+        if grid.dims == 2:
+            solve_TTR(V_0, list_x1, list_x2)
+        if grid.dims == 3:
+            solve_TTR(V_0, constraint, list_x1, list_x2, list_x3)
+        if grid.dims == 4:
+            solve_TTR(V_0, list_x1, list_x2, list_x3, list_x4)
+        if grid.dims == 5:
+            solve_TTR(V_0, list_x1, list_x2, list_x3, list_x4, list_x5)
+        if grid.dims == 6:
+            solve_TTR(V_0, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6 )
+
+        error = np.max(np.abs(prev_val - V_0.asnumpy()))
+        prev_val = V_0.asnumpy()
+                     
+    print("Total TTR computation time (s): {:.5f}".format(time.time() - start))
+    print("Finished solving\n")
+
+    ##################### PLOTTING #####################
+    if plot_option.do_plot :
+        # Only plots last value array for now
+        if plot_option.plot_type == "set":
+            plot_isosurface(grid, V_0.asnumpy(), plot_option)
+        elif plot_option.plot_type == "value":
+            plot_valuefunction(grid, V_0.asnumpy(), plot_option)
+
+    return V_0.asnumpy()
