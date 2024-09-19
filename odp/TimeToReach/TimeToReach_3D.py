@@ -299,9 +299,8 @@ def updatePhi_Dev(i, j, k, my_object, phi, constraint, g, x1, x2, x3):
     phiNew[0] = (-H[0] + diss1[0] + diss2[0] + diss3[0]) / c[0]
     #debugger[i,j,k] = phiNew[0]
     phi[i, j, k] = my_min(phi[i, j ,k], phiNew[0])
-    with hcl.if_(constraint is not None):
-        print(f"constraint[i,j,k]: {constraint[i,j,k]} with {(i,j,k)}")
-        phi[i, j, k] = my_max(phi[i, j, k], constraint[i, j, k])
+    # if constraint is not None:
+    phi[i, j, k] = my_max(phi[i, j, k], constraint[i, j, k])
         
         
 def TTR_3D_Dev(my_object, g):

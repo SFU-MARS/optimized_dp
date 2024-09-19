@@ -478,18 +478,18 @@ def TTRSolver_Dev(dynamics_obj, grid, multiple_value, epsilon, plot_option):
     else:
         target = multiple_value
         obstacle = None
-        constraint = obstacle
-    
+        
     if obstacle is None:
         print("No obstacles set !")
+        obstacle = np.full(target.shape, -1)
+        constraint = hcl.asarray(obstacle)
     else: 
         print("Obstacles set exists !")
         # Time-invariant obstacle set
         obstacle_dim = obstacle.ndim
         assert obstacle_dim == grid.dims, "Obstacle set dimension should be the same as the state dimension"
         # Convert the obstacle to time-to-reach value function
-        obstacle[obstacle <= 0] = 10000 
-        obstacle[obstacle > 0] = 0
+        obstacle = np.where(obstacle <= 0, 10000, 0)
         constraint = hcl.asarray(obstacle)
     
     # Initial value function
