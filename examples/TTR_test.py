@@ -61,22 +61,22 @@ epsilon = 0.001
 V_0 = TTRSolver(my_car, g, targetSet, epsilon, po)
 
 ## Hanyang: developing
-#TODO: Test the TTR solver without obstacles
-# V_0_Dev = TTRSolver_Dev(my_car, g, targeSet, epsilon, po)
+##TODO: Test the TTR solver without obstacles
+V_0_Dev = TTRSolver_Dev(my_car, g, targetSet, epsilon, po)
 
 # # Test the TTR solver with obstacles
-obs = ShapeRectangle(g, [-1.0, 0.0, -1000], [0.0, 2.0, 1000])
-V_0_Dev = TTRSolver_Dev(my_car, g, [targetSet, obs], epsilon, po)
-# ## Compare the results with the original TTR solver
-check_position1 = g.get_index((-0.5, -0.5, 1.57))
-print(f"V_0 at position {check_position1}: {V_0[check_position1]}")
-print(f"V_0_Dev at position {check_position1}: {V_0_Dev[check_position1]} \n")
+# obs = ShapeRectangle(g, [-1.0, 0.0, -1000], [0.0, 2.0, 1000])
+# V_0_Dev = TTRSolver_Dev(my_car, g, [targetSet, obs], epsilon, po)
+# # ## Compare the results with the original TTR solver
+# check_position1 = g.get_index((-0.5, -0.5, 1.57))
+# print(f"V_0 at position {check_position1}: {V_0[check_position1]}")
+# print(f"V_0_Dev at position {check_position1}: {V_0_Dev[check_position1]} \n")
 
-check_position2 = g.get_index((-1.0, -1.0, 1.57))
-print(f"V_0 at position {check_position2}: {V_0[check_position2]}")
-print(f"V_0_Dev at position {check_position2}: {V_0_Dev[check_position2]} \n")
+# check_position2 = g.get_index((-1.0, -1.0, 1.57))
+# print(f"V_0 at position {check_position2}: {V_0[check_position2]}")
+# print(f"V_0_Dev at position {check_position2}: {V_0_Dev[check_position2]} \n")
 
-check_position3 = g.get_index((-2, 3, 0.0))
-print(f"V_0 at position {check_position3}: {V_0[check_position3]}")
-print(f"V_0_Dev at position {check_position3}: {V_0_Dev[check_position3]} \n")
+# check_position3 = g.get_index((-2, 3, 0.0))
+# print(f"V_0 at position {check_position3}: {V_0[check_position3]}")
+# print(f"V_0_Dev at position {check_position3}: {V_0_Dev[check_position3]} \n")
 
