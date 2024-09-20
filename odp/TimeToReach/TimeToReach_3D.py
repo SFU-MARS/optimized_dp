@@ -62,7 +62,7 @@ def updatePhi(i, j, k, my_object, phi, g, x1, x2, x3):
     #debugger[i,j,k] = phiNew[0]
     phi[i, j, k] = my_min(phi[i, j ,k], phiNew[0])
 
-def EvalBoundary(phi, g):
+def EvalBoundary(phi, constraint, g):
     if 0 not in g.pDim:
         with hcl.for_(0, phi.shape[1], name="j") as j:
             with hcl.for_(0, phi.shape[2], name="k") as k:
@@ -71,11 +71,13 @@ def EvalBoundary(phi, g):
                 tmp1[0] = 2 * phi[1, j, k] - phi[2, j, k]
                 tmp1[0] = my_max(tmp1[0], phi[2, j, k])
                 phi[0, j, k] = my_min(tmp1[0], phi[0, j, k])
+                phi[0, j, k] = my_max(phi[0, j, k], constraint[0, j, k])
 
                 tmp2 = hcl.scalar(0, "tmp2")
                 tmp2[0] = 2 * phi[phi.shape[0] - 2, j, k] - phi[phi.shape[0] - 3, j, k]
                 tmp2[0] = my_max(tmp2[0], phi[phi.shape[0] - 3, j, k])
                 phi[phi.shape[0] - 1, j, k] = my_min(tmp2[0], phi[phi.shape[0] - 1, j, k])
+                phi[phi.shape[0] - 1, j, k] = my_max(phi[phi.shape[0] - 1, j, k], constraint[phi.shape[0] - 1, j, k])
 
     if 1 not in g.pDim:
         with hcl.for_(0, phi.shape[0], name="i2") as i2:
@@ -84,11 +86,13 @@ def EvalBoundary(phi, g):
                 tmp1[0] = 2 * phi[i2, 1, k] - phi[i2, 2, k]
                 tmp1[0] = my_max(tmp1[0], phi[i2, 2, k])
                 phi[i2, 0, k] = my_min(tmp1[0], phi[i2, 0, k])
+                phi[i2, 0, k] = my_max(phi[i2, 0, k], constraint[i2, 0, k])
 
                 tmp2 = hcl.scalar(0, "tmp2")
                 tmp2[0] = 2 * phi[i2, phi.shape[1] - 2, k] - phi[i2, phi.shape[1] - 3, k]
                 tmp2[0] = my_max(tmp2[0], phi[i2, phi.shape[1] - 3, k])
                 phi[i2, phi.shape[1] - 1, k] = my_min(tmp2[0], phi[i2, phi.shape[1] - 1, k])
+                phi[i2, phi.shape[1] - 1, k] = my_max(phi[i2, phi.shape[1] - 1, k], constraint[i2, phi.shape[1] - 1, k])
 
     if 2 not in g.pDim:
         with hcl.for_(0, phi.shape[0], name="i2") as i2:
@@ -97,11 +101,13 @@ def EvalBoundary(phi, g):
                 tmp1[0] = 2 * phi[i2, j, 1] - phi[i2, j, 2]
                 tmp1[0] = my_max(tmp1[0], phi[i2, j, 2])
                 phi[i2, j, 0] = my_min(tmp1[0], phi[i2, j, 0])
+                phi[i2, j, 0] = my_max(phi[i2, j, 0], constraint[i2, j, 0])
 
                 tmp2 = hcl.scalar(0, "tmp2")
                 tmp2[0] = 2 * phi[i2, j, phi.shape[2] - 2] - phi[i2, j, phi.shape[2] - 3]
                 tmp2[0] = my_max(tmp2[0], phi[i2, j, phi.shape[2] - 3])
                 phi[i2, j, phi.shape[2] - 1] = my_min(tmp2[0], phi[i2, j, phi.shape[2] - 1])
+                phi[i2, j, phi.shape[2] - 1] = my_max(phi[i2, j, phi.shape[2] - 1], constraint[i2, j, phi.shape[2] - 1])
 
 
 # Returns 0 if convergence has been reached
@@ -318,7 +324,7 @@ def TTR_3D_Dev(my_object, g):
                         with hcl.for_(l_k, h_k, name="k") as k:
                             updatePhi_Dev(i, j, k, my_object, phi, constraint, g, x1, x2, x3)
                             # debug2[0] = j
-                EvalBoundary(phi, g)
+                EvalBoundary(phi, constraint, g)
 
             #Perform value iteration by sweeping in direction 2
             with hcl.Stage("Sweep_2"):
@@ -329,7 +335,7 @@ def TTR_3D_Dev(my_object, g):
                             j2 = phi.shape[1] - j - 1
                             k2 = phi.shape[2] - k - 1
                             updatePhi_Dev(i2, j2, k2, my_object, phi, constraint, g, x1, x2, x3)
-                EvalBoundary(phi, g)
+                EvalBoundary(phi, constraint, g)
 
             # Perform value iteration by sweeping in direction 3
             with hcl.Stage("Sweep_3"):
@@ -339,7 +345,7 @@ def TTR_3D_Dev(my_object, g):
                             j2 = phi.shape[1] - j - 1
                             k2 = phi.shape[2] - k - 1
                             updatePhi_Dev(i, j2, k2, my_object, phi, constraint, g, x1, x2, x3)
-                EvalBoundary(phi, g)
+                EvalBoundary(phi, constraint, g)
 
 
             # Perform value iteration by sweeping in direction 4
@@ -350,7 +356,7 @@ def TTR_3D_Dev(my_object, g):
                             i2 = phi.shape[0] - i - 1
                             j2 = phi.shape[1] - j - 1
                             updatePhi_Dev(i2, j2, k, my_object, phi, constraint, g, x1, x2, x3)
-                EvalBoundary(phi, g)
+                EvalBoundary(phi, constraint, g)
 
             # Perform value iteration by sweeping in direction 5
             with hcl.Stage("Sweep_5"):
@@ -360,7 +366,7 @@ def TTR_3D_Dev(my_object, g):
                             i2 = phi.shape[0] - i - 1
                             k2 = phi.shape[2] - k - 1
                             updatePhi_Dev(i2, j, k2, my_object, phi, constraint, g, x1, x2, x3)
-                EvalBoundary(phi, g)
+                EvalBoundary(phi, constraint, g)
 
 
             # Perform value iteration by sweeping in direction 6
@@ -370,7 +376,7 @@ def TTR_3D_Dev(my_object, g):
                         with hcl.for_(l_k, h_k, name="k") as k:
                             i2 = phi.shape[0] - i - 1
                             updatePhi_Dev(i2, j, k, my_object, phi, constraint, g, x1, x2, x3)
-                EvalBoundary(phi, g)
+                EvalBoundary(phi, constraint, g)
 
             # Perform value iteration by sweeping in direction 7
             with hcl.Stage("Sweep_7"):
@@ -379,7 +385,7 @@ def TTR_3D_Dev(my_object, g):
                         with hcl.for_(l_k, h_k, name="k") as k:
                             j2 = phi.shape[1] - j - 1
                             updatePhi_Dev(i, j2, k, my_object, phi, constraint, g, x1, x2, x3)
-                EvalBoundary(phi, g)
+                EvalBoundary(phi, constraint, g)
 
             # Perform value iteration by sweeping in direction 8
             with hcl.Stage("Sweep_8"):
@@ -388,7 +394,7 @@ def TTR_3D_Dev(my_object, g):
                         with hcl.for_(l_k, h_k, name="k") as k:
                             k2 = phi.shape[2] - k - 1
                             updatePhi_Dev(i, j, k2, my_object, phi, constraint, g, x1, x2, x3)
-                EvalBoundary(phi, g)
+                EvalBoundary(phi, constraint, g)
 
     ###################################### SETUP PLACEHOLDERS ######################################
     

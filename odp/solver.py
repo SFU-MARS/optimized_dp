@@ -484,10 +484,9 @@ def TTRSolver_Dev(dynamics_obj, grid, multiple_value, epsilon, plot_option):
         obstacle = np.full(target.shape, -1)
     else: 
         print("Obstacles set exists !")
-        # Time-invariant obstacle set
         obstacle_dim = obstacle.ndim
         assert obstacle_dim == grid.dims, "We only support TTR with time-invariant obstacles now."
-        obstacle = np.where(obstacle <= 0, 10000, 0)
+        obstacle = np.where(obstacle <= 0, 1000, 0)
     
     # Initial value function
     init_value = target
@@ -553,15 +552,15 @@ def TTRSolver_Dev(dynamics_obj, grid, multiple_value, epsilon, plot_option):
         if grid.dims == 1:
             solve_TTR(V_0, list_x1)
         if grid.dims == 2:
-            solve_TTR(V_0, list_x1, list_x2)
+            solve_TTR(V_0, constraint, list_x1, list_x2)
         if grid.dims == 3:
             solve_TTR(V_0, constraint, list_x1, list_x2, list_x3)
         if grid.dims == 4:
-            solve_TTR(V_0, list_x1, list_x2, list_x3, list_x4)
+            solve_TTR(V_0, constraint, list_x1, list_x2, list_x3, list_x4)
         if grid.dims == 5:
-            solve_TTR(V_0, list_x1, list_x2, list_x3, list_x4, list_x5)
+            solve_TTR(V_0, constraint, list_x1, list_x2, list_x3, list_x4, list_x5)
         if grid.dims == 6:
-            solve_TTR(V_0, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6 )
+            solve_TTR(V_0, constraint, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6 )
 
         error = np.max(np.abs(prev_val - V_0.asnumpy()))
         prev_val = V_0.asnumpy()
@@ -575,6 +574,7 @@ def TTRSolver_Dev(dynamics_obj, grid, multiple_value, epsilon, plot_option):
         if plot_option.plot_type == "set":
             plot_isosurface(grid, V_0.asnumpy(), plot_option)
         elif plot_option.plot_type == "value":
-            plot_valuefunction(grid, V_0.asnumpy(), plot_option)
+            v_0 = np.clip(V_0.asnumpy(), -1, +10)
+            plot_valuefunction(grid, v_0, plot_option)
 
     return V_0.asnumpy()
