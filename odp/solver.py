@@ -6,7 +6,7 @@ from odp.Plots import plot_isosurface, plot_valuefunction
 
 # Backward reachable set computation library
 from odp.computeGraphs import graph_1D, graph_2D, graph_3D, graph_4D, graph_5D, graph_6D
-from odp.TimeToReach import TTR_2D, TTR_3D, TTR_4D, TTR_5D, TTR_3D_Dev
+from odp.TimeToReach import TTR_2D, TTR_3D, TTR_4D, TTR_5D
 
 # Value Iteration library
 from odp.valueIteration import value_iteration_3D, value_iteration_4D, value_iteration_5D, value_iteration_6D
@@ -530,7 +530,7 @@ def TTRSolver_Dev(dynamics_obj, grid, multiple_value, epsilon, plot_option):
     if grid.dims == 2:
         solve_TTR = TTR_2D(dynamics_obj, grid)
     if grid.dims == 3:
-        solve_TTR = TTR_3D_Dev(dynamics_obj, grid)
+        solve_TTR = TTR_3D(dynamics_obj, grid)
     if grid.dims == 4:
         solve_TTR = TTR_4D(dynamics_obj, grid)
     if grid.dims == 5:
@@ -574,7 +574,6 @@ def TTRSolver_Dev(dynamics_obj, grid, multiple_value, epsilon, plot_option):
         if plot_option.plot_type == "set":
             plot_isosurface(grid, V_0.asnumpy(), plot_option)
         elif plot_option.plot_type == "value":
-            v_0 = np.clip(V_0.asnumpy(), -1, +10)
-            plot_valuefunction(grid, v_0, plot_option)
+            plot_valuefunction(grid, V_0.asnumpy(), plot_option)
 
     return V_0.asnumpy()
