@@ -6,6 +6,7 @@ from odp.Shapes import *
 from odp.dynamics import DubinsCar
 # Plot options
 from odp.Plots import PlotOptions 
+from odp.Plots.plotting_utilities import plot_isosurface
 # Solver core
 
 from odp.solver import HJSolver, TTRSolver, TTRSolver_Dev
@@ -51,8 +52,8 @@ targetSet = ShapeRectangle(g, [1.0, 2.0, -1000], [2.0, 3.0, 1000])
 # # obstacles = 
 
 # Plot options
-po = PlotOptions( "set", plotDims=[0,1,2], slicesCut=[],
-                  min_isosurface=lookback_length, max_isosurface=lookback_length)
+# x, y, _ = g.get_grid(())
+po = PlotOptions( plot_type="value", plotDims=[0,1], slicesCut=[25])
 
 
 epsilon = 0.001
@@ -61,22 +62,12 @@ epsilon = 0.001
 V_0 = TTRSolver(my_car, g, targetSet, epsilon, po)
 
 ## Hanyang: developing
-##TODO: Test the TTR solver without obstacles
-V_0_Dev = TTRSolver_Dev(my_car, g, targetSet, epsilon, po)
+# # Test the TTR solver without obstacles
+# V_0_Dev = TTRSolver_Dev(my_car, g, targetSet, epsilon, po)
 
 # # Test the TTR solver with obstacles
 # obs = ShapeRectangle(g, [-1.0, 0.0, -1000], [0.0, 2.0, 1000])
-# V_0_Dev = TTRSolver_Dev(my_car, g, [targetSet, obs], epsilon, po)
-# # ## Compare the results with the original TTR solver
-# check_position1 = g.get_index((-0.5, -0.5, 1.57))
-# print(f"V_0 at position {check_position1}: {V_0[check_position1]}")
-# print(f"V_0_Dev at position {check_position1}: {V_0_Dev[check_position1]} \n")
-
-# check_position2 = g.get_index((-1.0, -1.0, 1.57))
-# print(f"V_0 at position {check_position2}: {V_0[check_position2]}")
-# print(f"V_0_Dev at position {check_position2}: {V_0_Dev[check_position2]} \n")
-
-# check_position3 = g.get_index((-2, 3, 0.0))
-# print(f"V_0 at position {check_position3}: {V_0[check_position3]}")
-# print(f"V_0_Dev at position {check_position3}: {V_0_Dev[check_position3]} \n")
-
+# obs = ShapeRectangle(g, [-2.0, 0.0, -1000], [0.0, 1.0, 1000])
+obs_goal = np.array([-0.5, 0.5])
+obs = CylinderShape(g, [2], np.array(obs_goal), 0.5)
+V_0_Dev = TTRSolver_Dev(my_car, g, [targetSet, obs], epsilon, po)
