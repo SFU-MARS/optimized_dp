@@ -45,3 +45,72 @@ class DubinsCar:
         theta_dot[0] = uOpt[0]
 
         return (x_dot[0], y_dot[0], theta_dot[0])
+    
+    def optCtrl_inPython(self, spat_deriv):
+        opt_u = self.wMax
+        if spat_deriv[2] > 0:
+            if self.uMode == "min":
+                opt_u = - self.wMax
+        else:
+            if self.uMode == "max":
+                opt_u = - self.wMax
+        
+        return np.array(opt_u)
+    
+    def dynamics_inPython(self, state, action):
+        """Return the partial derivative equations of one agent.
+
+        Args:
+            state (np.ndarray, shape(3, )): the state of one agent
+            action (np.ndarray, shape (1, )): the action of one agent
+        """
+        dx = self.speed * np.cos(state[2])
+        dy = self.speed * np.sin(state[2])
+        dtheta = action[0]
+        return (dx, dy, dtheta)
+    
+    def forward(self, ctrl_freq, current_state, u):
+        # Forward the dubincar dynamics with one step
+        x, y, theta = current_state
+        dt = 1.0 / ctrl_freq
+
+        # # Runge Kutta method
+        # k1_state = self.dynamics_inPython(current_state, u)
+        # k1_x, k1_y, k1_theta = k1_state
+        # k2 = self._dynamics((x+0.5*dt*k1_x, y+0.5*dt*k1_y, theta+0.5*dt*k1_theta), u)
+        # k2_x, k2_y, k2_theta = k2
+        # k3 = self._dynamics((x+0.5*dt*k2_x, y+0.5*dt*k2_y, theta+0.5*dt*k2_theta), u)
+        # k3_x, k3_y, k3_theta = k3
+        # k4 = self._dynamics((x+dt*k3_x, y+dt*k3_y, theta+dt*k3_theta), u)
+        # next_x = x + dt/6*(k1_x + 2*k2_x + 2*k3_x + k4[0])
+        # next_y = y + dt/6*(k1_y + 2*k2_y + 2*k3_y + k4[1])
+        # next_theta = theta + dt/6*(k1_theta + 2*k2_theta + 2*k3_theta + k4[2])
+        # next_state = (next_x, next_y, next_theta)
+        
+
+        # Forward-Euler method
+        next_x = x + self.speed * np.cos(theta) * dt
+        next_y = y + self.speed * np.sin(theta) * dt
+        next_theta = theta + u * dt
+        next_state = (next_x, next_y, next_theta)
+
+        def check_theta(angle):
+            # Make sure the angle is in the range of [0, 2*pi)
+            while angle >=2*np.pi:
+                angle -= 2 * np.pi
+            while angle < 0:
+                angle += 2 * np.pi
+
+            return angle
+
+        # Check the boundary
+        # x_min, x_max, y_min, y_max = -1.0, 1.0, -1.0, 1.0
+        # x_new = max(min(next_state[0], x_max), x_min)
+        # y_new = max(min(next_state[1], y_max), y_min)
+        theta_new = check_theta(next_state[2])
+        # print(f"theta_new is {theta_new}. \n")
+        next_state = (next_x, next_y, theta_new)
+        
+        return next_state
+        
+        
