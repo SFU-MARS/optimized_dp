@@ -336,134 +336,9 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
 
     return V_t.asnumpy()
 
-def TTRSolver(dynamics_obj, grid, init_value, epsilon, plot_option):
-    print("Welcome to optimized_dp \n")
-    ################# INITIALIZE DATA TO BE INPUT INTO EXECUTABLE ##########################
 
-    print("Initializing\n")
-    hcl.init()
-    hcl.config.init_dtype = hcl.Float(32)
-
-    # Convert initial distance value function to initial time-to-reach value function
-    init_value[init_value < 0] = 0
-    init_value[init_value > 0] = 1000
-    V_0 = hcl.asarray(init_value)
-    prev_val = np.zeros(init_value.shape)
-
-    # Re-shape states vector
-    list_x1 = np.reshape(grid.vs[0], grid.pts_each_dim[0])
-    if grid.dims >= 2:
-        list_x2 = np.reshape(grid.vs[1], grid.pts_each_dim[1])
-    if grid.dims >= 3:
-        list_x3 = np.reshape(grid.vs[2], grid.pts_each_dim[2])
-    if grid.dims >= 4:
-        list_x4 = np.reshape(grid.vs[3], grid.pts_each_dim[3])
-    if grid.dims >= 5:
-        list_x5 = np.reshape(grid.vs[4], grid.pts_each_dim[4])
-    if grid.dims >= 6:
-        list_x6 = np.reshape(grid.vs[5], grid.pts_each_dim[5])
-
-    # Convert states vector to hcl array type
-    list_x1 = hcl.asarray(list_x1)
-    if grid.dims >= 2:
-        list_x2 = hcl.asarray(list_x2)
-    if grid.dims >= 3:
-        list_x3 = hcl.asarray(list_x3)
-    if grid.dims >= 4:
-        list_x4 = hcl.asarray(list_x4)
-    if grid.dims >= 5:
-        list_x5 = hcl.asarray(list_x5)
-    if grid.dims >= 6:
-        list_x6 = hcl.asarray(list_x6)
-
-    # Get executable
-    # if grid.dims == 1:
-    #     solve_TTR = TTR_1D(dynamics_obj, grid)
-    if grid.dims == 2:
-        solve_TTR = TTR_2D(dynamics_obj, grid)
-    if grid.dims == 3:
-        solve_TTR = TTR_3D(dynamics_obj, grid)
-    if grid.dims == 4:
-        solve_TTR = TTR_4D(dynamics_obj, grid)
-    if grid.dims == 5:
-        solve_TTR = TTR_5D(dynamics_obj, grid)
-    if grid.dims == 6:
-        solve_TTR = TTR_6D(dynamics_obj, grid)
-    print("Got Executable\n")
-
-    # Print out code for different backend
-    # print(solve_pde)
-
-    ################ USE THE EXECUTABLE ############
-    error = 10000
-    count = 0
-    start = time.time()
-    while error > epsilon:
-        print("Iteration: {} Error: {}".format(count, error))
-        count += 1
-        if grid.dims == 1:
-            solve_TTR(V_0, list_x1)
-        if grid.dims == 2:
-            solve_TTR(V_0, list_x1, list_x2)
-        if grid.dims == 3:
-            solve_TTR(V_0, list_x1, list_x2, list_x3)
-        if grid.dims == 4:
-            solve_TTR(V_0, list_x1, list_x2, list_x3, list_x4)
-        if grid.dims == 5:
-            solve_TTR(V_0, list_x1, list_x2, list_x3, list_x4, list_x5)
-        if grid.dims == 6:
-            solve_TTR(V_0, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6 )
-
-        error = np.max(np.abs(prev_val - V_0.asnumpy()))
-        prev_val = V_0.asnumpy()
-    print("Total TTR computation time (s): {:.5f}".format(time.time() - start))
-    print("Finished solving\n")
-
-    ##################### PLOTTING #####################
-    if plot_option.do_plot :
-        # Only plots last value array for now
-        if plot_option.plot_type == "set":
-            plot_isosurface(grid, V_0.asnumpy(), plot_option)
-        elif plot_option.plot_type == "value":
-            plot_valuefunction(grid, V_0.asnumpy(), plot_option)
-
-    return V_0.asnumpy()
-
-def computeSpatDerivArray(grid, V, deriv_dim, accuracy="low"):
-    # Return a tensor same size as V that contains spatial derivatives at every state in V
-    hcl.init()
-    hcl.config.init_dtype = hcl.Float(32)
-
-    # Need to make sure that value array has the same size as grid
-    assert list(V.shape) == list(grid.pts_each_dim)
-
-    V_0 = hcl.asarray(V)
-    spatial_deriv = hcl.asarray(np.zeros(tuple(grid.pts_each_dim)))
-
-    # Get executable, obstacle check intial value function
-    if grid.dims == 1:
-        compute_SpatDeriv = graph_1D(None, grid, "None", accuracy,
-                                     generate_SpatDeriv=True, deriv_dim=deriv_dim)
-    if grid.dims == 2:
-        compute_SpatDeriv = graph_2D(None, grid, "None", accuracy,
-                                     generate_SpatDeriv=True, deriv_dim=deriv_dim)
-    if grid.dims == 3:
-        compute_SpatDeriv = graph_3D(None, grid, "None", accuracy,
-                                     generate_SpatDeriv=True, deriv_dim=deriv_dim)
-    if grid.dims == 4:
-        compute_SpatDeriv = graph_4D(None, grid, "None", accuracy,
-                                     generate_SpatDeriv=True, deriv_dim=deriv_dim)
-    if grid.dims == 5:
-        compute_SpatDeriv = graph_5D(None, grid, "None", accuracy,
-                                     generate_SpatDeriv=True, deriv_dim=deriv_dim)
-
-    compute_SpatDeriv(V_0, spatial_deriv)
-    return spatial_deriv.asnumpy()
-
-# Hanyang: add develop version of the TTRSolver: TTRSolver_Dev
-def TTRSolver_Dev(dynamics_obj, grid, multiple_value, epsilon, plot_option):
-    #TODO: Hanyang: developing version of the TTRSolver, aim to take the obstacles into consideration
-    print("Welcome to optimized_dp TTRSolver_Dev \n")
+def TTRSolver(dynamics_obj, grid, multiple_value, epsilon, plot_option):
+    print("Welcome to optimized_dp TTRSolver \n")
     ################# INITIALIZE DATA TO BE INPUT INTO EXECUTABLE ##########################
 
     print("Initializing\n")
@@ -577,3 +452,35 @@ def TTRSolver_Dev(dynamics_obj, grid, multiple_value, epsilon, plot_option):
             plot_valuefunction(grid, V_0.asnumpy(), plot_option)
 
     return V_0.asnumpy()
+
+def computeSpatDerivArray(grid, V, deriv_dim, accuracy="low"):
+    # Return a tensor same size as V that contains spatial derivatives at every state in V
+    hcl.init()
+    hcl.config.init_dtype = hcl.Float(32)
+
+    # Need to make sure that value array has the same size as grid
+    assert list(V.shape) == list(grid.pts_each_dim)
+
+    V_0 = hcl.asarray(V)
+    spatial_deriv = hcl.asarray(np.zeros(tuple(grid.pts_each_dim)))
+
+    # Get executable, obstacle check intial value function
+    if grid.dims == 1:
+        compute_SpatDeriv = graph_1D(None, grid, "None", accuracy,
+                                     generate_SpatDeriv=True, deriv_dim=deriv_dim)
+    if grid.dims == 2:
+        compute_SpatDeriv = graph_2D(None, grid, "None", accuracy,
+                                     generate_SpatDeriv=True, deriv_dim=deriv_dim)
+    if grid.dims == 3:
+        compute_SpatDeriv = graph_3D(None, grid, "None", accuracy,
+                                     generate_SpatDeriv=True, deriv_dim=deriv_dim)
+    if grid.dims == 4:
+        compute_SpatDeriv = graph_4D(None, grid, "None", accuracy,
+                                     generate_SpatDeriv=True, deriv_dim=deriv_dim)
+    if grid.dims == 5:
+        compute_SpatDeriv = graph_5D(None, grid, "None", accuracy,
+                                     generate_SpatDeriv=True, deriv_dim=deriv_dim)
+
+    compute_SpatDeriv(V_0, spatial_deriv)
+    return spatial_deriv.asnumpy()
+
