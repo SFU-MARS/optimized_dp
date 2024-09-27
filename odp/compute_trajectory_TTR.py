@@ -90,6 +90,7 @@ def compute_opt_traj_TTR(dynamics, grids, TTR_value, start_state, target, ctrl_f
     # Get the time-to-reach value
     current_state = start_state
     current_value = grids.get_value(TTR_value, current_state)
+    print(f"The supposed TTR time is {current_value}")
     num_control = int(current_value*ctrl_freq)
     # Initializations
     traj = np.empty((num_control, len(start_state)))  # current_value*ctrl_freq is the number of control to be applied
@@ -101,6 +102,7 @@ def compute_opt_traj_TTR(dynamics, grids, TTR_value, start_state, target, ctrl_f
         # Check the state
         if check_target(grids, target, current_state):
             traj[t:] = current_state
+            print(f"The agent has arrived at the target region after {t/ctrl_freq} seconds ({t}steps).")
             break
         # Compute the optimal control
         spat_deriv_vector = spa_deriv(grids.get_index(current_state), TTR_value[..., np.newaxis], grids, periodic_dims=periodic_dims)
