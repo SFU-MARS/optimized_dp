@@ -126,6 +126,11 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
     Hamiltonian = hcl.asarray(np.zeros(tuple(grid.pts_each_dim)))
     delta_t = hcl.asarray(np.zeros(1))
     
+    # Indirect TTR computation
+    prev_V = np.copy(init_value)
+    TTR = np.zeros(tuple(grid.pts_each_dim))
+    TTR[init_value > 0] = 99.
+    
     # Check which target set or initial value set
     if compMethod["TargetSetMode"] != "minVWithVTarget" and compMethod["TargetSetMode"] != "maxVWithVTarget":
         l0 = hcl.asarray(init_value)
@@ -291,6 +296,11 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
             # Increment the current time
             tNow += dt
             
+            # Extract TTR
+            TTR_update_idx = (prev_V > 0) & (V_tp1 <= 0)
+            TTR[TTR_update_idx] = tNow
+            prev_V = V_t.asnumpy()
+            
             # Calculate computation time
             execution_time += time.time() - start
 
@@ -334,7 +344,7 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
         valfuncs[..., 0] = V_t.asnumpy()
         return valfuncs
 
-    return V_t.asnumpy()
+    return V_t.asnumpy(), TTR
 
 
 def TTRSolver(dynamics_obj, grid, multiple_value, epsilon, plot_option):
