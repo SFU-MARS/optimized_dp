@@ -11,11 +11,8 @@ import numpy as np
 
 
 class DubinsCar2:
-    def __init__(self, x=[0,0,0], uMin=[-0.1, -0.5], uMax =[0.5, 0.5], wMax=1, speed=1, dMax=[0,0,0], uMode="min", dMode="max"):
+    def __init__(self, x=[0,0,0], uMin=[-0.1, -1.0], uMax =[0.8, 1.0], dMax=[0,0,0], uMode="min", dMode="max"):
         self.x = x
-        # self.wMax = wMax
-        self.speed = speed
-        
         self.dMax = dMax
         self.uMode = uMode
         self.dMode = dMode
