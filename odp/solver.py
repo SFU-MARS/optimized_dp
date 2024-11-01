@@ -6,7 +6,7 @@ from odp.Plots import plot_isosurface, plot_valuefunction
 
 # Backward reachable set computation library
 from odp.computeGraphs import graph_1D, graph_2D, graph_3D, graph_4D, graph_5D, graph_6D
-from odp.TimeToReach import TTR_2D, TTR_3D, TTR_4D, TTR_5D 
+from odp.TimeToReach import TTR_2D, TTR_3D, TTR_4D, TTR_5D
 
 # Value Iteration library
 from odp.valueIteration import value_iteration_3D, value_iteration_4D, value_iteration_5D, value_iteration_6D
@@ -125,6 +125,11 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
     V_t = hcl.asarray(init_value)
     Hamiltonian = hcl.asarray(np.zeros(tuple(grid.pts_each_dim)))
     delta_t = hcl.asarray(np.zeros(1))
+    
+    # Indirect TTR computation
+    prev_V = np.copy(init_value)
+    TTR = np.zeros(tuple(grid.pts_each_dim))
+    TTR[init_value > 0] = 99.
     
     # Check which target set or initial value set
     if compMethod["TargetSetMode"] != "minVWithVTarget" and compMethod["TargetSetMode"] != "maxVWithVTarget":
@@ -291,6 +296,11 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
             # Increment the current time
             tNow += dt
             
+            # Extract TTR
+            TTR_update_idx = (prev_V > 0) & (V_tp1 <= 0)
+            TTR[TTR_update_idx] = tNow
+            prev_V = V_t.asnumpy()
+            
             # Calculate computation time
             execution_time += time.time() - start
 
@@ -334,10 +344,11 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
         valfuncs[..., 0] = V_t.asnumpy()
         return valfuncs
 
-    return V_t.asnumpy()
+    return V_t.asnumpy(), TTR
 
-def TTRSolver(dynamics_obj, grid, init_value, epsilon, plot_option):
-    print("Welcome to optimized_dp \n")
+
+def TTRSolver(dynamics_obj, grid, multiple_value, epsilon, plot_option):
+    print("Welcome to optimized_dp TTRSolver \n")
     ################# INITIALIZE DATA TO BE INPUT INTO EXECUTABLE ##########################
 
     print("Initializing\n")
@@ -345,9 +356,31 @@ def TTRSolver(dynamics_obj, grid, init_value, epsilon, plot_option):
     hcl.config.init_dtype = hcl.Float(32)
 
     # Convert initial distance value function to initial time-to-reach value function
+    if type(multiple_value) == list:
+        # We have both goal and obstacle set
+        target = multiple_value[0] # Target set
+        obstacle = multiple_value[1] # Obstacle set
+    else:
+        target = multiple_value
+        obstacle = None
+        
+    if obstacle is None:
+        print("No obstacles set !")
+        obstacle = np.full(target.shape, -1)
+    else: 
+        print("Obstacles set exists !")
+        obstacle_dim = obstacle.ndim
+        assert obstacle_dim == grid.dims, "We only support TTR with time-invariant obstacles now."
+        obstacle = np.where(obstacle <= 0, 1000, 0)
+    
+    # Initial value function
+    init_value = target
     init_value[init_value < 0] = 0
     init_value[init_value > 0] = 1000
+    # Convert target and obstacle to heterocl syntax
+    constraint = hcl.asarray(obstacle)
     V_0 = hcl.asarray(init_value)
+    
     prev_val = np.zeros(init_value.shape)
 
     # Re-shape states vector
@@ -404,18 +437,19 @@ def TTRSolver(dynamics_obj, grid, init_value, epsilon, plot_option):
         if grid.dims == 1:
             solve_TTR(V_0, list_x1)
         if grid.dims == 2:
-            solve_TTR(V_0, list_x1, list_x2)
+            solve_TTR(V_0, constraint, list_x1, list_x2)
         if grid.dims == 3:
-            solve_TTR(V_0, list_x1, list_x2, list_x3)
+            solve_TTR(V_0, constraint, list_x1, list_x2, list_x3)
         if grid.dims == 4:
-            solve_TTR(V_0, list_x1, list_x2, list_x3, list_x4)
+            solve_TTR(V_0, constraint, list_x1, list_x2, list_x3, list_x4)
         if grid.dims == 5:
-            solve_TTR(V_0, list_x1, list_x2, list_x3, list_x4, list_x5)
+            solve_TTR(V_0, constraint, list_x1, list_x2, list_x3, list_x4, list_x5)
         if grid.dims == 6:
-            solve_TTR(V_0, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6 )
+            solve_TTR(V_0, constraint, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6 )
 
         error = np.max(np.abs(prev_val - V_0.asnumpy()))
         prev_val = V_0.asnumpy()
+                     
     print("Total TTR computation time (s): {:.5f}".format(time.time() - start))
     print("Finished solving\n")
 
@@ -459,3 +493,4 @@ def computeSpatDerivArray(grid, V, deriv_dim, accuracy="low"):
 
     compute_SpatDeriv(V_0, spatial_deriv)
     return spatial_deriv.asnumpy()
+

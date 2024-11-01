@@ -3,7 +3,7 @@ import numpy as np
 from odp.computeGraphs.graph_2D import *
 
 # Update the phi function at position (i,j)
-def updatePhi(i, j, my_object, phi, g, x1, x2):
+def updatePhi(i, j, my_object, phi, constraint, g, x1, x2):
     dV_dx1_L = hcl.scalar(0, "dV_dx1_L")
     dV_dx1_R = hcl.scalar(0, "dV_dx1_R")
     dV_dx1 = hcl.scalar(0, "dV_dx1")
@@ -51,8 +51,10 @@ def updatePhi(i, j, my_object, phi, g, x1, x2):
     phiNew[0] = (-H[0] + diss1[0] + diss2[0]) / c[0]
     #debugger[i,j,k] = phiNew[0]
     phi[i, j] = my_min(phi[i, j], phiNew[0])
+    # Check with the obstacle
+    phi[i, j] = my_max(phi[i, j], constraint[i, j])
 
-def EvalBoundary(phi, g):
+def EvalBoundary(phi, constraint, g):
     if 0 not in g.pDim:
         with hcl.for_(0, phi.shape[1], name="j") as j:
                 #debug2[0] = j
@@ -60,11 +62,13 @@ def EvalBoundary(phi, g):
                 tmp1[0] = 2 * phi[1, j] - phi[2, j]
                 tmp1[0] = my_max(tmp1[0], phi[2, j])
                 phi[0, j] = my_min(tmp1[0], phi[0, j])
+                phi[0, j] = my_max(phi[0, j], constraint[0, j])
 
                 tmp2 = hcl.scalar(0, "tmp2")
                 tmp2[0] = 2 * phi[phi.shape[0] - 2, j] - phi[phi.shape[0] - 3, j]
                 tmp2[0] = my_max(tmp2[0], phi[phi.shape[0] - 3, j])
                 phi[phi.shape[0] - 1, j] = my_min(tmp2[0], phi[phi.shape[0] - 1, j])
+                phi[phi.shape[0] - 1, j] = my_max(phi[phi.shape[0] - 1, j], constraint[phi.shape[0] - 1, j])
 
     if 1 not in g.pDim:
         with hcl.for_(0, phi.shape[0], name="i1") as i1:
@@ -72,11 +76,13 @@ def EvalBoundary(phi, g):
                 tmp1[0] = 2 * phi[i1, 1] - phi[i1, 2]
                 tmp1[0] = my_max(tmp1[0], phi[i1, 2])
                 phi[i1, 0] = my_min(tmp1[0], phi[i1, 0])
+                phi[i1, 0] = my_max(phi[i1, 0], constraint[i1, 0])
 
                 tmp2 = hcl.scalar(0, "tmp2")
                 tmp2[0] = 2 * phi[i1, phi.shape[1] - 2] - phi[i1, phi.shape[1] - 3]
                 tmp2[0] = my_max(tmp2[0], phi[i1, phi.shape[1] - 3])
                 phi[i1, phi.shape[1] - 1] = my_min(tmp2[0], phi[i1, phi.shape[1] - 1])
+                phi[i1, phi.shape[1] - 1] = my_max(phi[i1, phi.shape[1] - 1], constraint[i1, phi.shape[1] - 1])
 
 
 # Returns 0 if convergence has been reached
@@ -92,7 +98,7 @@ def evaluateConvergence(newV, oldV, epsilon, reSweep):
 ######################################### TIME-TO-REACH COMPUTATION ##########################################
 
 def TTR_2D(my_object, g):
-    def solve_phiNew(phi, x1, x2):
+    def solve_phiNew(phi, constraint, x1, x2):
             l_i = 0 if 0 in g.pDim else 1
             h_i = phi.shape[0] if 0 in g.pDim else phi.shape[0] - 1
             l_j = 0 if 1 in g.pDim else 1
@@ -101,9 +107,9 @@ def TTR_2D(my_object, g):
             with hcl.Stage("Sweep_1"):
                 with hcl.for_(l_i, h_i, name="i") as i:
                     with hcl.for_(l_j, h_j, name="j") as j:
-                        updatePhi(i, j, my_object, phi, g, x1, x2)
+                        updatePhi(i, j, my_object, phi, constraint, g, x1, x2)
                             # debug2[0] = j
-                EvalBoundary(phi, g)
+                EvalBoundary(phi, constraint, g)
 
             #Perform value iteration by sweeping in direction 2
             with hcl.Stage("Sweep_2"):
@@ -111,16 +117,16 @@ def TTR_2D(my_object, g):
                     with hcl.for_(l_j, h_j, name="j") as j:
                         i2 = phi.shape[0] - i - 1
                         j2 = phi.shape[1] - j - 1
-                        updatePhi(i2, j2, my_object, phi, g, x1, x2)
-                EvalBoundary(phi, g)
+                        updatePhi(i2, j2, my_object, phi, constraint, g, x1, x2)
+                EvalBoundary(phi, constraint, g)
 
             # Perform value iteration by sweeping in direction 3
             with hcl.Stage("Sweep_3"):
                 with hcl.for_(l_i, h_i, name="i") as i:
                     with hcl.for_(l_j, h_j, name="j") as j:
                         j2 = phi.shape[1] - j - 1
-                        updatePhi(i, j2, my_object, phi, g, x1, x2)
-                EvalBoundary(phi, g)
+                        updatePhi(i, j2, my_object, phi, constraint, g, x1, x2)
+                EvalBoundary(phi, constraint, g)
 
 
             # Perform value iteration by sweeping in direction 4
@@ -129,16 +135,16 @@ def TTR_2D(my_object, g):
                     with hcl.for_(l_j, h_j, name="j") as j:
                         i2 = phi.shape[0] - i - 1
                         j2 = phi.shape[1] - j - 1
-                        updatePhi(i2, j2, my_object, phi, g, x1, x2)
-                EvalBoundary(phi, g)
+                        updatePhi(i2, j2, my_object, phi, constraint, g, x1, x2)
+                EvalBoundary(phi, constraint, g)
 
             # Perform value iteration by sweeping in direction 5
             with hcl.Stage("Sweep_5"):
                 with hcl.for_(l_i, h_i, name="i") as i:
                     with hcl.for_(l_j, h_j, name="j") as j:
                         i2 = phi.shape[0] - i - 1
-                        updatePhi(i2, j, my_object, phi, g, x1, x2)
-                EvalBoundary(phi, g)
+                        updatePhi(i2, j, my_object, phi, constraint, g, x1, x2)
+                EvalBoundary(phi, constraint, g)
 
 
             # Perform value iteration by sweeping in direction 6
@@ -146,23 +152,23 @@ def TTR_2D(my_object, g):
                 with hcl.for_(l_i, h_i, name="i") as i:
                     with hcl.for_(l_j, h_j, name="j") as j:
                         i2 = phi.shape[0] - i - 1
-                        updatePhi(i2, j, my_object, phi, g, x1, x2)
-                EvalBoundary(phi, g)
+                        updatePhi(i2, j, my_object, phi, constraint, g, x1, x2)
+                EvalBoundary(phi, constraint, g)
 
             # Perform value iteration by sweeping in direction 7
             with hcl.Stage("Sweep_7"):
                 with hcl.for_(l_i, h_i, name="i") as i:
                     with hcl.for_(l_j, h_j, name="j") as j:
                         j2 = phi.shape[1] - j - 1
-                        updatePhi(i, j2, my_object, phi, g, x1, x2)
-                EvalBoundary(phi, g)
+                        updatePhi(i, j2, my_object, phi, constraint, g, x1, x2)
+                EvalBoundary(phi, constraint, g)
 
             # Perform value iteration by sweeping in direction 8
             with hcl.Stage("Sweep_8"):
                 with hcl.for_(l_i, h_i, name="i") as i:
                     with hcl.for_(l_j, h_j, name="j") as j:
-                        updatePhi(i, j, my_object, phi, g, x1, x2)
-                EvalBoundary(phi, g)
+                        updatePhi(i, j, my_object, phi, constraint, g, x1, x2)
+                EvalBoundary(phi, constraint, g)
 
     ###################################### SETUP PLACEHOLDERS ######################################
     
@@ -174,11 +180,12 @@ def TTR_2D(my_object, g):
     x1 = hcl.placeholder((g.pts_each_dim[0],), name="x1", dtype=hcl.Float())
     x2 = hcl.placeholder((g.pts_each_dim[1],), name="x2", dtype=hcl.Float())
     phi      = hcl.placeholder(tuple(g.pts_each_dim), name="phi", dtype=hcl.Float())
+    constraint = hcl.placeholder(tuple(g.pts_each_dim), name="constraint", dtype=hcl.Float())
     #debugger = hcl.placeholder(tuple(g.pts_each_dim), name="debugger", dtype=hcl.Float())
     #debug2 = hcl.placeholder((0,), "debug2")
 
     # Create a static schedule -- graph
-    s = hcl.create_schedule([phi, x1, x2], solve_phiNew)
+    s = hcl.create_schedule([phi, constraint, x1, x2], solve_phiNew)
     sweep_1 = solve_phiNew.Sweep_1
     sweep_2 = solve_phiNew.Sweep_2
     sweep_3 = solve_phiNew.Sweep_3
