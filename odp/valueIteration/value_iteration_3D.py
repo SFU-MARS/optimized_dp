@@ -28,26 +28,18 @@ def updateVopt(obj, i, j, k, iVals, sVals, actions, Vopt, intermeds, trans, inte
             sVals[0] = trans[si,1]
             sVals[1] = trans[si,2]
             sVals[2] = trans[si,3]
-            # Nearest neighbour
-            with hcl.if_(useNN[0] == 1):
-                # convert the state values of the successor state (si,sj,sk) into indeces (ia,ij,ik)
-                stateToIndex(sVals, iVals, bounds, ptsEachDim)
-                # if (ia, ij, ik) is within the state space, add its discounted value to action a
-                with hcl.if_(hcl.and_(iVals[0] < Vopt.shape[0], iVals[1] < Vopt.shape[1], iVals[2] < Vopt.shape[2])):
-                    with hcl.if_(hcl.and_(iVals[0] >= 0, iVals[1] >= 0, iVals[2] >= 0)):
-                        intermeds[a] += (gamma[0] * (p[0] * Vopt[iVals[0], iVals[1], iVals[2]]))
-            # # Linear interpolation
-            # with hcl.if_(useNN[0] == 0):
-            #     # if (sia, sja, ska) is within the state space, add its discounted value to action a
-            #     with hcl.if_(hcl.and_(sVals[0] <= bounds[0,1], sVals[1] <= bounds[1,1], sVals[2] <= bounds[2,1])):
-            #         with hcl.if_(hcl.and_(sVals[0] >= bounds[0,0], sVals[1] >= bounds[1,0], sVals[2] >= bounds[2,0])):
-            #             stateToIndexInterpolants(Vopt, sVals, bounds, ptsEachDim, interpV, fillVal)
-            #             intermeds[a] += (gamma[0] * (p[0] * interpV[0]))
+
+            # Maps state to indices
+            stateToIndex(sVals, iVals, bounds, ptsEachDim)
+            # if (ia, ij, ik) is within the state space, add its discounted value to action a
+            with hcl.if_(hcl.and_(iVals[0] < Vopt.shape[0], iVals[1] < Vopt.shape[1], iVals[2] < Vopt.shape[2])):
+                with hcl.if_(hcl.and_(iVals[0] >= 0, iVals[1] >= 0, iVals[2] >= 0)):
+                    intermeds[a] += (gamma[0] * (p[0] * Vopt[iVals[0], iVals[1], iVals[2]]))
+
         # maximize over each possible action in intermeds to obtain the optimal value
         with hcl.for_(0, intermeds.shape[0], name="r") as r:
             with hcl.if_(Vopt[i,j,k] < intermeds[r]):
                 Vopt[i,j,k] = intermeds[r]
-
 
 # Returns 0 if convergence has been reached
 def evaluateConvergence(newV, oldV, epsilon, reSweep):
@@ -59,7 +51,6 @@ def evaluateConvergence(newV, oldV, epsilon, reSweep):
     with hcl.if_(delta[0] > epsilon[0]):
         reSweep[0] = 1
 
-
 # _bounds = np.array([[-5.0, 5.0],[-5.0, 5.0],[-3.1415, 3.1415]])
 # convert state values into indeces using nearest neighbour
 def stateToIndex(sVals, iVals, bounds, ptsEachDim):
@@ -67,120 +58,15 @@ def stateToIndex(sVals, iVals, bounds, ptsEachDim):
     iVals[1] = ((sVals[1] - bounds[1,0]) / (bounds[1,1] - bounds[1,0])) *  (ptsEachDim[1] - 1)
     iVals[2] = ((sVals[2] - bounds[2,0]) / (bounds[2,1] - bounds[2,0])) *  (ptsEachDim[2] - 1)
     # NOTE: add 0.5 to simulate rounding
-    iVals[0] = hcl.cast(hcl.Int(), iVals[0])
-    iVals[1] = hcl.cast(hcl.Int(), iVals[1])
-    iVals[2] = hcl.cast(hcl.Int(), iVals[2])
-
-
-# # given state values sVals, obtain the 8 possible successor states and their corresponding weight
-# def stateToIndexInterpolants(Vopt, sVals, bounds, ptsEachDim, interpV, fillVal):
-#     iMin = hcl.scalar(0, "iMin")
-#     jMin = hcl.scalar(0, "jMin")
-#     kMin = hcl.scalar(0, "kMin")
-#     iMax = hcl.scalar(0, "iMax")
-#     jMax = hcl.scalar(0, "jMax")
-#     kMax = hcl.scalar(0, "kMax")
-#     c000 = hcl.scalar(fillVal[0], "c000")
-#     c001 = hcl.scalar(fillVal[0], "c001")
-#     c010 = hcl.scalar(fillVal[0], "c010")
-#     c011 = hcl.scalar(fillVal[0], "c011")
-#     c100 = hcl.scalar(fillVal[0], "c100")
-#     c101 = hcl.scalar(fillVal[0], "c101")
-#     c110 = hcl.scalar(fillVal[0], "c110")
-#     c111 = hcl.scalar(fillVal[0], "c111")
-#     c00  = hcl.scalar(0, "c00")
-#     c01  = hcl.scalar(0, "c01")
-#     c10  = hcl.scalar(0, "c10")
-#     c11  = hcl.scalar(0, "c11")
-#     c0   = hcl.scalar(0, "c0")
-#     c1   = hcl.scalar(0, "c1")
-#     ia   = hcl.scalar(0, "ia")
-#     ja   = hcl.scalar(0, "ja")
-#     ka   = hcl.scalar(0, "ka")
-#     di   = hcl.scalar(0, "di")
-#     dj   = hcl.scalar(0, "dj")
-#     dk   = hcl.scalar(0, "dk")
-#
-#     # obtain unrounded index values
-#     ia[0] = ((sVals[0] - bounds[0,0]) / (bounds[0,1] - bounds[0,0])) *  (ptsEachDim[0] - 1)
-#     ja[0] = ((sVals[1] - bounds[1,0]) / (bounds[1,1] - bounds[1,0])) *  (ptsEachDim[1] - 1)
-#     ka[0] = ((sVals[2] - bounds[2,0]) / (bounds[2,1] - bounds[2,0])) *  (ptsEachDim[2] - 1)
-#
-#     # obtain neighbouring state indeces in each direction
-#     with hcl.if_(ia[0] < 0):
-#         iMin[0] = hcl.cast(hcl.Int(), ia[0] - 1.0)
-#         iMax[0] = hcl.cast(hcl.Int(), ia[0])
-#     with hcl.else_():
-#         iMin[0] = hcl.cast(hcl.Int(), ia[0])
-#         iMax[0] = hcl.cast(hcl.Int(), ia[0] + 1.0)
-#     with hcl.if_(ja[0] < 0):
-#         jMin[0] = hcl.cast(hcl.Int(), ja[0] - 1.0)
-#         jMax[0] = hcl.cast(hcl.Int(), ja[0])
-#     with hcl.else_():
-#         jMin[0] = hcl.cast(hcl.Int(), ja[0])
-#         jMax[0] = hcl.cast(hcl.Int(), ja[0] + 1.0)
-#     with hcl.if_(ka[0] < 0):
-#         kMin[0] = hcl.cast(hcl.Int(), ka[0] - 1.0)
-#         kMax[0] = hcl.cast(hcl.Int(), ka[0])
-#     with hcl.else_():
-#         kMin[0] = hcl.cast(hcl.Int(), ka[0])
-#         kMax[0] = hcl.cast(hcl.Int(), ka[0] + 1.0)
-#
-#     # obtain weights in each direction
-#     di[0] = ia[0] - iMin[0]
-#     dj[0] = ja[0] - jMin[0]
-#     dk[0] = ka[0] - kMin[0]
-#
-#     # Obtain value of each neighbour state
-#     # Vopt[iMin, jMin, kMin]
-#     with hcl.if_(hcl.and_(iMin[0] < Vopt.shape[0], jMin[0] < Vopt.shape[1], kMin[0] < Vopt.shape[2])):
-#         with hcl.if_(hcl.and_(iMin[0] >= 0, jMin[0] >= 0, kMin[0] >= 0)):
-#             c000[0] = Vopt[iMin[0], jMin[0], kMin[0]]
-#     # Vopt[iMin, jMin, kMax]
-#     with hcl.if_(hcl.and_(iMin[0] < Vopt.shape[0], jMin[0] < Vopt.shape[1], kMax[0] < Vopt.shape[2])):
-#         with hcl.if_(hcl.and_(iMin[0] >= 0, jMin[0] >= 0, kMax[0] >= 0)):
-#             c001[0] = Vopt[iMin[0], jMin[0], kMax[0]]
-#     # Vopt[iMin, jMax, kMin]
-#     with hcl.if_(hcl.and_(iMin[0] < Vopt.shape[0], jMax[0] < Vopt.shape[1], kMin[0] < Vopt.shape[2])):
-#         with hcl.if_(hcl.and_(iMin[0] >= 0, jMax[0] >= 0, kMin[0] >= 0)):
-#             c010[0] = Vopt[iMin[0], jMax[0], kMin[0]]
-#     # Vopt[iMin, jMax, kMax]
-#     with hcl.if_(hcl.and_(iMin[0] < Vopt.shape[0], jMax[0] < Vopt.shape[1], kMax[0] < Vopt.shape[2])):
-#         with hcl.if_(hcl.and_(iMin[0] >= 0, jMax[0] >= 0, kMax[0] >= 0)):
-#             c011[0] = Vopt[iMin[0], jMax[0], kMax[0]]
-#     # Vopt[iMax, jMin, kMin]
-#     with hcl.if_(hcl.and_(iMax[0] < Vopt.shape[0], jMin[0] < Vopt.shape[1], kMin[0] < Vopt.shape[2])):
-#         with hcl.if_(hcl.and_(iMax[0] >= 0, jMin[0] >= 0, kMin[0] >= 0)):
-#             c100[0] = Vopt[iMax[0], jMin[0], kMin[0]]
-#     # Vopt[iMax, jMin, kMax]
-#     with hcl.if_(hcl.and_(iMax[0] < Vopt.shape[0], jMin[0] < Vopt.shape[1], kMax[0] < Vopt.shape[2])):
-#         with hcl.if_(hcl.and_(iMax[0] >= 0, jMin[0] >= 0, kMax[0] >= 0)):
-#             c101[0] = Vopt[iMax[0], jMin[0], kMax[0]]
-#     # Vopt[iMax, jMax, kMin]
-#     with hcl.if_(hcl.and_(iMax[0] < Vopt.shape[0], jMax[0] < Vopt.shape[1], kMin[0] < Vopt.shape[2])):
-#         with hcl.if_(hcl.and_(iMax[0] >= 0, jMax[0] >= 0, kMin[0] >= 0)):
-#             c110[0] = Vopt[iMax[0], jMax[0], kMin[0]]
-#     # Vopt[iMax, jMax, kMax]
-#     with hcl.if_(hcl.and_(iMax[0] < Vopt.shape[0], jMax[0] < Vopt.shape[1], kMax[0] < Vopt.shape[2])):
-#         with hcl.if_(hcl.and_(iMax[0] >= 0, jMax[0] >= 0, kMax[0] >= 0)):
-#             c111[0] = Vopt[iMax[0], jMax[0], kMax[0]]
-#
-#     # perform linear interpolation
-#     c00[0] = (c000[0] * (1-di[0])) + (c100[0] * di[0])
-#     c01[0] = (c001[0] * (1-di[0])) + (c101[0] * di[0])
-#     c10[0] = (c010[0] * (1-di[0])) + (c110[0] * di[0])
-#     c11[0] = (c011[0] * (1-di[0])) + (c111[0] * di[0])
-#     c0[0]  = (c00[0] * (1-dj[0])) + (c10[0] * dj[0])
-#     c1[0]  = (c01[0] * (1-dj[0])) + (c11[0] * dj[0])
-#     interpV[0] = (c0[0] * (1-dk[0])) + (c1[0] * dk[0])
-    
+    iVals[0] = hcl.cast(hcl.Int(), iVals[0] + 0.5)
+    iVals[1] = hcl.cast(hcl.Int(), iVals[1] + 0.5)
+    iVals[2] = hcl.cast(hcl.Int(), iVals[2] + 0.5)
 
 # convert indices into state values
 def indexToState(iVals, sVals, bounds, ptsEachDim):
     sVals[0] = bounds[0,0] + ( (bounds[0,1] - bounds[0,0]) * (iVals[0] / (ptsEachDim[0]-1)) ) 
     sVals[1] = bounds[1,0] + ( (bounds[1,1] - bounds[1,0]) * (iVals[1] / (ptsEachDim[1]-1)) ) 
     sVals[2] = bounds[2,0] + ( (bounds[2,1] - bounds[2,0]) * (iVals[2] / (ptsEachDim[2]-1)) ) 
-
 
 # set iVals equal to (i,j,k) and sVals equal to the corresponding state values at (i,j,k)
 def updateStateVals(i, j, k, iVals, sVals, bounds, ptsEachDim):

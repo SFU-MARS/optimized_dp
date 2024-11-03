@@ -4,6 +4,7 @@ import os
 # import MDP.Example_3D as MDP
 #import MDP.Example_6D as MDP
 from odp.solver import *
+# from odp.valueIteration import value_iteration_2D
 
 import numpy as np
 import math
@@ -76,32 +77,19 @@ import os
 #                                                                                                  #
 ####################################################################################################
 
-class MDP_Pendulum_3D_example:
-    _bounds = np.array([[-math.pi, math.pi], [-8., 8.], [0, 1]])
-    _ptsEachDim = np.array([1000, 100, 1])
-    # Set goal to be
+class pendulum_2d_example:
+    _bounds = np.array([[-math.pi, math.pi], [-8., 8.]])
+    _ptsEachDim = np.array([201, 401])
+    # Set goal to b
     _goal = np.zeros([30, 30])
-    a1 = np.linspace(-1., 1., _goal.shape[0], True)
-    a2 = np.linspace(-1., 1., _goal.shape[1], True)
+    torques = np.linspace(-2., 2., 41)
+    _actions = torques #np.array(torques)
 
-    # goals are actually angles
-    for i in range(_goal.shape[0]):
-        for j in range(_goal.shape[1]):
-            _goal[i, j] = math.atan2(a2[j], a1[i])
-
-    #print("goal")
-    #print(np.sort(_goal.reshape(900,)))
-    # set _actions based on ranges and number of steps
-    torques = np.linspace(-2., 2., 100, endpoint=True)
-    _actions = np.array(torques)
-
-    _gamma = np.array([0.8])
-    _epsilon = np.array([.00000005])
-    _maxIters = np.array([200])
+    _gamma = np.array([0.99])
+    _epsilon = np.array([1.117e-5])
+    _maxIters = np.array([1500])
     # Deterministic case - dynamics based on pendulum dynamics
-    _trans = np.zeros([1, 4])  # size: [maximum number of transition states available x 4]
-    _useNN = np.array([1])
-    _fillVal = np.array([-400])
+    _trans = np.zeros([1, 3])  # size: [maximum number of transition states available x 4]
 
     def __init__(self):
         # Some constant parameters for pendumlum from the openAI gym dynamics
@@ -112,130 +100,60 @@ class MDP_Pendulum_3D_example:
         self.max_speed = 8.
         self.coeff1 = 3 * self.g/ (2* self.l)
         self.coeff2 = 3.0/(self.m * self.l * self.l)
+        print("fick")
 
-    # Given state and action, return successor states and their probabilities
-    # sVals:  the coordinates of state
-    # bounds: the lower and upper limits of the state space in each dimension
-    # trans:  holds each successor state and the probability of reaching that state
-
-    def arctan(self, x):
-        my_st_result = hcl.scalar(0, "my_st_result")
-        # Pay attention to the sign
-        with hcl.if_(x <= 1):
-            with hcl.if_(x >= -1):
-                my_st_result[0] = x - x * x * x / 3 + x * x * x * x * x / 5 - x * x * x * x * x * x * x / 7 + x * x * x * x * x * x * x * x * x / 9 \
-                         - x * x * x * x * x * x * x * x * x * x * x / 11 + x * x * x * x * x * x * x * x * x * x * x * x * x / 13 \
-                         - x * x * x * x * x * x * x * x * x * x * x * x * x * x * x / 15 + x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x / 17 \
-                         - x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x / 19 + x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x / 21 \
-                         - x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x / 23 + x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x / 25
-
-            with hcl.elif_(x < -1):
-                my_st_result[0] = -math.pi / 2 - (1 / x - 1 / (x * x * x * 3) + 1 / (x * x * x * x * x * 5) - 1 / (
-                            x * x * x * x * x * x * x * 7) + 1 / (x * x * x * x * x * x * x * x * x * 9) - 1 / (x * x * x * x * x * x * x * x * x * x * x * 11) + 1 / (
-                                                              x * x * x * x * x * x * x * x * x * x * x * x * x * 13) \
-                                                  - 1 / (
-                                                              x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * 15) + 1 / (
-                                                              x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * 17) \
-                                                  - 1 / (
-                                                              x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * 19) + 1 / (
-                                                              x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * 21) \
-                                                  - 1 / (
-                                                              x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * 23) + 1 / (
-                                                              x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * 25))
-        with hcl.if_(x > 1):
-            my_st_result[0] = math.pi / 2 - (1 / x - 1 / (x * x * x * 3) + 1 / (x * x * x * x * x * 5) - 1 / (
-                        x * x * x * x * x * x * x * 7) + 1 / (x * x * x * x * x * x * x * x * x * 9) \
-                                             - 1 / (x * x * x * x * x * x * x * x * x * x * x * 11) + 1 / (
-                                                         x * x * x * x * x * x * x * x * x * x * x * x * x * 13) \
-                                             - 1 / (
-                                                         x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * 15) + 1 / (
-                                                         x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * 17) \
-                                             - 1 / (
-                                                         x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * 19) + 1 / (
-                                                         x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * 21) \
-                                             - 1 / (
-                                                         x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * 23) + 1 / (
-                                                         x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * x * 25))
-
-        return my_st_result[0]
-
-
-    def transition(self, sVals, iVals, action, bounds, trans, goal):
+    def transition(self, sVals, iVals, u, bounds, trans, goal):
         # Variable declaration
         newthdot = hcl.scalar(0, "newthdot")
         th = hcl.scalar(0, "th")
-        tan_th = hcl.scalar(0, "tan_th")
         new_th = hcl.scalar(0, "new_th")
+
 
         # Just use theta from goals variable
         # th[0] = goal[iVals[0], iVals[1]]
         th[0] = sVals[0]
 
-        newthdot[0] = sVals[1] + (self.coeff1 * hcl.sin(th[0]) +  self.coeff2* action) * self.dt
+        newthdot[0] = sVals[1] + (self.coeff1 * hcl.sin(sVals[0]) +  self.coeff2 * u) * self.dt
         with hcl.if_(newthdot[0] > self.max_speed):
             newthdot[0] = self.max_speed
         with hcl.if_(newthdot[0] < -self.max_speed):
             newthdot[0] = -self.max_speed
         new_th[0] = th[0] + newthdot[0] * self.dt
 
-        with hcl.if_(newthdot[0] > math.pi):
+        # Normalize angles
+        with hcl.if_(new_th[0] >= math.pi):
             new_th[0] = new_th[0] - 2*math.pi
-        with hcl.if_(newthdot[0] < -math.pi):
+        with hcl.elif_(new_th[0] < -math.pi):
             new_th[0] = new_th[0] + 2*math.pi
         trans[0, 0] = 1.0
         trans[0, 1] = new_th[0]
         trans[0, 2] = newthdot[0]
-        trans[0, 3] = sVals[2]
 
     # Return the reward for taking action from state
-    def reward(self, sVals, iVals, action, bounds, goal, trans):
-
+    def reward(self, sVals, iVals, u, bounds, goal, trans):
         # Variable declaration
-        th = hcl.scalar(0, "th")
-        tan_th = hcl.scalar(0, "tan_th")
         rwd = hcl.scalar(0, "rwd")
-        # Infer theta from x,y
-        # tan_th[0] = sVals[1] / sVals[0]
-        th[0] = sVals[0]
-        # rwd[0] = -(th[0] * th[0] + 0.1 * sVals[2] * sVals[2] + 0.001 * action * action)
-        rwd[0] = -(th[0] * th[0] + 0.1 * sVals[1] * sVals[1] + 0.001 * action * action)
-        # rwd[0] = -(th[0] * th[0])
+        rwd[0] = -(sVals[0] * sVals[0] + 0.1 * sVals[1] * sVals[1] + 0.001 * u * u)
         return rwd[0]
 
-    # Provide a print function
-    def writeResults(self, V, dir_path, file_name, just_values=False):
-        # Create directory for results if one does not exist
-        print("\nRecording results")
-        try:
-            os.mkdir(dir_path)
-            print("Created directory: ", dir_path)
-        except:
-            print("Writing to: '", dir_path, "'")
-        # Open file and write results
-        f = open(dir_path + file_name, "w")
-        for k in range(V.shape[2]):
-            for i in range(V.shape[0]):
-                for j in range(V.shape[1]):
-                    s = ""
-                    if not just_values:
-                        si = ((i / (self._ptsEachDim[0] - 1)) * (self._bounds[0, 1] - self._bounds[0, 0])) + self._bounds[0, 0]
-                        sj = ((j / (self._ptsEachDim[1] - 1)) * (self._bounds[1, 1] - self._bounds[1, 0])) + self._bounds[1, 0]
-                        sk = ((k / (self._ptsEachDim[2] - 1)) * (self._bounds[2, 1] - self._bounds[2, 0])) + self._bounds[2, 0]
-                        state = ("{:.4f}".format(si), "{:.4f}".format(sj), "{:.4f}".format(sk))
-                        s = str(state) + "   " + str("{:.4f}".format(V[(i, j, k)])) + '\n'
-                    else:
-                        s = str("{:.4f}".format(V[(i, j, k)])) + ',\n'
-                    f.write(s)
-        print("Finished recording results")
 
-myProblem   = MDP_Pendulum_3D_example()
+myProblem   = pendulum_2d_example()
+print(myProblem)
+
 result = solveValueIteration(myProblem)
-print(np.sort(result.reshape(100000))[-10:])
+print(np.shape(result))
+# print(result[20, 25])
 print(np.max(result))
-print(result.shape)
-# myProblem.writeResults(result, )
-np.save('pendulum.npy', result.reshape((1000, 100)))
+print(np.min(result))
+print(result)
+np.save('hcl_pendulum_res_new.npy', result)
 
+
+# myProblem.writeResults(result, )
+# python_res = np.load('pendulum_python_gamma08_new.npy')
+V = np.load("pendulum_python_gamma99_new.npy")
+
+print(V)
 # print(result)
 # Optionally provide a directory and filename to save results of computation
 # dir_path   = None

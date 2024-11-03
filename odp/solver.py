@@ -9,7 +9,7 @@ from odp.computeGraphs import graph_1D, graph_2D, graph_3D, graph_4D, graph_5D, 
 from odp.TimeToReach import TTR_2D, TTR_3D, TTR_4D, TTR_5D 
 
 # Value Iteration library
-from odp.valueIteration import value_iteration_3D, value_iteration_4D, value_iteration_5D, value_iteration_6D
+from odp.valueIteration import value_iteration_2D, value_iteration_3D, value_iteration_4D, value_iteration_5D, value_iteration_6D
 
 def solveValueIteration(MDP_obj):
     print("Welcome to optimized_dp \n")
@@ -33,61 +33,60 @@ def solveValueIteration(MDP_obj):
     ptsEachDim = hcl.asarray(MDP_obj._ptsEachDim)
     sVals = hcl.asarray(np.zeros([MDP_obj._bounds.shape[0]]))
     iVals = hcl.asarray(np.zeros([MDP_obj._bounds.shape[0]]))
-    interpV = hcl.asarray(np.zeros([1]))
-    useNN = hcl.asarray(MDP_obj._useNN)
+    # interpV = hcl.asarray(np.zeros([1]))
+    # useNN = hcl.asarray(MDP_obj._useNN)
 
-    print(MDP_obj._bounds.shape[0])
-    print(np.zeros([MDP_obj._bounds.shape[0]]))
-    if MDP_obj._bounds.shape[0] == 3:
-        fillVal = hcl.asarray(MDP_obj._fillVal)
-        f = value_iteration_3D(MDP_obj)
-    if MDP_obj._bounds.shape[0] == 4:
-        f = value_iteration_4D(MDP_obj)
-    if MDP_obj._bounds.shape[0] == 5:
-        f = value_iteration_5D(MDP_obj)
-    if MDP_obj._bounds.shape[0] == 6:
-        f = value_iteration_6D(MDP_obj)
+    # print(MDP_obj._bounds.shape[0])
+    # print(np.zeros([MDP_obj._bounds.shape[0]]))
+    if MDP_obj._bounds.shape[0] == 2:
+        # fillVal = hcl.asarray(MDP_obj._fillVal)
+        f = value_iteration_2D.value_iteration_2D(MDP_obj)
 
+    # if MDP_obj._bounds.shape[0] == 3:
+    #     fillVal = hcl.asarray(MDP_obj._fillVal)
+    #     f = value_iteration_3D(MDP_obj)
+    # if MDP_obj._bounds.shape[0] == 4:
+    #     f = value_iteration_4D(MDP_obj)
+    # if MDP_obj._bounds.shape[0] == 5:
+    #     f = value_iteration_5D(MDP_obj)
+    # if MDP_obj._bounds.shape[0] == 6:
+    #     f = value_iteration_6D(MDP_obj)
+
+    data_record = []
     # Build the graph and use the executable
     # Now use the executable
     t_s = time.time()
-    if MDP_obj._bounds.shape[0] == 3:
+    if MDP_obj._bounds.shape[0] == 2:
         iter = 0
-        resweep = 1
-        while iter < MDP_obj._maxIters and resweep == 1:
-            reSweep = hcl.asarray(np.zeros([1]))
+        while iter < MDP_obj._maxIters:
             print("Currently at iteration {}".format(iter))
-            f(V_opt, actions, intermeds, trans, interpV, gamma, epsilon, reSweep, iVals, sVals, bounds, goal, ptsEachDim, count,
-                maxIters, useNN, fillVal)
+            oldV = V_opt.asnumpy()
+            f(V_opt, actions, intermeds, trans, gamma,
+               iVals, sVals, bounds, goal, ptsEachDim)
+            diff = np.max(np.abs(oldV - V_opt.asnumpy()))
+            print("Difference wrt to previous array {}".format(diff))
+            data_record.append((iter, diff ))
+            if diff < MDP_obj._epsilon:
+                break
             iter += 1
-            resweep = reSweep.asnumpy()[0]
     else:
-        f(V_opt, actions, intermeds, trans, interpV, gamma, epsilon, iVals, sVals, bounds, goal, ptsEachDim, count,
-          maxIters, useNN)
+        f(V_opt, actions, intermeds, trans, gamma, epsilon, iVals, sVals, bounds, goal, ptsEachDim, count,
+          maxIters)
     t_e = time.time()
 
     V = V_opt.asnumpy()
     c = count.asnumpy()
     print("Finished in ", int(c[0]), " iterations")
     print("Took        ", t_e - t_s, " seconds")
+    np.save("pendulum_s{}_{}_a{}_no_alternate.npy".format(V.shape[0],
+                            V.shape[1], MDP_obj._actions.shape[0]), V)
 
-    # # Write results to file
-    # if (MDP_obj.dir_path):
-    #     dir_path = MDP_obj.dir_path
-    # else:
-    #     dir_path = "./hcl_value_matrix_test/"
-    #
-    # if (MDP_obj.file_name):
-    #     file_name = MDP_obj.file_name
-    # else:
-    #     file_name = "hcl_value_iteration_" + str(int(c[0])) + "_iterations_by" + (
-    #         "_Interpolation" if MDP_obj._useNN[0] == 0 else "_NN")
-    # MDP_obj.writeResults(V, dir_path, file_name, just_values=True)
     return V
 
 def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
              plot_option, saveAllTimeSteps=False,
-             accuracy="medium", untilConvergent=False, epsilon=2e-3):
+             accuracy="medium", untilConvergent=False, epsilon=2e-3,
+             computeTimeToReach=False):
 
     print("Welcome to optimized_dp \n")
     if type(multiple_value) == list:
@@ -187,6 +186,8 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
         valfuncs[..., -1 ] = V_t.asnumpy()
         print(valfuncs.shape)
 
+    time_to_reach = np.ones(tuple(grid.pts_each_dim)) * 10000  # when attacker bound to win
+    time_to_reach[init_value <= 0] = 0.
 
     ################ USE THE EXECUTABLE ############
     # Variables used for timing
@@ -285,6 +286,9 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
 
             # Copy over for input next iterations
             V_t = hcl.asarray(V_tp1)
+            # DEBUG: specifically for fastrack. todo: remove
+            print("min distance is {}".format(np.min(V_tp1)))
+            print("sub-1 level volume {}".format(np.sum(V_tp1 <= 1.)))
             # Convert new V back into heterocl type
             Hamiltonian = hcl.asarray(Hamiltonian)
 
@@ -298,6 +302,9 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
             print(np.array([tNow, tau[i]]))
             print("Computational time to integrate (s): {:.5f}".format(time.time() - start))
 
+            # Update the time to reach
+            update_idx = np.logical_and(V_tp1 <= 0, prev_arr > 0)
+            time_to_reach[update_idx] = tNow
             if untilConvergent is True:
                 # Compare difference between V_{t-1} and V_{t} and choose the max changes
                 diff = np.amax(np.abs(V_t.asnumpy() - prev_arr))
@@ -332,8 +339,12 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
 
     if saveAllTimeSteps is True:
         valfuncs[..., 0] = V_t.asnumpy()
+        if computeTimeToReach:
+            return valfuncs, time_to_reach
         return valfuncs
 
+    if computeTimeToReach:
+        return V_t.asnumpy(), time_to_reach
     return V_t.asnumpy()
 
 def TTRSolver(dynamics_obj, grid, init_value, epsilon, plot_option):

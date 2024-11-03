@@ -182,6 +182,7 @@ class MDP_3D_example:
         print("Finished recording results")
 
 myProblem   = MDP_3D_example()
+print(myProblem)
 result = solveValueIteration(myProblem)
 
 print(result)
