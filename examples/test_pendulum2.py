@@ -25,13 +25,8 @@ def computeNextStates2(state, action):
         th -= 2 * math.pi
     elif th < -math.pi:
         th += 2 * math.pi
-    # print("theta {}".format(th))
-    # print("angular speed {}".format(state[2]))
     reward_predicted =  -(th * th + 0.1* state[1] * state[1] +
                        0.001 *action * action)
-    #if th == 0: #and state[1] == 0 and action == 0:
-    #    print("reward predictied {}".format(reward_predicted))
-
     newthdot = state[1] + (coeff1 * math.sin(th) + coeff2 * action) * dt
     if newthdot > max_speed:
         newthdot = max_speed
@@ -129,12 +124,7 @@ def set_initial_state(env, theta, theta_dot):
 
 # env = set_initial_state(env, 0., 0.)
 obs, info = env.reset(seed=30)
-# obs = (1, 0, 0)
-teta = math.atan2(obs[1], obs[0])
-print("Initial state {}".format((teta, obs[2])))
 
-# obs, r, terminated, trunc, inf = env.step([0.])
-# print(obs)
 # Load if computed from odp
 V = np.load("hcl_pendulum_res_new.npy")
 
@@ -149,7 +139,6 @@ for j in range(2000):
 
     best_a = action_list[0]
     state_for_best_a = []
-    # print("current state {}".format(obs))
     for a in action_list:
         new_state, Vs_tp1 = eval_next_state(V, obs, a)
         if Vs_tp1 > max_val:
@@ -158,12 +147,8 @@ for j in range(2000):
             state_for_best_a = new_state
 
     obs, r, terminated, trunc, inf = env.step([best_a])
-    # print(obs)
     rew += r
-    #print("here")
-    #env.render()
     if terminated or trunc:
-        print("here")
         obs, inf = env.reset()
         rewards_list.append(rew)
         #print(rew)

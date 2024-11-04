@@ -138,24 +138,7 @@ class pendulum_2d_example:
 
 
 myProblem   = pendulum_2d_example()
-print(myProblem)
-
 result = solveValueIteration(myProblem)
-print(np.shape(result))
-# print(result[20, 25])
-print(np.max(result))
-print(np.min(result))
-print(result)
 np.save('hcl_pendulum_res_new.npy', result)
 
-
-# myProblem.writeResults(result, )
-# python_res = np.load('pendulum_python_gamma08_new.npy')
-V = np.load("pendulum_python_gamma99_new.npy")
-
-print(V)
-# print(result)
-# Optionally provide a directory and filename to save results of computation
-# dir_path   = None
-# file_name  = None
 
