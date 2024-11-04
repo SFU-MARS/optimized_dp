@@ -286,9 +286,6 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
 
             # Copy over for input next iterations
             V_t = hcl.asarray(V_tp1)
-            # DEBUG: specifically for fastrack. todo: remove
-            print("min distance is {}".format(np.min(V_tp1)))
-            print("sub-1 level volume {}".format(np.sum(V_tp1 <= 1.)))
             # Convert new V back into heterocl type
             Hamiltonian = hcl.asarray(Hamiltonian)
 

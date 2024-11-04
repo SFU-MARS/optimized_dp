@@ -9,7 +9,7 @@ from odp.dynamics import DubinsCapture
 from odp.dynamics import DubinsCar4D2
 # Plot options
 from odp.Plots import PlotOptions
-# from odp.Plots import plot_isosurface, plot_valuefunction
+from odp.Plots import plot_isosurface, plot_valuefunction
 
 # Solver core
 from odp.solver import HJSolver, computeSpatDerivArray
