@@ -3,78 +3,16 @@ import numpy as np
 from odp.computeGraphs.graph_3D import *
 
 # Update the phi function at position (i,j,k)
-# def updatePhi(i, j, k, my_object, phi, g, x1, x2, x3):
-#     dV_dx1_L = hcl.scalar(0, "dV_dx1_L")
-#     dV_dx1_R = hcl.scalar(0, "dV_dx1_R")
-#     dV_dx1 = hcl.scalar(0, "dV_dx1")
-#     dV_dx2_L = hcl.scalar(0, "dV_dx2_L")
-#     dV_dx2_R = hcl.scalar(0, "dV_dx2_R")
-#     dV_dx2 = hcl.scalar(0, "dV_dx2")
-#     dV_dx3_L = hcl.scalar(0, "dV_dx3_L")
-#     dV_dx3_R = hcl.scalar(0, "dV_dx3_R")
-#     dV_dx3 = hcl.scalar(0, "dV_dx3")
-#
-#     sigma1 = hcl.scalar(0, "sigma1")
-#     sigma2 = hcl.scalar(0, "sigma2")
-#     sigma3 = hcl.scalar(0, "sigma3")
-#
-#     # dV_dx_L[0], dV_dx_R[0] = spa_derivX(i, j, k)
-#     dV_dx1_L[0], dV_dx1_R[0] = spa_derivX(i, j, k, phi, g)
-#     dV_dx2_L[0], dV_dx2_R[0] = spa_derivY(i, j, k, phi, g)
-#     dV_dx3_L[0], dV_dx3_R[0] = spa_derivT(i, j, k, phi, g)
-#
-#     # Calculate average gradient
-#     dV_dx1[0] = (dV_dx1_L[0] + dV_dx1_R[0]) / 2
-#     dV_dx2[0] = (dV_dx2_L[0] + dV_dx2_R[0]) / 2
-#     dV_dx3[0] = (dV_dx3_L[0] + dV_dx3_R[0]) / 2
-#
-#     # Find the optimal control through my_object's API
-#     uOpt = my_object.opt_ctrl(0, (x1[i], x2[j], x3[k]),
-#                               (dV_dx1[0], dV_dx2[0], dV_dx3[0]))
-#     dOpt = my_object.opt_dstb(0, (x1[i], x2[j], x3[k]),
-#                              (dV_dx1[0], dV_dx2[0], dV_dx3[0]))
-#
-#     # Calculate dynamical rates of changes
-#     dx1_dt, dx2_dt, dx3_dt = my_object.dynamics(0, (x1[i], x2[j], x3[k]), uOpt, dOpt)
-#
-#     H = hcl.scalar(0, "H")
-#     phiNew = hcl.scalar(0, "phiNew")
-#     diss1 = hcl.scalar(0, "diss1")
-#     diss2 = hcl.scalar(0, "diss2")
-#     diss3 = hcl.scalar(0, "diss3")
-#
-#     # Calculate Hamiltonian terms:
-#     H[0] = (-(dx1_dt * dV_dx1[0] + dx2_dt * dV_dx2[0] + dx3_dt * dV_dx3[0] + 1))
-#
-#     # Calculate the "dissipation"
-#     sigma1[0] = my_abs(dx1_dt)
-#     sigma2[0] = my_abs(dx2_dt)
-#     sigma3[0] = my_abs(dx3_dt)
-#     c = hcl.scalar(0, "c")
-#     c[0] = sigma1[0] / g.dx[0] + sigma2[0] / g.dx[1] + sigma3[0] / g.dx[2]
-#
-#     diss1[0] = sigma1[0] * ((dV_dx1_R[0] - dV_dx1_L[0]) / 2 + phi[i, j, k] / g.dx[0])
-#     diss2[0] = sigma2[0] * ((dV_dx2_R[0] - dV_dx2_L[0]) / 2 + phi[i, j, k] / g.dx[1])
-#     diss3[0] = sigma3[0] * ((dV_dx3_R[0] - dV_dx3_L[0]) / 2 + phi[i, j, k] / g.dx[2])
-#
-#     # New phi
-#     phiNew[0] = (-H[0] + diss1[0] + diss2[0] + diss3[0]) / c[0]
-#     #debugger[i,j,k] = phiNew[0]
-#     phi[i, j, k] = my_min(phi[i, j ,k], phiNew[0])
-
 def updatePhi(i, j, k, my_object, phi, g, x1, x2, x3):
     dV_dx1_L = hcl.scalar(0, "dV_dx1_L")
     dV_dx1_R = hcl.scalar(0, "dV_dx1_R")
     dV_dx1 = hcl.scalar(0, "dV_dx1")
-    dV_dx_100 = hcl.scalar(0, "dV_dx_100")
     dV_dx2_L = hcl.scalar(0, "dV_dx2_L")
     dV_dx2_R = hcl.scalar(0, "dV_dx2_R")
     dV_dx2 = hcl.scalar(0, "dV_dx2")
-    dV_dx_010 = hcl.scalar(0, "dV_dx_010")
     dV_dx3_L = hcl.scalar(0, "dV_dx3_L")
     dV_dx3_R = hcl.scalar(0, "dV_dx3_R")
     dV_dx3 = hcl.scalar(0, "dV_dx3")
-    dV_dx_001 = hcl.scalar(0, "dV_dx_001")
 
     sigma1 = hcl.scalar(0, "sigma1")
     sigma2 = hcl.scalar(0, "sigma2")
@@ -89,10 +27,6 @@ def updatePhi(i, j, k, my_object, phi, g, x1, x2, x3):
     dV_dx1[0] = (dV_dx1_L[0] + dV_dx1_R[0]) / 2
     dV_dx2[0] = (dV_dx2_L[0] + dV_dx2_R[0]) / 2
     dV_dx3[0] = (dV_dx3_L[0] + dV_dx3_R[0]) / 2
-
-    dV_dx_100[0] = dV_dx1[0]
-    dV_dx_010[0] = dV_dx2[0]
-    dV_dx_001[0] = dV_dx3[0]
 
     # Find the optimal control through my_object's API
     uOpt = my_object.opt_ctrl(0, (x1[i], x2[j], x3[k]),
@@ -127,45 +61,6 @@ def updatePhi(i, j, k, my_object, phi, g, x1, x2, x3):
     phiNew[0] = (-H[0] + diss1[0] + diss2[0] + diss3[0]) / c[0]
     #debugger[i,j,k] = phiNew[0]
     phi[i, j, k] = my_min(phi[i, j ,k], phiNew[0])
-
-    # Compute the new derivatives
-    # No need to deal with boundary grid points since we only use the inner (core) points
-    # 110 BASIS VECTOR
-    diagonal_deriv_110 = hcl.scalar(0, "diagonal_deriv_110")
-    diagonal_deriv_1m10 = hcl.scalar(0, "diagonal_deriv_1m10")
-
-    diagonal_deriv_110[0] = (phi[i + 1, j + 1, k] - phi[i - 1, j - 1, k]) / (2 * np.sqrt(g.dx[1] * g.dx[1]
-                                                                                       + g.dx[0] * g.dx[0]))
-    diagonal_deriv_1m10[0] = (phi[i + 1, j - 1, k] - phi[i - 1, j + 1, k]) / (2 * np.sqrt(g.dx[1] * g.dx[1]
-                                                                                         + g.dx[0] * g.dx[0]))
-    # # Now get back the derivatives in x and y direction
-    dV_dx1[0] = (diagonal_deriv_110[0] + diagonal_deriv_1m10[0])*np.sqrt(g.dx[1] * g.dx[1] + g.dx[0] * g.dx[0]) / (2*g.dx[0])
-    dV_dx2[0] = (diagonal_deriv_110[0] - diagonal_deriv_1m10[0])*np.sqrt(g.dx[1] * g.dx[1] + g.dx[0] * g.dx[0]) / (2*g.dx[1])
-
-    # diagonal_deriv_110[0] = (phi[i + 1, j + 1, k] - phi[i - 1, j - 1, k]) / 2
-    # diagonal_deriv_1m10[0] = (phi[i + 1, j - 1, k] - phi[i - 1, j + 1, k]) / 2
-
-    # Now get back the derivatives in x and y direction
-    # dV_dx1[0] = (diagonal_deriv_110[0] + diagonal_deriv_1m10[0])/ (2*g.dx[0])
-    # dV_dx2[0] = (diagonal_deriv_110[0] - diagonal_deriv_1m10[0])/ (2*g.dx[1])
-    # dV_dx3[0] = dV_dx_001[0]
-
-    # Find the optimal control through my_object's API
-    uOpt = my_object.opt_ctrl(0, (x1[i], x2[j], x3[k]),
-                              (dV_dx1[0], dV_dx2[0], dV_dx3[0]))
-    dOpt = my_object.opt_dstb(0, (x1[i], x2[j], x3[k]),
-                              (dV_dx1[0], dV_dx2[0], dV_dx3[0]))
-
-    # Calculate dynamical rates of changes
-    dx1_dt, dx2_dt, dx3_dt = my_object.dynamics(0, (x1[i], x2[j], x3[k]), uOpt, dOpt)
-
-    # Calculate Hamiltonian terms:
-    H[0] = (-(dx1_dt * dV_dx1[0] + dx2_dt * dV_dx2[0] + dx3_dt * dV_dx3[0] + 1))
-
-    # Use previous dissipation
-    phiNew[0] = (-H[0] + diss1[0] + diss2[0] + diss3[0]) / c[0]
-    #debugger[i,j,k] = phiNew[0]
-    #phi[i, j, k] = my_min(phi[i, j ,k], phiNew[0])
 
 def EvalBoundary(phi, g):
     if 0 not in g.pDim:
@@ -333,14 +228,14 @@ def TTR_3D(my_object, g):
     sweep_7 = solve_phiNew.Sweep_7
     sweep_8 = solve_phiNew.Sweep_8
 
-    # s[sweep_1].parallel(sweep_1.i)
-    # s[sweep_2].parallel(sweep_2.i)
-    # s[sweep_3].parallel(sweep_3.i)
-    # s[sweep_4].parallel(sweep_4.i)
-    # s[sweep_5].parallel(sweep_5.i)
-    # s[sweep_6].parallel(sweep_6.i)
-    # s[sweep_7].parallel(sweep_7.i)
-    # s[sweep_8].parallel(sweep_8.i)
+    s[sweep_1].parallel(sweep_1.i)
+    s[sweep_2].parallel(sweep_2.i)
+    s[sweep_3].parallel(sweep_3.i)
+    s[sweep_4].parallel(sweep_4.i)
+    s[sweep_5].parallel(sweep_5.i)
+    s[sweep_6].parallel(sweep_6.i)
+    s[sweep_7].parallel(sweep_7.i)
+    s[sweep_8].parallel(sweep_8.i)
 
     # Build an executable and return
     return hcl.build(s)
