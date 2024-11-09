@@ -259,14 +259,14 @@ def TTR_4D(my_object, g):
     sweep_7 = solve_phiNew.Sweep_7
     sweep_8 = solve_phiNew.Sweep_8
 
-    # s[sweep_1].parallel(sweep_1.i)
-    # s[sweep_2].parallel(sweep_2.i)
-    # s[sweep_3].parallel(sweep_3.i)
-    # s[sweep_4].parallel(sweep_4.i)
-    # s[sweep_5].parallel(sweep_5.i)
-    # s[sweep_6].parallel(sweep_6.i)
-    # s[sweep_7].parallel(sweep_7.i)
-    # s[sweep_8].parallel(sweep_8.i)
+    s[sweep_1].parallel(sweep_1.i)
+    s[sweep_2].parallel(sweep_2.i)
+    s[sweep_3].parallel(sweep_3.i)
+    s[sweep_4].parallel(sweep_4.i)
+    s[sweep_5].parallel(sweep_5.i)
+    s[sweep_6].parallel(sweep_6.i)
+    s[sweep_7].parallel(sweep_7.i)
+    s[sweep_8].parallel(sweep_8.i)
 
     # Build an executable and return
     return hcl.build(s)
