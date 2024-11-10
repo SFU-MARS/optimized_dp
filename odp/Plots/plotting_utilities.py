@@ -256,6 +256,7 @@ def plot_isosurface(grid, V_ori, plot_option):
 
     # Local figure save
     if plot_option.save_fig:
+        print(f"Saving figure to {plot_option.filename}")
         if plot_option.interactive_html:
             fig.write_html(plot_option.filename + ".html")
         else:
