@@ -552,7 +552,7 @@ def downsample(g, data, scale):
         if odd_ind[i]:
             idx[i] = slice(0,-(Ns[i] % scale[i]), scale[i])
         Ns[i] = grid_pts[idx[i]].shape[0]
-        grid_max[i] = grid_pts[-1]
+        grid_max[i] = grid_pts[idx[i]][-1]
     data_out = data[tuple(idx)]
     g_out = Grid(grid_min, grid_max, g.dims, Ns)
 
