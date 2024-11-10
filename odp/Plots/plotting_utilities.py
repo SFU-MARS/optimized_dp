@@ -4,12 +4,12 @@ import plotly.express as px
 from odp.Grid import Grid
 import numpy as np
 
-def plot_isosurface(grid, V_ori, plot_option):
+def plot_isosurface(grid, my_V, plot_option):
 
     dims_plot = plot_option.dims_plot
 
     if plot_option.downsample:
-        grid, my_V = pre_plot(plot_option, grid, V_ori)
+        grid, my_V = pre_plot(plot_option, grid, my_V)
 
     if len(dims_plot) != 3 and len(dims_plot) != 2 and len(dims_plot) != 1:
         raise Exception('dims_plot length should be equal to 3, 2 or 1\n')
