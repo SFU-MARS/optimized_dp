@@ -5,10 +5,11 @@ from odp.Grid import Grid
 import numpy as np
 
 def plot_isosurface(grid, V_ori, plot_option):
-    
+
     dims_plot = plot_option.dims_plot
 
-    grid, my_V = pre_plot(plot_option, grid, V_ori)
+    if plot_option.downsample:
+        grid, my_V = pre_plot(plot_option, grid, V_ori)
 
     if len(dims_plot) != 3 and len(dims_plot) != 2 and len(dims_plot) != 1:
         raise Exception('dims_plot length should be equal to 3, 2 or 1\n')
@@ -484,17 +485,17 @@ def pre_plot(plot_option, grid, V_ori):
     Pre-processing steps for plotting
     """
 
-
     # Slicing process
     dims_plot = plot_option.dims_plot
     idx = [slice(None)] * grid.dims
     slice_idx = 0
 
-    # Build new grid
-    grid_min = grid.min
-    grid_max = grid.max
-    dims = grid.dims
-    N = grid.pts_each_dim
+    # Build new grid by making new copy of original grid attributes
+    # so that original grid is not modified
+    grid_min = np.array(grid.min).copy()
+    grid_max = np.array(grid.max).copy()
+    dims = grid.dims # Scalar - no issue
+    Ns = np.array(grid.pts_each_dim).copy()
 
     delete_idx = []
     dims_list = list(range(grid.dims))
@@ -505,13 +506,14 @@ def pre_plot(plot_option, grid, V_ori):
             slice_idx += 1
             dims = dims -1
             delete_idx.append(i)
-    N = np.delete(N, delete_idx)
+    Ns = np.delete(Ns, delete_idx)
     grid_min = np.delete(grid_min, delete_idx)
     grid_max = np.delete(grid_max, delete_idx)
 
     V = V_ori[tuple(idx)]
-    
-    grid = Grid(grid_min, grid_max, dims, N)
+
+    # Create a new grid
+    grid = Grid(grid_min, grid_max, dims, Ns)
 
     # Downsamping process
     if plot_option.scale is not None:
@@ -522,6 +524,7 @@ def pre_plot(plot_option, grid, V_ori):
             if grid.pts_each_dim[i] > 30:
                 scale[i] = np.floor(grid.pts_each_dim[i]/30).astype(int)
     grid, V = downsample(grid, V, scale)
+    print("new downsampled data shape for plotting", V.shape)
 
     return grid, V
 
@@ -537,25 +540,21 @@ def downsample(g, data, scale):
     for i in range(g.dims):
         if g.pts_each_dim[i] % scale[i] != 0:
             odd_ind[i] = True
-    
-    # Generate new data
-    idx = [slice(0,None,scale[0])] * g.dims
+
+    grid_min = g.min.copy()
+    grid_max = g.max.copy()
+    Ns = g.pts_each_dim.copy()
+
+    # Generate new grid & new data
+    idx = [slice(0,None,scale[i]) for i in range(g.dims)]
     for i in range(g.dims):
+        grid_pts = g.grid_points[i]
         if odd_ind[i]:
-                idx[i] = slice(0,-(g.pts_each_dim[i]%scale[i]),scale[i])
+            idx[i] = slice(0,-(Ns[i] % scale[i]), scale[i])
+        Ns[i] = grid_pts[idx[i]].shape[0]
+        grid_max[i] = grid_pts[-1]
     data_out = data[tuple(idx)]
-    # Generate new grid
-    grid_min = g.min
-    grid_max = g.max
-    dims = g.dims
-    N = g.pts_each_dim
-    for i in range(g.dims):
-        if odd_ind[i]:
-            grid_max[i] = g.max[i]-(g.pts_each_dim[i]%scale[i])*(g.max[i]-g.min[i])/g.pts_each_dim[i]
-            N[i] = ((g.pts_each_dim[i]-g.pts_each_dim[i]%scale[i])/scale[i]).astype(np.int64)
-        else:
-            N[i] = (g.pts_each_dim[i]/scale[i]).astype(np.int64)
-    g_out = Grid(grid_min, grid_max, dims, N)
+    g_out = Grid(grid_min, grid_max, g.dims, Ns)
 
     return g_out, data_out
        

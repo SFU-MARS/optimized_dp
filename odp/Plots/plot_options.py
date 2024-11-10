@@ -3,7 +3,7 @@ class PlotOptions:
   def __init__(self, do_plot=True, plot_type="set", plotDims=[],
                slicesCut=[], min_isosurface = 0, max_isosurface = 0, 
                colorscale='Rainbow', save_fig=False, filename=None, interactive_html=False, contour=None,  flatshading=None,  
-               legend=None, legendgroup=None, 
+               downsample=False, legend=None, legendgroup=None,
                legendgrouptitle=None, legendrank=None, legendwidth=None, 
                lighting=None, lightposition=None, 
                opacity=0.8, reversescale=None, 
@@ -71,6 +71,9 @@ class PlotOptions:
 
     # Assign an id to this trace
     self.uid = uid
+
+    # If downsampled at all
+    self.downsample = downsample
 
     # Scale of downsampling data
     self.scale = scale
