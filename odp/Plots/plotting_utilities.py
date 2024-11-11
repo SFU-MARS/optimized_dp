@@ -8,8 +8,7 @@ def plot_isosurface(grid, my_V, plot_option):
 
     dims_plot = plot_option.dims_plot
 
-    if plot_option.downsample:
-        grid, my_V = pre_plot(plot_option, grid, my_V)
+    grid, my_V = pre_plot(plot_option, grid, my_V)
 
     if len(dims_plot) != 3 and len(dims_plot) != 2 and len(dims_plot) != 1:
         raise Exception('dims_plot length should be equal to 3, 2 or 1\n')
@@ -263,13 +262,13 @@ def plot_isosurface(grid, my_V, plot_option):
             fig.write_image(plot_option.filename)
 
 
-def plot_valuefunction(grid, V_ori, plot_option):
+def plot_valuefunction(grid, my_V, plot_option):
     '''
     Plot value function V, 1D or 2D grid is allowed
     https://plotly.com/python/3d-surface-plots/
     '''   
     dims_plot = plot_option.dims_plot
-    grid, my_V = pre_plot(plot_option, grid, V_ori)
+    grid, my_V = pre_plot(plot_option, grid, my_V)
 
     if len(dims_plot) != 2 and len(dims_plot) != 1:
         raise Exception('dims_plot length should be equal to 2 or 1\n')
@@ -511,9 +510,11 @@ def pre_plot(plot_option, grid, V_ori):
     grid_max = np.delete(grid_max, delete_idx)
 
     V = V_ori[tuple(idx)]
-
     # Create a new grid
     grid = Grid(grid_min, grid_max, dims, Ns)
+
+    if not plot_option.downsample:
+        return grid, V
 
     # Downsamping process
     if plot_option.scale is not None:
@@ -525,7 +526,6 @@ def pre_plot(plot_option, grid, V_ori):
                 scale[i] = np.floor(grid.pts_each_dim[i]/30).astype(int)
     grid, V = downsample(grid, V, scale)
     print("new downsampled data shape for plotting", V.shape)
-
     return grid, V
 
 def downsample(g, data, scale):
@@ -536,11 +536,6 @@ def downsample(g, data, scale):
     if len(scale) != g.dims:
         raise Exception('scale length should be equal to grid dimension\n')
 
-    odd_ind =[False] * g.dims
-    for i in range(g.dims):
-        if g.pts_each_dim[i] % scale[i] != 0:
-            odd_ind[i] = True
-
     grid_min = g.min.copy()
     grid_max = g.max.copy()
     Ns = g.pts_each_dim.copy()
@@ -549,8 +544,6 @@ def downsample(g, data, scale):
     idx = [slice(0,None,scale[i]) for i in range(g.dims)]
     for i in range(g.dims):
         grid_pts = g.grid_points[i]
-        if odd_ind[i]:
-            idx[i] = slice(0,-(Ns[i] % scale[i]), scale[i])
         Ns[i] = grid_pts[idx[i]].shape[0]
         grid_max[i] = grid_pts[idx[i]][-1]
     data_out = data[tuple(idx)]
