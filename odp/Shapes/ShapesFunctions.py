@@ -2,6 +2,14 @@ import numpy as np
 from odp.Grid import Grid
 from typing import List
 
+"""
+Functions for easily defining implicit surface functions for common shapes, 
+taking the convention that the zero sublevel set of the implicit surface
+function represents the set.
+
+These functions also serve as examples of how to implement implicit surface
+functions in general.
+"""
 
 def CylinderShape(
         grid: Grid, 
@@ -30,6 +38,7 @@ def CylinderShape(
         if i not in ignore_dims:
             # This works because of broadcasting
             data = data + np.power(grid.vs[i] - center[i], 2)
+
     if quadratic:
         return data - radius*radius
     
