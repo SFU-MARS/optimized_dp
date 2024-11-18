@@ -42,44 +42,47 @@ def plot_contour(V_slice, selected_slice, xmin, xmax, ymin, ymax, grid1, grid2, 
 
 # -------------------------------- ONE-SHOT TTR COMPUTATION ---------------------------------- #
 
-# TTR Example 1
-g = Grid(minBounds=np.array([-3.0, -1.0, -math.pi]), maxBounds=np.array([3.0, 4.0, math.pi]),
-         dims=3, pts_each_dim=np.array([50, 50, 50]), periodicDims=[2])
-targetSet = ShapeRectangle(g, [1.0, 2.0, -1000], [1.5, 2.5, 1000])
-my_car = DubinsCar(uMode="min")
-# # Test the TTR solver with obstacles
-# obs = ShapeRectangle(g, [-1.0, 0.0, -1000], [0.0, 2.0, 1000])
-obs = ShapeRectangle(g, [-0.2, 0.0, -1000], [0.0, 1.0, 1000])
-# obs_goal = np.array([-0.5, 0.5])
-# obs = CylinderShape(g, [2], np.array(obs_goal), 0.5)
-po = PlotOptions(do_plot=False, plot_type="value", plotDims=[0,1], slicesCut=[25])
-epsilon = 0.001
-V_0_Dev = TTRSolver(my_car, g, [targetSet, obs], epsilon, po)
-selected_slice = 25
-V_0_Dev = np.clip(V_0_Dev, -1, 10)
-# Plotting
-V_slice = V_0_Dev[:, :, selected_slice]
-# plot_contour(V_slice, selected_slice, -3.0, 3.0, -1.0, 4.0, 50, 50)
-# Traj test
-start_state = (1.0, 0.0, 0.0)
-ctrl_freq = 20
-traj = compute_opt_traj_TTR(my_car, g, V_0_Dev, start_state, targetSet, ctrl_freq, [2])
-print(f"The planned trajectory is {traj}.")
-plot_contour(V_slice, selected_slice, -3.0, 3.0, -1.0, 4.0, 50, 50, traj)
-
-
-
-# # # TTR Example 2 from the robut_utils
+# # TTR Example 1
+# g = Grid(minBounds=np.array([-3.0, -1.0, 0]), maxBounds=np.array([3.0, 4.0, 2*math.pi]),
+#          dims=3, pts_each_dim=np.array([150, 150, 50]), periodicDims=[2])
+# # targetSet = ShapeRectangle(g, [-1.7, 1.5, -1000], [-1.0, 1.8, 1000])
+# goal = (-1.7, 1.5)
+# targetSet = CylinderShape(g, [2], np.array(goal), 0.08)
 # my_car = DubinsCar(uMode="min")
-# g = Grid(minBounds=np.array([-6.5, -13, 0.0]), maxBounds=np.array([21.5, -1.5, 2*math.pi]),
-#          dims=3, pts_each_dim=np.array([561, 231, 36]), periodicDims=[2])
-# goal = np.array([-2.9, -4.6])
-# targetSet = CylinderShape(g, [2], np.array(goal), 0.25)
-# # obs = ShapeRectangle(g, [-2.0, 0.0, -1000], [0.0, 1.0, 1000])
-# po = PlotOptions(do_plot=True, plot_type="value", plotDims=[0,1], slicesCut=[25])
+# # # Test the TTR solver with obstacles
+# # obs = ShapeRectangle(g, [-1.0, 0.0, -1000], [0.0, 2.0, 1000])
+# obs = ShapeRectangle(g, [-1.5, 0.0, -1000], [-0.5, 1.0, 1000])
+# # obs_goal = np.array([-0.5, 0.5])
+# # obs = CylinderShape(g, [2], np.array(obs_goal), 0.5)
+# po = PlotOptions(do_plot=False, plot_type="value", plotDims=[0,1], slicesCut=[25])
 # epsilon = 0.001
-# V_0_Dev = TTRSolver(my_car, g, targetSet, epsilon, po)
-# # V_0_Dev = TTRSolver_Dev(my_car, g, [targetSet, obs], epsilon, po)
+# V_0_Dev = TTRSolver(my_car, g, [targetSet, obs], epsilon, po)
+# selected_slice = 0
+# V_0_Dev = np.clip(V_0_Dev, -1, 15)
+# # Plotting
+# V_slice = V_0_Dev[:, :, selected_slice]
+# # plot_contour(V_slice, selected_slice, -3.0, 3.0, -1.0, 4.0, 50, 50)
+# # Traj test
+# start_state = (1.0, 0.0, 0.0)  # theta is in radian
+# ctrl_freq = 20
+# traj = compute_opt_traj_TTR(my_car, g, V_0_Dev, start_state, targetSet, ctrl_freq, [2])
+# # print(f"The planned trajectory is {traj}.")
+# plot_contour(V_slice, selected_slice, -3.0, 3.0, -1.0, 4.0, 150, 150, traj)
+
+
+
+# # TTR Example 2 from the robut_utils
+my_car = DubinsCar(uMode="min")
+g = Grid(minBounds=np.array([-6.5, -13, 0.0]), maxBounds=np.array([5.0, 15.0, 2*math.pi]),
+         dims=3, pts_each_dim=np.array([231, 561, 36]), periodicDims=[2])
+goal = np.array([-2.5, 5.2, 1.57])
+# goal = np.array([-2.9, -4.6])
+targetSet = CylinderShape(g, [], np.array(goal), 0.5)
+# obs = ShapeRectangle(g, [-2.0, 0.0, -1000], [0.0, 1.0, 1000])
+po = PlotOptions(do_plot=True, plot_type="value", plotDims=[0,1], slicesCut=[25])
+epsilon = 0.001
+V_0_Dev = TTRSolver(my_car, g, targetSet, epsilon, po)
+# V_0_Dev = TTRSolver_Dev(my_car, g, [targetSet, obs], epsilon, po)
 # selected_slice = 18
 # V_0_Dev = np.clip(V_0_Dev, -1, 40)
 # V_slice = V_0_Dev[:, :, selected_slice]
@@ -99,3 +102,34 @@ plot_contour(V_slice, selected_slice, -3.0, 3.0, -1.0, 4.0, 50, 50, traj)
 # po = PlotOptions( plot_type="value", plotDims=[0,1], slicesCut=[])
 # epsilon = 0.001
 # V_0_Dev = TTRSolver(my_sig, g, [targetSet, obs], epsilon, po)
+
+# TTR Example 4: DubinCar4D
+# g = Grid(minBounds=np.array([-3.0, -1.0, 0, 0]), maxBounds=np.array([3.0, 4.0, 5, 2*math.pi]),
+#          dims=4, pts_each_dim=np.array([50, 50, 50, 50]), periodicDims=[3])
+# targetSet = ShapeRectangle(g, [-1.7, 1.5, -1000, -1000], [-1.0, 1.8, 1000, 1000])
+# # goal = (-1.7, 1.5)
+# # targetSet = CylinderShape(g, [2], np.array(goal), 0.08)
+# my_car = DubinsCar4D(uMode="min")
+# # # Test the TTR solver with obstacles
+# # obs = ShapeRectangle(g, [-1.0, 0.0, -1000], [0.0, 2.0, 1000])
+# obs = ShapeRectangle(g, [-1.5, 0.0, -1000, -1000], [-0.5, 1.0, 1000, 1000])
+# # obs_goal = np.array([-0.5, 0.5])
+# # obs = CylinderShape(g, [2], np.array(obs_goal), 0.5)
+# po = PlotOptions(do_plot=False, plot_type="value", plotDims=[0,1], slicesCut=[25, 25])
+# epsilon = 0.001
+# V_0_Dev = TTRSolver(my_car, g, [targetSet, obs], epsilon, po)
+# selected_slice1 = 0
+# selected_slice2 = 0
+# V_0_Dev = np.clip(V_0_Dev, -1, 20)
+# # Plotting
+# V_slice = V_0_Dev[:, :, selected_slice1, selected_slice2]
+# # plot_contour(V_slice, selected_slice, -3.0, 3.0, -1.0, 4.0, 50, 50)
+# # Traj test
+# start_state = (1.0, 0.0, 0.0, 0.0)  # theta is in radian
+# ctrl_freq = 20
+# traj = compute_opt_traj_TTR(my_car, g, V_0_Dev, start_state, targetSet, ctrl_freq, [3])
+# # print(f"The planned trajectory is {traj}.")
+# plot_contour(V_slice, selected_slice1, -3.0, 3.0, -1.0, 4.0, 50, 50, traj)
+
+# TTR value functions calculation
+# pose_list: "[[-2.9, 4.6, -90.0], [1.0, 4.6, 0.0], [1.0, 5.3, 90.0], [-2.2, 5.3, 180.0], [-2.2, 10.5, 90.0], [-2.9, 10.5, 180.0]]"
