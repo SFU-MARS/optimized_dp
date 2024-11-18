@@ -76,7 +76,7 @@ def spa_deriv(indices, values, grids, periodic_dims=[]):
             left_deriv = (values[indices] - values[prev_index]) / grids.dx[dim]
             right_deriv = (values[next_index] - values[indices]) / grids.dx[dim]
 
-        spa_derivatives.append(((left_deriv + right_deriv) / 2)[0])
+        spa_derivatives.append(((left_deriv + right_deriv) / 2))
     return spa_derivatives
 
 
