@@ -6,7 +6,7 @@ from odp.Plots import plot_isosurface, plot_valuefunction
 
 # Backward reachable set computation library
 from odp.computeGraphs import graph_1D, graph_2D, graph_3D, graph_4D, graph_5D, graph_6D
-from odp.TimeToReach import TTR_2D, TTR_3D, TTR_4D, TTR_5D
+from odp.TimeToReach import TTR_2D, TTR_3D, TTR_4D, TTR_5D, TTR_6D
 
 # Value Iteration library
 from odp.valueIteration import value_iteration_3D, value_iteration_4D, value_iteration_5D, value_iteration_6D
@@ -445,7 +445,7 @@ def TTRSolver(dynamics_obj, grid, multiple_value, epsilon, plot_option):
         if grid.dims == 5:
             solve_TTR(V_0, constraint, list_x1, list_x2, list_x3, list_x4, list_x5)
         if grid.dims == 6:
-            solve_TTR(V_0, constraint, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6 )
+            solve_TTR(V_0, constraint, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6)
 
         error = np.max(np.abs(prev_val - V_0.asnumpy()))
         prev_val = V_0.asnumpy()
