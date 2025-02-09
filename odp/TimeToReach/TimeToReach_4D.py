@@ -136,10 +136,10 @@ def EvalBoundary(phi, constraint, g):
                     phi[i3, j, k, 0] = my_max(phi[i3, j, k, 0], constraint[i3, j, k, 0])
 
                     tmp2 = hcl.scalar(0, "tmp2")
-                    tmp2[0] = 2 * phi[i3, j, k, phi.shape[2] - 2] - phi[i3, j, k, phi.shape[2] - 3]
-                    tmp2[0] = my_max(tmp2[0], phi[i3, j, k, phi.shape[2] - 3])
-                    phi[i3, j, k, phi.shape[2] - 1] = my_min(tmp2[0], phi[i3, j, k, phi.shape[2] - 1])
-                    phi[i3, j, k, phi.shape[2] - 1] = my_max(phi[i3, j, k, phi.shape[2] - 1], constraint[i3, j, k, phi.shape[2] - 1])
+                    tmp2[0] = 2 * phi[i3, j, k, phi.shape[3] - 2] - phi[i3, j, k, phi.shape[3] - 3]
+                    tmp2[0] = my_max(tmp2[0], phi[i3, j, k, phi.shape[3] - 3])
+                    phi[i3, j, k, phi.shape[3] - 1] = my_min(tmp2[0], phi[i3, j, k, phi.shape[3] - 1])
+                    phi[i3, j, k, phi.shape[3] - 1] = my_max(phi[i3, j, k, phi.shape[3] - 1], constraint[i3, j, k, phi.shape[3] - 1])
 
 
 
@@ -270,14 +270,14 @@ def TTR_4D(my_object, g):
     sweep_7 = solve_phiNew.Sweep_7
     sweep_8 = solve_phiNew.Sweep_8
 
-    # s[sweep_1].parallel(sweep_1.i)
-    # s[sweep_2].parallel(sweep_2.i)
-    # s[sweep_3].parallel(sweep_3.i)
-    # s[sweep_4].parallel(sweep_4.i)
-    # s[sweep_5].parallel(sweep_5.i)
-    # s[sweep_6].parallel(sweep_6.i)
-    # s[sweep_7].parallel(sweep_7.i)
-    # s[sweep_8].parallel(sweep_8.i)
+    s[sweep_1].parallel(sweep_1.i)
+    s[sweep_2].parallel(sweep_2.i)
+    s[sweep_3].parallel(sweep_3.i)
+    s[sweep_4].parallel(sweep_4.i)
+    s[sweep_5].parallel(sweep_5.i)
+    s[sweep_6].parallel(sweep_6.i)
+    s[sweep_7].parallel(sweep_7.i)
+    s[sweep_8].parallel(sweep_8.i)
 
     # Build an executable and return
     return hcl.build(s)

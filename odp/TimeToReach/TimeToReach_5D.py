@@ -150,10 +150,10 @@ def EvalBoundary(phi, constraint, g):
                         phi[i, j, k, 0, m] = my_max(phi[i, j, k, 0, m], constraint[i, j, k, 0, m])
 
                         tmp2 = hcl.scalar(0, "tmp2")
-                        tmp2[0] = 2 * phi[i, j, k, phi.shape[2] - 2, m] - phi[i, j, k, phi.shape[2] - 3, m]
-                        tmp2[0] = my_max(tmp2[0], phi[i, j, k, phi.shape[2] - 3, m])
-                        phi[i, j, k, phi.shape[2] - 1, m] = my_min(tmp2[0], phi[i, j, k, phi.shape[2] - 1, m])
-                        phi[i, j, k, phi.shape[2] - 1, m] = my_max(phi[i, j, k, phi.shape[2] - 1, m], constraint[i, j, k, phi.shape[2] - 1, m])
+                        tmp2[0] = 2 * phi[i, j, k, phi.shape[3] - 2, m] - phi[i, j, k, phi.shape[3] - 3, m]
+                        tmp2[0] = my_max(tmp2[0], phi[i, j, k, phi.shape[3] - 3, m])
+                        phi[i, j, k, phi.shape[3] - 1, m] = my_min(tmp2[0], phi[i, j, k, phi.shape[3] - 1, m])
+                        phi[i, j, k, phi.shape[3] - 1, m] = my_max(phi[i, j, k, phi.shape[3] - 1, m], constraint[i, j, k, phi.shape[3] - 1, m])
 
     if 4 not in g.pDim:
         with hcl.for_(0, phi.shape[0], name="i") as i:
@@ -167,10 +167,10 @@ def EvalBoundary(phi, constraint, g):
                         phi[i, j, k, l, 0] = my_max(phi[i, j, k, l, 0], constraint[i, j, k, l, 0])
 
                         tmp2 = hcl.scalar(0, "tmp2")
-                        tmp2[0] = 2 * phi[i, j, k, l, phi.shape[2] - 2] - phi[i, j, k, l, phi.shape[2] - 3]
-                        tmp2[0] = my_max(tmp2[0], phi[i, j, k, l, phi.shape[2] - 3])
-                        phi[i, j, k, l, phi.shape[2] - 1] = my_min(tmp2[0], phi[i, j, k, l, phi.shape[2] - 1])
-                        phi[i, j, k, l, phi.shape[2] - 1] = my_max(phi[i, j, k, l, phi.shape[2] - 1], constraint[i, j, k, l, phi.shape[2] - 1])
+                        tmp2[0] = 2 * phi[i, j, k, l, phi.shape[4] - 2] - phi[i, j, k, l, phi.shape[4] - 3]
+                        tmp2[0] = my_max(tmp2[0], phi[i, j, k, l, phi.shape[4] - 3])
+                        phi[i, j, k, l, phi.shape[4] - 1] = my_min(tmp2[0], phi[i, j, k, l, phi.shape[4] - 1])
+                        phi[i, j, k, l, phi.shape[4] - 1] = my_max(phi[i, j, k, l, phi.shape[4] - 1], constraint[i, j, k, l, phi.shape[4] - 1])
 
 ######################################### VALUE ITERATION ##########################################
 
