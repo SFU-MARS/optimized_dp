@@ -1,6 +1,15 @@
 import heterocl as hcl
 
 class DubinsCapture:
+    """
+        Pursuit-evasion game dynamics for Dubins cars
+        
+        x_dot = -speed + speed*cos(theta) + w*y
+        y_dot = speed*sin(theta) - w*x
+        theta_dot = d - w
+        
+        where x, y, theta are the state variables, w is the control input, d is the disturbance input, and speed is a constant.
+    """
     def __init__(self, x=[0,0,0], wMax=1.0, speed=1.0, dMax=1.0, uMode="max", dMode="min"):
         self.x = x
         self.wMax = wMax
