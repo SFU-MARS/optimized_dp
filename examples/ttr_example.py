@@ -36,7 +36,7 @@ correct_result = HJSolver(my_car, g, targeSet,
 
 # -------------------------------- ONE-SHOT TTR COMPUTATION ---------------------------------- #
 g = Grid(minBounds=np.array([-3.0, -1.0, -math.pi]), maxBounds=np.array([3.0, 4.0, math.pi]),
-         dims=3, pts_each_dim=np.array([50, 50, 50]), periodicDims=[2])
+         dims=3, pts_each_dim=np.array([100, 100, 100]), periodicDims=[2])
 # Car is trying to reach the target
 # my_car = DubinsCar(uMode="min")
 my_car = DubinsCar(uMode="max")
@@ -47,9 +47,6 @@ po = PlotOptions( do_plot=False, plotDims=[0,1,2], slicesCut=[],
                   min_isosurface=lookback_length, max_isosurface=lookback_length)
 
 # First compute TTR set
-epsilon = 0.00001
+epsilon = 1e-5
 V_0 = TTRSolver(my_car, g, targetSet, epsilon, po)
 print("Maximum value {}".format(np.max(V_0)))
-
-
-#np.save("tt2_array.npy", V_0)
