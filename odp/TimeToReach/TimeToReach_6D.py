@@ -186,8 +186,8 @@ def EvalBoundary(phi, constraint, g):
                             tmp2 = hcl.scalar(0, "tmp2")
                             tmp2[0] = 2 * phi[i, j, k, l, phi.shape[4] - 2, n] - phi[i, j, k, l, phi.shape[4] - 3, n]
                             tmp2[0] = my_max(tmp2[0], phi[i, j, k, l, phi.shape[4] - 3, n])
-                            phi[i, j, k, l, phi.shape[3] - 1, n] = my_min(tmp2[0], phi[i, j, k, l, phi.shape[3] - 1, n])
-                            phi[i, j, k, l, phi.shape[3] - 1, n] = my_max(phi[i, j, k, l, phi.shape[3] - 1, n], constraint[i, j, k, l, phi.shape[3] - 1, n])
+                            phi[i, j, k, l, phi.shape[4] - 1, n] = my_min(tmp2[0], phi[i, j, k, l, phi.shape[4] - 1, n])
+                            phi[i, j, k, l, phi.shape[4] - 1, n] = my_max(phi[i, j, k, l, phi.shape[4] - 1, n], constraint[i, j, k, l, phi.shape[4] - 1, n])
     
     if 5 not in g.pDim:
         with hcl.for_(0, phi.shape[0], name="i") as i:
@@ -202,7 +202,7 @@ def EvalBoundary(phi, constraint, g):
                             phi[i, j, k, l, m, 0] = my_max(phi[i, j, k, l, m, 0], constraint[i, j, k, l, m, 0])
 
                             tmp2 = hcl.scalar(0, "tmp2")
-                            tmp2[0] = 2 * phi[i, j, k, l, m, phi.shape[5] - 2] - phi[i, j, k, l, m, phi.shape[5] - 2]
+                            tmp2[0] = 2 * phi[i, j, k, l, m, phi.shape[5] - 2] - phi[i, j, k, l, m, phi.shape[5] - 3]
                             tmp2[0] = my_max(tmp2[0], phi[i, j, k, l, m, phi.shape[5] - 3])
                             phi[i, j, k, l, m, phi.shape[5] - 1] = my_min(tmp2[0], phi[i, j, k, l, m, phi.shape[5] - 1])
                             phi[i, j, k, l, m, phi.shape[5] - 1] = my_max(phi[i, j, k, l, m, phi.shape[5] - 1], constraint[i, j, k, l, m, phi.shape[5] - 1])
