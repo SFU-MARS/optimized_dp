@@ -1,5 +1,5 @@
 import heterocl as hcl
-import hcl_math
+import odp.hcl_math as hcl_math
 
 def spatial_derivative(left, right, axis, vf, grid, *idxs):
     """1st order spatial derivative."""
@@ -7,7 +7,7 @@ def spatial_derivative(left, right, axis, vf, grid, *idxs):
     axis_len = vf.shape[axis]
     axis_step = grid.dx[axis]
 
-    if grid.periodic_dims[axis]:
+    if axis in grid.periodic_dims:
         with hcl.if_(idxs[axis] == 0):
             ## if n == 0 then...
             ## left deriv := (vf[n] - vf[N]) / dx
@@ -128,7 +128,7 @@ def SecondOrderENO(left, right, axis, vf, grid, *idxs):
     V_i_plus_2 = hcl.scalar(0, 'V_i_plus_2')
 
 
-    if grid.periodic_dims[axis]:
+    if axis in grid.periodic_dims:
         with hcl.if_(idxs[axis] == 0):
             ## if n == 0 then...
             ## left deriv := (vf[n] - vf[N]) / dx
