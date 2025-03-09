@@ -41,7 +41,6 @@ tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)
 
 # Specify the dynamical object. DubinsCapture() has been declared in dynamics/
 # Control uMode is maximizing, meaning that we're avoiding the initial target set
-# my_car = DubinsCapture(uMode="max", dMode="min")
 pursuit_evasion_sys = odp_dyn.DubinsCapture(uMode="max", dMode="min")
 
 

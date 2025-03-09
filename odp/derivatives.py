@@ -1,7 +1,7 @@
 import heterocl as hcl
 import odp.hcl_math as hcl_math
 
-def spatial_derivative(left, right, axis, vf, grid, *idxs):
+def FirstOrderENO(left, right, axis, vf, grid, *idxs):
     """1st order spatial derivative."""
 
     axis_len = vf.shape[axis]
@@ -116,7 +116,7 @@ def spatial_derivative(left, right, axis, vf, grid, *idxs):
     return left.v, right.v
 
 def SecondOrderENO(left, right, axis, vf, grid, *idxs):
-    """1st order spatial derivative."""
+    """2nd order ENO spatial derivative."""
 
     axis_len = vf.shape[axis]
     axis_step = grid.dx[axis]
@@ -144,12 +144,12 @@ def SecondOrderENO(left, right, axis, vf, grid, *idxs):
 
             # Pick element to the right
             ix[axis] = 1
-            V_i_plus_1.v = vf[tuple[ix]]
+            V_i_plus_1.v = vf[tuple(ix)]
 
             ix[axis] = 2
-            V_i_plus_2.v = vf[tuple[ix]]
+            V_i_plus_2.v = vf[tuple(ix)]
 
-        with hcl.if_(idxs[axis] == 1):
+        with hcl.elif_(idxs[axis] == 1):
             ## if n == 0 then...
             ## left deriv := (vf[n] - vf[N]) / dx
             ## right deriv := (vf[n+1] - vf[n]) / dx
@@ -164,10 +164,10 @@ def SecondOrderENO(left, right, axis, vf, grid, *idxs):
 
             # Pick element to the right
             ix[axis] = 2
-            V_i_plus_1.v = vf[tuple[ix]]
+            V_i_plus_1.v = vf[tuple(ix)]
 
             ix[axis] = 3
-            V_i_plus_2.v = vf[tuple[ix]]
+            V_i_plus_2.v = vf[tuple(ix)]
 
         with hcl.elif_(idxs[axis] == axis_len-1):
             ## if n == N then...
@@ -183,10 +183,10 @@ def SecondOrderENO(left, right, axis, vf, grid, *idxs):
 
             # Pick element to the right
             ix[axis] = 0
-            V_i_plus_1.v = vf[tuple[ix]]
+            V_i_plus_1.v = vf[tuple(ix)]
 
             ix[axis] = 1
-            V_i_plus_2.v = vf[tuple[ix]]
+            V_i_plus_2.v = vf[tuple(ix)]
 
         with hcl.elif_(idxs[axis] == axis_len-2):
             ## if n == N then...
@@ -202,10 +202,10 @@ def SecondOrderENO(left, right, axis, vf, grid, *idxs):
 
             # Pick element to the right
             ix[axis] = axis_len - 1
-            V_i_plus_1.v = vf[tuple[ix]]
+            V_i_plus_1.v = vf[tuple(ix)]
 
             ix[axis] = 0
-            V_i_plus_2.v = vf[tuple[ix]]
+            V_i_plus_2.v = vf[tuple(ix)]
 
         with hcl.else_():
 
@@ -218,10 +218,10 @@ def SecondOrderENO(left, right, axis, vf, grid, *idxs):
 
             # Pick element to the right
             ix[axis] = axis_len + 1
-            V_i_plus_1.v = vf[tuple[ix]]
+            V_i_plus_1.v = vf[tuple(ix)]
 
             ix[axis] = axis_len + 2
-            V_i_plus_2.v = vf[tuple[ix]]
+            V_i_plus_2.v = vf[tuple(ix)]
 
     else:
         # left boundary  = vf[n] + sign(vf[n]) * |vf[n+1] - vf[n]|
@@ -241,10 +241,10 @@ def SecondOrderENO(left, right, axis, vf, grid, *idxs):
             # Pick element to the right
             ix = list(idxs)
             ix[axis] = 1
-            V_i_plus_1.v = vf[tuple[ix]]
+            V_i_plus_1.v = vf[tuple(ix)]
 
             ix[axis] = 2
-            V_i_plus_2.v = vf[tuple[ix]]
+            V_i_plus_2.v = vf[tuple(ix)]
 
         with hcl.elif_(idxs[axis] == 1):
             ## if n == N then...
@@ -260,10 +260,10 @@ def SecondOrderENO(left, right, axis, vf, grid, *idxs):
             # Pick element to the right
             ix = list(idxs)
             ix[axis] = 2
-            V_i_plus_1.v = vf[tuple[ix]]
+            V_i_plus_1.v = vf[tuple(ix)]
 
             ix[axis] = 3
-            V_i_plus_2.v = vf[tuple[ix]]
+            V_i_plus_2.v = vf[tuple(ix)]
 
         with hcl.elif_(idxs[axis] == axis_len - 1):
             ## if n == N then...
@@ -297,8 +297,8 @@ def SecondOrderENO(left, right, axis, vf, grid, *idxs):
             # Pick element to the right
             ix = list(idxs)
             ix[axis] = axis_len - 1
-            V_i_plus_1.v = vf[tuple[ix]]
-            V_i_plus_2.v = vf[tuple[ix]] + hcl_math.sign(vf[tuple[ix]]) * hcl_math.abs(vf[tuple[ix]] - vf[idxs])
+            V_i_plus_1.v = vf[tuple(ix)]
+            V_i_plus_2.v = vf[tuple(ix)] + hcl_math.sign(vf[tuple(ix)]) * hcl_math.abs(vf[tuple(ix)] - vf[idxs])
 
         with hcl.else_():
 
@@ -311,10 +311,10 @@ def SecondOrderENO(left, right, axis, vf, grid, *idxs):
 
             # Pick element to the right
             ix[axis] = axis_len + 1
-            V_i_plus_1.v = vf[tuple[ix]]
+            V_i_plus_1.v = vf[tuple(ix)]
 
             ix[axis] = axis_len + 2
-            V_i_plus_2.v = vf[tuple[ix]]
+            V_i_plus_2.v = vf[tuple(ix)]
 
 
     D1_minus_2_plus_half = (V_i_minus_1.v - V_i_minus_2.v) / axis_step

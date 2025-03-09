@@ -3,7 +3,7 @@ import numpy as np
 import time
 
 import odp.hcl_math as hcl_math
-from odp.derivatives import spatial_derivative
+from odp.derivatives import FirstOrderENO, SecondOrderENO
 
 class Solver:
     debug = False
@@ -31,7 +31,7 @@ class Solver:
         hcl.init(hcl.Float(32))
 
         self.accuracy = accuracy
-        assert self.accuracy == 'low', 'This modification to odp only supports low accuracy'
+        assert self.accuracy in ['low', 'medium'], 'This modification to odp only supports low & medium accuracy'
 
         self.dtype = dtype
 
@@ -148,7 +148,10 @@ class Solver:
                 right = hcl.scalar(0, 'right')
 
                 # Compute the spatial derivative of the value function (dV/dx)
-                spatial_derivative(left, right, axis, vf, self.grid, *idxs)
+                if self.accuracy == 'low':
+                    FirstOrderENO(left, right, axis, vf, self.grid, *idxs)
+                elif self.accuracy == 'medium':
+                    SecondOrderENO(left, right, axis, vf, self.grid, *idxs)
 
                 # do for both left/right derivatives
                 for deriv in (left, right):
