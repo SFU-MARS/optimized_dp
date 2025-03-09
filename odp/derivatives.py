@@ -130,10 +130,6 @@ def SecondOrderENO(left, right, axis, vf, grid, *idxs):
 
     if axis in grid.periodic_dims:
         with hcl.if_(idxs[axis] == 0):
-            ## if n == 0 then...
-            ## left deriv := (vf[n] - vf[N]) / dx
-            ## right deriv := (vf[n+1] - vf[n]) / dx
-
             # pick last element of axis
             ix = list(idxs)
             ix[axis] = axis_len-1
@@ -150,9 +146,6 @@ def SecondOrderENO(left, right, axis, vf, grid, *idxs):
             V_i_plus_2.v = vf[tuple(ix)]
 
         with hcl.elif_(idxs[axis] == 1):
-            ## if n == 0 then...
-            ## left deriv := (vf[n] - vf[N]) / dx
-            ## right deriv := (vf[n+1] - vf[n]) / dx
 
             # pick last element of axis
             ix = list(idxs)
@@ -189,9 +182,6 @@ def SecondOrderENO(left, right, axis, vf, grid, *idxs):
             V_i_plus_2.v = vf[tuple(ix)]
 
         with hcl.elif_(idxs[axis] == axis_len-2):
-            ## if n == N then...
-            ## left deriv := (vf[n] - vf[n-1]) / dx
-            ## right deriv := (vf[0] - vf[n]) / dx
 
             ix = list(idxs)
             ix[axis] = axis_len - 3
@@ -224,13 +214,8 @@ def SecondOrderENO(left, right, axis, vf, grid, *idxs):
             V_i_plus_2.v = vf[tuple(ix)]
 
     else:
-        # left boundary  = vf[n] + sign(vf[n]) * |vf[n+1] - vf[n]|
-        # right boundary = vf[n] + sign(vf[n]) * |vf[n] - vf[n-1]|
         with hcl.if_(idxs[axis] == 0):
-            ## if n == 0 then...
-            ## left deriv := (vf[n] - LB) / dx
-            ## right deriv := (vf[n+1] - vf[n]) / dx
-
+            
             # Need to extrapolate
             ix = list(idxs)
             ix[axis] += 1
@@ -247,10 +232,6 @@ def SecondOrderENO(left, right, axis, vf, grid, *idxs):
             V_i_plus_2.v = vf[tuple(ix)]
 
         with hcl.elif_(idxs[axis] == 1):
-            ## if n == N then...
-            ## left deriv := (vf[n] - vf[n-1]) / dx
-            ## right deriv := (RB - vf[n]) / dx
-
             ix = list(idxs)
             ix[axis] = 0
             V_i_minus_1.v = vf[tuple(ix)]
@@ -266,10 +247,6 @@ def SecondOrderENO(left, right, axis, vf, grid, *idxs):
             V_i_plus_2.v = vf[tuple(ix)]
 
         with hcl.elif_(idxs[axis] == axis_len - 1):
-            ## if n == N then...
-            ## left deriv := (vf[n] - vf[n-1]) / dx
-            ## right deriv := (RB - vf[n]) / dx
-
             ix = list(idxs)
             ix[axis] = axis_len - 2
             V_i_minus_1.v = vf[tuple(ix)]
@@ -283,9 +260,6 @@ def SecondOrderENO(left, right, axis, vf, grid, *idxs):
             V_i_plus_2.v = vf[idxs] + 2 * hcl_math.sign(vf[idxs]) * hcl_math.abs(vf[idxs] - V_i_minus_1)
 
         with hcl.elif_(idxs[axis] == axis_len - 2):
-            ## if n == N then...
-            ## left deriv := (vf[n] - vf[n-1]) / dx
-            ## right deriv := (RB - vf[n]) / dx
 
             ix = list(idxs)
             ix[axis] = axis_len - 3

@@ -27,7 +27,7 @@ import math
 
 ##################################################### EXAMPLE 1 #####################################################
 
-g = Grid(np.array([-4.0, -4.0, -math.pi]), np.array([4.0, 4.0, math.pi]), 3, np.array([80, 80, 80]), [2])
+g = Grid(np.array([-4.0, -4.0, -math.pi]), np.array([4.0, 4.0, math.pi]), 3, np.array([100, 100, 100]), [2])
 
 # Implicit function is a spherical shape - check out CylinderShape API
 Initial_value_f = CylinderShape(g, [2], np.zeros(3), 1)
@@ -60,7 +60,7 @@ compMethods = { "TargetSetMode": "minVWithV0"}
 pursuit_evasion_solver = HJSolver(model=pursuit_evasion_sys,
                                 grid=g,
                                 interactive=True,
-                                accuracy='low')
+                                accuracy='low',)
 
 result = pursuit_evasion_solver(tau=tau,
                        target=Initial_value_f,
