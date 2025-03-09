@@ -2,21 +2,19 @@ import heterocl as hcl
 import numpy as np
 import time
 
-from . import math as hcl_math
-from .derivatives import spatial_derivative
-from .grid import Grid
-from .shapes import *
+from derivatives import spatial_derivative
+import hcl_math
 
-class Solver: 
 
+class Solver:
     debug = False
     interactive = False
-    
+
     accuracy = 'low'
-    
+
     _executable = None
 
-    def __init__(self, grid, model, *, 
+    def __init__(self, grid, model, *,
                  interactive=True,
                  debug=False,
                  accuracy='low',
@@ -43,32 +41,33 @@ class Solver:
         self.state_shape = (self.model.state_dims,)
         self.ctrl_shape = (self.model.ctrl_dims,)
         self.dstb_shape = (self.model.dstb_dims,)
+        self.grid_shape = tuple(self.grid.pts_each_dim)
+        self.ndims = int(len(self.grid.pts_each_dim))
 
         self.build()
-        
+
     def __call__(self, *args):
         """
         Run the solver.
-        
+
         This method is intended to be overloaded.
         """
 
         # Run the executable
         self._executable(*args)
-        
-    def build(self):
 
+    def build(self):
         if self.interactive:
             print('Building...')
 
-        vf = hcl.placeholder(self.grid.shape, name="vf", dtype=self.dtype)
+        vf = hcl.placeholder(self.grid_shape, name="vf", dtype=self.dtype)
         t = hcl.placeholder((2,), name="t", dtype=self.dtype)
         xs = [hcl.placeholder((axlen,), dtype=self.dtype, name=f'x_{i}')
-              for i, axlen in enumerate(self.grid.shape)]
+              for i, axlen in enumerate(self.grid_shape)]
         args = [vf, t, *xs]
 
         if self.debug:
-            h = hcl.placeholder(self.grid.shape, name='h', dtype=self.dtype)
+            h = hcl.placeholder(self.grid_shape, name='h', dtype=self.dtype)
             args = [h] + args
 
         # lambda is necessary so that hcl can modify properties of the function object
@@ -76,7 +75,6 @@ class Solver:
         self._sched = hcl.create_schedule(args, program)
 
         if not self.debug:
-
             # Accessing the hamiltonian and dissipation stage
             stage_hamiltonian = program.Hamiltonian
             stage_dissipation = program.Dissipation
@@ -98,18 +96,18 @@ class Solver:
             vf, t, *xs = args
 
         # Initialize intermediate tensors
-        dv_diff = hcl.compute(self.grid.shape + self.state_shape, lambda *_: 0, name='dv_diff')
+        dv_diff = hcl.compute(self.grid_shape + self.state_shape, lambda *_: 0, name='dv_diff')
         dv_max = hcl.compute(self.state_shape, lambda _: -1e9, name='dv_max')
         dv_min = hcl.compute(self.state_shape, lambda _: +1e9, name='dv_min')
         max_alpha = hcl.compute(self.state_shape, lambda _: -1e9, name='max_alpha')
 
         # Initialize the Hamiltonian tensor
-        h = hcl.compute(self.grid.shape, lambda *idxs: vf[idxs], name='h')
+        h = hcl.compute(self.grid_shape, lambda *idxs: vf[idxs], name='h')
 
         # Compute Hamiltonian term, max and min derivative
         self.hamiltonian_stage(h, vf, t, xs,
                                dv_min=dv_min, dv_max=dv_max, dv_diff=dv_diff)
-        
+
         if self.debug:
             hcl.update(h_dbg, lambda *idxs: h[idxs])
 
@@ -124,7 +122,6 @@ class Solver:
         # First order Runge-Kutta (RK) integrator
         hcl.update(vf, lambda *idxs: vf[idxs] + h[idxs] * delta_t.v)
 
-
     def hamiltonian_stage(self, h, vf, t, xs, *,
                           dv_min, dv_max, dv_diff):
         """Calculate Hamiltonian for every grid point in V_init"""
@@ -137,7 +134,7 @@ class Solver:
             dx = hcl.compute(self.state_shape, lambda _: 0, name='dx')
             dv = hcl.compute(self.state_shape, lambda _: 0, name='dv_avg')
 
-            # x_n = X_{n,i} where 
+            # x_n = X_{n,i} where
             #   x = `x` The state tensor,
             #   X = `xs` The list of state space arrays,
             #   n = Current state dimension (in updating x),
@@ -145,7 +142,7 @@ class Solver:
             for n, i in enumerate(idxs):
                 x[n] = xs[n][i]
 
-            for axis in range(self.grid.ndims):
+            for axis in range(self.ndims):
 
                 left = hcl.scalar(0, 'left')
                 right = hcl.scalar(0, 'right')
@@ -159,9 +156,9 @@ class Solver:
                         dv_min[axis] = deriv.v
                     with hcl.if_(dv_max[axis] < deriv.v):
                         dv_max[axis] = deriv.v
-                
+
                 dv[axis] = (left.v + right.v) / 2
-                
+
                 dv_diff[idxs + (axis,)] = right.v - left.v
 
             # Use the model's methods to solve optimal control
@@ -177,12 +174,11 @@ class Solver:
         hcl.mutate(vf.shape, body, name='Hamiltonian')
 
     def dissipation_stage(self, h, t, xs, *,
-                          dv_min, dv_max, dv_diff, 
+                          dv_min, dv_max, dv_diff,
                           max_alpha):
         """Calculate the dissipation"""
 
         def body(*idxs):
-
             x = hcl.compute(self.state_shape, lambda _: 0, name='x')
 
             # Each has a combination of lower/upper bound on control and disturbance
@@ -225,9 +221,9 @@ class Solver:
             hcl.update(dx_uu, lambda i: hcl_math.abs(dx_uu[i]))
 
             # Calulate alpha
-            alpha = hcl.compute(self.state_shape, 
-                                lambda i: hcl_math.max(dx_ll[i], dx_lu[i], 
-                                                       dx_ul[i], dx_uu[i]), 
+            alpha = hcl.compute(self.state_shape,
+                                lambda i: hcl_math.max(dx_ll[i], dx_lu[i],
+                                                       dx_ul[i], dx_uu[i]),
                                 name='alpha')
 
             hcl.update(max_alpha, lambda i: hcl_math.max(max_alpha[i], alpha[i]))
@@ -240,7 +236,7 @@ class Solver:
 
         hcl.mutate(h.shape, body, name='Dissipation')
 
-    def time_step(self, t, *, 
+    def time_step(self, t, *,
                   max_alpha):
 
         step_bound = hcl.scalar(0, 'step_bound')
@@ -261,7 +257,6 @@ class Solver:
 class HJSolver(Solver):
 
     def __init__(self, grid, tau, model, **kwargs):
-        
 
         super().__init__(grid, model, **kwargs)
 
@@ -269,13 +264,13 @@ class HJSolver(Solver):
                  target, target_mode='min',
                  constraint=None, constraint_mode='max'):
 
-        target_invariant = target.shape == self.grid.shape
-        assert target_invariant or target.shape == self.grid.shape + tau.shape
+        target_invariant = target.shape == self.grid_shape
+        assert target_invariant or target.shape == self.grid_shape + tau.shape
         assert target_mode in ('max', 'min')
 
         if constraint is not None:
-            constraint_invariant = constraint.shape == self.grid.shape
-            assert constraint_invariant or constraint.shape == self.grid.shape + tau.shape
+            constraint_invariant = constraint.shape == self.grid_shape
+            assert constraint_invariant or constraint.shape == self.grid_shape + tau.shape
             assert constraint_mode in ('max', 'min')
 
         # Tensor input to our computation graph
@@ -298,9 +293,9 @@ class HJSolver(Solver):
 
         # Backward reachable set/tube will be computed over the specified time horizon
         # Or until convergent ( which ever happens first )
-        for i in reversed(range(0, len(t)-1)):
+        for i in reversed(range(0, len(t) - 1)):
 
-            vf = out[..., i+1].copy()
+            vf = out[..., i + 1].copy()
 
             pde_args = [vf, np.array([now, t[i]]), *xs]
             pde_args = list(map(hcl.asarray, pde_args))
@@ -319,6 +314,7 @@ class HJSolver(Solver):
 
                 # End timing
                 end = time.time()
+                print(np.array([now, t[i]]))
 
                 # Calculate computation time
                 execution_time += end - start

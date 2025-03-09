@@ -1,5 +1,5 @@
 import heterocl as hcl
-from . import math as hcl_math
+import hcl_math
 
 def spatial_derivative(left, right, axis, vf, grid, *idxs):
     """1st order spatial derivative."""

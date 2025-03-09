@@ -8,6 +8,8 @@
 /valueIteration/3D_value_iteration_francis.py
 *.npy
 *.txt
+*.html
+*.png
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
