@@ -81,22 +81,26 @@ class Grid:
         if n == 1:
             states = np.array([states])
 
+        assert states.shape[1] == self.dims
+        
         indices = np.zeros(states.shape)
 
         for i in range(self.dims):
-            states_i = states[:,i] # Shape (N,)
-            indices_i = np.searchsorted(self.grid_points[i], states_i) # Shape (N,)
+            states_i = states[:, i]  # Shape (N,)
+            indices_i = np.searchsorted(self.grid_points[i], states_i)  # Shape (N,)
             indices_i_m1 = (indices_i - 1).astype(int)
 
             # Decrement indices that are at the upper edge, or that are closer to
             # the previous grid point than the next
-            decrement_these = indices_i > 0 and (
-                indices_i == len(self.grid_points[i])
-                or math.fabs(states_i - self.grid_points[i][indices_i_m1])
-                < math.fabs(states_i - self.grid_points[i][indices_i])
-            ) 
+            decrement_these = indices_i > 0 & (
+                (indices_i == len(self.grid_points[i]))
+                | (
+                    (states_i - self.grid_points[i][indices_i_m1])
+                    < (self.grid_points[i][indices_i] - states_i)
+                )
+            )
             indices_i[decrement_these] -= 1
-            indices[:,i] = indices_i
+            indices[:, i] = indices_i
 
         if n == 1:
             indices = indices[0]
@@ -104,7 +108,7 @@ class Grid:
         return tuple(indices.astype(int).T)
 
     def get_values(self, V: np.ndarray, states: np.ndarray) -> np.ndarray:
-        """Interpolates value function V on states (nearest neighbour). Assumes that 
+        """Interpolates value function V on states (nearest neighbour). Assumes that
         all states are within the bounds of the grid
 
         Returns:
@@ -119,4 +123,5 @@ class Grid:
             float if states is shape (self.dims,)
         """
         indices = self.get_indices(states)
+        print(indices)
         return V[indices]
