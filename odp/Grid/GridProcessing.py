@@ -79,10 +79,24 @@ class Grid:
 
         TODO: Handle periodic dimensions correctly
         """
-        n = states.ndim
-        if n == 1:
-            states = np.array([states])
+        # Single state
+        if states.ndim == 1:
+            index = []
 
+            for i, s in enumerate(states):
+                idx = np.searchsorted(self.grid_points[i], s)
+                if idx > 0 and (
+                    idx == len(self.grid_points[i])
+                    or math.fabs(s - self.grid_points[i][idx - 1])
+                    < math.fabs(s - self.grid_points[i][idx])
+                ):
+                    index.append(idx - 1)
+                else:
+                    index.append(idx)
+
+            return tuple(index)
+
+        # Batch of states, shape (N, self.dims)
         assert states.shape[1] == self.dims
 
         indices = np.zeros(states.shape)
@@ -107,9 +121,6 @@ class Grid:
 
 
             indices[:, i] = indices_i
-
-        if n == 1:
-            indices = indices[0]
 
         return tuple(indices.astype(int).T)
 
