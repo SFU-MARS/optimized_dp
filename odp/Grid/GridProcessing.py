@@ -76,15 +76,13 @@ class Grid:
 
         Returns:
             np.ndarray: indices of each state, shape (N, self.dims)
-
-        TODO: Handle periodic dimensions correctly
         """
         n = states.ndim
         if n == 1:
             states = np.array([states])
 
         assert states.shape[1] == self.dims
-
+        
         indices = np.zeros(states.shape)
 
         for i in range(self.dims):
@@ -92,20 +90,16 @@ class Grid:
             indices_i = np.searchsorted(self.grid_points[i], states_i)  # Shape (N,)
             indices_i_m1 = (indices_i - 1).astype(int)
 
-            # Decrement indices that are at the upper edge
-            beyond_upper = indices_i == len(self.grid_points[i])
-            indices_i[indices_i > 0 & beyond_upper] -= 1
-
-            # Decrement indices that are closer to the previous grid point than the 
-            # next. Note that previously decremented points will not get decremented 
-            # again because they were out of bounds, and therefore closer to the next
-            # grid point
-            closer_to_left = (states_i - self.grid_points[i][indices_i_m1]) < (
-                self.grid_points[i][indices_i] - states_i
+            # Decrement indices that are at the upper edge, or that are closer to
+            # the previous grid point than the next
+            decrement_these = indices_i > 0 & (
+                (indices_i == len(self.grid_points[i]))
+                | (
+                    (states_i - self.grid_points[i][indices_i_m1])
+                    < (self.grid_points[i][indices_i] - states_i)
+                )
             )
-            indices_i[indices_i > 0 & closer_to_left] -= 1
-
-
+            indices_i[decrement_these] -= 1
             indices[:, i] = indices_i
 
         if n == 1:
@@ -129,4 +123,5 @@ class Grid:
             float if states is shape (self.dims,)
         """
         indices = self.get_indices(states)
+        print(indices)
         return V[indices]
