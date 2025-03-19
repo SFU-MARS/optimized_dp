@@ -68,6 +68,44 @@ class Grid:
             + f"  dx: {self.dx}\n"
         )
 
+    def get_index(self, state):
+        """ Returns a tuple of the closest index of each state in the grid
+
+        Args:
+            state (tuple): state of dynamic object
+        """
+        index = []
+
+        for i, s in enumerate(state):
+            idx = np.searchsorted(self.grid_points[i], s)
+            if idx > 0 and (
+                idx == len(self.grid_points[i])
+                or math.fabs(s - self.grid_points[i][idx - 1])
+                < math.fabs(s - self.grid_points[i][idx])
+            ):
+                index.append(idx - 1)
+            else:
+                index.append(idx)
+
+        return tuple(index)
+
+    def get_value(self, V, state):
+        """Obtain the approximate value of a state
+
+        Assumes that the state is within the bounds of the grid
+
+        Args:
+            V (np.array): value function of solved HJ PDE 
+            state (tuple): state of dynamic object
+
+        Returns:
+            [float]: V(state)
+
+        TODO: Deprecate this method
+        """
+        index = self.get_index(state)
+        return V[index]
+
     def get_indices(self, states: np.ndarray) -> np.ndarray:
         """Returns a tuple of the closest indices of each state in the grid
 
@@ -81,20 +119,7 @@ class Grid:
         """
         # Single state
         if states.ndim == 1:
-            index = []
-
-            for i, s in enumerate(states):
-                idx = np.searchsorted(self.grid_points[i], s)
-                if idx > 0 and (
-                    idx == len(self.grid_points[i])
-                    or math.fabs(s - self.grid_points[i][idx - 1])
-                    < math.fabs(s - self.grid_points[i][idx])
-                ):
-                    index.append(idx - 1)
-                else:
-                    index.append(idx)
-
-            return tuple(index)
+            return self.get_index(states)
 
         # Batch of states, shape (N, self.dims)
         assert states.shape[1] == self.dims
@@ -141,3 +166,4 @@ class Grid:
         """
         indices = self.get_indices(states)
         return V[indices]
+
