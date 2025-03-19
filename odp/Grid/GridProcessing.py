@@ -68,38 +68,55 @@ class Grid:
             + f"  dx: {self.dx}\n"
         )
 
-    def get_index(self, state):
-        """Returns a tuple of the closest index of each state in the grid
+    def get_indices(self, states: np.ndarray) -> np.ndarray:
+        """Returns a tuple of the closest indices of each state in the grid
 
         Args:
-            state (tuple): state of dynamic object
+            states (np.ndarray): states of dynamical system, shape (N, self.dims)
+
+        Returns:
+            np.ndarray: indices of each state, shape (N, self.dims)
         """
-        index = []
+        n = states.ndim
+        if n == 1:
+            states = np.array([states])
 
-        for i, s in enumerate(state):
-            idx = np.searchsorted(self.grid_points[i], s)
-            if idx > 0 and (
-                idx == len(self.grid_points[i])
-                or math.fabs(s - self.grid_points[i][idx - 1])
-                < math.fabs(s - self.grid_points[i][idx])
-            ):
-                index.append(idx - 1)
-            else:
-                index.append(idx)
+        indices = np.zeros(states.shape)
 
-        return tuple(index)
+        for i in range(self.dims):
+            states_i = states[:,i] # Shape (N,)
+            indices_i = np.searchsorted(self.grid_points[i], states_i) # Shape (N,)
+            indices_i_m1 = (indices_i - 1).astype(int)
 
-    def get_value(self, V, state):
-        """Obtain the approximate value of a state
+            # Decrement indices that are at the upper edge, or that are closer to
+            # the previous grid point than the next
+            decrement_these = indices_i > 0 and (
+                indices_i == len(self.grid_points[i])
+                or math.fabs(states_i - self.grid_points[i][indices_i_m1])
+                < math.fabs(states_i - self.grid_points[i][indices_i])
+            ) 
+            indices_i[decrement_these] -= 1
+            indices[:,i] = indices_i
 
-        Assumes that the state is within the bounds of the grid
+        if n == 1:
+            indices = indices[0]
 
-        Args:
-            V (np.array): value function of solved HJ PDE
-            state (tuple): state of dynamic object
+        return tuple(indices.astype(int).T)
+
+    def get_values(self, V: np.ndarray, states: np.ndarray) -> np.ndarray:
+        """Interpolates value function V on states (nearest neighbour). Assumes that 
+        all states are within the bounds of the grid
 
         Returns:
             [float]: V(state)
+
+        Args:
+            V (np.ndarray): value function of solved HJ PDE, shape self.pts_each_dim
+            states (np.ndarray): states, shape (N, self.dims) or (self.dims,)
+
+        Returns: V evaluated at all the states
+            np.ndarray of shape (N,) if states is shape (N, self.dims)
+            float if states is shape (self.dims,)
         """
-        index = self.get_index(state)
-        return V[index]
+        indices = self.get_indices(states)
+        return V[indices]
