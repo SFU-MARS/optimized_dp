@@ -69,7 +69,7 @@ class Grid:
         )
 
     def get_index(self, state):
-        """Returns a tuple of the closest index of each state in the grid
+        """ Returns a tuple of the closest index of each state in the grid
 
         Args:
             state (tuple): state of dynamic object
@@ -95,11 +95,72 @@ class Grid:
         Assumes that the state is within the bounds of the grid
 
         Args:
+            V (np.array): value function of solved HJ PDE 
+            state (tuple): state of dynamic object
+
+        Returns:
+            [float]: V(state)
+
+        TODO: Deprecate this method
+        """
+        index = self.get_index(state)
+        return V[index]
+
+    def get_indices(self, states: np.ndarray) -> np.ndarray:
+        """Returns a tuple of the closest indices of each state in the grid
+
+        Args:
+            states (np.ndarray): states of dynamical system, shape (N, self.dims)
+
+        Returns:
+            np.ndarray: indices of each state, shape (N, self.dims)
+
+        TODO: Handle periodic dimensions correctly
+        """
+        # Single state
+        if states.ndim == 1:
+            return self.get_index(states)
+
+        # Batch of states, shape (N, self.dims)
+        assert states.shape[1] == self.dims
+
+        indices = np.zeros(states.shape)
+
+        for i in range(self.dims):
+            states_i = states[:, i]  # Shape (N,)
+            indices_i = np.searchsorted(self.grid_points[i], states_i)  # Shape (N,)
+            indices_i_m1 = (indices_i - 1).astype(int)
+
+            # Decrement indices that are at the upper edge
+            beyond_upper = indices_i == len(self.grid_points[i])
+            indices_i[indices_i > 0 & beyond_upper] -= 1
+
+            # Decrement indices that are closer to the previous grid point than the 
+            # next. Note that previously decremented points will not get decremented 
+            # again because they were out of bounds, and therefore closer to the next
+            # grid point
+            closer_to_left = (states_i - self.grid_points[i][indices_i_m1]) < (
+                self.grid_points[i][indices_i] - states_i
+            )
+            indices_i[indices_i > 0 & closer_to_left] -= 1
+
+
+            indices[:, i] = indices_i
+
+        return tuple(indices.astype(int).T)
+
+    def get_values(self, V, states):
+        """Obtain the approximate value of a state
+
+        Assumes that the state is within the bounds of the grid
+
+        Args:
             V (np.array): value function of solved HJ PDE
             state (tuple): state of dynamic object
 
         Returns:
             [float]: V(state)
         """
-        index = self.get_index(state)
-        return V[index]
+        indices = self.get_indices(states)
+        return V[indices]
+
