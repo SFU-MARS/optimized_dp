@@ -95,5 +95,8 @@ class PlotOptions:
         # Assign an id to this trace
         self.uid = uid
 
+        # If downsampled at all
+        self.downsample = downsample
+
         # Scale of downsampling data
         self.scale = scale

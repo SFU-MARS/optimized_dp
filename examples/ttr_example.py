@@ -15,12 +15,13 @@ import math
 g = Grid(minBounds=np.array([-3.0, -1.0, -math.pi]), maxBounds=np.array([3.0, 4.0, math.pi]),
          dims=3, pts_each_dim=np.array([80, 80, 80]), periodicDims=[2])
 # Car is trying to reach the target
-my_car = DubinsCar(uMode="min")
+# my_car = DubinsCar(uMode="min")
+my_car = DubinsCar(uMode="max")
 
 # Initialize target set as a cylinder
 targeSet = CylinderShape(g, [2], np.array([0.0, 1.0, 0.0]), 0.70)
 
-po = PlotOptions("set", plotDims=[0,1,2], slicesCut=[],
+po = PlotOptions(do_plot=False, plotDims=[0,1,2], slicesCut=[],
                 min_isosurface=0, max_isosurface=0)
 
 lookback_length = 1.5
@@ -35,17 +36,17 @@ correct_result = HJSolver(my_car, g, targeSet,
 
 # -------------------------------- ONE-SHOT TTR COMPUTATION ---------------------------------- #
 g = Grid(minBounds=np.array([-3.0, -1.0, -math.pi]), maxBounds=np.array([3.0, 4.0, math.pi]),
-         dims=3, pts_each_dim=np.array([50, 50, 50]), periodicDims=[2])
+         dims=3, pts_each_dim=np.array([100, 100, 100]), periodicDims=[2])
 # Car is trying to reach the target
-my_car = DubinsCar(uMode="min")
+# my_car = DubinsCar(uMode="min")
+my_car = DubinsCar(uMode="max")
 
 # Initialize target set as a cylinder
 targetSet = CylinderShape(g, [2], np.array([0.0, 1.0, 0.0]), 0.70)
-po = PlotOptions( "set", plotDims=[0,1,2], slicesCut=[],
+po = PlotOptions( do_plot=False, plotDims=[0,1,2], slicesCut=[],
                   min_isosurface=lookback_length, max_isosurface=lookback_length)
 
 # First compute TTR set
-epsilon = 0.001
+epsilon = 1e-5
 V_0 = TTRSolver(my_car, g, targetSet, epsilon, po)
-
-#np.save("tt2_array.npy", V_0)
+print("Maximum value {}".format(np.max(V_0)))
