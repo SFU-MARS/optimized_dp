@@ -149,20 +149,17 @@ class Grid:
 
         return tuple(indices.astype(int).T)
 
-    def get_values(self, V: np.ndarray, states: np.ndarray) -> np.ndarray:
-        """Interpolates value function V on states (nearest neighbour). Assumes that
-        all states are within the bounds of the grid
+    def get_values(self, V, states):
+        """Obtain the approximate value of a state
+
+        Assumes that the state is within the bounds of the grid
+
+        Args:
+            V (np.array): value function of solved HJ PDE
+            state (tuple): state of dynamic object
 
         Returns:
             [float]: V(state)
-
-        Args:
-            V (np.ndarray): value function of solved HJ PDE, shape self.pts_each_dim
-            states (np.ndarray): states, shape (N, self.dims) or (self.dims,)
-
-        Returns: V evaluated at all the states
-            np.ndarray of shape (N,) if states is shape (N, self.dims)
-            float if states is shape (self.dims,)
         """
         indices = self.get_indices(states)
         return V[indices]
