@@ -68,13 +68,16 @@ class Grid:
             + f"  dx: {self.dx}\n"
         )
 
-    def get_index(self, state):
+    def get_index(self, state: np.ndarray):
         """ Returns a tuple of the closest index of each state in the grid
 
         Args:
             state (tuple): state of dynamic object
         """
         index = []
+
+        assert state.ndim == 1
+        assert state.size == self.dims, f"{state.size=} != {self.dims=}"
 
         for i, s in enumerate(state):
             idx = np.searchsorted(self.grid_points[i], s)
