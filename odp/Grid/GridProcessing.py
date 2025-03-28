@@ -136,7 +136,8 @@ class Grid:
 
             # Decrement indices that are at the upper edge
             beyond_upper = indices_i == len(self.grid_points[i])
-            indices_i[indices_i > 0 & beyond_upper] -= 1
+            positive_index = indices_i > 0
+            indices_i[np.logical_and(beyond_upper, positive_index)] -= 1
 
             # Decrement indices that are closer to the previous grid point than the 
             # next. Note that previously decremented points will not get decremented 
@@ -145,8 +146,7 @@ class Grid:
             closer_to_left = (states_i - self.grid_points[i][indices_i_m1]) < (
                 self.grid_points[i][indices_i] - states_i
             )
-            indices_i[indices_i > 0 & closer_to_left] -= 1
-
+            indices_i[np.logical_and(closer_to_left, positive_index)] -= 1
 
             indices[:, i] = indices_i
 
