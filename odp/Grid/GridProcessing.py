@@ -116,7 +116,7 @@ class Grid:
 
         TODO: Handle periodic dimensions correctly
         """
-        indices = np.round((states - self.min) / self.dx).astype(int)
+        indices = np.round((states - self.min) / self.dx)
         indices = np.clip(indices, 0, self.pts_each_dim - 1)
 
         return tuple(indices.astype(int).T)
