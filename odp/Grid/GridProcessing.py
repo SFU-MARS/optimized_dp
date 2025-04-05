@@ -1,7 +1,7 @@
 import numpy as np
 import math
-from typing import List
-
+from typing import List, Union
+import warnings
 
 class Grid:
     def __init__(
@@ -74,23 +74,12 @@ class Grid:
         Args:
             state (tuple): state of dynamic object
         """
-        index = []
-
-        assert state.ndim == 1
-        assert state.size == self.dims, f"{state.size=} != {self.dims=}"
-
-        for i, s in enumerate(state):
-            idx = np.searchsorted(self.grid_points[i], s)
-            if idx > 0 and (
-                idx == len(self.grid_points[i])
-                or math.fabs(s - self.grid_points[i][idx - 1])
-                < math.fabs(s - self.grid_points[i][idx])
-            ):
-                index.append(idx - 1)
-            else:
-                index.append(idx)
-
-        return tuple(index)
+        warnings.warn(
+            "get_index is deprecated and will be removed in a future version. Use get_indices instead.",
+            DeprecationWarning,
+            stacklevel=2  # This shows where the deprecated function was called
+        )        
+        return self.get_indices(state)
 
     def get_value(self, V, state):
         """Obtain the approximate value of a state
@@ -113,56 +102,31 @@ class Grid:
         """Returns a tuple of the closest indices of each state in the grid
 
         Args:
-            states (np.ndarray): states of dynamical system, shape (N, self.dims)
+            states (np.ndarray): states of dynamical system, shape (self.dims,) or 
+                                 (N, self.dims)
 
         Returns:
-            np.ndarray: indices of each state, shape (N, self.dims)
+            np.ndarray: indices of each state, shape (self.dims,) or (N, self.dims)
 
         TODO: Handle periodic dimensions correctly
         """
-        # Single state
-        if states.ndim == 1:
-            return self.get_index(states)
-
-        # Batch of states, shape (N, self.dims)
-        assert states.shape[1] == self.dims
-
-        indices = np.zeros(states.shape)
-
-        for i in range(self.dims):
-            states_i = states[:, i]  # Shape (N,)
-            indices_i = np.searchsorted(self.grid_points[i], states_i)  # Shape (N,)
-            indices_i_m1 = (indices_i - 1).astype(int)
-
-            # Decrement indices that are at the upper edge
-            beyond_upper = indices_i == len(self.grid_points[i])
-            positive_index = indices_i > 0
-            indices_i[np.logical_and(beyond_upper, positive_index)] -= 1
-
-            # Decrement indices that are closer to the previous grid point than the 
-            # next. Note that previously decremented points will not get decremented 
-            # again because they were out of bounds, and therefore closer to the next
-            # grid point
-            closer_to_left = (states_i - self.grid_points[i][indices_i_m1]) < (
-                self.grid_points[i][indices_i] - states_i
-            )
-            indices_i[np.logical_and(closer_to_left, positive_index)] -= 1
-
-            indices[:, i] = indices_i
+        indices = np.round((states - self.min) / self.dx).astype(int)
+        indices = np.clip(indices, 0, self.pts_each_dim - 1)
 
         return tuple(indices.astype(int).T)
 
-    def get_values(self, V, states):
-        """Obtain the approximate value of a state
+    def get_values(self, V: np.ndarray, states: np.ndarray) -> Union[float, np.ndarray]:
+        """
+        Obtains the approximate value of a state using nearest neighbour interpolation
 
-        Assumes that the state is within the bounds of the grid
+        Out-of-bounds state components will be clipped to the boundary of grid
 
         Args:
             V (np.array): value function of solved HJ PDE
-            state (tuple): state of dynamic object
+            state (np.ndarray): states, shape (self.dims,) or (N, self.dims)
 
         Returns:
-            [float]: V(state)
+            [float or np.ndarray]: Value(s) at states, scalar or shape (N,)
         """
         indices = self.get_indices(states)
         return V[indices]
