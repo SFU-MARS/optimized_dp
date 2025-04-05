@@ -73,6 +73,8 @@ class Grid:
 
         Args:
             state (tuple): state of dynamic object
+
+        TODO: Deprecate this method
         """
         warnings.warn(
             "get_index is deprecated and will be removed in a future version. Use get_indices instead.",
@@ -95,8 +97,12 @@ class Grid:
 
         TODO: Deprecate this method
         """
-        index = self.get_index(state)
-        return V[index]
+        warnings.warn(
+            "get_index is deprecated and will be removed in a future version. Use get_indices instead.",
+            DeprecationWarning,
+            stacklevel=2  # This shows where the deprecated function was called
+        )
+        return self.get_values(self, V, state)
 
     def get_indices(self, states: np.ndarray) -> np.ndarray:
         """Returns a tuple of the closest indices of each state in the grid
