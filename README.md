@@ -151,7 +151,7 @@ Please cite our paper (https://arxiv.org/abs/2204.05520) if you use the toolbox 
 @misc{https://doi.org/10.48550/arxiv.2204.05520,
   doi = {10.48550/ARXIV.2204.05520},
   url = {https://arxiv.org/abs/2204.05520},
-  author = {Bui, Minh and Giovanis, George and Chen, Mo and Shriraman, Arrvindh},
+  author = {Bui, Minh and Hu, Hanyang and He, Chong and Lu, Michael and Giovanis, George and Shriraman, Arrvindh and Chen, Mo},
   keywords = {Systems and Control (eess.SY), FOS: Electrical engineering, electronic engineering, information engineering, FOS: Electrical engineering, electronic engineering, information engineering},
   title = {OptimizedDP: An Efficient, User-friendly Library For Optimal Control and Dynamic Programming},
   publisher = {arXiv},
