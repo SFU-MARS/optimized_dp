@@ -1,4 +1,5 @@
 import heterocl as hcl
+import numpy as np
 
 """ 4D DUBINS CAR DYNAMICS IMPLEMENTATION 
  x_dot = v * cos(theta) + d_1
@@ -120,3 +121,69 @@ class DubinsCar4D:
         theta_dot[0] = uOpt[1]
 
         return (x_dot[0], y_dot[0], v_dot[0] ,theta_dot[0])
+    
+    def optCtrl_inPython(self, spat_deriv):
+        opt_a = self.uMax[0]
+        opt_w = self.uMax[1]
+        if self.uMode == "min":
+            if spat_deriv[2] > 0:
+                opt_a = self.uMin[0]
+            if spat_deriv[3] > 0:
+                opt_w = self.uMin[1]
+        else:
+            if spat_deriv[2] < 0:
+                opt_a = - self.uMin[0]
+            if spat_deriv[3] < 0:
+                opt_w = - self.uMin[1]
+        
+        return opt_a, opt_w
+
+    def dynamics_inPython(self, state, action):
+        """Compute the first-order derivative of one agent. No distburbance now.
+
+        Args:
+            state (np.ndarray, shape(4, )): the state of one agent
+            action (np.ndarray, shape (2, )): the action of one agent
+        Return:
+            a tuple of the first-order derivative of the dynamics
+        """
+        x_dot = state[2] * np.cos(state[3])
+        y_dot = state[2] * np.sin(state[3])
+        v_dot = action[0]
+        theta_dot = action[1]
+        return (x_dot, y_dot, v_dot, theta_dot)
+    
+    def forward(self, ctrl_freq, current_state, action):
+        """Compute the next state of the agent, no disturbance is considered now.
+
+        Args:
+            ctrl_freq (int): the control frequency
+            current_state (np.ndarray, shape(4, )): the state of one agent
+            action (np.ndarray, shape (2, )): the action of one agent
+        Return:
+            next_state (tuple, len 4): the next state of the agent
+        """
+        # Forward the dubincar dynamics with one step
+        x, y, v, theta = current_state
+        dt = 1.0 / ctrl_freq
+
+        # Forward-Euler method
+        next_x = x + current_state[2] * np.cos(theta) * dt
+        next_y = y + current_state[2] * np.sin(theta) * dt
+        next_v = v + action[0] * dt
+        next_theta_raw = theta + action[1] * dt
+
+        def check_theta(angle):
+            # Make sure the angle is in the range of [0, 2*pi)
+            while angle >=2*np.pi:
+                angle -= 2 * np.pi
+            while angle < 0:
+                angle += 2 * np.pi
+
+            return angle
+
+        # Check the boundary
+        next_theta = check_theta(next_theta_raw)
+        next_state = (next_x, next_y, next_v, next_theta)
+        
+        return next_state
