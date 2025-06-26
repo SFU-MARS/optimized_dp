@@ -25,13 +25,13 @@ Please install the following:
 
 
 # Solving the Hamilton-Jacobi-Issac (HJI) PDE
-* We provide a running example of solving HJI PDE in the file [`examples/low_dimensional_plotting_example.py`](https://github.com/SFU-MARS/optimized_dp/examples/examples.py):
+* We provide a running example of solving HJI PDE in the file [`examples/plotting_example.py`](https://github.com/SFU-MARS/optimized_dp/examples/examples.py):
 ```python
 # STEP 1: Define grid
 grid_min = np.array([-4.0, -4.0, -math.pi])
 grid_max = np.array([4.0, 4.0, math.pi])
 dims = 3
-N = np.array([40, 40, 40])
+N = np.array([150, 150, 150])
 pd=[2]
 g = Grid(grid_min, grid_max, dims, N, pd)
 
@@ -42,26 +42,23 @@ ignore_dims = [2]
 Initial_value_f = CylinderShape(g, ignore_dims, center, radius)
 
 # STEP 3: Time length for computations
-lookback_length = 2.0
+Lookback_length = 1.0
 t_step = 0.05
 
 small_number = 1e-5
-tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)
+tau = np.arange(start=0, stop=Lookback_length + small_number, step=t_step)
 
-# STEP 4: User-defined System dynamics for computation
+# STEP 4: System dynamics for computation
 sys = DubinsCapture(uMode="max", dMode="min")
 
-po2 = PlotOptions(do_plot=False, plot_type="3d_plot", plotDims=[0,1,2],
-                  slicesCut=[])
-                  
 # STEP 5: Initialize plotting option
-po1 = PlotOptions(do_plot=True, plot_type="set", plotDims=[0,1,2])
+po1 = PlotOptions(do_plot=False, plot_type="set", plotDims=[0,1,2])
 
-# STEP 6: Call HJSolver function (BRS)
+# STEP 6: Call HJSolver function
 compMethod = { "TargetSetMode": "None"}
 result_3 = HJSolver(sys, g, Initial_value_f, tau, compMethod, po1, saveAllTimeSteps=True)
 ```
-* To run the example, execute the command `python3 low_dimensional_plotting_example.py`
+* To run the example, execute the command `python3 examples/plotting_example.py`
 * If the parameter `do_plot` is set to `True`, when initializing `PlotOptions`. The parameter `saveAllTimeSteps` is set to `False` in `HJSolver`, an static 3D plot will show on pop-up browser.
 <!-- ![BallPic](images/ball_pic.png) -->
 <div align="center">
@@ -70,11 +67,11 @@ result_3 = HJSolver(sys, g, Initial_value_f, tau, compMethod, po1, saveAllTimeSt
 
 * If interactive 3D animation needs to be visualized, and outputs need to be saved locally
 ```python
-# While file needs to be saved locally, set save_fig=True and filename, recommend to set interactive_html=True for better interaction
+# While file needs to be saved locally, set save_fig=True and filename, recommend to set interactive_html=True for better visualization
 po2 = PlotOptions(do_plot=False, plot_type="set", plotDims=[0,1,2],
-                  slicesCut=[], colorscale="Bluered", save_fig=True, filename="plots/3D_0_sublevel_set.png", interactive_html=False)
+                  slicesCut=[1], colorscale="Bluered", save_fig=True, filename="plots/3D_0_sublevel_set", interactive_html=True)
 
-# STEP 7: Visualizing output
+# STEP 6: Call Plotting function
 plot_isosurface(g, result_3, po2)
 ```
 
@@ -154,7 +151,7 @@ Please cite our paper (https://arxiv.org/abs/2204.05520) if you use the toolbox 
 @misc{https://doi.org/10.48550/arxiv.2204.05520,
   doi = {10.48550/ARXIV.2204.05520},
   url = {https://arxiv.org/abs/2204.05520},
-  author = {Bui, Minh and Giovanis, George and Chen, Mo and Shriraman, Arrvindh},
+  author = {Bui, Minh and Hu, Hanyang and He, Chong and Lu, Michael and Giovanis, George and Shriraman, Arrvindh and Chen, Mo},
   keywords = {Systems and Control (eess.SY), FOS: Electrical engineering, electronic engineering, information engineering, FOS: Electrical engineering, electronic engineering, information engineering},
   title = {OptimizedDP: An Efficient, User-friendly Library For Optimal Control and Dynamic Programming},
   publisher = {arXiv},

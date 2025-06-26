@@ -11,7 +11,8 @@ from odp.TimeToReach import TTR_2D, TTR_3D, TTR_4D, TTR_5D, TTR_6D
 # Value Iteration library
 from odp.valueIteration import value_iteration_2D, value_iteration_3D, value_iteration_4D, value_iteration_5D, value_iteration_6D
 
-def solveValueIteration(MDP_obj):
+def solveValueIteration(MDP_obj, grid, action_space,
+                        gamma=0.9, epsilon=1e-3, maxIters=1000):
     print("Welcome to optimized_dp \n")
     # Initialize the HCL environment
     hcl.init()
@@ -20,67 +21,47 @@ def solveValueIteration(MDP_obj):
     ########################################## INITIALIZE ##########################################
 
     # Convert the python array to hcl type array
-    V_opt = hcl.asarray(np.zeros(MDP_obj._ptsEachDim))
-    intermeds = hcl.asarray(np.ones(MDP_obj._actions.shape[0]))
-    trans = hcl.asarray(MDP_obj._trans)
-    gamma = hcl.asarray(MDP_obj._gamma)
-    epsilon = hcl.asarray(MDP_obj._epsilon)
-    count = hcl.asarray(np.zeros(1))
-    maxIters = hcl.asarray(MDP_obj._maxIters)
-    actions = hcl.asarray(MDP_obj._actions)
-    bounds = hcl.asarray(MDP_obj._bounds)
-    goal = hcl.asarray(MDP_obj._goal)
-    ptsEachDim = hcl.asarray(MDP_obj._ptsEachDim)
-    sVals = hcl.asarray(np.zeros([MDP_obj._bounds.shape[0]]))
-    iVals = hcl.asarray(np.zeros([MDP_obj._bounds.shape[0]]))
-    # interpV = hcl.asarray(np.zeros([1]))
-    # useNN = hcl.asarray(MDP_obj._useNN)
+    V_opt = hcl.asarray(np.zeros(grid.pts_each_dim))
+    
+    gamma = hcl.asarray(gamma)
+    actions = hcl.asarray(action_space)
 
-    # print(MDP_obj._bounds.shape[0])
-    # print(np.zeros([MDP_obj._bounds.shape[0]]))
-    if MDP_obj._bounds.shape[0] == 2:
-        # fillVal = hcl.asarray(MDP_obj._fillVal)
-        f = value_iteration_2D.value_iteration_2D(MDP_obj)
+    # Extract bounds from the grid object
+    bounds = np.vstack((grid.min, grid.max)).T
+    print(f"bounds is {bounds}")
+    bounds = hcl.asarray(bounds)
+    ptsEachDim = hcl.asarray(grid.pts_each_dim)
+    
+    if bounds.shape[0] == 2:
+        f = value_iteration_2D(MDP_obj, grid.pts_each_dim, bounds, action_space)
+    if bounds.shape[0] == 3:
+        f = value_iteration_3D(MDP_obj, grid.pts_each_dim, bounds, action_space)
+    if bounds.shape[0] == 4:
+        f = value_iteration_4D(MDP_obj, grid.pts_each_dim, bounds, action_space)
+    if bounds.shape[0] == 5:
+        f = value_iteration_5D(MDP_obj, grid.pts_each_dim, bounds, action_space)
+    if bounds.shape[0] == 6:
+        f = value_iteration_6D(MDP_obj, grid.pts_each_dim, bounds, action_space)
 
-    # if MDP_obj._bounds.shape[0] == 3:
-    #     fillVal = hcl.asarray(MDP_obj._fillVal)
-    #     f = value_iteration_3D(MDP_obj)
-    # if MDP_obj._bounds.shape[0] == 4:
-    #     f = value_iteration_4D(MDP_obj)
-    # if MDP_obj._bounds.shape[0] == 5:
-    #     f = value_iteration_5D(MDP_obj)
-    # if MDP_obj._bounds.shape[0] == 6:
-    #     f = value_iteration_6D(MDP_obj)
-
-    data_record = []
     # Build the graph and use the executable
     # Now use the executable
     t_s = time.time()
-    if MDP_obj._bounds.shape[0] == 2:
-        iter = 0
-        while iter < MDP_obj._maxIters:
-            print("Currently at iteration {}".format(iter))
-            oldV = V_opt.asnumpy()
-            f(V_opt, actions, intermeds, trans, gamma,
-               iVals, sVals, bounds, goal, ptsEachDim)
-            diff = np.max(np.abs(oldV - V_opt.asnumpy()))
-            print("Difference wrt to previous array {}".format(diff))
-            data_record.append((iter, diff ))
-            if diff < MDP_obj._epsilon:
-                break
-            iter += 1
-    else:
-        f(V_opt, actions, intermeds, trans, gamma, epsilon, iVals, sVals, bounds, goal, ptsEachDim, count,
-          maxIters)
+    iter = 0
+    while iter < maxIters:
+        print("Currently at iteration {}".format(iter))
+        oldV = V_opt.asnumpy()
+        f(V_opt, actions, gamma, bounds, ptsEachDim)
+        diff = np.max(np.abs(oldV - V_opt.asnumpy()))
+        print("Difference wrt to previous array {}".format(diff))
+        if diff < epsilon:
+            break
+        iter += 1
+    
     t_e = time.time()
-
     V = V_opt.asnumpy()
-    c = count.asnumpy()
-    print("Finished in ", int(c[0]), " iterations")
+    print(f"Finished in {iter} iterations")
     print("Took        ", t_e - t_s, " seconds")
-    np.save("pendulum_s{}_{}_a{}_no_alternate.npy".format(V.shape[0],
-                            V.shape[1], MDP_obj._actions.shape[0]), V)
-
+    
     return V
 
 def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,

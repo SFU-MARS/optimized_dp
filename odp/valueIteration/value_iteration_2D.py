@@ -1,93 +1,70 @@
 import heterocl as hcl
 import numpy as np
 
-def updateVopt(obj, i, j, iVals, sVals, actions, Vopt, intermeds, trans, gamma, bounds, goal, ptsEachDim):
+def updateVopt(obj, current_indices, actions, V, gamma, bounds, ptsEachDim):
     p = hcl.scalar(0, "p")
     best_next_val = hcl.scalar(-1e9, "best_next_val")
+    intermeds = hcl.compute(actions.shape, lambda *x: 0, "intermeds")
     with hcl.for_(0, actions.shape[0], name="a") as a:
-        # set iVals equal to (i,j,k) and sVals equal to the corresponding state values (si,sj,sk)
-        updateStateVals(i, j, iVals, sVals, bounds, ptsEachDim)
+
+        sVals = discreteIndexToContinuousState(current_indices, bounds, ptsEachDim)
         # call the transition function to obtain the outcome(s) of action a from state (si,sj,sk)
-        obj.transition(sVals, iVals, actions[a], bounds, trans, goal)
+        transition_matrix = obj.transition(sVals, current_indices, actions[a])
         # initialize the value of the action using the immediate reward of taking that action
-        intermeds[a] = obj.reward(sVals, iVals, actions[a], bounds, goal, trans)
+        intermeds[a] = obj.reward(sVals, current_indices, actions[a])
         # add the value of each possible successor state to the estimated value of taking action a
-        with hcl.for_(0, trans.shape[0], name="si") as si:
-            p[0]     = trans[si,0]
-            sVals[0] = trans[si,1]
-            sVals[1] = trans[si,2]
+        with hcl.for_(0, transition_matrix.shape[0], name="si") as si:
+            p[0]     = transition_matrix[si,0]
+            sVals[0] = transition_matrix[si,1]
+            sVals[1] = transition_matrix[si,2]
 
             # convert the state values of the successor state (si,sj,sk) into indeces (ia,ij,ik)
-            stateToIndex(sVals, iVals, bounds, ptsEachDim)
-            intermeds[a] += (gamma[0] * (p[0] * Vopt[iVals[0], iVals[1]]))
+            iVals = continuousStateToDiscreteIndices(sVals, bounds, ptsEachDim)
+            intermeds[a] += (gamma[0] * (p[0] * V[iVals[0], iVals[1]]))
 
         with hcl.if_(intermeds[a] > best_next_val[0]):
             best_next_val[0] = intermeds[a]
 
-    Vopt[i, j] = best_next_val[0]
+    return best_next_val[0]
 
 
 # convert state values into indeces using nearest neighbour
-def stateToIndex(sVals, iVals, bounds, ptsEachDim):
-    # iVals[0] = 0
-    # iVals[1] = 0
-    # with hcl.for_(0, sVals.shape[0], name="axis") as axis:
-    with hcl.if_(sVals[0] <= bounds[0, 0]):
-        iVals[0] = 0
-    with hcl.elif_(sVals[0] >= bounds[0, 1]):
-        iVals[0] = ptsEachDim[0] - 1
-    with hcl.else_():
-        iVals[0] = ((sVals[0] - bounds[0, 0]) / (bounds[0, 1] - bounds[0, 0])) * (ptsEachDim[0] - 1)
-        iVals[0] = hcl.cast(hcl.Int(), iVals[0] + 0.5)
+def continuousStateToDiscreteIndices(sVals, bounds, ptsEachDim):
+    iVals = hcl.compute((2,), lambda *x: 0, "iVals") 
+   
+    for axis in range(2):
+        with hcl.if_(sVals[axis] <= bounds[axis, 0]):
+            iVals[axis] = 0
+        with hcl.elif_(sVals[axis] >= bounds[axis, 1]):
+            iVals[axis] = ptsEachDim[axis] - 1
+        with hcl.else_():
+            iVals[axis] = ((sVals[axis] - bounds[axis, 0]) / (bounds[axis, 1] - bounds[axis, 0])) * (ptsEachDim[axis] - 1)
+            iVals[axis] = hcl.cast(hcl.Int(), iVals[axis] + 0.5)
 
-    with hcl.if_(sVals[1] <= bounds[1, 0]):
-        iVals[1] = 0
-    with hcl.elif_(sVals[1] >= bounds[1, 1]):
-        iVals[1] = ptsEachDim[1] - 1
-    with hcl.else_():
-        iVals[1] = ((sVals[1] - bounds[1, 0]) / (bounds[1, 1] - bounds[1, 0])) * (ptsEachDim[1] - 1)
-        iVals[1] = hcl.cast(hcl.Int(), iVals[1] + 0.5)
+    return iVals
 
-# convert indices into state values
-def indexToState(iVals, sVals, bounds, ptsEachDim):
-    sVals[0] = bounds[0,0] + ( (bounds[0,1] - bounds[0,0]) * (iVals[0] / (ptsEachDim[0]-1)) ) 
-    sVals[1] = bounds[1,0] + ( (bounds[1,1] - bounds[1,0]) * (iVals[1] / (ptsEachDim[1]-1)) ) 
+# convert indices into state valuestrans
+def discreteIndexToContinuousState(iVals, bounds, ptsEachDim):
+    sVals = hcl.compute((2,), lambda *x: 0, "sVals")
+    for axis in range(2):
+        sVals[axis] = bounds[axis, 0] + ( (bounds[axis, 1] - bounds[axis, 0]) * (iVals[axis] / (ptsEachDim[axis]-1)))
+    return sVals
 
+def value_iteration_2D(MDP_object, pts_each_dim, bounds, 
+                       action_space):
+    def solve_Vopt(Vopt, actions, gamma, bounds, ptsEachDim):
+            for sweep_id in range(2**2):
+                with hcl.Stage(f"Sweep_{sweep_id + 1}"):
+                    with hcl.for_(0, Vopt.shape[0], name="i2") as i2:
+                        with hcl.for_(0, Vopt.shape[1], name="j2") as j2:
+                            if sweep_id & 1:
+                                i2 = Vopt.shape[0] - i2 - 1
+                            if sweep_id & 2:
+                                j2 = Vopt.shape[1] - j2 - 1
+                            indices = (i2, j2)
+                            Vopt[i2, j2] = updateVopt(MDP_object, indices, actions, Vopt, 
+                                                    gamma, bounds, ptsEachDim)
 
-# set iVals equal to (i,j,k) and sVals equal to the corresponding state values at (i,j,k)
-def updateStateVals(i, j, iVals, sVals, bounds, ptsEachDim):
-    iVals[0] = i
-    iVals[1] = j
-    indexToState(iVals, sVals, bounds, ptsEachDim)
-
-
-def value_iteration_2D(MDP_object):
-    def solve_Vopt(Vopt, actions, intermeds, trans, gamma, iVals, sVals, bounds, goal, ptsEachDim):
-            with hcl.Stage("Sweep_1"):
-                with hcl.for_(0, Vopt.shape[0], name="i2") as i2:
-                    with hcl.for_(0, Vopt.shape[1], name="j2") as j2:
-                        updateVopt(MDP_object, i2, j2, iVals, sVals, actions, Vopt, intermeds, trans, gamma, bounds, goal, ptsEachDim)
-
-            # Perform value iteration by sweeping in direction 1
-            with hcl.Stage("Sweep_2"):
-                with hcl.for_(0, Vopt.shape[0], name="i2") as i2:
-                    with hcl.for_(0, Vopt.shape[1], name="j2") as j2:
-                        i2 = Vopt.shape[0] - i2 - 1
-                        j2 = Vopt.shape[1] - j2 - 1
-                        updateVopt(MDP_object, i2, j2, iVals, sVals, actions, Vopt, intermeds, trans, gamma, bounds, goal, ptsEachDim)
-
-            with hcl.Stage("Sweep_3"):
-                with hcl.for_(0, Vopt.shape[0], name="i2") as i2:
-                    with hcl.for_(0, Vopt.shape[1], name="j2") as j2:
-                        j2 = Vopt.shape[1] - j2 - 1
-                        updateVopt(MDP_object, i2, j2, iVals, sVals, actions, Vopt, intermeds, trans, gamma, bounds, goal, ptsEachDim)
-
-            with hcl.Stage("Sweep_4"):
-                with hcl.for_(0, Vopt.shape[0], name="i2") as i2:
-                    with hcl.for_(0, Vopt.shape[1], name="j2") as j2:
-                        i2 = Vopt.shape[0] - i2 - 1
-                        j2 = Vopt.shape[1] - j2 - 1
-                        updateVopt(MDP_object, i2, j2, iVals, sVals, actions, Vopt, intermeds, trans, gamma, bounds, goal, ptsEachDim)
 
     ###################################### SETUP PLACEHOLDERS ######################################
     
@@ -95,26 +72,20 @@ def value_iteration_2D(MDP_object):
     # NOTE: trans is a tensor with size = maximum number of transitions
     # NOTE: intermeds must have size  [# possible actions]
     # NOTE: transition must have size [# possible outcomes, #state dimensions + 1]
-    print()
-    Vopt       = hcl.placeholder(tuple(MDP_object._ptsEachDim), name="Vopt", dtype=hcl.Float())
+    Vopt       = hcl.placeholder(tuple(pts_each_dim), name="Vopt", dtype=hcl.Float())
     gamma      = hcl.placeholder((0,), "gamma")
-    actions    = hcl.placeholder(tuple(MDP_object._actions.shape), name="actions", dtype=hcl.Float())
-    intermeds  = hcl.placeholder(tuple(MDP_object._actions.shape), name="intermeds", dtype=hcl.Float())
-    trans      = hcl.placeholder(tuple(MDP_object._trans.shape), name="successors", dtype=hcl.Float())
-    print(tuple(MDP_object._trans.shape))
+    actions    = hcl.placeholder(tuple(action_space.shape), name="actions", dtype=hcl.Float())
 
-    bounds     = hcl.placeholder(tuple(MDP_object._bounds.shape), name="bounds", dtype=hcl.Float())
-    goal       = hcl.placeholder(tuple(MDP_object._goal.shape), name="goal", dtype=hcl.Float())
-    ptsEachDim = hcl.placeholder(tuple([2]), name="ptsEachDim", dtype=hcl.Float())
-    sVals      = hcl.placeholder(tuple([2]), name="sVals", dtype=hcl.Float())
-    iVals      = hcl.placeholder(tuple([2]), name="iVals", dtype=hcl.Float())
+    bounds     = hcl.placeholder(tuple(bounds.shape), name="bounds", dtype=hcl.Float())
+    ptsEachDim = hcl.placeholder((2,), name="ptsEachDim", dtype=hcl.Float())
 
     # Create a static schedule -- graph
-    s = hcl.create_schedule([Vopt, actions, intermeds, trans, gamma, iVals, sVals, bounds, goal,
-                             ptsEachDim], solve_Vopt)
+    s = hcl.create_schedule([Vopt, actions, gamma, bounds, ptsEachDim],
+                             solve_Vopt)
 
-    s_1 = solve_Vopt.Sweep_1
-    s[s_1].parallel(s_1.i2)
+    for sweep_id in range(2**2):
+        sweep = getattr(solve_Vopt, "Sweep_{}".format(sweep_id + 1))
+        s[sweep].parallel(sweep.i2) 
 
     # Use this graph and build an executable
-    return hcl.build(s) #target="llvm")
+    return hcl.build(s)
