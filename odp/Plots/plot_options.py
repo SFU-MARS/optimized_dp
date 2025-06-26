@@ -13,6 +13,7 @@ class PlotOptions:
         interactive_html=False,
         contour=None,
         flatshading=None,
+        downsample=False,
         legend=None,
         legendgroup=None,
         legendgrouptitle=None,
