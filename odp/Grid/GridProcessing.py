@@ -102,7 +102,7 @@ class Grid:
             DeprecationWarning,
             stacklevel=2  # This shows where the deprecated function was called
         )
-        return self.get_values(self, V, state)
+        return self.get_values(V, state)
 
     def get_indices(self, states: np.ndarray) -> np.ndarray:
         """Returns a tuple of the closest indices of each state in the grid
