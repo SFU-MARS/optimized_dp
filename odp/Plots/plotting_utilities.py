@@ -279,7 +279,7 @@ def plot_valuefunction(grid, my_V, plot_option):
 
         my_X = np.linspace(grid.min[0], grid.max[0], grid.pts_each_dim[0])
         my_Y = np.linspace(grid.min[1], grid.max[1], grid.pts_each_dim[1])
-        my_V = my_V
+        my_V = my_V.T  # make the axes align with the values in plotting
 
         print("Plotting beautiful plots. Please wait\n")
         fig = go.Figure(data=go.Surface(
@@ -302,6 +302,7 @@ def plot_valuefunction(grid, my_V, plot_option):
         # dim1, dim2 = dims_plot[0], dims_plot[1]
         my_X = np.linspace(grid.min[0], grid.max[0], grid.pts_each_dim[0])
         my_Y = np.linspace(grid.min[1], grid.max[1], grid.pts_each_dim[1])
+        my_V = np.transpose(my_V, (1, 0, 2))  # make the axes align with the values in plotting
         N = my_V.shape[2]
 
         print("Plotting beautiful plots. Please wait\n")
