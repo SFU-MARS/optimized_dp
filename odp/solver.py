@@ -106,10 +106,10 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
     Hamiltonian = hcl.asarray(np.zeros(tuple(grid.pts_each_dim)))
     delta_t = hcl.asarray(np.zeros(1))
     
-    # Indirect TTR computation
-    prev_V = np.copy(init_value)
-    TTR = np.zeros(tuple(grid.pts_each_dim))
-    TTR[init_value > 0] = 99.
+    if computeTimeToReach:
+        # Indirect TTR computation
+        time_to_reach = np.ones(tuple(grid.pts_each_dim)) * 10000  # when attacker bound to win
+        time_to_reach[init_value <= 0] = 0.
     
     # Check which target set or initial value set
     if compMethod["TargetSetMode"] != "minVWithVTarget" and compMethod["TargetSetMode"] != "maxVWithVTarget":
@@ -171,9 +171,6 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
         valfuncs = np.zeros(np.insert(tuple(grid.pts_each_dim), grid.dims, len(tau)))
         valfuncs[..., -1 ] = V_t.asnumpy()
         print(valfuncs.shape)
-
-    time_to_reach = np.ones(tuple(grid.pts_each_dim)) * 10000  # when attacker bound to win
-    time_to_reach[init_value <= 0] = 0.
 
     ################ USE THE EXECUTABLE ############
     # Variables used for timing
@@ -278,10 +275,10 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
             # Increment the current time
             tNow += dt
             
-            # Extract TTR
-            TTR_update_idx = (prev_V > 0) & (V_tp1 <= 0)
-            TTR[TTR_update_idx] = tNow
-            prev_V = V_t.asnumpy()
+            if computeTimeToReach:
+                # Update the time to reach
+                update_idx = np.logical_and(V_tp1 <= 0, prev_arr > 0)
+                time_to_reach[update_idx] = tNow
             
             # Calculate computation time
             execution_time += time.time() - start
@@ -290,9 +287,6 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
             print(np.array([tNow, tau[i]]))
             print("Computational time to integrate (s): {:.5f}".format(time.time() - start))
 
-            # Update the time to reach
-            update_idx = np.logical_and(V_tp1 <= 0, prev_arr > 0)
-            time_to_reach[update_idx] = tNow
             if untilConvergent is True:
                 # Compare difference between V_{t-1} and V_{t} and choose the max changes
                 diff = np.amax(np.abs(V_t.asnumpy() - prev_arr))
