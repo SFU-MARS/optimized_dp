@@ -55,14 +55,14 @@ def value_iteration_2D(MDP_object, pts_each_dim, bounds,
     def solve_Vopt(Vopt, actions, gamma, bounds, ptsEachDim):
             for sweep_id in range(2**2):
                 with hcl.Stage(f"Sweep_{sweep_id + 1}"):
-                    with hcl.for_(0, Vopt.shape[0], name="i2") as i2:
-                        with hcl.for_(0, Vopt.shape[1], name="j2") as j2:
+                    with hcl.for_(0, Vopt.shape[0], name="i") as i:
+                        with hcl.for_(0, Vopt.shape[1], name="j") as j:
                             if sweep_id & 1:
-                                i2 = Vopt.shape[0] - i2 - 1
+                                i = Vopt.shape[0] - i - 1
                             if sweep_id & 2:
-                                j2 = Vopt.shape[1] - j2 - 1
-                            indices = (i2, j2)
-                            Vopt[i2, j2] = updateVopt(MDP_object, indices, actions, Vopt, 
+                                j = Vopt.shape[1] - j - 1
+                            indices = (i, j)
+                            Vopt[i, j] = updateVopt(MDP_object, indices, actions, Vopt, 
                                                     gamma, bounds, ptsEachDim)
 
 
@@ -85,7 +85,7 @@ def value_iteration_2D(MDP_object, pts_each_dim, bounds,
 
     for sweep_id in range(2**2):
         sweep = getattr(solve_Vopt, "Sweep_{}".format(sweep_id + 1))
-        s[sweep].parallel(sweep.i2) 
+        s[sweep].parallel(sweep.i) 
 
     # Use this graph and build an executable
     return hcl.build(s)
