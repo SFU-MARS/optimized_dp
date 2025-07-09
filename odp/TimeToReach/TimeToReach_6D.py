@@ -1,316 +1,370 @@
 import heterocl as hcl
 import numpy as np
-import time
-import user_definer_6D as UD
-
-
+from odp.computeGraphs.graph_6D import *
 
 ######################################### HELPER FUNCTIONS #########################################
 
+# Update the phi function at position (i,j,k,l,m,n)
+def updatePhi(i, j, k, l, m, n, my_object, phi, constraint, g, x1, x2, x3, x4, x5, x6):
+    dV_dx1_L = hcl.scalar(0, "dV_dx1_L")
+    dV_dx1_R = hcl.scalar(0, "dV_dx1_R")
+    dV_dx1 = hcl.scalar(0, "dV_dx1")
+    dV_dx2_L = hcl.scalar(0, "dV_dx2_L")
+    dV_dx2_R = hcl.scalar(0, "dV_dx2_R")
+    dV_dx2 = hcl.scalar(0, "dV_dx2")
+    dV_dx3_L = hcl.scalar(0, "dV_dx3_L")
+    dV_dx3_R = hcl.scalar(0, "dV_dx3_R")
+    dV_dx3 = hcl.scalar(0, "dV_dx3")
+    dV_dx4_L = hcl.scalar(0, "dV_dx4_L")
+    dV_dx4_R = hcl.scalar(0, "dV_dx4_R")
+    dV_dx4 = hcl.scalar(0, "dV_dx4")
+    dV_dx5_L = hcl.scalar(0, "dV_dx5_L")
+    dV_dx5_R = hcl.scalar(0, "dV_dx5_R")
+    dV_dx5 = hcl.scalar(0, "dV_dx5")
+    dV_dx6_L = hcl.scalar(0, "dV_dx6_L")
+    dV_dx6_R = hcl.scalar(0, "dV_dx6_R")
+    dV_dx6 = hcl.scalar(0, "dV_dx6")
 
-# Update the value function at position (i,j,k,l,m,n)
-# iVals:      holds index values (i,j,k,l,m,n) that correspond to state values (si,sj,sk,sl,sm,sn)
-# intermeds:  holds the estimated value associated with taking each action
-# interpV:    holds the estimated value of a successor state (linear interpolation only)
-# gamma:      discount factor
-# ptsEachDim: the number of grid points in each dimension of the state space
-# useNN:      a mode flag (0: use linear interpolation, 1: use nearest neighbour)
-def updateVopt(i, j, k, l, m, n, iVals, sVals, actions, Vopt, intermeds, trans, interpV, gamma, bounds, goal, ptsEachDim, useNN):
-    p = hcl.scalar(0, "p")
+    sigma1 = hcl.scalar(0, "sigma1")
+    sigma2 = hcl.scalar(0, "sigma2")
+    sigma3 = hcl.scalar(0, "sigma3")
+    sigma4 = hcl.scalar(0, "sigma4")
+    sigma5 = hcl.scalar(0, "sigma5")
+    sigma6 = hcl.scalar(0, "sigma6")
 
-    with hcl.for_(0, actions.shape[0], name="a") as a:
-        # set iVals equal to (i,j,k,l,m,n) and sVals equal to the corresponding state values (si,sj,sk,sl,sm,sn)
-        updateStateVals(i, j, k, l, m, n, iVals, sVals, bounds, ptsEachDim)
-        # call the transition function to obtain the outcome(s) of action a from state (si,sj,sk,sl,sm,sn)
-        UD.transition(sVals, actions[a], bounds, trans, goal)
-        # initialize the value of the action Q value with the immediate reward of taking that action
-        intermeds[a] = UD.reward(sVals, actions[a], bounds, goal, trans)
-        # add the value of each possible successor state to the Q value
-        with hcl.for_(0, trans.shape[0], name="si") as si:
-            p[0]     = trans[si,0]
-            sVals[0] = trans[si,1]
-            sVals[1] = trans[si,2]
-            sVals[2] = trans[si,3]
-            sVals[3] = trans[si,4]
-            sVals[4] = trans[si,5]
-            sVals[5] = trans[si,6]
+    # dV_dx_L[0], dV_dx_R[0] = spa_derivX(i, j, k)
+    dV_dx1_L[0], dV_dx1_R[0] = spa_derivX1_6d(i, j, k, l, m, n, phi, g)
+    dV_dx2_L[0], dV_dx2_R[0] = spa_derivX2_6d(i, j, k, l, m, n, phi, g)
+    dV_dx3_L[0], dV_dx3_R[0] = spa_derivX3_6d(i, j, k, l, m, n, phi, g)
+    dV_dx4_L[0], dV_dx4_R[0] = spa_derivX4_6d(i, j, k, l, m, n, phi, g)
+    dV_dx5_L[0], dV_dx5_R[0] = spa_derivX5_6d(i, j, k, l, m, n, phi, g)
+    dV_dx6_L[0], dV_dx6_R[0] = spa_derivX6_6d(i, j, k, l, m, n, phi, g)
 
-            # Nearest neighbour
-            with hcl.if_(useNN[0] == 1):
-                # convert the state values of the successor state (si,sj,sk,sl,sm,sn) into indeces (ia,ja,ka,la,ma,na)
-                stateToIndex(sVals, iVals, bounds, ptsEachDim)
-                # if (ia,ja,ka,la,ma,na) is within the state space, add its discounted value to the Q value
-                with hcl.if_(hcl.and_(iVals[0] < Vopt.shape[0], iVals[1] < Vopt.shape[1], iVals[2] < Vopt.shape[2])):
-                    with hcl.if_(hcl.and_(iVals[3] < Vopt.shape[3], iVals[4] < Vopt.shape[4], iVals[5] < Vopt.shape[5])):
-                        with hcl.if_(hcl.and_(iVals[0] >= 0, iVals[1] >= 0, iVals[2] >= 0, iVals[3] >= 0, iVals[4] >= 0, iVals[5] >= 0)):
-                            intermeds[a] += (gamma[0] * (p[0] * Vopt[iVals[0], iVals[1], iVals[2], iVals[3], iVals[4], iVals[5]]))
+    # Calculate average gradient
+    dV_dx1[0] = (dV_dx1_L[0] + dV_dx1_R[0]) / 2
+    dV_dx2[0] = (dV_dx2_L[0] + dV_dx2_R[0]) / 2
+    dV_dx3[0] = (dV_dx3_L[0] + dV_dx3_R[0]) / 2
+    dV_dx4[0] = (dV_dx4_L[0] + dV_dx4_R[0]) / 2
+    dV_dx5[0] = (dV_dx5_L[0] + dV_dx5_R[0]) / 2
+    dV_dx6[0] = (dV_dx6_L[0] + dV_dx6_R[0]) / 2
 
-        # maximize over each Q value to obtain the optimal value
-        Vopt[i,j,k,l,m,n] = -1000000
-        with hcl.for_(0, intermeds.shape[0], name="r") as r:
-            with hcl.if_(Vopt[i,j,k,l,m,n] < intermeds[r]):
-                Vopt[i,j,k,l,m,n] = intermeds[r]
+    # Find the optimal control through my_object's API
+    uOpt = my_object.opt_ctrl(0, (x1[i], x2[j], x3[k], x4[l], x5[m], x6[n]),
+                              (dV_dx1[0], dV_dx2[0], dV_dx3[0], dV_dx4[0], dV_dx5[0], dV_dx6[0]))
+    # Find optimal disturbance
+    dOpt = my_object.opt_dstb(0, (x1[i], x2[j], x3[k], x4[l], x5[m], x6[n]),
+                              (dV_dx1[0], dV_dx2[0], dV_dx3[0], dV_dx4[0], dV_dx5[0], dV_dx6[0]))
 
+    # Find rates of changes based on dynamics equation
+    dx1_dt, dx2_dt, dx3_dt, dx4_dt, dx5_dt, dx6_dt = my_object.dynamics(0, (x1[i], x2[j], x3[k], x4[l], x5[m], x6[n]), uOpt, dOpt)
 
-# Returns 0 if convergence has been reached
-def evaluateConvergence(newV, oldV, epsilon, reSweep):
-    delta = hcl.scalar(0, "delta")
-    # Calculate the difference, if it's negative, make it positive
-    delta[0] = newV[0] - oldV[0]
-    with hcl.if_(delta[0] < 0):
-        delta[0] = delta[0] * -1
-    with hcl.if_(delta[0] > epsilon[0]):
-        reSweep[0] = 1
+    H = hcl.scalar(0, "H")
+    phiNew = hcl.scalar(0, "phiNew")
+    diss1 = hcl.scalar(0, "diss1")
+    diss2 = hcl.scalar(0, "diss2")
+    diss3 = hcl.scalar(0, "diss3")
+    diss4 = hcl.scalar(0, "diss4")
+    diss5 = hcl.scalar(0, "diss5")
+    diss6 = hcl.scalar(0, "diss6")
 
+    # Calculate Hamiltonian terms:
+    H[0] = (-(dx1_dt * dV_dx1[0] + dx2_dt * dV_dx2[0] + dx3_dt * dV_dx3[0] + dx4_dt * dV_dx4[0]
+              + dx5_dt * dV_dx5[0] + dx6_dt * dV_dx6[0] + 1))
 
-# Converts state values into indeces using nearest neighbour rounding
-def stateToIndex(sVals, iVals, bounds, ptsEachDim):
-    iVals[0] = ((sVals[0] - bounds[0,0]) / (bounds[0,1] - bounds[0,0])) *  (ptsEachDim[0] - 1)
-    iVals[1] = ((sVals[1] - bounds[1,0]) / (bounds[1,1] - bounds[1,0])) *  (ptsEachDim[1] - 1)
-    iVals[2] = ((sVals[2] - bounds[2,0]) / (bounds[2,1] - bounds[2,0])) *  (ptsEachDim[2] - 1)
-    iVals[3] = ((sVals[3] - bounds[3,0]) / (bounds[3,1] - bounds[3,0])) *  (ptsEachDim[3] - 1)
-    iVals[4] = ((sVals[4] - bounds[4,0]) / (bounds[4,1] - bounds[4,0])) *  (ptsEachDim[4] - 1)
-    iVals[5] = ((sVals[5] - bounds[5,0]) / (bounds[5,1] - bounds[5,0])) *  (ptsEachDim[5] - 1)
-    # NOTE: add 0.5 to simulate rounding
-    iVals[0] = hcl.cast(hcl.Int(), iVals[0] + 0.5)
-    iVals[1] = hcl.cast(hcl.Int(), iVals[1] + 0.5)
-    iVals[2] = hcl.cast(hcl.Int(), iVals[2] + 0.5)
-    iVals[3] = hcl.cast(hcl.Int(), iVals[3] + 0.5)
-    iVals[4] = hcl.cast(hcl.Int(), iVals[4] + 0.5)
-    iVals[5] = hcl.cast(hcl.Int(), iVals[5] + 0.5)
+    # Calculate the "dissipation"
+    sigma1[0] = my_abs(dx1_dt)
+    sigma2[0] = my_abs(dx2_dt)
+    sigma3[0] = my_abs(dx3_dt)
+    sigma4[0] = my_abs(dx4_dt)
+    sigma5[0] = my_abs(dx5_dt)
+    sigma6[0] = my_abs(dx6_dt)
 
+    c = hcl.scalar(0, "c")
+    c[0] = sigma1[0] / g.dx[0] + sigma2[0] / g.dx[1] + sigma3[0] / g.dx[2] \
+           + sigma4[0] / g.dx[3] + sigma5[0] / g.dx[4] + sigma6[0] / g.dx[5]
 
-# Convert indices into state values
-def indexToState(iVals, sVals, bounds, ptsEachDim):
-    sVals[0] = bounds[0,0] + ( (bounds[0,1] - bounds[0,0]) * (iVals[0] / (ptsEachDim[0]-1)) ) 
-    sVals[1] = bounds[1,0] + ( (bounds[1,1] - bounds[1,0]) * (iVals[1] / (ptsEachDim[1]-1)) ) 
-    sVals[2] = bounds[2,0] + ( (bounds[2,1] - bounds[2,0]) * (iVals[2] / (ptsEachDim[2]-1)) ) 
-    sVals[3] = bounds[3,0] + ( (bounds[3,1] - bounds[3,0]) * (iVals[3] / (ptsEachDim[3]-1)) ) 
-    sVals[4] = bounds[4,0] + ( (bounds[4,1] - bounds[4,0]) * (iVals[4] / (ptsEachDim[4]-1)) ) 
-    sVals[5] = bounds[5,0] + ( (bounds[5,1] - bounds[5,0]) * (iVals[5] / (ptsEachDim[5]-1)) ) 
+    diss1[0] = sigma1[0] * ((dV_dx1_R[0] - dV_dx1_L[0]) / 2 + phi[i, j, k, l, m, n] / g.dx[0])
+    diss2[0] = sigma2[0] * ((dV_dx2_R[0] - dV_dx2_L[0]) / 2 + phi[i, j, k, l, m, n] / g.dx[1])
+    diss3[0] = sigma3[0] * ((dV_dx3_R[0] - dV_dx3_L[0]) / 2 + phi[i, j, k, l, m, n] / g.dx[2])
+    diss4[0] = sigma4[0] * ((dV_dx4_R[0] - dV_dx4_L[0]) / 2 + phi[i, j, k, l, m, n] / g.dx[3])
+    diss5[0] = sigma5[0] * ((dV_dx5_R[0] - dV_dx5_L[0]) / 2 + phi[i, j, k, l, m, n] / g.dx[4])
+    diss6[0] = sigma6[0] * ((dV_dx6_R[0] - dV_dx6_L[0]) / 2 + phi[i, j, k, l, m, n] / g.dx[5])
+
+    # New phi
+    phiNew[0] = (-H[0] + diss1[0] + diss2[0] + diss3[0] + diss4[0] + diss5[0] + diss6[0]) / c[0]
+    #debugger[i, j, k, l, m, n] = phiNew[0]
+    phi[i, j, k, l, m, n] = my_min(phi[i, j, k, l, m, n], phiNew[0])
+    # Check with the obstacle
+    phi[i, j, k, l, m, n] = my_max(phi[i, j, k, l, m, n], constraint[i, j, k, l, m, n])
 
 
-# Sets iVals equal to (i,j,k,l,m,n) and sVals equal to the corresponding state values
-def updateStateVals(i, j, k, l, m, n, iVals, sVals, bounds, ptsEachDim):
-    iVals[0] = i
-    iVals[1] = j
-    iVals[2] = k
-    iVals[3] = l
-    iVals[4] = m
-    iVals[5] = n
-    indexToState(iVals, sVals, bounds, ptsEachDim)
+def EvalBoundary(phi, constraint, g): 
+    if 0 not in g.pDim:
+        with hcl.for_(0, phi.shape[1], name="j") as j:
+            with hcl.for_(0, phi.shape[2], name="k") as k:
+                with hcl.for_(0, phi.shape[3], name="l") as l:
+                    with hcl.for_(0, phi.shape[4], name="m") as m:
+                        with hcl.for_(0, phi.shape[5], name="n") as n:
+                            tmp1 = hcl.scalar(0, "tmp1")
+                            tmp1[0] = 2 * phi[1, j, k, l, m, n] - phi[2, j, k, l, m, n]
+                            tmp1[0] = my_max(tmp1[0], phi[2, j, k, l, m, n])
+                            phi[0, j, k, l, m, n] = my_min(tmp1[0], phi[0, j, k, l, m, n])
+                            phi[0, j, k, l, m, n] = my_max(phi[0, j, k, l, m, n], constraint[0, j, k, l, m, n])
 
+                            tmp2 = hcl.scalar(0, "tmp2")
+                            tmp2[0] = 2 * phi[phi.shape[0] - 2, j, k, l, m, n] - phi[phi.shape[0] - 3, j, k, l, m, n]
+                            tmp2[0] = my_max(tmp2[0], phi[phi.shape[0] - 3, j, k, l, m, n])
+                            phi[phi.shape[0] - 1, j, k, l, m, n] = my_min(tmp2[0], phi[phi.shape[0] - 1, j, k, l, m, n])
+                            phi[phi.shape[0] - 1, j, k, l, m, n] = my_max(phi[phi.shape[0] - 1, j, k, l, m, n], constraint[phi.shape[0] - 1, j, k, l, m, n])
 
+    if 1 not in g.pDim:
+        with hcl.for_(0, phi.shape[0], name="i") as i:
+            with hcl.for_(0, phi.shape[2], name="k") as k:
+                with hcl.for_(0, phi.shape[3], name="l") as l:
+                    with hcl.for_(0, phi.shape[4], name="m") as m:
+                        with hcl.for_(0, phi.shape[5], name="n") as n:
+                            tmp1 = hcl.scalar(0, "tmp1")
+                            tmp1[0] = 2 * phi[i, 1, k, l, m, n] - phi[i, 2, k, l, m, n]
+                            tmp1[0] = my_max(tmp1[0], phi[i, 2, k, l, m, n])
+                            phi[i, 0, k, l, m, n] = my_min(tmp1[0], phi[i, 0, k, l, m, n])
+                            phi[i, 0, k, l, m, n] = my_max(phi[i, 0, k, l, m, n], constraint[i, 0, k, l, m, n])
+
+                            tmp2 = hcl.scalar(0, "tmp2")
+                            tmp2[0] = 2 * phi[i, phi.shape[1] - 2, k, l, m, n] - phi[i, phi.shape[1] - 3, k, l, m, n]
+                            tmp2[0] = my_max(tmp2[0], phi[i, phi.shape[1] - 3, k, l, m, n])
+                            phi[i, phi.shape[1] - 1, k, l, m, n] = my_min(tmp2[0], phi[i, phi.shape[1] - 1, k, l, m, n])
+                            phi[i, phi.shape[1] - 1, k, l, m, n] = my_max(phi[i, phi.shape[1] - 1, k, l, m, n], constraint[i, phi.shape[1] - 1, k, l, m, n])
+
+    if 2 not in g.pDim:
+        with hcl.for_(0, phi.shape[0], name="i") as i:
+            with hcl.for_(0, phi.shape[1], name="j") as j:
+                with hcl.for_(0, phi.shape[3], name="l") as l:
+                    with hcl.for_(0, phi.shape[4], name="m") as m:
+                        with hcl.for_(0, phi.shape[5], name="n") as n:
+                            tmp1 = hcl.scalar(0, "tmp1")
+                            tmp1[0] = 2 * phi[i, j, 1, l, m, n] - phi[i, j, 2, l, m, n]
+                            tmp1[0] = my_max(tmp1[0], phi[i, j, 2, l, m, n])
+                            phi[i, j, 0, l, m, n] = my_min(tmp1[0], phi[i, j, 0, l, m, n])
+                            phi[i, j, 0, l, m, n] = my_max(phi[i, j, 0, l, m, n], constraint[i, j, 0, l, m, n])
+
+                            tmp2 = hcl.scalar(0, "tmp2")
+                            tmp2[0] = 2 * phi[i, j, phi.shape[2] - 2, l, m, n] - phi[i, j, phi.shape[2] - 3, l, m, n]
+                            tmp2[0] = my_max(tmp2[0], phi[i, j, phi.shape[2] - 3, l, m, n])
+                            phi[i, j, phi.shape[2] - 1, l, m, n] = my_min(tmp2[0], phi[i, j, phi.shape[2] - 1, l, m, n])
+                            phi[i, j, phi.shape[2] - 1, l, m, n] = my_max(phi[i, j, phi.shape[2] - 1, l, m, n], constraint[i, j, phi.shape[2] - 1, l, m, n])
+                            
+    if 3 not in g.pDim:
+        with hcl.for_(0, phi.shape[0], name="i") as i:
+            with hcl.for_(0, phi.shape[1], name="j") as j:
+                with hcl.for_(0, phi.shape[2], name="k") as k:
+                    with hcl.for_(0, phi.shape[4], name="m") as m:
+                        with hcl.for_(0, phi.shape[5], name="n") as n:
+                            tmp1 = hcl.scalar(0, "tmp1")
+                            tmp1[0] = 2 * phi[i, j, k, 1, m, n] - phi[i, j, k, 2, m, n]
+                            tmp1[0] = my_max(tmp1[0], phi[i, j, k, 2, m, n])
+                            phi[i, j, k, 0, m, n] = my_min(tmp1[0], phi[i, j, k, 0, m, n])
+                            phi[i, j, k, 0, m, n] = my_max(phi[i, j, k, 0, m, n], constraint[i, j, k, 0, m, n])
+
+                            tmp2 = hcl.scalar(0, "tmp2")
+                            tmp2[0] = 2 * phi[i, j, k, phi.shape[3] - 2, m, n] - phi[i, j, k, phi.shape[3] - 3, m, n]
+                            tmp2[0] = my_max(tmp2[0], phi[i, j, k, phi.shape[3] - 3, m, n])
+                            phi[i, j, k, phi.shape[3] - 1, m, n] = my_min(tmp2[0], phi[i, j, k, phi.shape[3] - 1, m, n])
+                            phi[i, j, k, phi.shape[3] - 1, m, n] = my_max(phi[i, j, k, phi.shape[3] - 1, m, n], constraint[i, j, k, phi.shape[3] - 1, m, n])
+
+    if 4 not in g.pDim:
+        with hcl.for_(0, phi.shape[0], name="i") as i:
+            with hcl.for_(0, phi.shape[1], name="j") as j:
+                with hcl.for_(0, phi.shape[2], name="k") as k:
+                    with hcl.for_(0, phi.shape[3], name="l") as l:
+                        with hcl.for_(0, phi.shape[5], name="n") as n:
+                            tmp1 = hcl.scalar(0, "tmp1")
+                            tmp1[0] = 2 * phi[i, j, k, l, 1, n] - phi[i, j, k, l, 2, n]
+                            tmp1[0] = my_max(tmp1[0], phi[i, j, k, l, 2, n])
+                            phi[i, j, k, l, 0, n] = my_min(tmp1[0], phi[i, j, k, l, 0, n])
+                            phi[i, j, k, l, 0, n] = my_max(phi[i, j, k, l, 0, n], constraint[i, j, k, l, 0, n])
+
+                            tmp2 = hcl.scalar(0, "tmp2")
+                            tmp2[0] = 2 * phi[i, j, k, l, phi.shape[4] - 2, n] - phi[i, j, k, l, phi.shape[4] - 3, n]
+                            tmp2[0] = my_max(tmp2[0], phi[i, j, k, l, phi.shape[4] - 3, n])
+                            phi[i, j, k, l, phi.shape[4] - 1, n] = my_min(tmp2[0], phi[i, j, k, l, phi.shape[4] - 1, n])
+                            phi[i, j, k, l, phi.shape[4] - 1, n] = my_max(phi[i, j, k, l, phi.shape[4] - 1, n], constraint[i, j, k, l, phi.shape[4] - 1, n])
+    
+    if 5 not in g.pDim:
+        with hcl.for_(0, phi.shape[0], name="i") as i:
+            with hcl.for_(0, phi.shape[1], name="j") as j:
+                with hcl.for_(0, phi.shape[2], name="k") as k:
+                    with hcl.for_(0, phi.shape[3], name="l") as l:
+                        with hcl.for_(0, phi.shape[4], name="m") as m:
+                            tmp1 = hcl.scalar(0, "tmp1")
+                            tmp1[0] = 2 * phi[i, j, k, l, m, 1] - phi[i, j, k, l, m, 2]
+                            tmp1[0] = my_max(tmp1[0], phi[i, j, k, l, m, 2])
+                            phi[i, j, k, l, m, 0] = my_min(tmp1[0], phi[i, j, k, l, m, 0])
+                            phi[i, j, k, l, m, 0] = my_max(phi[i, j, k, l, m, 0], constraint[i, j, k, l, m, 0])
+
+                            tmp2 = hcl.scalar(0, "tmp2")
+                            tmp2[0] = 2 * phi[i, j, k, l, m, phi.shape[5] - 2] - phi[i, j, k, l, m, phi.shape[5] - 3]
+                            tmp2[0] = my_max(tmp2[0], phi[i, j, k, l, m, phi.shape[5] - 3])
+                            phi[i, j, k, l, m, phi.shape[5] - 1] = my_min(tmp2[0], phi[i, j, k, l, m, phi.shape[5] - 1])
+                            phi[i, j, k, l, m, phi.shape[5] - 1] = my_max(phi[i, j, k, l, m, phi.shape[5] - 1], constraint[i, j, k, l, m, phi.shape[5] - 1])
 
 ######################################### VALUE ITERATION ##########################################
 
 
-# Main value iteration algorithm
-# reSweep:  a convergence flag (1: continue iterating, 0: convergence reached)
-# epsilon:  convergence criteria
-# maxIters: maximum number of iterations that can occur without convergence being reached
-# count:    the number of iterations that have been performed
-def value_iteration_6D():
-    def solve_Vopt(Vopt, actions, intermeds, trans, interpV, gamma, epsilon, iVals, sVals, bounds, goal, ptsEachDim, count, maxIters, useNN):
-            reSweep = hcl.scalar(1, "reSweep")
-            oldV    = hcl.scalar(0, "oldV")
-            newV    = hcl.scalar(0, "newV")
-            with hcl.while_(hcl.and_(reSweep[0] == 1, count[0] < maxIters[0])):
-                reSweep[0] = 0
-                # Perform value iteration by sweeping in direction 1
-                with hcl.Stage("Sweep_1"):
-                    with hcl.for_(0, Vopt.shape[0], name="i") as i:
-                        with hcl.for_(0, Vopt.shape[1], name="j") as j:
-                            with hcl.for_(0, Vopt.shape[2], name="k") as k:
-                                with hcl.for_(0, Vopt.shape[3], name="l") as l:
-                                    with hcl.for_(0, Vopt.shape[4], name="m") as m:
-                                        with hcl.for_(0, Vopt.shape[5], name="n") as n:
-                                            oldV[0] = Vopt[i,j,k,l,m,n]
-                                            updateVopt(i, j, k, l, m, n, iVals, sVals, actions, Vopt, intermeds, trans, interpV, gamma, bounds, goal, ptsEachDim, useNN)
-                                            newV[0] = Vopt[i,j,k,l,m,n]
-                                            evaluateConvergence(newV, oldV, epsilon, reSweep)
-                    count[0] += 1
-                # Perform value iteration by sweeping in direction 2
-                with hcl.Stage("Sweep_2"):
-                    with hcl.if_(useNN[0] == 1):
-                        with hcl.for_(1, Vopt.shape[0] + 1, name="i") as i:
-                            with hcl.for_(1, Vopt.shape[1] + 1, name="j") as j:
-                                with hcl.for_(1, Vopt.shape[2] + 1, name="k") as k:
-                                    with hcl.for_(0, Vopt.shape[3], name="l") as l:
-                                        with hcl.for_(0, Vopt.shape[4], name="m") as m:
-                                            with hcl.for_(0, Vopt.shape[5], name="n") as n:
-                                                i2 = Vopt.shape[0] - i
-                                                j2 = Vopt.shape[1] - j
-                                                k2 = Vopt.shape[2] - k
-                                                oldV[0] = Vopt[i2,j2,k2,l,m,n]
-                                                updateVopt(i2, j2, k2, l, m, n, iVals, sVals, actions, Vopt, intermeds, trans, interpV, gamma, bounds, goal, ptsEachDim, useNN)
-                                                newV[0] = Vopt[i2,j2,k2,l,m,n]
-                                                evaluateConvergence(newV, oldV, epsilon, reSweep)
-                    count[0] += 1
-                # Perform value iteration by sweeping in direction 3
-                with hcl.Stage("Sweep_3"):
-                    with hcl.if_(useNN[0] == 1):
-                        with hcl.for_(1, Vopt.shape[0] + 1, name="i") as i:
-                            with hcl.for_(0, Vopt.shape[1], name="j") as j:
-                                with hcl.for_(0, Vopt.shape[2], name="k") as k:
-                                    with hcl.for_(0, Vopt.shape[3], name="l") as l:
-                                        with hcl.for_(0, Vopt.shape[4], name="m") as m:
-                                            with hcl.for_(0, Vopt.shape[5], name="n") as n:
-                                                i2 = Vopt.shape[0] - i
-                                                oldV[0] = Vopt[i2,j,k,l,m,n]
-                                                updateVopt(i2, j, k, l, m, n, iVals, sVals, actions, Vopt, intermeds, trans, interpV, gamma, bounds, goal, ptsEachDim, useNN)
-                                                newV[0] = Vopt[i2,j,k,l,m,n]
-                                                evaluateConvergence(newV, oldV, epsilon, reSweep)
-                    count[0] += 1
-                # Perform value iteration by sweeping in direction 4
-                with hcl.Stage("Sweep_4"):
-                    with hcl.if_(useNN[0] == 1):
-                        with hcl.for_(0, Vopt.shape[0], name="i") as i:
-                            with hcl.for_(1, Vopt.shape[1] + 1, name="j") as j:
-                                with hcl.for_(0, Vopt.shape[2], name="k") as k:
-                                    with hcl.for_(0, Vopt.shape[3], name="l") as l:
-                                        with hcl.for_(0, Vopt.shape[4], name="m") as m:
-                                            with hcl.for_(0, Vopt.shape[5], name="n") as n:
-                                                j2 = Vopt.shape[1] - j
-                                                oldV[0] = Vopt[i,j2,k,l,m,n]
-                                                updateVopt(i, j2, k, l, m, n, iVals, sVals, actions, Vopt, intermeds, trans, interpV, gamma, bounds, goal, ptsEachDim, useNN)
-                                                newV[0] = Vopt[i,j2,k,l,m,n]
-                                                evaluateConvergence(newV, oldV, epsilon, reSweep)
-                    count[0] += 1
-                # Perform value iteration by sweeping in direction 5
-                with hcl.Stage("Sweep_5"):
-                    with hcl.if_(useNN[0] == 1):
-                        with hcl.for_(0, Vopt.shape[0], name="i") as i:
-                            with hcl.for_(0, Vopt.shape[1], name="j") as j:
-                                with hcl.for_(1, Vopt.shape[2] + 1, name="k") as k:
-                                    with hcl.for_(0, Vopt.shape[3], name="l") as l:
-                                        with hcl.for_(0, Vopt.shape[4], name="m") as m:
-                                            with hcl.for_(0, Vopt.shape[5], name="n") as n:
-                                                k2 = Vopt.shape[2] - k
-                                                oldV[0] = Vopt[i,j,k2,l,m,n]
-                                                updateVopt(i, j, k2, l, m, n, iVals, sVals, actions, Vopt, intermeds, trans, interpV, gamma, bounds, goal, ptsEachDim, useNN)
-                                                newV[0] = Vopt[i,j,k2,l,m,n]
-                                                evaluateConvergence(newV, oldV, epsilon, reSweep)
-                    count[0] += 1
-                # Perform value iteration by sweeping in direction 6
-                with hcl.Stage("Sweep_6"):
-                    with hcl.if_(useNN[0] == 1):
-                        with hcl.for_(1, Vopt.shape[0] + 1, name="i") as i:
-                            with hcl.for_(1, Vopt.shape[1] + 1, name="j") as j:
-                                with hcl.for_(0, Vopt.shape[2], name="k") as k:
-                                    with hcl.for_(0, Vopt.shape[3], name="l") as l:
-                                        with hcl.for_(0, Vopt.shape[4], name="m") as m:
-                                            with hcl.for_(0, Vopt.shape[5], name="n") as n:
-                                                i2 = Vopt.shape[0] - i
-                                                j2 = Vopt.shape[1] - j
-                                                oldV[0] = Vopt[i2,j2,k,l,m,n]
-                                                updateVopt(i2, j2, k, l, m, n, iVals, sVals, actions, Vopt, intermeds, trans, interpV, gamma, bounds, goal, ptsEachDim, useNN)
-                                                newV[0] = Vopt[i2,j2,k,l,m,n]
-                                                evaluateConvergence(newV, oldV, epsilon, reSweep)
-                    count[0] += 1
-                # Perform value iteration by sweeping in direction 7
-                with hcl.Stage("Sweep_7"):
-                    with hcl.if_(useNN[0] == 1):
-                        with hcl.for_(1, Vopt.shape[0] + 1, name="i") as i:
-                            with hcl.for_(0, Vopt.shape[1], name="j") as j:
-                                with hcl.for_(1, Vopt.shape[2] + 1, name="k") as k:
-                                    with hcl.for_(0, Vopt.shape[3], name="l") as l:
-                                        with hcl.for_(0, Vopt.shape[4], name="m") as m:
-                                            with hcl.for_(0, Vopt.shape[5], name="n") as n:
-                                                i2 = Vopt.shape[0] - i
-                                                k2 = Vopt.shape[2] - k
-                                                oldV[0] = Vopt[i2,j,k2,l,m,n]
-                                                updateVopt(i2, j, k2, l, m, n, iVals, sVals, actions, Vopt, intermeds, trans, interpV, gamma, bounds, goal, ptsEachDim, useNN)
-                                                newV[0] = Vopt[i2,j,k2,l,m,n]
-                                                evaluateConvergence(newV, oldV, epsilon, reSweep)
-                    count[0] += 1
-                # Perform value iteration by sweeping in direction 8
-                with hcl.Stage("Sweep_8"):
-                    with hcl.if_(useNN[0] == 1):
-                        with hcl.for_(0, Vopt.shape[0], name="i") as i:
-                            with hcl.for_(1, Vopt.shape[1] + 1, name="j") as j:
-                                with hcl.for_(1, Vopt.shape[2] + 1, name="k") as k:
-                                    with hcl.for_(0, Vopt.shape[3], name="l") as l:
-                                        with hcl.for_(0, Vopt.shape[4], name="m") as m:
-                                            with hcl.for_(0, Vopt.shape[5], name="n") as n:
-                                                j2 = Vopt.shape[1] - j
-                                                k2 = Vopt.shape[2] - k
-                                                oldV[0] = Vopt[i,j2,k2,l,m,n]
-                                                updateVopt(i, j2, k2, l, m, n, iVals, sVals, actions, Vopt, intermeds, trans, interpV, gamma, bounds, goal, ptsEachDim, useNN)
-                                                newV[0] = Vopt[i,j2,k2,l,m,n]
-                                                evaluateConvergence(newV, oldV, epsilon, reSweep)
-                        count[0] += 1
+def TTR_6D(my_object, g):
+    def solve_phiNew(phi, constraint, x1, x2, x3, x4, x5, x6):
+        l_i = 0 if 0 in g.pDim else 1
+        h_i = phi.shape[0] if 0 in g.pDim else phi.shape[0] - 1
+        l_j = 0 if 1 in g.pDim else 1
+        h_j = phi.shape[1] if 1 in g.pDim else phi.shape[1] - 1
+        l_k = 0 if 2 in g.pDim else 1
+        h_k = phi.shape[2] if 2 in g.pDim else phi.shape[2] - 1
+        l_l = 0 if 3 in g.pDim else 1
+        h_l = phi.shape[3] if 3 in g.pDim else phi.shape[3] - 1
+        l_m = 0 if 4 in g.pDim else 1
+        h_m = phi.shape[4] if 4 in g.pDim else phi.shape[4] - 1
+        l_n = 0 if 5 in g.pDim else 1
+        h_n = phi.shape[5] if 5 in g.pDim else phi.shape[5] - 1
 
+        # Perform value iteration by sweeping in direction 1
+        with hcl.Stage("Sweep_1"):
+            with hcl.for_(l_i, h_i, name="i") as i:
+                with hcl.for_(l_j, h_j, name="j") as j:
+                    with hcl.for_(l_k, h_k, name="k") as k:
+                        with hcl.for_(l_l, h_l, name="l") as l:
+                            with hcl.for_(l_m, h_m, name="m") as m:
+                                with hcl.for_(l_n, h_n, name="n") as n:
+                                    updatePhi(i, j, k, l, m, n, my_object, phi, constraint, g, x1, x2, x3, x4, x5, x6)
+            EvalBoundary(phi, constraint, g)
+
+        # Perform value iteration by sweeping in direction 2
+        with hcl.Stage("Sweep_2"):
+            with hcl.for_(l_i, h_i, name="i") as i:
+                with hcl.for_(l_j, h_j, name="j") as j:
+                    with hcl.for_(l_k, h_k, name="k") as k:
+                        with hcl.for_(l_l, h_l, name="l") as l:
+                            with hcl.for_(l_m, h_m, name="m") as m:
+                                with hcl.for_(l_n, h_n, name="n") as n:
+                                    i2 = phi.shape[0] - i - 1
+                                    j2 = phi.shape[1] - j - 1
+                                    k2 = phi.shape[2] - k - 1
+                                    l2 = phi.shape[3] - l - 1
+                                    m2 = phi.shape[4] - m - 1
+                                    n2 = phi.shape[5] - n - 1
+                                    updatePhi(i2, j2, k2, l2, m2, n2, my_object, phi, constraint, g, x1, x2, x3, x4, x5, x6)
+            EvalBoundary(phi, constraint, g)
+
+        # Perform value iteration by sweeping in direction 3
+        with hcl.Stage("Sweep_3"):
+            with hcl.for_(l_i, h_i, name="i") as i:
+                with hcl.for_(l_j, h_j, name="j") as j:
+                    with hcl.for_(l_k, h_k, name="k") as k:
+                        with hcl.for_(l_l, h_l, name="l") as l:
+                            with hcl.for_(l_m, h_m, name="m") as m:
+                                with hcl.for_(l_n, h_n, name="n") as n:
+                                    i2 = phi.shape[0] - i - 1
+                                    j2 = phi.shape[1] - j - 1
+                                    k2 = phi.shape[2] - k - 1
+                                    l2 = phi.shape[3] - l - 1
+                                    m2 = phi.shape[4] - m - 1
+                                    updatePhi(i2, j2, k2, l2, m, n, my_object, phi, constraint, g, x1, x2, x3, x4, x5, x6)
+            EvalBoundary(phi, constraint, g)
+
+        # Perform value iteration by sweeping in direction 4
+        with hcl.Stage("Sweep_4"):
+            with hcl.for_(l_i, h_i, name="i") as i:
+                with hcl.for_(l_j, h_j, name="j") as j:
+                    with hcl.for_(l_k, h_k, name="k") as k:
+                        with hcl.for_(l_l, h_l, name="l") as l:
+                            with hcl.for_(l_m, h_m, name="m") as m:
+                                with hcl.for_(l_n, h_n, name="n") as n:
+                                    i2 = phi.shape[0] - i - 1
+                                    j2 = phi.shape[1] - j - 1
+                                    k2 = phi.shape[2] - k - 1
+                                    l2 = phi.shape[3] - l - 1
+                                    updatePhi(i2, j2, k2, l2, m, n, my_object, phi, constraint, g, x1, x2, x3, x4, x5, x6)
+            EvalBoundary(phi, constraint, g)
+
+        # Perform value iteration by sweeping in direction 5
+        with hcl.Stage("Sweep_5"):
+            with hcl.for_(l_i, h_i, name="i") as i:
+                with hcl.for_(l_j, h_j, name="j") as j:
+                    with hcl.for_(l_k, h_k, name="k") as k:
+                        with hcl.for_(l_l, h_l, name="l") as l:
+                            with hcl.for_(l_m, h_m, name="m") as m:
+                                with hcl.for_(l_n, h_n, name="n") as n:
+                                    i2 = phi.shape[0] - i - 1
+                                    j2 = phi.shape[1] - j - 1
+                                    k2 = phi.shape[2] - k - 1
+                                    updatePhi(i2, j2, k2, l, m, n, my_object, phi, constraint, g, x1, x2, x3, x4, x5, x6)
+            EvalBoundary(phi, constraint, g)
+
+        # Perform value iteration by sweeping in direction 6
+        with hcl.Stage("Sweep_6"):
+            with hcl.for_(l_i, h_i, name="i") as i:
+                with hcl.for_(l_j, h_j, name="j") as j:
+                    with hcl.for_(l_k, h_k, name="k") as k:
+                        with hcl.for_(l_l, h_l, name="l") as l:
+                            with hcl.for_(l_m, h_m, name="m") as m:
+                                with hcl.for_(l_n, h_n, name="n") as n:
+                                    i2 = phi.shape[0] - i - 1
+                                    j2 = phi.shape[1] - j - 1
+                                    updatePhi(i2, j2, k, l, m, n, my_object, phi, constraint, g, x1, x2, x3, x4, x5, x6)
+            EvalBoundary(phi, constraint, g)
+
+        # Perform value iteration by sweeping in direction 7
+        with hcl.Stage("Sweep_7"):
+            with hcl.for_(l_i, h_i, name="i") as i:
+                with hcl.for_(l_j, h_j, name="j") as j:
+                    with hcl.for_(l_k, h_k, name="k") as k:
+                        with hcl.for_(l_l, h_l, name="l") as l:
+                            with hcl.for_(l_m, h_m, name="m") as m:
+                                with hcl.for_(l_n, h_n, name="n") as n:
+                                    i2 = phi.shape[0] - i - 1
+                                    updatePhi(i2, j, k, l, m, n, my_object, phi, constraint, g, x1, x2, x3, x4, x5, x6)
+            EvalBoundary(phi, constraint, g)
+
+        # Perform value iteration by sweeping in direction 8
+        with hcl.Stage("Sweep_8"):
+            with hcl.for_(l_i, h_i, name="i") as i:
+                with hcl.for_(l_j, h_j, name="j") as j:
+                    with hcl.for_(l_k, h_k, name="k") as k:
+                        with hcl.for_(l_l, h_l, name="l") as l:
+                            with hcl.for_(l_m, h_m, name="m") as m:
+                                with hcl.for_(l_n, h_n, name="n") as n:
+                                    j2 = phi.shape[1] - j - 1
+                                    updatePhi(i, j2, k, l, m, n, my_object, phi, constraint, g, x1, x2, x3, x4, x5, x6)
+            EvalBoundary(phi, constraint, g)
 
     ###################################### SETUP PLACEHOLDERS ######################################
-    
-    # Initialize the HCL environment
-    hcl.init()
-    hcl.config.init_dtype = hcl.Float()
+    x1 = hcl.placeholder((g.pts_each_dim[0],), name="x1", dtype=hcl.Float())
+    x2 = hcl.placeholder((g.pts_each_dim[1],), name="x2", dtype=hcl.Float())
+    x3 = hcl.placeholder((g.pts_each_dim[2],), name="x3", dtype=hcl.Float())
+    x4 = hcl.placeholder((g.pts_each_dim[3],), name="x4", dtype=hcl.Float())
+    x5 = hcl.placeholder((g.pts_each_dim[4],), name="x5", dtype=hcl.Float())
+    x6 = hcl.placeholder((g.pts_each_dim[5],), name="x6", dtype=hcl.Float())
+    phi = hcl.placeholder(tuple(g.pts_each_dim), name="phi", dtype=hcl.Float())
+    constraint = hcl.placeholder(tuple(g.pts_each_dim), name="constraint", dtype=hcl.Float())
+    # debugger = hcl.placeholder(tuple(g.pts_each_dim), name="debugger", dtype=hcl.Float())
+    # debug2 = hcl.placeholder((0,), "debug2")
+        # Create a static schedule -- graph
+    s = hcl.create_schedule([phi, constraint, x1, x2, x3, x4, x5, x6], solve_phiNew)
+    sweep_1 = solve_phiNew.Sweep_1
+    sweep_2 = solve_phiNew.Sweep_2
+    sweep_3 = solve_phiNew.Sweep_3
+    sweep_4 = solve_phiNew.Sweep_4
+    sweep_5 = solve_phiNew.Sweep_5
+    sweep_6 = solve_phiNew.Sweep_6
+    sweep_7 = solve_phiNew.Sweep_7
+    sweep_8 = solve_phiNew.Sweep_8
 
-    # NOTE: trans is a tensor with size = maximum number of transitions
-    # NOTE: intermeds must have size  [# possible actions]
-    # NOTE: transition must have size [# possible outcomes, #state dimensions + 1]
-    Vopt       = hcl.placeholder(tuple(UD._ptsEachDim), name="Vopt", dtype=hcl.Float())
-    gamma      = hcl.placeholder((0,), "gamma")
-    count      = hcl.placeholder((0,), "count")
-    maxIters   = hcl.placeholder((0,), "maxIters")
-    epsilon    = hcl.placeholder((0,), "epsilon")
-    actions    = hcl.placeholder(tuple(UD._actions.shape), name="actions", dtype=hcl.Float())
-    intermeds  = hcl.placeholder(tuple([UD._actions.shape[0]]), name="intermeds", dtype=hcl.Float())
-    trans      = hcl.placeholder(tuple(UD._trans.shape), name="successors", dtype=hcl.Float())
-    bounds     = hcl.placeholder(tuple(UD._bounds.shape), name="bounds", dtype=hcl.Float())
-    goal       = hcl.placeholder(tuple(UD._goal.shape), name="goal", dtype=hcl.Float())
-    ptsEachDim = hcl.placeholder(tuple([6]), name="ptsEachDim", dtype=hcl.Float())
-    sVals      = hcl.placeholder(tuple([6]), name="sVals", dtype=hcl.Float())
-    iVals      = hcl.placeholder(tuple([6]), name="iVals", dtype=hcl.Float())
-    interpV    = hcl.placeholder((0,), "interpols")
-    useNN      = hcl.placeholder((0,), "useNN")
-
-    # Create a static schedule -- graph
-    s = hcl.create_schedule([Vopt, actions, intermeds, trans, interpV, gamma, epsilon, iVals, sVals, bounds, goal, ptsEachDim, count, maxIters, useNN], solve_Vopt)
-    
-
-    ########################################## INITIALIZE ##########################################
-
-    # Convert the python array to hcl type array
-    V_opt      = hcl.asarray(np.zeros(UD._ptsEachDim))
-    intermeds  = hcl.asarray(np.ones(UD._actions.shape[0]))
-    trans      = hcl.asarray(UD._trans)
-    gamma      = hcl.asarray(UD._gamma)
-    epsilon    = hcl.asarray(UD._epsilon)
-    count      = hcl.asarray(np.zeros(1))
-    maxIters   = hcl.asarray(UD._maxIters)
-    actions    = hcl.asarray(UD._actions)
-    bounds     = hcl.asarray(UD._bounds)
-    goal       = hcl.asarray(UD._goal)
-    ptsEachDim = hcl.asarray(UD._ptsEachDim)
-    sVals      = hcl.asarray(np.zeros([6]))
-    iVals      = hcl.asarray(np.zeros([6]))
-    interpV    = hcl.asarray(np.zeros([1]))
-    useNN      = hcl.asarray(UD._useNN)
-
-    # Use this graph and build an executable
-    f = hcl.build(s, target="llvm")
-
-
-    ########################################### EXECUTE ############################################
-
-    # Now use the executable
-    t_s = time.time()
-    f(V_opt, actions, intermeds, trans, interpV, gamma, epsilon, iVals, sVals, bounds, goal, ptsEachDim, count, maxIters, useNN)
-    t_e = time.time()
-
-    V = V_opt.asnumpy()
-    c = count.asnumpy()
-    print("Finished in ", int(c[0]), " iterations")
-    print("Took        ", t_e-t_s, " seconds")
-
-    # Write results to file
-    dir_path  = "./hcl_value_matrix_test/"
-    file_name = "hcl_value_iteration_6D_" + str(int(c[0])) + "_iterations_by" + ("_Interpolation" if UD._useNN[0] == 0 else "_NN")
-    UD.writeResults(V, dir_path, file_name, just_values=False)
-
-
-# Call the function
-value_iteration_6D()
+    s[sweep_1].parallel(sweep_1.i)
+    s[sweep_2].parallel(sweep_2.i)
+    s[sweep_3].parallel(sweep_3.i)
+    s[sweep_4].parallel(sweep_4.i)
+    s[sweep_5].parallel(sweep_5.i)
+    s[sweep_6].parallel(sweep_6.i)
+    s[sweep_7].parallel(sweep_7.i)
+    s[sweep_8].parallel(sweep_8.i)
+    # Build an executable and return
+    return hcl.build(s)
+       
