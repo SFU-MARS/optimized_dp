@@ -5,7 +5,7 @@ from odp.computeGraphs.graph_5D import *
 ######################################### HELPER FUNCTIONS #########################################
 
 # Update the phi function at position (i,j,k)
-def updatePhi(i, j, k, l, m, my_object, phi, g, x1, x2, x3, x4, x5):
+def updatePhi(i, j, k, l, m, my_object, phi, constraint, g, x1, x2, x3, x4, x5):
     dV_dx1_L = hcl.scalar(0, "dV_dx1_L")
     dV_dx1_R = hcl.scalar(0, "dV_dx1_R")
     dV_dx1 = hcl.scalar(0, "dV_dx1")
@@ -46,7 +46,8 @@ def updatePhi(i, j, k, l, m, my_object, phi, g, x1, x2, x3, x4, x5):
     uOpt = my_object.opt_ctrl(0, (x1[i], x2[j], x3[k], x4[l], x5[m]),
                               (dV_dx1[0], dV_dx2[0], dV_dx3[0], dV_dx4[0], dV_dx5[0]))
     # Find optimal disturbance
-    dOpt = my_object.opt_dstb((dV_dx1[0], dV_dx2[0], dV_dx3[0], dV_dx4[0], dV_dx5[0]))
+    dOpt = my_object.opt_dstb(0, (x1[i], x2[j], x3[k], x4[l], x5[m]),
+                              (dV_dx1[0], dV_dx2[0], dV_dx3[0], dV_dx4[0], dV_dx5[0]))
 
     # Find rates of changes based on dynamics equation
     dx1_dt, dx2_dt, dx3_dt, dx4_dt, dx5_dt = my_object.dynamics(0, (x1[i], x2[j], x3[k], x4[l], x5[m]), uOpt, dOpt)
@@ -82,8 +83,11 @@ def updatePhi(i, j, k, l, m, my_object, phi, g, x1, x2, x3, x4, x5):
 
     # New phi
     phiNew[0] = (-H[0] + diss1[0] + diss2[0] + diss3[0] + diss4[0] + diss5[0]) / c[0]
-    #debugger[i, j, k, l] = phiNew[0]
     phi[i, j, k, l, m] = my_min(phi[i, j, k, l, m], phiNew[0])
+
+    # Check with the obstacles
+    phi[i, j, k, l, m] = my_max(phi[i, j, k, l, m], constraint[i, j, k, l, m])
+
 
 def EvalBoundary(phi, constraint, g):
     if 0 not in g.pDim:
@@ -110,7 +114,7 @@ def EvalBoundary(phi, constraint, g):
                 with hcl.for_(0, phi.shape[3], name="l") as l:
                     with hcl.for_(0, phi.shape[4], name="m") as m:
                         tmp1 = hcl.scalar(0, "tmp1")
-                        tmp1[0] = 2 * phi[i, 1, k, l] - phi[i, 2, k, l, m]
+                        tmp1[0] = 2 * phi[i, 1, k, l, m] - phi[i, 2, k, l, m]
                         tmp1[0] = my_max(tmp1[0], phi[i, 2, k, l, m])
                         phi[i, 0, k, l, m] = my_min(tmp1[0], phi[i, 0, k, l, m])
                         phi[i, 0, k, l, m] = my_max(phi[i, 0, k, l, m], constraint[i, 0, k, l, m])
@@ -289,19 +293,18 @@ def TTR_5D(my_object, g):
 
     ###################################### SETUP PLACEHOLDERS ######################################
 
-        # Positions vector
-        x1 = hcl.placeholder((g.pts_each_dim[0],), name="x1", dtype=hcl.Float())
-        x2 = hcl.placeholder((g.pts_each_dim[1],), name="x2", dtype=hcl.Float())
-        x3 = hcl.placeholder((g.pts_each_dim[2],), name="x3", dtype=hcl.Float())
-        x4 = hcl.placeholder((g.pts_each_dim[3],), name="x4", dtype=hcl.Float())
-        x5 = hcl.placeholder((g.pts_each_dim[4],), name="x5", dtype=hcl.Float())
-        phi = hcl.placeholder(tuple(g.pts_each_dim), name="phi", dtype=hcl.Float())
-        constraint = hcl.placeholder(tuple(g.pts_each_dim), name="constraint", dtype=hcl.Float())
-        debugger = hcl.placeholder(tuple(g.pts_each_dim), name="debugger", dtype=hcl.Float())
-        debug2 = hcl.placeholder((0,), "debug2")
+    # Positions vector
+    x1 = hcl.placeholder((g.pts_each_dim[0],), name="x1", dtype=hcl.Float())
+    x2 = hcl.placeholder((g.pts_each_dim[1],), name="x2", dtype=hcl.Float())
+    x3 = hcl.placeholder((g.pts_each_dim[2],), name="x3", dtype=hcl.Float())
+    x4 = hcl.placeholder((g.pts_each_dim[3],), name="x4", dtype=hcl.Float())
+    x5 = hcl.placeholder((g.pts_each_dim[4],), name="x5", dtype=hcl.Float())
+    phi = hcl.placeholder(tuple(g.pts_each_dim), name="phi", dtype=hcl.Float())
+    constraint = hcl.placeholder(tuple(g.pts_each_dim), name="constraint", dtype=hcl.Float())
+    
+    
+    # Create a static schedule -- graph
+    s = hcl.create_schedule([phi, constraint, x1, x2, x3, x4, x5], solve_phiNew)
 
-        # Create a static schedule -- graph
-        s = hcl.create_schedule([phi, constraint, x1, x2, x3, x4, x5, debugger, debug2], solve_phiNew)
-
-        # Build an executable and return
-        return hcl.build(s)
+    # Build an executable and return
+    return hcl.build(s)

@@ -65,7 +65,7 @@ def solveValueIteration(MDP_obj, grid, action_space,
     return V
 
 def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
-             plot_option, saveAllTimeSteps=False,
+             saveAllTimeSteps=False,
              accuracy="medium", untilConvergent=False, epsilon=2e-3,
              computeTimeToReach=False):
 
@@ -306,19 +306,6 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
     print("Finished solving\n")
 
     ##################### PLOTTING #####################
-    if plot_option.do_plot :
-        # Only plots last value array for now
-        if plot_option.plot_type == "set":
-            if saveAllTimeSteps is True:
-                plot_isosurface(grid, valfuncs, plot_option)
-            else:
-                plot_isosurface(grid, V_t.asnumpy(), plot_option)
-        elif plot_option.plot_type == "value":
-            if saveAllTimeSteps is True:
-                plot_valuefunction(grid, valfuncs, plot_option)
-            else:
-                plot_valuefunction(grid,V_t.asnumpy(), plot_option)
-
     if saveAllTimeSteps is True:
         valfuncs[..., 0] = V_t.asnumpy()
         if computeTimeToReach:
@@ -329,7 +316,7 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
         return V_t.asnumpy(), time_to_reach
     return V_t.asnumpy()
 
-def TTRSolver(dynamics_obj, grid, multiple_value, epsilon, plot_option):
+def TTRSolver(dynamics_obj, grid, multiple_value, epsilon):
     print("Welcome to optimized_dp TTRSolver \n")
     ################# INITIALIZE DATA TO BE INPUT INTO EXECUTABLE ##########################
 
@@ -401,7 +388,9 @@ def TTRSolver(dynamics_obj, grid, multiple_value, epsilon, plot_option):
     if grid.dims == 4:
         solve_TTR = TTR_4D(dynamics_obj, grid)
     if grid.dims == 5:
+        print("Using TTR_5D")
         solve_TTR = TTR_5D(dynamics_obj, grid)
+        print(solve_TTR)
     if grid.dims == 6:
         solve_TTR = TTR_6D(dynamics_obj, grid)
     print("Got Executable\n")
@@ -436,13 +425,6 @@ def TTRSolver(dynamics_obj, grid, multiple_value, epsilon, plot_option):
     print("Finished solving\n")
 
     ##################### PLOTTING #####################
-    if plot_option.do_plot :
-        # Only plots last value array for now
-        if plot_option.plot_type == "set":
-            plot_isosurface(grid, V_0.asnumpy(), plot_option)
-        elif plot_option.plot_type == "value":
-            plot_valuefunction(grid, V_0.asnumpy(), plot_option)
-
     return V_0.asnumpy()
 
 def computeSpatDerivArray(grid, V, deriv_dim, accuracy="low"):

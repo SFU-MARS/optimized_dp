@@ -7,7 +7,7 @@ from odp.Shapes import *
 # Specify the  file that includes dynamic systems
 from odp.dynamics import DubinsCar4D2
 # Plot options
-from odp.Plots import PlotOptions, plot_isosurface, plot_valuefunction
+from odp.Plots import PlotOptions, visualize_plots
 
 # Solver core
 from odp.solver import HJSolver, computeSpatDerivArray
@@ -30,12 +30,9 @@ small_number = 1e-5
 
 tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)
 
-po = PlotOptions(do_plot=True, plot_type="set", plotDims=[0,1,3],
-                  slicesCut=[10], save_fig=True, filename="test_obs_avoid.png")
-
 # In this example, we compute a Backward Reachable Tube
 compMethods = { "TargetSetMode": "minVWithV0"}
-result = HJSolver(my_car, g, Initial_value_f, tau, compMethods, po, saveAllTimeSteps=True, accuracy="medium")
+result = HJSolver(my_car, g, Initial_value_f, tau, compMethods, saveAllTimeSteps=True, accuracy="medium")
 
 last_time_step_result = result[..., 0]
 
@@ -51,3 +48,8 @@ spat_deriv_vector = (x_derivative[10,20,15,15], y_derivative[10,20,15,15],
 
 # Compute the optimal control
 opt_a, opt_w = my_car.optCtrl_inPython(spat_deriv_vector)
+
+# Visualize the results
+po = PlotOptions(do_plot=True, plot_type="set", plotDims=[0,1,3],
+                  slicesCut=[10], save_fig=True, filename="test_obs_avoid.png")
+visualize_plots(result, g, po)

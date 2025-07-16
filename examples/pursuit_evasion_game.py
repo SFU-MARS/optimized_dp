@@ -7,7 +7,7 @@ from odp.Shapes import *
 # Specify the  file that includes dynamic systems
 from odp.dynamics import DubinsCapture
 # Plot options
-from odp.Plots import PlotOptions, plot_isosurface, plot_valuefunction
+from odp.Plots import PlotOptions, visualize_plots
 
 # Solver core
 from odp.solver import HJSolver, computeSpatDerivArray
@@ -28,11 +28,6 @@ tau = np.arange(start=0, stop=lookback_length + small_number, step=t_step)
 
 # uMode maximizing means avoiding capture, dMode minimizing means capturing
 my_car = DubinsCapture(uMode="max", dMode="min")
-
-# Specify how to plot the isosurface of the value function ( for higher-than-3-dimension arrays, which slices, indices
-# we should plot if we plot at all )
-po2 = PlotOptions(do_plot=True, plot_type="set", plotDims=[0,1,2],
-                  slicesCut=[], save_fig=True, filename="test_pursuit_evasion.png")
 
 """
 Assign one of the following strings to `TargetSetMode` to specify the characteristics of computation
@@ -60,7 +55,7 @@ for solving a reach-avoid problem
 # In this example, we compute a Backward Reachable Tube
 compMethods = { "TargetSetMode": "minVWithV0"}
 # HJSolver(dynamics object, grid, initial value function, time length, system objectives, plotting options)
-result = HJSolver(my_car, g, Initial_value_f, tau, compMethods, po2, saveAllTimeSteps=True )
+result = HJSolver(my_car, g, Initial_value_f, tau, compMethods, saveAllTimeSteps=True )
 
 last_time_step_result = result[..., 0]
 # Compute spatial derivatives at every state
@@ -75,4 +70,8 @@ state_vector = (g.grid_points[0][10], g.grid_points[1][20], g.grid_points[2][30]
 # Compute the optimal control
 opt_ctrl = my_car.optCtrl_inPython(state_vector, spat_deriv_vector)
 
-plot_isosurface(g, last_time_step_result, po2)
+# Specify how to plot the isosurface of the value function ( for higher-than-3-dimension arrays, which slices, indices
+# we should plot if we plot at all )
+po2 = PlotOptions(do_plot=True, plot_type="set", plotDims=[0,1,2],
+                  slicesCut=[], save_fig=True, filename="test_pursuit_evasion.png")
+visualize_plots(result, g, po2)

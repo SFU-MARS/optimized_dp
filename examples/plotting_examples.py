@@ -8,7 +8,7 @@ from odp.Shapes import *
 from odp.dynamics import DubinsCapture, Plane2D, Plane1D, DubinsCar4D
 # Plot options
 from odp.Plots import PlotOptions
-from odp.Plots import plot_isosurface, plot_valuefunction
+from odp.Plots import visualize_plots, plot_isosurface, plot_valuefunction
 # Solver core
 from odp.solver import HJSolver, computeSpatDerivArray
 
@@ -54,12 +54,14 @@ tau = np.arange(start=0, stop=Lookback_length + small_number, step=t_step)
 # STEP 4: System dynamics for computation
 sys4D = DubinsCar4D(uMode="max", dMode="min")  
 
-# STEP 5: Initialize plotting option
-po = PlotOptions(do_plot=True, plot_type="set", plotDims=[0,1,3], slicesCut=[50], colorscale="Bluered", save_fig=False, filename="plots/4D_0_sublevel_set", interactive_html=True)
-
-# STEP 6: Call HJSolver function
+# STEP 5: Call HJSolver function
 compMethod = { "TargetSetMode": "None"}
-result_3 = HJSolver(sys4D, g, Initial_value_f, tau, compMethod, po, saveAllTimeSteps=True)
+result_4D = HJSolver(sys4D, g, Initial_value_f, tau, compMethod, saveAllTimeSteps=True)
+
+# Visualization of computed 4D value function
+po = PlotOptions(do_plot=True, plot_type="set", plotDims=[0,1,3], slicesCut=[50], colorscale="Bluered", 
+                 save_fig=False, filename="plots/4D_0_sublevel_set", interactive_html=True)
+visualize_plots(result_4D, g, po)
 
 
 ##################################################### 3D EXAMPLE #####################################################
@@ -87,12 +89,9 @@ tau = np.arange(start=0, stop=Lookback_length + small_number, step=t_step)
 # STEP 4: System dynamics for computation
 sys = DubinsCapture(uMode="max", dMode="min")
 
-# STEP 5: Initialize plotting option
-po1 = PlotOptions(do_plot=False, plot_type="set", plotDims=[0,1,2])
-
-# STEP 6: Call HJSolver function
+# STEP 5: Call HJSolver function
 compMethod = { "TargetSetMode": "None"}
-result_3 = HJSolver(sys, g, Initial_value_f, tau, compMethod, po1, saveAllTimeSteps=True)
+result_3D = HJSolver(sys, g, Initial_value_f, tau, compMethod, saveAllTimeSteps=True)
 
 '''
 Test downsample function
@@ -109,7 +108,7 @@ po2 = PlotOptions(do_plot=False, plot_type="set", plotDims=[0,1,2],
                   slicesCut=[1], colorscale="Bluered", save_fig=True, filename="plots/3D_0_sublevel_set", interactive_html=True)
 
 # STEP 6: Call Plotting function
-plot_isosurface(g, result_3, po2)
+visualize_plots(result_3D, g, po2)
 
 
 ##################################################### 2D EXAMPLE #####################################################
@@ -135,22 +134,19 @@ tau = np.arange(start=0, stop=Lookback_length + small_number, step=t_step)
 # STEP 4: System dynamics for computation
 sys = Plane2D()
 
-# STEP 5: Initialize plotting option
-po1 = PlotOptions(do_plot=True, plot_type="value", plotDims=[0,1])
-
-# STEP 6: Call HJSolver function
+# STEP 5: Call HJSolver function
 compMethod = { "TargetSetMode": "None"}
-result_2 = HJSolver(sys, g_2, Initial_value_f, tau, compMethod, po1, saveAllTimeSteps=True)
+result_2D = HJSolver(sys, g_2, Initial_value_f, tau, compMethod, saveAllTimeSteps=True)
 
 # Visualization of animated 2D value function 
 po2 = PlotOptions(do_plot=False, plot_type="value", plotDims=[0,1],
                   slicesCut=[50], colorscale="Hot", save_fig=True, filename="plots/2D_0_valuefunction", interactive_html=True)
-plot_valuefunction(g, result_3, po2)
+visualize_plots(result_2D, g_2, po2)
 
 # Visualization of animated 2D 0 sublevel set
 po3 = PlotOptions(do_plot=False, plot_type="set", plotDims=[0,1],
                   slicesCut=[50], colorscale="Bluered", save_fig=True, filename="plots/2D_0_sublevel_set", interactive_html=True)
-plot_isosurface(g, result_3, po3)
+visualize_plots(result_2D, g_2, po3)
 
 
 # ##################################################### 1D EXAMPLE #####################################################
@@ -185,9 +181,9 @@ po1 = PlotOptions(do_plot=False, plot_type="value", plotDims=[0],
 # STEP 6: Call HJSolver function
 compMethod = { "TargetSetMode": "None"}
 
-result_1 = HJSolver(sys_1, g_1, Initial_value_f_1, tau, compMethod, po1, saveAllTimeSteps=True)
+result_1D = HJSolver(sys_1, g_1, Initial_value_f_1, tau, compMethod, saveAllTimeSteps=True)
 
 po2 = PlotOptions(do_plot=False, plot_type="value", plotDims=[0],
                   slicesCut=[50,50], save_fig=True, filename="plots/1D_0_valuefunction.png", interactive_html=False)
-plot_valuefunction(g, result_3, po2)
+visualize_plots(result_1D, g_1, po2)
 

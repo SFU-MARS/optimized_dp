@@ -551,4 +551,13 @@ def downsample(g, data, scale):
     g_out = Grid(grid_min, grid_max, g.dims, Ns)
 
     return g_out, data_out
+
+def visualize_plots(V, grid, plot_option):
+    if plot_option.do_plot :
+        # Only plots last value array for now
+        if plot_option.plot_type == "set":
+            plot_isosurface(grid, V, plot_option)
+        elif plot_option.plot_type == "value":
+            plot_valuefunction(grid, V, plot_option)
+    return
        
