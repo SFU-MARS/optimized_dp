@@ -49,14 +49,15 @@ def CylinderShape(
 def ShapeRectangle(
         grid: Grid, 
         target_min: np.ndarray, 
-        target_max: np.ndarray
+        target_max: np.ndarray,
+        ignore_dims: List = []
         ) -> np.ndarray:
-    data = Intersection(Lower_Half_Space(grid, 0, target_max[0]),
-                        Upper_Half_Space(grid, 0, target_min[0])
-                        )
-    for i in range(1, grid.dims):
-        data = Intersection(data, Lower_Half_Space(grid, i, target_max[i]))
-        data = Intersection(data, Upper_Half_Space(grid, i, target_min[i]))
+    
+    data = np.array([])
+    for i in range(grid.dims):
+        if i not in ignore_dims:
+            data = Intersection(data, Lower_Half_Space(grid, i, target_max[i]))
+            data = Intersection(data, Upper_Half_Space(grid, i, target_min[i]))
 
     return data
 
@@ -117,6 +118,11 @@ def Union(shape1: np.ndarray, shape2: np.ndarray) -> np.ndarray:
     Returns:
         np.ndarray: the element-wise minimum of two shapes
     """
+    if shape1.size == 0 and shape2.size > 0:
+        return shape2
+    elif shape1.size > 0 and shape2.size == 0:
+        return shape1
+    
     return np.minimum(shape1, shape2)
 
 
@@ -130,6 +136,11 @@ def Intersection(shape1: np.ndarray, shape2: np.ndarray) -> np.ndarray:
     Returns:
         np.ndarray: the element-wise minimum of two shapes
     """
+    if shape1.size == 0 and shape2.size > 0:
+        return shape2
+    elif shape1.size > 0 and shape2.size == 0:
+        return shape1
+    
     return np.maximum(shape1, shape2)
 
 
