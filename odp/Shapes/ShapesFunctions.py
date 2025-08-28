@@ -62,12 +62,20 @@ def ShapeRectangle(
     return data
 
 
-def Rect_Around_Point(grid: Grid, target_point: np.ndarray) -> np.ndarray:
+def Rect_Around_Point(
+    grid: Grid, 
+    center: np.ndarray, 
+    scale: np.ndarray,
+    ignore_dims: List = []) -> np.ndarray:
     """
     Creates a small rectangle of width 3 grid points in each dimension around 
     target_point
     """
-    return ShapeRectangle(grid, target_point - 1.5 * grid.dx, target_point + 1.5 * grid.dx)
+    target_min = center - 0.5*scale
+    target_max = center + 0.5*scale
+    rectangle = ShapeRectangle(grid, target_min, target_max, ignore_dims)
+    
+    return rectangle
 
 
 def Lower_Half_Space(grid: Grid, dim: int, value: float) -> np.ndarray:
