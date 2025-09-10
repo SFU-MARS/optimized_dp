@@ -101,3 +101,16 @@ class DubinsCapture:
             if self.uMode == "max":
                 opt_w = -self.wMax
         return opt_w
+    
+    def optDistb_inPython(self, state, spat_deriv):
+        b_term = spat_deriv[2]
+        
+        opt_d = self.dMax
+        if b_term >= 0:
+            if self.dMode == "min":
+                opt_d = - self.dMax
+        else:
+            if self.dMode == "max":
+                opt_d = - self.dMax
+
+        return opt_d
