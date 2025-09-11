@@ -112,5 +112,4 @@ class DubinsCapture:
         else:
             if self.dMode == "max":
                 opt_d = - self.dMax
-
         return opt_d

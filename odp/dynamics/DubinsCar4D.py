@@ -122,68 +122,74 @@ class DubinsCar4D:
 
         return (x_dot[0], y_dot[0], v_dot[0] ,theta_dot[0])
     
-    def optCtrl_inPython(self, spat_deriv):
+    def optCtrl_inPython(self, state, spat_deriv):
         opt_a = self.uMax[0]
         opt_w = self.uMax[1]
-        if self.uMode == "min":
-            if spat_deriv[2] > 0:
-                opt_a = self.uMin[0]
-            if spat_deriv[3] > 0:
-                opt_w = self.uMin[1]
-        else:
-            if spat_deriv[2] < 0:
-                opt_a = - self.uMin[0]
-            if spat_deriv[3] < 0:
-                opt_w = - self.uMin[1]
         
-        return opt_a, opt_w
-
-    def dynamics_inPython(self, state, action):
-        """Compute the first-order derivative of one agent. No distburbance now.
-
-        Args:
-            state (np.ndarray, shape(4, )): the state of one agent
-            action (np.ndarray, shape (2, )): the action of one agent
-        Return:
-            a tuple of the first-order derivative of the dynamics
-        """
-        x_dot = state[2] * np.cos(state[3])
-        y_dot = state[2] * np.sin(state[3])
-        v_dot = action[0]
-        theta_dot = action[1]
-        return (x_dot, y_dot, v_dot, theta_dot)
+        if self.uMode == "min":
+            if spat_deriv[2] >= 0.0:
+                opt_a = self.uMin[0]
+            if spat_deriv[3] >= 0.0:
+                opt_w = self.uMin[1]
+        else:  # "max"
+            if spat_deriv[2] < 0.0:
+                opt_a = self.uMin[0]
+            if spat_deriv[3] < 0.0:
+                opt_w = self.uMin[1]
+                
+        return (opt_a, opt_w)
     
-    def forward(self, ctrl_freq, current_state, action):
-        """Compute the next state of the agent, no disturbance is considered now.
+    def optDistb_inPython(self, state, spat_deriv):
+        distb1 = self.dMax[0]
+        distb2 = self.dMax[1]
+        
+        if self.dMode == "min":
+            if spat_deriv[0] >= 0.0:
+                distb1 = self.dMin[0]
+            if spat_deriv[1] >= 0.0:
+                distb2 = self.dMin[1]
+        else:  # "max"
+            if spat_deriv[0] < 0.0:
+                distb1 = self.dMin[0]
+            if spat_deriv[1] < 0.0:
+                distb2 = self.dMin[1]
+        
+        return (distb1, distb2)
+        
+    
+    def dynamics_inPython(self, state, control, disturbance):
+        dx = state[2] * np.cos(state[3]) + disturbance[0]
+        dy = state[2] * np.sin(state[3]) + disturbance[1]
+        dv = control[0]
+        dtheta = control[1]
 
-        Args:
-            ctrl_freq (int): the control frequency
-            current_state (np.ndarray, shape(4, )): the state of one agent
-            action (np.ndarray, shape (2, )): the action of one agent
-        Return:
-            next_state (tuple, len 4): the next state of the agent
-        """
-        # Forward the dubincar dynamics with one step
+        return (dx, dy, dv, dtheta)
+    
+    
+    def forward(self, ctrl_freq, current_state, control, disturbance):
         x, y, v, theta = current_state
         dt = 1.0 / ctrl_freq
-
+        dx, dy, dv, dtheta = self.dynamics_inPython(current_state, control, disturbance)
+        
         # Forward-Euler method
-        next_x = x + current_state[2] * np.cos(theta) * dt
-        next_y = y + current_state[2] * np.sin(theta) * dt
-        next_v = v + action[0] * dt
-        next_theta_raw = theta + action[1] * dt
-
+        next_x = x + dx * dt
+        next_y = y + dy * dt
+        next_v = v + dv * dt
+        next_theta_raw = theta + dtheta * dt
+        
         def check_theta(angle):
-            # Make sure the angle is in the range of [0, 2*pi)
-            while angle >=2*np.pi:
+            # Make sure the angle is in the range of [-pi, pi)
+            while angle >=np.pi:
                 angle -= 2 * np.pi
-            while angle < 0:
+            while angle < -np.pi:
                 angle += 2 * np.pi
 
             return angle
+        
 
         # Check the boundary
         next_theta = check_theta(next_theta_raw)
-        next_state = (next_x, next_y, next_v, next_theta)
+
+        return (next_x, next_y, next_v, next_theta)
         
-        return next_state
+        
