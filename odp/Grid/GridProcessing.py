@@ -1,5 +1,9 @@
+
 import numpy as np
 import math
+
+from scipy.interpolate import interpn
+from copy import deepcopy
 
 
 class Grid:
@@ -71,7 +75,7 @@ class Grid:
 
         return tuple(index)
 
-    def get_value(self, V, state):
+    def get_value(self, V, state, interp = False):
         """Obtain the approximate value of a state
 
         Assumes that the state is within the bounds of the grid
@@ -79,9 +83,25 @@ class Grid:
         Args:
             V (np.array): value function of solved HJ PDE 
             state (tuple): state of dynamic object
+            interp (bool, optional): whether to use linear interpolation. Defaults to False.
 
         Returns:
             [float]: V(state)
         """
-        index = self.get_index(state)
-        return V[index]
+        if not interp:
+            index = self.get_index(state)
+            return V[index]
+        else:
+            # incase the state is out of periodic bound
+            p = deepcopy(state)
+            for dim in self.pDim:
+                dimMax = max(self.grid_points[dim])
+                dimMin = min(self.grid_points[dim])
+                period = dimMax - dimMin
+                while p[dim] > dimMax:
+                    p[dim] -= period
+                while p[dim] < dimMin:
+                    p[dim] += period
+            points = tuple(self.grid_points)
+            val = interpn(points, V, p)
+            return val[0]
