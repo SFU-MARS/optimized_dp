@@ -120,3 +120,75 @@ class DubinsCar4D:
         theta_dot[0] = uOpt[1]
 
         return (x_dot[0], y_dot[0], v_dot[0] ,theta_dot[0])
+    
+    def optCtrl_inPython(self, state, spat_deriv):
+        opt_a = self.uMax[0]
+        opt_w = self.uMax[1]
+        
+        if self.uMode == "min":
+            if spat_deriv[2] >= 0.0:
+                opt_a = self.uMin[0]
+            if spat_deriv[3] >= 0.0:
+                opt_w = self.uMin[1]
+        else:  # "max"
+            if spat_deriv[2] < 0.0:
+                opt_a = self.uMin[0]
+            if spat_deriv[3] < 0.0:
+                opt_w = self.uMin[1]
+                
+        return (opt_a, opt_w)
+    
+    def optDistb_inPython(self, state, spat_deriv):
+        distb1 = self.dMax[0]
+        distb2 = self.dMax[1]
+        
+        if self.dMode == "min":
+            if spat_deriv[0] >= 0.0:
+                distb1 = self.dMin[0]
+            if spat_deriv[1] >= 0.0:
+                distb2 = self.dMin[1]
+        else:  # "max"
+            if spat_deriv[0] < 0.0:
+                distb1 = self.dMin[0]
+            if spat_deriv[1] < 0.0:
+                distb2 = self.dMin[1]
+        
+        return (dist1, distb2)
+        
+    
+    def dynamics_inPython(self, state, control, disturbance):
+        dx = state[2] * np.cos(state[3]) + disturbance[0]
+        dy = state[2] * np.sin(state[3]) + disturbance[1]
+        dv = control[0]
+        dtheta = control[1]
+
+        return (dx, dy, dv, dtheta)
+    
+    
+    def forward(self, ctrl_freq, current_state, control, disturbance):
+        x, y, v, theta = current_state
+        dt = 1.0 / ctrl_freq
+        dx, dy, dv, dtheta = self.dynamics_inPython(current_state, control, disturbance)
+        
+        # Forward-Euler method
+        next_x = x + dx * dt
+        next_y = y + dy * dt
+        next_v = v + dv * dt
+        next_theta_raw = theta + dtheta * dt
+        
+        def check_theta(angle):
+            # Make sure the angle is in the range of [-pi, pi)
+            while angle >=np.pi:
+                angle -= 2 * np.pi
+            while angle < -np.pi:
+                angle += 2 * np.pi
+
+            return angle
+        
+
+        # Check the boundary
+        next_theta = check_theta(next_theta_raw)
+
+        return (next_x, next_y, next_v, next_theta)
+        
+        
