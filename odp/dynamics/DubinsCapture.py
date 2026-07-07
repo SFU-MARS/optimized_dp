@@ -11,12 +11,15 @@ class DubinsCapture:
         
         where x, y, theta are the state variables, w is the control input, d is the disturbance input, and speed is a constant.
     """
-    def __init__(self, x=None, wMax=1.0, speed=1.0, dMax=1.0, uMode="max", dMode="min"):
+    def __init__(self, x=None, wMax=1.0, w_speed=1.0,
+                d_speed=1.0, dMax=1.0, uMode="max",
+                dMode="min"):
         if x is None:
             x = [0, 0, 0]
         self.x = x
         self.wMax = wMax
-        self.speed = speed
+        self.w_speed = w_speed
+        self.d_speed = d_speed
         self.dMax = dMax
         self.uMode = uMode
         self.dMode = dMode
@@ -81,8 +84,8 @@ class DubinsCapture:
         y_dot = hcl.scalar(0, "y_dot")
         theta_dot = hcl.scalar(0, "theta_dot")
 
-        x_dot[0] = -self.speed + self.speed*hcl.cos(state[2]) + uOpt[0]*state[1]
-        y_dot[0] = self.speed*hcl.sin(state[2]) - uOpt[0]*state[0]
+        x_dot[0] = -self.w_speed + self.d_speed*hcl.cos(state[2]) + uOpt[0]*state[1]
+        y_dot[0] = self.d_speed*hcl.sin(state[2]) - uOpt[0]*state[0]
         theta_dot[0] = dOpt[0] - uOpt[0]
 
         return (x_dot[0], y_dot[0], theta_dot[0])
