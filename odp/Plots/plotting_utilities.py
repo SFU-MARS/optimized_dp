@@ -258,8 +258,8 @@ def plot_isosurface(grid, my_V, plot_option):
     if plot_option.save_fig:
         if plot_option.interactive_html:
             fig.write_html(plot_option.filename + ".html")
-        else:
-            fig.write_image(plot_option.filename)
+        # Save an image by default
+        fig.write_image(plot_option.filename)
 
 
 def plot_valuefunction(grid, my_V, plot_option):
@@ -553,11 +553,11 @@ def downsample(g, data, scale):
     return g_out, data_out
 
 def visualize_plots(V, grid, plot_option):
-    if plot_option.do_plot :
-        # Only plots last value array for now
-        if plot_option.plot_type == "set":
-            plot_isosurface(grid, V, plot_option)
-        elif plot_option.plot_type == "value":
-            plot_valuefunction(grid, V, plot_option)
+    # Only plots last value array for now
+    if plot_option.plot_type == "set":
+        plot_isosurface(grid, V, plot_option)
+    elif plot_option.plot_type == "value":
+        plot_valuefunction(grid, V, plot_option)
+
     return
        

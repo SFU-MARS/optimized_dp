@@ -1,5 +1,11 @@
-import heterocl as hcl
 import numpy as np
+
+try:
+    import heterocl as hcl
+    HCL_AVAILABLE = True
+except ImportError:
+    hcl = None
+    HCL_AVAILABLE = False
 
 """ 6D DUBINS AIRPLANE DYNAMICS IMPLEMENTATION 
  x_dot = v * cos(gamma) * cos(psi) + d1

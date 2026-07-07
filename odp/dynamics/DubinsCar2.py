@@ -1,5 +1,18 @@
-import heterocl as hcl
 import numpy as np
+
+try:
+    import heterocl as hcl
+    HCL_AVAILABLE = True
+except ImportError:
+    hcl = None
+    HCL_AVAILABLE = False
+
+def _require_hcl(method_name):
+    if not HCL_AVAILABLE:
+        raise RuntimeError(
+            f"'{method_name}' requires heterocl, which is not available outside its conda environment. "
+            f"Use the '_inPython' variants instead."
+        )
 
 """ 3D DUBINS CAR DYNAMICS with 2 CONTROL INPUTS IMPLEMENTATION 
  x_dot = v * cos(theta)
@@ -22,29 +35,23 @@ class DubinsCar2:
         self.wMax = uMax[1]
 
     def opt_ctrl(self, t, state, spat_deriv):
+        _require_hcl("opt_ctrl")
         opt_w = hcl.scalar(self.wMax, "opt_w")
         opt_speed = hcl.scalar(self.speedMax, "opt_speed")
         # Just create and pass back, even though they're not used
         in4 = hcl.scalar(0, "in4")
-        # Declare hcl scalars for the coefficient
-        deriv0 = hcl.scalar(0, "deriv0")
-        deriv1 = hcl.scalar(0, "deriv1")
-        theta = hcl.scalar(0, "theta")
-        deriv0[0] = spat_deriv[0]
-        deriv1[0] = spat_deriv[1]
-        theta[0] = state[2]
-        # coefficient = spat_deriv[0]*np.cos(state[2]) + spat_deriv[1]*np.sin(state[2])
-        coefficient = deriv0[0]*hcl.cos(theta[0]) + deriv1[0]*hcl.sin(theta[0])
+        coefficient = spat_deriv[0]*hcl.cos(state[2]) + spat_deriv[1]*hcl.sin(state[2])
     
-        with hcl.if_(self.uMode == "min"):
-            with hcl.if_(coefficient > 0):
+        if self.uMode == "min":
+            with hcl.if_(coefficient >= 0):
                 opt_speed[0] = self.speedMin
             with hcl.if_(spat_deriv[2] > 0):
                 opt_w[0] = self.wMin
-        with hcl.if_(self.uMode == "max"):
-            with hcl.if_(coefficient < 0):
+
+        if self.uMode == "max":
+            with hcl.if_(coefficient <= 0):
                 opt_speed[0] = self.speedMin
-            with hcl.elif_(spat_deriv[2] < 0):
+            with hcl.if_(spat_deriv[2] < 0):
                 opt_w[0] = self.wMin
             
         return (opt_speed[0], opt_w[0], in4[0])
@@ -54,6 +61,7 @@ class DubinsCar2:
         :param spat_deriv: tuple of spatial derivative in all dimensions
         :return: a tuple of optimal disturbances
         """
+        _require_hcl("opt_dstb")
         # Graph takes in 4 possible inputs, by default, for now
         d1 = hcl.scalar(0, "d1")
         d2 = hcl.scalar(0, "d2")
@@ -62,6 +70,7 @@ class DubinsCar2:
         return (d1[0], d2[0], d3[0])
 
     def dynamics(self, t, state, uOpt, dOpt):
+        _require_hcl("dynamics")
         x_dot = hcl.scalar(0, "x_dot")
         y_dot = hcl.scalar(0, "y_dot")
         theta_dot = hcl.scalar(0, "theta_dot")

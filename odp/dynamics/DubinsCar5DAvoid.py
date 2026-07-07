@@ -1,5 +1,11 @@
-import heterocl as hcl
 import numpy as np
+
+try:
+    import heterocl as hcl
+    HCL_AVAILABLE = True
+except ImportError:
+    hcl = None
+    HCL_AVAILABLE = False
 
 """
 DubinsCar5D avoidance System 

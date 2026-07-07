@@ -1,5 +1,11 @@
-import heterocl as hcl
 import numpy as np
+
+try:
+    import heterocl as hcl
+    HCL_AVAILABLE = True
+except ImportError:
+    hcl = None
+    HCL_AVAILABLE = False
 
 class DubinsCar:
     def __init__(self, x=[0,0,0], wMax=1, speed=1, dMax=[0,0,0], uMode="min", dMode="max"):

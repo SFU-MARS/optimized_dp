@@ -1,5 +1,11 @@
-import heterocl as hcl
 import numpy as np
+
+try:
+    import heterocl as hcl
+    HCL_AVAILABLE = True
+except ImportError:
+    hcl = None
+    HCL_AVAILABLE = False
 
 """ 4D DUBINS CAR DYNAMICS IMPLEMENTATION 
  x_dot = v * cos(theta) + d_1

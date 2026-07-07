@@ -1,5 +1,11 @@
-import heterocl as hcl
+import numpy as np
 import math
+try:
+    import heterocl as hcl
+    HCL_AVAILABLE = True
+except ImportError:
+    hcl = None
+    HCL_AVAILABLE = False
 
 """
 4D DUBINS CAR DYNAMICS IMPLEMENTATION
