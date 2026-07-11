@@ -19,16 +19,36 @@ Please install the following:
 
     ``` pip install -e . ```
 * Note: HeteroCL 0.3 links against the legacy `ncurses5` runtime (`libtinfo.so.5`).
-  If importing the package fails with a missing `libtinfo.so.5`, install the
-  compatibility library for your distribution:
+  If importing the package fails with a missing `libtinfo.so.5`:
+
+  * On older distributions, install the compatibility library directly:
 
     ```sudo apt install libtinfo5```
 
-  On newer releases (e.g. Ubuntu 24.04) `libtinfo5` has been dropped in favour of
-  `libtinfo6`; in that case install `libtinfo6` instead, or obtain `libtinfo5`
-  from the older `universe` archive:
+  * On newer releases (e.g. Ubuntu 24.04) the `libtinfo5` package has been
+    dropped. Installing `libtinfo6` alone is **not** sufficient: it ships
+    `libtinfo.so.6`, whereas HeteroCL requires the `libtinfo.so.5` soname. Install
+    `libtinfo6` and add a compatibility symlink (the two are ABI-compatible for
+    HeteroCL's use). Without root, keep the symlink inside the conda environment:
 
-    ```sudo apt install libtinfo6```
+    ```bash
+    conda activate odp
+    ln -s "$CONDA_PREFIX/lib/libtinfo.so.6" "$CONDA_PREFIX/lib/libtinfo.so.5"
+    ```
+
+    or create it system-wide:
+
+    ```bash
+    sudo apt install libtinfo6
+    sudo ln -s /lib/x86_64-linux-gnu/libtinfo.so.6 /lib/x86_64-linux-gnu/libtinfo.so.5
+    ```
+
+  To test that the runtime resolves correctly, importing HeteroCL should succeed
+  without error:
+
+    ```bash
+    python -c "import heterocl"
+    ```
 
 
 # Solving the Hamilton-Jacobi-Issac (HJI) PDE

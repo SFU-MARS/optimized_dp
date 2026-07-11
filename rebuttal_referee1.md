@@ -169,6 +169,17 @@ newer distributions (where `libtinfo5` has been dropped) to install `libtinfo6`
 instead, and the CI workflow now installs `libtinfo5` with an automatic fallback
 to `libtinfo6`.
 
+> **TODO (internal — resolve/remove before submission):** Verify the `libtinfo6`
+> path end-to-end in a genuinely `libtinfo5`-free environment (a clean
+> `ubuntu:24.04` container or a CI run on `ubuntu-24.04`). So far it has only been
+> confirmed indirectly, via a `libtinfo.so.5` → `libtinfo.so.6` symlink: `apt
+> install libtinfo6` provides `libtinfo.so.6`, **not** the `libtinfo.so.5` soname
+> HeteroCL loads, so `libtinfo6` works only once that compatibility symlink
+> exists. The README now documents the symlink (env-local or system-wide) plus a
+> `python -c "import heterocl"` check; the CI `libtinfo6` fallback still needs the
+> symlink step and that import smoke check added before this paragraph is
+> accurate.
+
 ### `odp/dynamics/__init__.py` is incorrect (`DubinsCar5D.py` does not exist)
 
 > *The `odp/dynamics/__init__.py` file appears to be incorrect because, at
