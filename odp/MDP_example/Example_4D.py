@@ -1,131 +1,97 @@
+"""
+4-D Markov Decision Process example for OptimizedDP value iteration.
+
+Run with::
+
+    python -m odp.MDP_example.Example_4D
+
+See :mod:`odp.MDP_example.Example_3D` for a full description of the
+value-iteration interface (``maxTransitions``, ``transition`` and ``reward``).
+This example uses the same reach-avoid template in four dimensions: the state
+is a point in R^4, each action is a per-dimension displacement, moving into the
+domain walls is penalised, and a ball around the origin is an absorbing goal.
+"""
+
 import numpy as np
 import heterocl as hcl
-import os
 
+from odp.Grid import Grid
+from odp.solver import solveValueIteration
 
 
 class MDP_4D_example:
+    def __init__(self):
+        self.bounds = np.array([[-2.5, 2.5]] * 4)
+        self.goal_center = np.zeros(4)
+        self.goal_radius = 1.0
+        self.wall = 0.2
+        self.maxTransitions = 1
 
-    _bounds     = np.array([[-2.5, 2.5],[-2.5, 2.5],[-2.5, 2.5],[-2.5, 2.5]])
-    _ptsEachDim = np.array([15, 15, 15, 15])
-    _goal       = np.array([1.5, 1.5, 1.5, 1.5]) 
+    def _dist_to_goal(self, sVals):
+        acc = hcl.scalar(0, "acc")
+        for d in range(4):
+            diff = sVals[d] - self.goal_center[d]
+            acc[0] += diff * diff
+        return hcl.sqrt(acc[0])
 
-    # set _actions based on ranges and number of steps
-    # format: range(lower bound, upper bound, number of steps)
-    iValues  = np.linspace(-0.5, 0.5, 5)
-    jValues  = np.linspace(-0.5, 0.5, 5)
-    kValues  = np.linspace(-0.5, 0.5, 5)
-    lValues  = np.linspace(-0.5, 0.5, 5)
-    _actions = []
-    for i in iValues:
-        for j in jValues:
-            for k in kValues:
-                for l in lValues:
-                    _actions.append((i,j,k,l))
-    _actions = np.array(_actions)
-
-    _gamma      = np.array([0.93])
-    _epsilon    = np.array([.3])
-    _maxIters   = np.array([30])
-    _trans      = np.zeros([1, 7]) # size: [maximum number of transition states available x 4]
-    _useNN      = np.array([1])
-
-
-    # Given state and action, return successor states and their probabilities
-    # sVals:  the coordinates of state
-    # bounds: the lower and upper limits of the state space in each dimension
-    # trans:  holds each successor state and the probability of reaching that state
-    def transition(self, sVals, action, bounds, trans, goal):
-        di  = hcl.scalar(0, "di") 
-        dj  = hcl.scalar(0, "dj") 
-        dk  = hcl.scalar(0, "dk") 
-        dl  = hcl.scalar(0, "dl")  
+    def transition(self, sVals, iVals, u):
+        trans = hcl.compute((self.maxTransitions, 1 + 4), lambda *x: 0, "trans")
         mag = hcl.scalar(0, "mag")
-
-        # Check if moving from a goal state
-        di[0]  = (sVals[0] - goal[0]) * (sVals[0] - goal[0])
-        dj[0]  = (sVals[1] - goal[1]) * (sVals[1] - goal[1])
-        dk[0]  = (sVals[2] - goal[2]) * (sVals[2] - goal[2])
-        dl[0]  = (sVals[3] - goal[3]) * (sVals[3] - goal[3])
-        mag[0] = hcl.sqrt(di[0] + dj[0] + dk[0] + dl[0])
-
-        # Check if moving from an obstacle 
-        with hcl.if_(mag[0] <= 5.0):
+        mag[0] = self._dist_to_goal(sVals)
+        with hcl.if_(mag[0] <= self.goal_radius):
             trans[0, 0] = 0
-        with hcl.elif_(hcl.or_(sVals[0] <= bounds[0,0], sVals[0] >= bounds[0,1])):
+        with hcl.elif_(hcl.or_(sVals[0] < self.bounds[0, 0] + self.wall,
+                               sVals[0] > self.bounds[0, 1] - self.wall,
+                               sVals[1] < self.bounds[1, 0] + self.wall,
+                               sVals[1] > self.bounds[1, 1] - self.wall)):
             trans[0, 0] = 0
-        with hcl.elif_(hcl.or_(sVals[1] <= bounds[1,0], sVals[1] >= bounds[1,1])):
+        with hcl.elif_(hcl.or_(sVals[2] < self.bounds[2, 0] + self.wall,
+                               sVals[2] > self.bounds[2, 1] - self.wall,
+                               sVals[3] < self.bounds[3, 0] + self.wall,
+                               sVals[3] > self.bounds[3, 1] - self.wall)):
             trans[0, 0] = 0
-        with hcl.elif_(hcl.or_(sVals[2] <= bounds[2,0], sVals[2] >= bounds[2,1])):
-            trans[0, 0] = 0
-        with hcl.elif_(hcl.or_(sVals[3] <= bounds[3,0], sVals[3] >= bounds[3,1])):
-            trans[0, 0] = 0
-
-        # Standard move
         with hcl.else_():
             trans[0, 0] = 1.0
-            trans[0, 1] = sVals[0] + action[0]
-            trans[0, 2] = sVals[1] + action[1]
-            trans[0, 3] = sVals[2] + action[2]
-            trans[0, 4] = sVals[3] + action[3]  
+            for d in range(4):
+                trans[0, 1 + d] = sVals[d] + u[d]
+        return trans
 
-    # Return the reward for taking action from state
-    def reward(self, sVals, action, bounds, goal, trans):
-        di  = hcl.scalar(0, "di") 
-        dj  = hcl.scalar(0, "dj") 
-        dk  = hcl.scalar(0, "dk") 
-        dl  = hcl.scalar(0, "dl") 
+    def reward(self, sVals, iVals, u):
         mag = hcl.scalar(0, "mag")
         rwd = hcl.scalar(0, "rwd")
-
-        # Check if moving from a collision state, if so, assign a penalty
-        with hcl.if_(hcl.or_(sVals[0] <= bounds[0,0], sVals[0] >= bounds[0,1])):
+        with hcl.if_(hcl.or_(sVals[0] < self.bounds[0, 0] + self.wall,
+                             sVals[0] > self.bounds[0, 1] - self.wall,
+                             sVals[1] < self.bounds[1, 0] + self.wall,
+                             sVals[1] > self.bounds[1, 1] - self.wall,
+                             sVals[2] < self.bounds[2, 0] + self.wall,
+                             sVals[2] > self.bounds[2, 1] - self.wall,
+                             sVals[3] < self.bounds[3, 0] + self.wall,
+                             sVals[3] > self.bounds[3, 1] - self.wall)):
             rwd[0] = -400
-        with hcl.elif_(hcl.or_(sVals[1] <= bounds[1,0], sVals[1] >= bounds[1,1])):
-            rwd[0] = -400
-        with hcl.elif_(hcl.or_(sVals[2] <= bounds[2,0], sVals[2] >= bounds[2,1])):
-            rwd[0] = -400
-        with hcl.elif_(hcl.or_(sVals[3] <= bounds[3,0], sVals[3] >= bounds[3,1])):
-            rwd[0] = -400
-
         with hcl.else_():
-            # Check if moving from a goal state
-            di[0]  = (sVals[0] - goal[0]) * (sVals[0] - goal[0])
-            dj[0]  = (sVals[1] - goal[1]) * (sVals[1] - goal[1])
-            dk[0]  = (sVals[2] - goal[2]) * (sVals[2] - goal[2])
-            dl[0]  = (sVals[3] - goal[3]) * (sVals[3] - goal[3])
-            mag[0] = hcl.sqrt(di[0] + dj[0] + dk[0] + dl[0])
-            with hcl.if_(mag[0] <= 5.0):
+            mag[0] = self._dist_to_goal(sVals)
+            with hcl.if_(mag[0] <= self.goal_radius):
                 rwd[0] = 1000
-            # Standard move
-            with hcl.else_():                
+            with hcl.else_():
                 rwd[0] = 0
         return rwd[0]
 
-    def writeResults(self, V, dir_path, file_name, just_values=False):
-        # Create directory for results if one does not exist
-        print("\nRecording results")
-        try:
-            os.mkdir(dir_path)
-            print("Created directory: ", dir_path)
-        except:
-            print("Writing to: '", dir_path, "'")
-        # Open file and write results
-        f = open(dir_path + file_name, "w")
-        for i in range(V.shape[0]):
-            for j in range(V.shape[1]):
-                for k in range(V.shape[2]):
-                    for l in range(V.shape[3]):
-                        s = ""
-                        if not just_values:
-                            si = ((i / (self._ptsEachDim[0] - 1)) * (self._bounds[0, 1] - self._bounds[0, 0])) + self._bounds[0, 0]
-                            sj = ((j / (self._ptsEachDim[1] - 1)) * (self._bounds[1, 1] - self._bounds[1, 0])) + self._bounds[1, 0]
-                            sk = ((k / (self._ptsEachDim[2] - 1)) * (self._bounds[2, 1] - self._bounds[2, 0])) + self._bounds[2, 0]
-                            sl = ((l / (self._ptsEachDim[3] - 1)) * (self._bounds[3, 1] - self._bounds[3, 0])) + self._bounds[3, 0]
 
-                            state = ("{:.4f}".format(si), "{:.4f}".format(sj), "{:.4f}".format(sk), "{:.4f}".format(sl))
-                            s = str(state) + "   " + str("{:.4f}".format(V[(i, j, k, l)])) + '\n'
-                        else:
-                            s = str("{:.4f}".format(V[(i, j, k, l)])) + ',\n'
-                        f.write(s)
-        print("Finished recording results")
+def main():
+    mdp = MDP_4D_example()
+    grid = Grid(minBounds=mdp.bounds[:, 0], maxBounds=mdp.bounds[:, 1],
+                dims=4, pts_each_dim=np.array([15, 15, 15, 15]))
+    step = np.linspace(-0.5, 0.5, 3)
+    actions = np.array([(a, b, c, d)
+                        for a in step for b in step
+                        for c in step for d in step])
+    value_function = solveValueIteration(
+        mdp, grid=grid, action_space=actions,
+        gamma=np.array([0.93]), epsilon=np.array([0.3]),
+        maxIters=np.array([50]))
+    print("Value function shape:", value_function.shape)
+    return value_function
+
+
+if __name__ == "__main__":
+    main()

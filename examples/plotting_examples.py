@@ -34,7 +34,7 @@ if os.path.exists("plots") == False:
 grid_min = np.array([-4.0, -4.0, -4.0, -math.pi])
 grid_max = np.array([4.0, 4.0, 4.0, math.pi])
 dims = 4
-N = np.array([80, 80, 80, 80])
+N = np.array([40, 40, 40, 40])
 pd=[3]
 g = Grid(grid_min, grid_max, dims, N, pd)
 
@@ -59,7 +59,7 @@ compMethod = { "TargetSetMode": "None"}
 result_4D = HJSolver(sys4D, g, Initial_value_f, tau, compMethod, saveAllTimeSteps=True)
 
 # Visualization of computed 4D value function
-po = PlotOptions(do_plot=True, plot_type="set", plotDims=[0,1,3], slicesCut=[50], colorscale="Bluered", 
+po = PlotOptions(do_plot=False, plot_type="set", plotDims=[0,1,3], slicesCut=[20], colorscale="Bluered",
                  save_fig=False, filename="plots/4D_0_sublevel_set", interactive_html=True)
 visualize_plots(result_4D, g, po)
 
@@ -69,7 +69,7 @@ visualize_plots(result_4D, g, po)
 grid_min = np.array([-4.0, -4.0, -math.pi])
 grid_max = np.array([4.0, 4.0, math.pi])
 dims = 3
-N = np.array([150, 150, 150])
+N = np.array([60, 60, 60])
 pd=[2]
 g = Grid(grid_min, grid_max, dims, N, pd)
 

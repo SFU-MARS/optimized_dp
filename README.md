@@ -18,21 +18,28 @@ Please install the following:
 * Install the `optimized_dp` repository
 
     ``` pip install -e . ```
-* Note: If you're on Ubuntu 20.04 or 22.04, you may have encounter an error regarding ``` libtinfo5 ```. 
-  To fix, please just run this command 
+* Note: HeteroCL 0.3 links against the legacy `ncurses5` runtime (`libtinfo.so.5`).
+  If importing the package fails with a missing `libtinfo.so.5`, install the
+  compatibility library for your distribution:
 
-    ```sudo apt install libtinfo5 ``` 
+    ```sudo apt install libtinfo5```
+
+  On newer releases (e.g. Ubuntu 24.04) `libtinfo5` has been dropped in favour of
+  `libtinfo6`; in that case install `libtinfo6` instead, or obtain `libtinfo5`
+  from the older `universe` archive:
+
+    ```sudo apt install libtinfo6```
 
 
 # Solving the Hamilton-Jacobi-Issac (HJI) PDE
-* We provide a running example of solving HJI PDE in the file [`examples/plotting_example.py`](https://github.com/SFU-MARS/optimized_dp/examples/examples.py):
+* We provide a running example of solving HJI PDE in the file [`examples/plotting_examples.py`](https://github.com/SFU-MARS/optimized_dp/blob/master/examples/plotting_examples.py):
 ```python
 # STEP 1: Define grid
-grid_min = np.array([-4.0, -4.0, -math.pi])
-grid_max = np.array([4.0, 4.0, math.pi])
-dims = 3
-N = np.array([150, 150, 150])
-pd=[2]
+grid_min = np.array([-4.0, -4.0, -math.pi])   # lower bound of each dimension
+grid_max = np.array([4.0, 4.0, math.pi])      # upper bound of each dimension
+dims = 3                                       # optional: inferred from the bounds if omitted
+N = np.array([150, 150, 150])                  # number of grid points per dimension
+pd = [2]                                        # pd = "periodic dimensions" (0-indexed); here x3 (heading) is periodic
 g = Grid(grid_min, grid_max, dims, N, pd)
 
 # STEP 2: Generate initial values for grid using shape functions
@@ -58,7 +65,12 @@ po1 = PlotOptions(do_plot=False, plot_type="set", plotDims=[0,1,2])
 compMethod = { "TargetSetMode": "None"}
 result_3 = HJSolver(sys, g, Initial_value_f, tau, compMethod, po1, saveAllTimeSteps=True)
 ```
-* To run the example, execute the command `python3 examples/plotting_example.py`
+Notes on the `Grid` arguments (frequently asked):
+* `grid_min` / `grid_max` may be either numpy arrays or plain Python lists — they are converted to numpy arrays internally.
+* `dims` is the number of state dimensions. It is redundant with the length of `grid_min`/`grid_max` and is therefore **optional**: if you omit it, it is inferred from the bounds; if you pass it, it is validated against them as a sanity check.
+* `pd` (5th argument, `periodicDims`) is the list of 0-indexed dimensions that are periodic (e.g. an angle in `[-pi, pi)`). For a periodic dimension the upper bound is treated as identified with the lower bound.
+
+* To run the example, execute the command `python3 examples/plotting_examples.py`
 * If the parameter `do_plot` is set to `True`, when initializing `PlotOptions`. The parameter `saveAllTimeSteps` is set to `False` in `HJSolver`, an static 3D plot will show on pop-up browser.
 <!-- ![BallPic](images/ball_pic.png) -->
 <div align="center">
@@ -78,12 +90,12 @@ plot_isosurface(g, result_3, po2)
 <!-- * Check the interactive result [`images/3D_0_sublevel_set.html`](https://github.com/SFU-MARS/optimized_dp/images/3D_0_sublevel_set.html) -->
 
 
-* For computing result higher than 6D, check [`examples/examples.py`](https://github.com/SFU-MARS/optimized_dp/examples/examples.py)
+* For additional runnable examples (2D–4D reachability, pursuit-evasion, etc.), see the [`examples/`](https://github.com/SFU-MARS/optimized_dp/blob/master/examples) directory.
 * Notes: For 6 dimensions, recommended grid size is 20-30 each dimension on system with 32Gbs of DRAM.
-* Create a class file in folder dynamics/ to specify your own system dynamics. Remember to import the class in your running example.  
+* Create a class file in folder `odp/dynamics/` to specify your own system dynamics. Remember to import the class in your running example.  
 
 ## System dynamics specification
-It can noticed in ```user_definer.py``` that the class DubinsCapture is imported from the folder ```dynamics/```, where our example system dynamics. 
+As shown in the example above, a system such as `DubinsCapture` is imported from `odp/dynamics/`, where the example system dynamics live. A dynamics class implements the following interface: 
 ```python 
 import heterocl as hcl
 
@@ -121,7 +133,7 @@ class DubinsCapture:
 
 
 # Time-to-Reach computation
-* We have provided an example in [`examples/TTR_example.py`](https://github.com/SFU-MARS/optimized_dp/examples/TTR_example.py):
+* We have provided an example in [`examples/ttr_example.py`](https://github.com/SFU-MARS/optimized_dp/blob/master/examples/ttr_example.py):
 ```python
 # -------------------------------- ONE-SHOT TTR COMPUTATION ---------------------------------- #
 g = Grid(minBounds=np.array([-3.0, -1.0, -math.pi]), maxBounds=np.array([3.0, 4.0, math.pi]),
@@ -138,7 +150,18 @@ po = PlotOptions( "3d_plot", plotDims=[0,1,2], slicesCut=[],
 epsilon = 0.001
 V_0 = TTRSolver(my_car, g, targetSet, epsilon, po)
 ```
-* To run the example : `python3 TTR_example.py`
+* To run the example : `python3 examples/ttr_example.py`
+
+# Solving a Markov Decision Process (value iteration)
+* We provide a runnable example in [`examples/pendulum_valueIter_example.py`](https://github.com/SFU-MARS/optimized_dp/blob/master/examples/pendulum_valueIter_example.py), and dimension-by-dimension reference examples (3D–6D) in [`odp/MDP_example/`](https://github.com/SFU-MARS/optimized_dp/blob/master/odp/MDP_example).
+* The user supplies an object exposing a `transition(sVals, iVals, u)` method (returning the successor states and their probabilities) and a `reward(sVals, iVals, u)` method, then calls `solveValueIteration`. See the docstring at the top of [`odp/MDP_example/Example_3D.py`](https://github.com/SFU-MARS/optimized_dp/blob/master/odp/MDP_example/Example_3D.py) for a full description of the interface.
+
+# Tests
+* The package ships with an automated test suite under [`tests/`](https://github.com/SFU-MARS/optimized_dp/blob/master/tests) covering the grid/shape utilities and the HJ, time-to-reach and value-iteration solvers (numerical regression tests against stored reference solutions, plus mathematical-property checks).
+* Run them from the repository root inside the `odp` environment:
+
+    ```pip install pytest && python -m pytest```
+
 # Current code structure
 * solver.py: Containing python APIs to interact with the numerical solver
 * dynamics/ : User's dynamical system specification

@@ -4,7 +4,10 @@ import numpy as np
 def updateVopt(obj, current_indices, actions, V, gamma, bounds, ptsEachDim):
     p = hcl.scalar(0, "p")
     best_next_val = hcl.scalar(-1e9, "best_next_val")
-    intermeds = hcl.compute(actions.shape, lambda *x: 0, "intermeds")
+    # NOTE: use the *number* of actions (actions.shape[0]) so that multi-
+    # dimensional action spaces (e.g. (v, w) pairs) are supported, not just
+    # scalar action spaces.
+    intermeds = hcl.compute((actions.shape[0], ), lambda *x: 0, "intermeds")
     with hcl.for_(0, actions.shape[0], name="a") as a:
 
         sVals = discreteIndexToContinuousState(current_indices, bounds, ptsEachDim)

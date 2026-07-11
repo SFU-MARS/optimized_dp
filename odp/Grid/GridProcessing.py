@@ -8,19 +8,36 @@ class Grid:
         self,
         minBounds: List,
         maxBounds: List,
-        dims: int,
-        pts_each_dim: List,
+        dims: int = None,
+        pts_each_dim: List = None,
         periodicDims: List = [],
     ):
         """
         Args:
-            minBounds (list): The lower bounds of each dimension in the grid
-            maxBounds (list): The upper bounds of each dimension in the grid
-            dims (int): The dimension of grid
-            pts_each_dim (list): The number of points for each dimension in the grid
-            periodicDim (list, optional): A list of periodic dimentions (0-indexed). Defaults to [].
+            minBounds (list or np.ndarray): The lower bounds of each dimension in
+                the grid. Plain Python lists and numpy arrays are both accepted.
+            maxBounds (list or np.ndarray): The upper bounds of each dimension.
+            dims (int, optional): The number of dimensions of the grid. This is
+                redundant with ``len(minBounds)`` and is therefore optional: when
+                omitted it is inferred from ``minBounds``. When supplied it is
+                validated against the length of the bound vectors, acting as a
+                simple sanity check on the caller's arguments.
+            pts_each_dim (list or np.ndarray): The number of grid points along
+                each dimension.
+            periodicDims (list, optional): A list of periodic dimensions
+                (0-indexed). Defaults to [].
         """
-        assert len(minBounds) == len(maxBounds) == len(pts_each_dim) == dims
+        if pts_each_dim is None:
+            raise ValueError("pts_each_dim must be provided")
+        # `dims` is redundant with the length of the bound vectors; infer it
+        # when the caller does not pass it explicitly.
+        if dims is None:
+            dims = len(minBounds)
+        assert len(minBounds) == len(maxBounds) == len(pts_each_dim) == dims, (
+            "minBounds, maxBounds, pts_each_dim and dims must all agree in "
+            f"length/value (got {len(minBounds)}, {len(maxBounds)}, "
+            f"{len(pts_each_dim)}, {dims})"
+        )
 
         self.max = np.array(maxBounds)
         self.min = np.array(minBounds)

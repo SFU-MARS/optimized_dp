@@ -1,158 +1,91 @@
+"""
+6-D Markov Decision Process example for OptimizedDP value iteration.
+
+Run with::
+
+    python -m odp.MDP_example.Example_6D
+
+See :mod:`odp.MDP_example.Example_3D` for a description of the value-iteration
+interface.  This is the reach-avoid template in six dimensions and is the
+highest-dimensional MDP exposed through :func:`odp.solver.solveValueIteration`.
+Note that value iteration is subject to the curse of dimensionality: keep the
+per-dimension resolution and the action set modest at this dimension.
+"""
+
 import numpy as np
 import heterocl as hcl
-import os
 
+from odp.Grid import Grid
+from odp.solver import solveValueIteration
+
+_DIMS = 6
 
 
 class MDP_6D_example:
+    def __init__(self):
+        self.bounds = np.array([[-2.5, 2.5]] * _DIMS)
+        self.goal_center = np.zeros(_DIMS)
+        self.goal_radius = 1.0
+        self.wall = 0.2
+        self.maxTransitions = 1
 
-    _bounds     = np.array([[-2.5, 2.5],[-2.5, 2.5],[-2.5, 2.5],[-2.5, 2.5],[-2.5, 2.5],[-2.5, 2.5]])
-    _ptsEachDim = np.array([10, 10, 10, 10, 10, 10])
-    _goal       = np.array([1.5, 1.5, 1.5, 1.5, 1.5, 1.5]) 
+    def _dist_to_goal(self, sVals):
+        acc = hcl.scalar(0, "acc")
+        for d in range(_DIMS):
+            diff = sVals[d] - self.goal_center[d]
+            acc[0] += diff * diff
+        return hcl.sqrt(acc[0])
 
-    # set _actions based on ranges and number of steps
-    # format: range(lower bound, upper bound, number of steps)
-    iValues  = np.linspace(-0.5, 0.5, 3)
-    jValues  = np.linspace(-0.5, 0.5, 3)
-    kValues  = np.linspace(-0.5, 0.5, 3)
-    lValues  = np.linspace(-0.5, 0.5, 3)
-    mValues  = np.linspace(-0.5, 0.5, 3)
-    nValues  = np.linspace(-0.5, 0.5, 3)
-    _actions = []
-    for i in iValues:
-        for j in jValues:
-            for k in kValues:
-                for l in lValues:
-                    for m in mValues:
-                        for n in nValues:
-                            _actions.append((i,j,k,l,m,n))
-    _actions = np.array(_actions)
+    def _hits_wall(self, sVals):
+        flag = hcl.scalar(0, "wall_flag")
+        for d in range(_DIMS):
+            with hcl.if_(hcl.or_(sVals[d] < self.bounds[d, 0] + self.wall,
+                                 sVals[d] > self.bounds[d, 1] - self.wall)):
+                flag[0] = 1
+        return flag
 
-    _gamma      = np.array([0.93])
-    _epsilon    = np.array([.3])
-    _maxIters   = np.array([30])
-    _trans      = np.zeros([1, 7]) # size: [maximum number of transition states available x 4]
-    _useNN      = np.array([1])
-
-
-    # Given state and action, return successor states and their probabilities
-    # sVals:  the coordinates of state
-    # bounds: the lower and upper limits of the state space in each dimension
-    # trans:  holds each successor state and the probability of reaching that state
-    def transition(self, sVals, action, bounds, trans, goal):
-        di  = hcl.scalar(0, "di") 
-        dj  = hcl.scalar(0, "dj") 
-        dk  = hcl.scalar(0, "dk") 
-        dl  = hcl.scalar(0, "dl") 
-        dm  = hcl.scalar(0, "dm") 
-        dn  = hcl.scalar(0, "dn")    
+    def transition(self, sVals, iVals, u):
+        trans = hcl.compute((self.maxTransitions, 1 + _DIMS),
+                            lambda *x: 0, "trans")
         mag = hcl.scalar(0, "mag")
-
-        # Check if moving from a goal state
-        di[0]  = (sVals[0] - goal[0]) * (sVals[0] - goal[0])
-        dj[0]  = (sVals[1] - goal[1]) * (sVals[1] - goal[1])
-        dk[0]  = (sVals[2] - goal[2]) * (sVals[2] - goal[2])
-        dl[0]  = (sVals[3] - goal[3]) * (sVals[3] - goal[3])
-        dm[0]  = (sVals[4] - goal[4]) * (sVals[4] - goal[4])
-        dn[0]  = (sVals[5] - goal[5]) * (sVals[5] - goal[5])
-        mag[0] = hcl.sqrt(di[0] + dj[0] + dk[0] + dl[0] + dm[0] + dn[0])
-
-        # Check if moving from an obstacle 
-        with hcl.if_(mag[0] <= 5.0):
+        wall = self._hits_wall(sVals)
+        mag[0] = self._dist_to_goal(sVals)
+        with hcl.if_(hcl.or_(mag[0] <= self.goal_radius, wall[0] == 1)):
             trans[0, 0] = 0
-        with hcl.elif_(hcl.or_(sVals[0] <= bounds[0,0], sVals[0] >= bounds[0,1])):
-            trans[0, 0] = 0
-        with hcl.elif_(hcl.or_(sVals[1] <= bounds[1,0], sVals[1] >= bounds[1,1])):
-            trans[0, 0] = 0
-        with hcl.elif_(hcl.or_(sVals[2] <= bounds[2,0], sVals[2] >= bounds[2,1])):
-            trans[0, 0] = 0
-        with hcl.elif_(hcl.or_(sVals[3] <= bounds[3,0], sVals[3] >= bounds[3,1])):
-            trans[0, 0] = 0
-        with hcl.elif_(hcl.or_(sVals[4] <= bounds[4,0], sVals[4] >= bounds[4,1])):
-            trans[0, 0] = 0
-        with hcl.elif_(hcl.or_(sVals[5] <= bounds[5,0], sVals[5] >= bounds[5,1])):
-            trans[0, 0] = 0
-
-        # Standard move
         with hcl.else_():
             trans[0, 0] = 1.0
-            trans[0, 1] = sVals[0] + action[0]
-            trans[0, 2] = sVals[1] + action[1]
-            trans[0, 3] = sVals[2] + action[2]
-            trans[0, 4] = sVals[3] + action[3]  
-            trans[0, 5] = sVals[4] + action[4]  
-            trans[0, 6] = sVals[5] + action[5]  
+            for d in range(_DIMS):
+                trans[0, 1 + d] = sVals[d] + u[d]
+        return trans
 
-    # Return the reward for taking action from state
-    def reward(self, sVals, action, bounds, goal, trans):
-        di  = hcl.scalar(0, "di") 
-        dj  = hcl.scalar(0, "dj") 
-        dk  = hcl.scalar(0, "dk") 
-        dl  = hcl.scalar(0, "dl") 
-        dm  = hcl.scalar(0, "dm") 
-        dn  = hcl.scalar(0, "dn") 
+    def reward(self, sVals, iVals, u):
         mag = hcl.scalar(0, "mag")
         rwd = hcl.scalar(0, "rwd")
-
-        # Check if moving from a collision state, if so, assign a penalty
-        with hcl.if_(hcl.or_(sVals[0] <= bounds[0,0], sVals[0] >= bounds[0,1])):
+        wall = self._hits_wall(sVals)
+        with hcl.if_(wall[0] == 1):
             rwd[0] = -400
-        with hcl.elif_(hcl.or_(sVals[1] <= bounds[1,0], sVals[1] >= bounds[1,1])):
-            rwd[0] = -400
-        with hcl.elif_(hcl.or_(sVals[2] <= bounds[2,0], sVals[2] >= bounds[2,1])):
-            rwd[0] = -400
-        with hcl.elif_(hcl.or_(sVals[3] <= bounds[3,0], sVals[3] >= bounds[3,1])):
-            rwd[0] = -400
-        with hcl.elif_(hcl.or_(sVals[4] <= bounds[4,0], sVals[4] >= bounds[4,1])):
-            rwd[0] = -400
-        with hcl.elif_(hcl.or_(sVals[5] <= bounds[5,0], sVals[5] >= bounds[5,1])):
-            rwd[0] = -400
-
         with hcl.else_():
-            # Check if moving from a goal state
-            di[0]  = (sVals[0] - goal[0]) * (sVals[0] - goal[0])
-            dj[0]  = (sVals[1] - goal[1]) * (sVals[1] - goal[1])
-            dk[0]  = (sVals[2] - goal[2]) * (sVals[2] - goal[2])
-            dl[0]  = (sVals[3] - goal[3]) * (sVals[3] - goal[3])
-            dm[0]  = (sVals[4] - goal[4]) * (sVals[4] - goal[4])
-            dn[0]  = (sVals[5] - goal[5]) * (sVals[5] - goal[5])
-            mag[0] = hcl.sqrt(di[0] + dj[0] + dk[0] + dl[0] + dm[0] + dn[0])
-            with hcl.if_(mag[0] <= 5.0):
+            mag[0] = self._dist_to_goal(sVals)
+            with hcl.if_(mag[0] <= self.goal_radius):
                 rwd[0] = 1000
-            # Standard move
-            with hcl.else_():                
+            with hcl.else_():
                 rwd[0] = 0
         return rwd[0]
 
-    def writeResults(self, V, dir_path, file_name, just_values=False):
-        # Create directory for results if one does not exist
-        print("\nRecording results")
-        try:
-            os.mkdir(dir_path)
-            print("Created directory: ", dir_path)
-        except:
-            print("Writing to: '", dir_path, "'")
-        # Open file and write results
-        f = open(dir_path + file_name, "w")
-        for i in range(V.shape[0]):
-            for j in range(V.shape[1]):
-                for k in range(V.shape[2]):
-                    for l in range(V.shape[3]):
-                        for m in range(V.shape[4]):
-                            for n in range(V.shape[5]):
-                                s = ""
-                                if not just_values:
-                                    si = ((i / (self._ptsEachDim[0] - 1)) * (self._bounds[0, 1] - self._bounds[0, 0])) + self._bounds[0, 0]
-                                    sj = ((j / (self._ptsEachDim[1] - 1)) * (self._bounds[1, 1] - self._bounds[1, 0])) + self._bounds[1, 0]
-                                    sk = ((k / (self._ptsEachDim[2] - 1)) * (self._bounds[2, 1] - self._bounds[2, 0])) + self._bounds[2, 0]
-                                    sl = ((l / (self._ptsEachDim[3] - 1)) * (self._bounds[3, 1] - self._bounds[3, 0])) + self._bounds[3, 0]
-                                    sm = ((m / (self._ptsEachDim[4] - 1)) * (self._bounds[4, 1] - self._bounds[4, 0])) + self._bounds[4, 0]
-                                    sn = ((n / (self._ptsEachDim[5] - 1)) * (self._bounds[5, 1] - self._bounds[5, 0])) + self._bounds[5, 0]
 
-                                    state = ("{:.4f}".format(si), "{:.4f}".format(sj), "{:.4f}".format(sk),
-                                             "{:.4f}".format(sl), "{:.4f}".format(sm), "{:.4f}".format(sn))
-                                    s = str(state) + "   " + str("{:.4f}".format(V[(i, j, k, l, m, n)])) + '\n'
-                                else:
-                                    s = str("{:.4f}".format(V[(i, j, k, l, m, n)])) + ',\n'
-                                f.write(s)
-        print("Finished recording results")
+def main():
+    mdp = MDP_6D_example()
+    grid = Grid(minBounds=mdp.bounds[:, 0], maxBounds=mdp.bounds[:, 1],
+                dims=_DIMS, pts_each_dim=np.array([7] * _DIMS))
+    step = np.linspace(-0.5, 0.5, 3)
+    actions = np.array(np.meshgrid(*([step] * _DIMS))).T.reshape(-1, _DIMS)
+    value_function = solveValueIteration(
+        mdp, grid=grid, action_space=actions,
+        gamma=np.array([0.93]), epsilon=np.array([0.3]),
+        maxIters=np.array([50]))
+    print("Value function shape:", value_function.shape)
+    return value_function
+
+
+if __name__ == "__main__":
+    main()

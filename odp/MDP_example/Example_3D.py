@@ -1,174 +1,154 @@
+"""
+3-D Markov Decision Process example for OptimizedDP value iteration.
+
+This file documents, and provides a runnable example of, the **current**
+MDP / value-iteration interface used by :func:`odp.solver.solveValueIteration`.
+
+Run it directly with::
+
+    python -m odp.MDP_example.Example_3D
+
+--------------------------------------------------------------------------------
+VALUE-ITERATION INTERFACE
+--------------------------------------------------------------------------------
+The user supplies a plain Python object exposing two methods and one attribute:
+
+    maxTransitions : int
+        The maximum number of successor states that ``transition`` can return
+        for any (state, action) pair.  For a deterministic system this is 1.
+
+    transition(self, sVals, iVals, u) -> hcl.compute tensor
+        Returns a matrix of shape ``(maxTransitions, 1 + n_dims)`` describing the
+        possible successor states of taking action ``u`` from state ``sVals``:
+            row i, column 0            : probability of transition i
+            row i, columns 1 .. n_dims : the successor state values of transition i
+        The probabilities in column 0 should sum to 1 (or to 0 to indicate an
+        absorbing / terminal state that receives no future reward).
+
+    reward(self, sVals, iVals, u) -> hcl.scalar value
+        The immediate reward for taking action ``u`` from state ``sVals``.
+
+    Method arguments:
+        sVals : the *continuous* state values, sVals[k] = value of dimension k.
+        iVals : the *integer grid indices* of that state (iVals[k] = index of
+                dimension k).  Provided for convenience; unused here.
+        u     : the action, one element of ``action_space``.
+
+The state space, grid resolution, discount factor, convergence tolerance and
+iteration cap are passed to :func:`solveValueIteration` (see ``__main__`` below);
+they are no longer declared as class attributes.
+"""
+
+import math
+
 import numpy as np
 import heterocl as hcl
-import os
 
-####################################################################################################
-#                                                                                                  #
-#                                  VALUE ITERATION DOCUMENTATION                                   #
-#                                                                                                  #
-#                                                                                                  #
-# 1. REQUIRED FUNCTIONS                                                                            #
-# The user is required to provide implementations of the following state transition and reward     #
-# functions:                                                                                       #
-#                                                                                                  #
-#       transition(sVals, action, bounds, trans, goal)                                             #
-#       reward(sVals, action, bounds, goal, trans)                                                 #
-#                                                                                                  #
-#       1.1 PARAMETERS                                                                             #
-#       sVals:  a vector containing state values                                                   #
-#               Format: sVals[0] = state dimension 1, sVals[1] = state dimension 2, .....          #
-#       action: the action taken from the state specified by sVals                                 #
-#               Format: user-specified. This is used exclusively in user-defined functions         #
-#       bounds: the lower and upper limits of the state space in each dimension                    #
-#               Format: bounds[i,0] is the lower bound of dimension i, bounds[i,1] is the upper    #
-#       trans:  a matrix containing the possible successor states when taking action from the      #
-#               state defined by sVals.                                                            #
-#               Format: the size of this vector must be:                                           #
-#                       maximum number of possible transitions x number of state dimensions + 1    #
-#                       The first element of each row of trans will be a probability, and the      #
-#                       remaining elements will be the state values of that transition state       #
-#                       ex. trans[i, 0] is the probability of making transition i,                 #
-#                           trans[i, 1] is the first state dimension of transition i               #
-#       goal:   a vector defining the goal region                                                  #
-#               Format: user-specified. This is used exclusively in user-defined functions         #
-#                                                                                                  #
-# 2. PROBLEM DECLARATION                                                                           #
-# The user is required to provide declarations of a series of variables that define the value      #
-# iteration problem:                                                                               #
-#                                                                                                  #
-#       2.1 VARIABLE DECLARATIONS                                                                  #
-#       _bounds:     a matrix defining the state space boundaries                                  #
-#                    Format: np.array([[iMin, iMax], [jMin, jMax], ... , [nMin, nMax])             #
-#       _ptsEachDim: the number of grid spaces for each dimension                                  #
-#                    Format: np.array([ptsDimension1, ptsDimension2, ... , ptsDimensionN])         #
-#       _actions:    The set of actions that can be taken from any state                           #
-#                    Format: np.array([action1, action2, ... , actionN])                           #
-#       _gamma:      the discount factor                                                           #
-#                    Format: np.array([value])                                                     #
-#       _epsilon:    the convergence number. The algorithm is considered to have converged to the  #
-#                    optimal value function when the largest difference between values is less     #
-#                    than _epsilon.                                                                #
-#                    Format: np.array([value])                                                     #
-#       _maxIters:   the maximum number of iterations that will be performed without convergence   #
-#                    Format: np.array([value])                                                     #
-#       _trans:      a placeholder matrix containing possible successor states.                    #
-#                    Format: np.zeros([maximumNumberOfTransitionStates, 1 + numberOfDimensions])   #
-#                    Usage:  The first value of each row is the probability of the transition. The #
-#                            remaining n values of that row are the n values of the state space    #
-#       _useNN:      a flag for choosing between Nearest Neighbour and Linear Interpolation modes  #
-#                    Format: np.array([0]) to use Linear Interpolation                             #
-#                            np.array([1]) to use Nearest Neighbour                                #
-#       _fillVal     the fill value for the Linear Interpolation method. This value is assigned to #
-#                    states that are out of the state space bounds.                                #
-#                    Format: np.array([value])                                                     #
-#                    Usage: this variable must be declared, even if using the Nearest Neighbour    #
-#                           method. In this case, the value assigned is of no significance.        #
-#                                                                                                  #
-#                                                                                                  #
-#                                                                                                  #
-####################################################################################################
+from odp.Grid import Grid
+from odp.solver import solveValueIteration
+
 
 class MDP_3D_example:
+    """A Dubins-car-style reach-avoid MDP on a 3-D (x, y, theta) grid."""
 
-    _bounds     = np.array([[-5.0, 5.0],[-5.0, 5.0],[-3.141592653589793, 3.141592653589793]])
-    _ptsEachDim = np.array([25, 25, 9])
-    _goal       = np.array([[3.5, 3.5], [1.5707, 2.3562]]) 
+    def __init__(self):
+        # Absorbing goal region: position within radius 1 of (3.5, 3.5) with a
+        # heading between pi/2 and 3pi/4.
+        self.goal_xy = np.array([3.5, 3.5])
+        self.goal_radius = 1.0
+        self.goal_theta = np.array([1.5707, 2.3562])
+        # State-space bounds (must match the Grid created in __main__).
+        self.bounds = np.array([[-5.0, 5.0],
+                                [-5.0, 5.0],
+                                [-math.pi, math.pi]])
+        self.wall = 0.2          # obstacle margin next to the domain walls
+        self.step = 0.6          # integration step for the deterministic move
+        self.maxTransitions = 1  # deterministic dynamics -> single successor
 
-    # set _actions based on ranges and number of steps
-    # format: range(lower bound, upper bound, number of steps)
-    vValues  = np.linspace(-2, 2, 9)
-    wValues  = np.linspace(-1, 1, 9)
-    _actions = []
-    for i in vValues:
-        for j in wValues:
-            _actions.append((i,j))
-    _actions = np.array(_actions)
+    # --- required interface -------------------------------------------------
+    def transition(self, sVals, iVals, u):
+        trans = hcl.compute((self.maxTransitions, 1 + 3), lambda *x: 0, "trans")
 
-    _gamma    = np.array([0.93])
-    _epsilon  = np.array([.3])
-    _maxIters = np.array([500])
-    _trans    = np.zeros([1, 4]) # size: [maximum number of transition states available x 4]
-    _useNN    = np.array([0])
-    _fillVal  = np.array([-400])
-
-    # Given state and action, return successor states and their probabilities
-    # sVals:  the coordinates of state
-    # bounds: the lower and upper limits of the state space in each dimension
-    # trans:  holds each successor state and the probability of reaching that state
-    def transition(self, sVals, action, bounds, trans, goal):
-        dx  = hcl.scalar(0, "dx")
-        dy  = hcl.scalar(0, "dy")
+        dx = hcl.scalar(0, "dx")
+        dy = hcl.scalar(0, "dy")
         mag = hcl.scalar(0, "mag")
+        dx[0] = sVals[0] - self.goal_xy[0]
+        dy[0] = sVals[1] - self.goal_xy[1]
+        mag[0] = hcl.sqrt(dx[0] * dx[0] + dy[0] * dy[0])
 
-        # Check if moving from a goal state
-        dx[0]  = sVals[0] - goal[0,0]
-        dy[0]  = sVals[1] - goal[0,1]
-        mag[0] = hcl.sqrt((dx[0] * dx[0]) + (dy[0] * dy[0]))
-        with hcl.if_(hcl.and_(mag[0] <= 1.0, sVals[2] <= goal[1,1], sVals[2] >= goal[1,0])):
+        # Terminal (absorbing) states get probability 0 -> no future reward.
+        with hcl.if_(hcl.and_(mag[0] <= self.goal_radius,
+                              sVals[2] <= self.goal_theta[1],
+                              sVals[2] >= self.goal_theta[0])):
             trans[0, 0] = 0
-        # Check if moving from an obstacle 
-        with hcl.elif_(hcl.or_(sVals[0] < bounds[0,0] + 0.2, sVals[0] > bounds[0,1] - 0.2)):
+        with hcl.elif_(hcl.or_(sVals[0] < self.bounds[0, 0] + self.wall,
+                               sVals[0] > self.bounds[0, 1] - self.wall)):
             trans[0, 0] = 0
-        with hcl.elif_(hcl.or_(sVals[1] < bounds[1,0] + 0.2, sVals[1] > bounds[1,1] - 0.2)):
+        with hcl.elif_(hcl.or_(sVals[1] < self.bounds[1, 0] + self.wall,
+                               sVals[1] > self.bounds[1, 1] - self.wall)):
             trans[0, 0] = 0
-        # Standard move
+        # Standard deterministic move.
         with hcl.else_():
             trans[0, 0] = 1.0
-            trans[0, 1] = sVals[0] + (0.6 * action[0] * hcl.cos(sVals[2]))
-            trans[0, 2] = sVals[1] + (0.6 * action[0] * hcl.sin(sVals[2]))
-            trans[0, 3] = sVals[2] + (0.6 * action[1])
-            # Adjust for periodic dimension
-            with hcl.while_(trans[0, 3] > 3.141592653589793):
-                trans[0, 3] -= 6.283185307179586
-            with hcl.while_(trans[0, 3] < -3.141592653589793):
-                trans[0, 3] += 6.283185307179586
+            trans[0, 1] = sVals[0] + self.step * u[0] * hcl.cos(sVals[2])
+            trans[0, 2] = sVals[1] + self.step * u[0] * hcl.sin(sVals[2])
+            trans[0, 3] = sVals[2] + self.step * u[1]
+            # Wrap the periodic heading dimension back into [-pi, pi).
+            with hcl.while_(trans[0, 3] > math.pi):
+                trans[0, 3] -= 2 * math.pi
+            with hcl.while_(trans[0, 3] < -math.pi):
+                trans[0, 3] += 2 * math.pi
+        return trans
 
-    # Return the reward for taking action from state
-    def reward(self, sVals, action, bounds, goal, trans):
-        dx  = hcl.scalar(0, "dx")
-        dy  = hcl.scalar(0, "dy")
+    def reward(self, sVals, iVals, u):
+        dx = hcl.scalar(0, "dx")
+        dy = hcl.scalar(0, "dy")
         mag = hcl.scalar(0, "mag")
         rwd = hcl.scalar(0, "rwd")
 
-        # Check if moving from a collision state, if so, assign a penalty
-        with hcl.if_(hcl.or_(sVals[0] < bounds[0,0] + 0.2, sVals[0] > bounds[0,1] - 0.2)):
+        with hcl.if_(hcl.or_(sVals[0] < self.bounds[0, 0] + self.wall,
+                             sVals[0] > self.bounds[0, 1] - self.wall)):
             rwd[0] = -400
-        with hcl.elif_(hcl.or_(sVals[1] < bounds[1,0] + 0.2, sVals[1] > bounds[1,1] - 0.2)):
+        with hcl.elif_(hcl.or_(sVals[1] < self.bounds[1, 0] + self.wall,
+                               sVals[1] > self.bounds[1, 1] - self.wall)):
             rwd[0] = -400
         with hcl.else_():
-            # Check if moving from a goal state
-            dx[0]  = sVals[0] - goal[0,0]
-            dy[0]  = sVals[1] - goal[0,1]
-            mag[0] = hcl.sqrt((dx[0] * dx[0]) + (dy[0] * dy[0]))
-            with hcl.if_(hcl.and_(mag[0] <= 1.0, sVals[2] <= goal[1,1], sVals[2] >= goal[1,0])):
+            dx[0] = sVals[0] - self.goal_xy[0]
+            dy[0] = sVals[1] - self.goal_xy[1]
+            mag[0] = hcl.sqrt(dx[0] * dx[0] + dy[0] * dy[0])
+            with hcl.if_(hcl.and_(mag[0] <= self.goal_radius,
+                                  sVals[2] <= self.goal_theta[1],
+                                  sVals[2] >= self.goal_theta[0])):
                 rwd[0] = 1000
-            # Standard move
             with hcl.else_():
                 rwd[0] = 0
         return rwd[0]
 
-    # Provide a print function
-    def writeResults(self, V, dir_path, file_name, just_values=False):
-        # Create directory for results if one does not exist
-        print("\nRecording results")
-        try:
-            os.mkdir(dir_path)
-            print("Created directory: ", dir_path)
-        except:
-            print("Writing to: '", dir_path, "'")
-        # Open file and write results
-        f = open(dir_path + file_name, "w")
-        for k in range(V.shape[2]):
-            for i in range(V.shape[0]):
-                for j in range(V.shape[1]):
-                    s = ""
-                    if not just_values:
-                        si = ((i / (self._ptsEachDim[0] - 1)) * (self._bounds[0, 1] - self._bounds[0, 0])) + self._bounds[0, 0]
-                        sj = ((j / (self._ptsEachDim[1] - 1)) * (self._bounds[1, 1] - self._bounds[1, 0])) + self._bounds[1, 0]
-                        sk = ((k / (self._ptsEachDim[2] - 1)) * (self._bounds[2, 1] - self._bounds[2, 0])) + self._bounds[2, 0]
-                        state = ("{:.4f}".format(si), "{:.4f}".format(sj), "{:.4f}".format(sk))
-                        s = str(state) + "   " + str("{:.4f}".format(V[(i, j, k)])) + '\n'
-                    else:
-                        s = str("{:.4f}".format(V[(i, j, k)])) + ',\n'
-                    f.write(s)
-        print("Finished recording results")
+
+def main():
+    mdp = MDP_3D_example()
+    grid = Grid(minBounds=mdp.bounds[:, 0],
+                maxBounds=mdp.bounds[:, 1],
+                dims=3,
+                pts_each_dim=np.array([25, 25, 9]),
+                periodicDims=[2])
+
+    # Action space: (linear velocity, angular velocity) pairs.
+    v_values = np.linspace(-2.0, 2.0, 9)
+    w_values = np.linspace(-1.0, 1.0, 9)
+    actions = np.array([(v, w) for v in v_values for w in w_values])
+
+    value_function = solveValueIteration(
+        mdp,
+        grid=grid,
+        action_space=actions,
+        gamma=np.array([0.93]),
+        epsilon=np.array([0.3]),
+        maxIters=np.array([500]),
+    )
+    print("Value function shape:", value_function.shape)
+    return value_function
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,37 @@
+name: tests
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        # Login shell so that `conda activate` works.
+        shell: bash -l {0}
+    steps:
+      - uses: actions/checkout@v4
+
+      # HeteroCL 0.3 links against the legacy ncurses5 runtime.
+      - name: Install system dependencies (libtinfo5)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libtinfo5 || \
+            sudo apt-get install -y libtinfo6
+
+      - name: Set up conda environment
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          activate-environment: odp
+          environment-file: environment.yml
+          auto-activate-base: false
+
+      - name: Install package (editable)
+        run: pip install -e .
+
+      - name: Run test suite
+        run: python -m pytest

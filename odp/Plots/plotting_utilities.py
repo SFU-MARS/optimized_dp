@@ -258,8 +258,9 @@ def plot_isosurface(grid, my_V, plot_option):
     if plot_option.save_fig:
         if plot_option.interactive_html:
             fig.write_html(plot_option.filename + ".html")
-        # Save an image by default
-        fig.write_image(plot_option.filename)
+        else:
+            # Save a static image (filename must include an extension, e.g. .png)
+            fig.write_image(plot_option.filename)
 
 
 def plot_valuefunction(grid, my_V, plot_option):
