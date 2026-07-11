@@ -156,12 +156,12 @@ class DubinsAirplane6D:
             if spat_deriv[4] > 0:
                 opt_u_gamma = self.uMin[0]
             if spat_deriv[5] > 0:
-                opt_u_phi = self.uMin[2]
+                opt_u_phi = self.uMin[1]
         else:
             if spat_deriv[4] < 0:
                 opt_u_gamma = -self.uMin[0]
             if spat_deriv[5] < 0:
-                opt_u_phi = -self.uMin[2]
+                opt_u_phi = -self.uMin[1]
 
         return opt_u_gamma, opt_u_phi
 
