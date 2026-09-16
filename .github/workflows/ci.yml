@@ -21,7 +21,7 @@ jobs:
         uses: conda-incubator/setup-miniconda@v3
         with:
           environment-file: environment.yml
-          activate-environment: ${{ env.odp }}
+          activate-environment: odp
           auto-activate-base: false
 
       - name: Install optimized_dp package and dependencies
@@ -29,6 +29,13 @@ jobs:
         run: |
           pip install -e .
           pip install pytest pytest-cov
+
+      - name: Debug conda env
+        shell: bash -l {0}
+        run: |
+          conda info --envs
+          which python
+          python -c "import numpy; print(numpy.__version__)"
 
       - name: Run tests
         shell: bash -l {0}
