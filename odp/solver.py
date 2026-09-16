@@ -6,7 +6,7 @@ from odp.Plots import plot_isosurface, plot_valuefunction
 
 # Backward reachable set computation library
 from odp.computeGraphs import graph_1D, graph_2D, graph_3D, graph_4D, graph_5D, graph_6D
-from odp.TimeToReach import TTR_2D, TTR_3D, TTR_4D, TTR_5D, TTR_6D
+from odp.TimeToReach import TTR_1D, TTR_2D, TTR_3D, TTR_4D, TTR_5D, TTR_6D
 
 # Value Iteration library
 from odp.valueIteration import value_iteration_2D, value_iteration_3D, value_iteration_4D, value_iteration_5D, value_iteration_6D
@@ -103,12 +103,12 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
 
     # Tensors input to our computation graph
     V_t = hcl.asarray(init_value)
-    Hamiltonian = hcl.asarray(np.zeros(tuple(grid.pts_each_dim)))
-    delta_t = hcl.asarray(np.zeros(1))
-    
+    Hamiltonian = hcl.asarray(np.zeros(tuple(grid.pts_each_dim), dtype=np.float32))
+    delta_t = hcl.asarray(np.zeros(1, dtype=np.float32))
+
     if computeTimeToReach:
         # Indirect TTR computation
-        time_to_reach = np.ones(tuple(grid.pts_each_dim)) * 10000  # when attacker bound to win
+        time_to_reach = np.ones(tuple(grid.pts_each_dim), dtype=np.float32) * 10000  # when attacker bound to win
         time_to_reach[init_value <= 0] = 0.
     
     # Check which target set or initial value set
@@ -317,7 +317,7 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
         return V_t.asnumpy(), time_to_reach
     return V_t.asnumpy()
 
-def TTRSolver(dynamics_obj, grid, multiple_value, epsilon):
+def TTRSolver(dynamics_obj, grid, multiple_value, epsilon, verbose=True):
     print("Welcome to optimized_dp TTRSolver \n")
     ################# INITIALIZE DATA TO BE INPUT INTO EXECUTABLE ##########################
 
@@ -380,8 +380,8 @@ def TTRSolver(dynamics_obj, grid, multiple_value, epsilon):
         list_x6 = hcl.asarray(list_x6)
 
     # Get executable
-    # if grid.dims == 1:
-    #     solve_TTR = TTR_1D(dynamics_obj, grid)
+    if grid.dims == 1:
+        solve_TTR = TTR_1D(dynamics_obj, grid)
     if grid.dims == 2:
         solve_TTR = TTR_2D(dynamics_obj, grid)
     if grid.dims == 3:
@@ -404,7 +404,8 @@ def TTRSolver(dynamics_obj, grid, multiple_value, epsilon):
     count = 0
     start = time.time()
     while error > epsilon:
-        print("Iteration: {} Error: {}".format(count, error))
+        if verbose:
+            print("Iteration: {} Error: {}".format(count, error))
         count += 1
         if grid.dims == 1:
             solve_TTR(V_0, list_x1)
@@ -422,8 +423,8 @@ def TTRSolver(dynamics_obj, grid, multiple_value, epsilon):
         error = np.max(np.abs(prev_val - V_0.asnumpy()))
         prev_val = V_0.asnumpy()
                      
-    print("Total TTR computation time (s): {:.5f}".format(time.time() - start))
-    print("Finished solving\n")
+    # print("Total TTR computation time (s): {:.5f}".format(time.time() - start))
+    # print("Finished solving\n")
 
     ##################### PLOTTING #####################
     return V_0.asnumpy()
@@ -454,6 +455,9 @@ def computeSpatDerivArray(grid, V, deriv_dim, accuracy="low"):
                                      generate_SpatDeriv=True, deriv_dim=deriv_dim)
     if grid.dims == 5:
         compute_SpatDeriv = graph_5D(None, grid, "None", accuracy,
+                                     generate_SpatDeriv=True, deriv_dim=deriv_dim)
+    if grid.dims == 6:
+        compute_SpatDeriv = graph_6D(None, grid, "None", accuracy,
                                      generate_SpatDeriv=True, deriv_dim=deriv_dim)
 
     compute_SpatDeriv(V_0, spatial_deriv)
