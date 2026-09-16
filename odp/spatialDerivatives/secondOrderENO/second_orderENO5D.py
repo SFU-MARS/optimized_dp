@@ -17,7 +17,7 @@ def secondOrder_ENO5D_X0(i0, i1, i2, i3, i4, V, g):
 			V_i_plus_2[0] = V[i0 + 2, i1, i2, i3, i4]
 		with hcl.elif_(i0 == 1):
 			V_i_minus_1[0] = V[i0 - 1, i1, i2, i3, i4]
-			V_i_minus_2[0] = V[i0, i1, i2, i3, i4] + my_abs(V[i0, i1, i2, i3, i4] - V[i0 - 1, i1, i2, i3, i4]) * my_sign(V[i0, i1, i2, i3, i4])
+			V_i_minus_2[0] = V[i0 - 1, i1, i2, i3, i4] + my_abs(V[i0, i1, i2, i3, i4] - V[i0 - 1, i1, i2, i3, i4]) * my_sign(V[i0 - 1, i1, i2, i3, i4])
 			V_i_plus_1[0] = V[i0 + 1, i1, i2, i3, i4]
 			V_i_plus_2[0] = V[i0 + 2, i1, i2, i3, i4]
 		with hcl.elif_(i0 == V.shape[0] - 1):
@@ -29,7 +29,7 @@ def secondOrder_ENO5D_X0(i0, i1, i2, i3, i4, V, g):
 			V_i_minus_1[0] = V[i0 - 1, i1, i2, i3, i4]
 			V_i_minus_2[0] = V[i0 - 2, i1, i2, i3, i4]
 			V_i_plus_1[0] = V[i0 + 1, i1, i2, i3, i4]
-			V_i_plus_2[0] =V[i0, i1, i2, i3, i4] + my_abs(V[i0 + 1, i1, i2, i3, i4] - V[i0, i1, i2, i3, i4]) * my_sign(V[i0, i1, i2, i3, i4])
+			V_i_plus_2[0] =V[i0 + 1, i1, i2, i3, i4] + my_abs(V[i0 + 1, i1, i2, i3, i4] - V[i0, i1, i2, i3, i4]) * my_sign(V[i0 + 1, i1, i2, i3, i4])
 		with hcl.else_():
 			V_i_minus_1[0] = V[i0 - 1, i1, i2, i3, i4]
 			V_i_minus_2[0] = V[i0 - 2, i1, i2, i3, i4]
@@ -97,7 +97,7 @@ def secondOrder_ENO5D_X1(i0, i1, i2, i3, i4, V, g):
 			V_i_plus_2[0] = V[i0, i1 + 2, i2, i3, i4]
 		with hcl.elif_(i1 == 1):
 			V_i_minus_1[0] = V[i0, i1 - 1, i2, i3, i4]
-			V_i_minus_2[0] = V[i0, i1, i2, i3, i4] + my_abs(V[i0, i1, i2, i3, i4] - V[i0, i1 - 1, i2, i3, i4]) * my_sign(V[i0, i1, i2, i3, i4])
+			V_i_minus_2[0] = V[i0, i1 - 1, i2, i3, i4] + my_abs(V[i0, i1, i2, i3, i4] - V[i0, i1 - 1, i2, i3, i4]) * my_sign(V[i0, i1 - 1, i2, i3, i4])
 			V_i_plus_1[0] = V[i0, i1 + 1, i2, i3, i4]
 			V_i_plus_2[0] = V[i0, i1 + 2, i2, i3, i4]
 		with hcl.elif_(i1 == V.shape[1] - 1):
@@ -109,7 +109,7 @@ def secondOrder_ENO5D_X1(i0, i1, i2, i3, i4, V, g):
 			V_i_minus_1[0] = V[i0, i1 - 1, i2, i3, i4]
 			V_i_minus_2[0] = V[i0, i1 - 2, i2, i3, i4]
 			V_i_plus_1[0] = V[i0, i1 + 1, i2, i3, i4]
-			V_i_plus_2[0] =V[i0, i1, i2, i3, i4] + my_abs(V[i0, i1 + 1, i2, i3, i4] - V[i0, i1, i2, i3, i4]) * my_sign(V[i0, i1, i2, i3, i4])
+			V_i_plus_2[0] = V[i0, i1 + 1, i2, i3, i4] + my_abs(V[i0, i1 + 1, i2, i3, i4] - V[i0, i1, i2, i3, i4]) * my_sign(V[i0, i1 + 1, i2, i3, i4])
 		with hcl.else_():
 			V_i_minus_1[0] = V[i0, i1 - 1, i2, i3, i4]
 			V_i_minus_2[0] = V[i0, i1 - 2, i2, i3, i4]
@@ -177,7 +177,7 @@ def secondOrder_ENO5D_X2(i0, i1, i2, i3, i4, V, g):
 			V_i_plus_2[0] = V[i0, i1, i2 + 2, i3, i4]
 		with hcl.elif_(i2 == 1):
 			V_i_minus_1[0] = V[i0, i1, i2 - 1, i3, i4]
-			V_i_minus_2[0] = V[i0, i1, i2, i3, i4] + my_abs(V[i0, i1, i2, i3, i4] - V[i0, i1, i2 - 1, i3, i4]) * my_sign(V[i0, i1, i2, i3, i4])
+			V_i_minus_2[0] = V[i0, i1, i2 - 1, i3, i4] + my_abs(V[i0, i1, i2, i3, i4] - V[i0, i1, i2 - 1, i3, i4]) * my_sign(V[i0, i1, i2 - 1, i3, i4])
 			V_i_plus_1[0] = V[i0, i1, i2 + 1, i3, i4]
 			V_i_plus_2[0] = V[i0, i1, i2 + 2, i3, i4]
 		with hcl.elif_(i2 == V.shape[2] - 1):
@@ -189,7 +189,7 @@ def secondOrder_ENO5D_X2(i0, i1, i2, i3, i4, V, g):
 			V_i_minus_1[0] = V[i0, i1, i2 - 1, i3, i4]
 			V_i_minus_2[0] = V[i0, i1, i2 - 2, i3, i4]
 			V_i_plus_1[0] = V[i0, i1, i2 + 1, i3, i4]
-			V_i_plus_2[0] =V[i0, i1, i2, i3, i4] + my_abs(V[i0, i1, i2 + 1, i3, i4] - V[i0, i1, i2, i3, i4]) * my_sign(V[i0, i1, i2, i3, i4])
+			V_i_plus_2[0] = V[i0, i1, i2 + 1, i3, i4] + my_abs(V[i0, i1, i2 + 1, i3, i4] - V[i0, i1, i2, i3, i4]) * my_sign(V[i0, i1, i2 + 1, i3, i4])
 		with hcl.else_():
 			V_i_minus_1[0] = V[i0, i1, i2 - 1, i3, i4]
 			V_i_minus_2[0] = V[i0, i1, i2 - 2, i3, i4]
@@ -257,7 +257,7 @@ def secondOrder_ENO5D_X3(i0, i1, i2, i3, i4, V, g):
 			V_i_plus_2[0] = V[i0, i1, i2, i3 + 2, i4]
 		with hcl.elif_(i3 == 1):
 			V_i_minus_1[0] = V[i0, i1, i2, i3 - 1, i4]
-			V_i_minus_2[0] = V[i0, i1, i2, i3, i4] + my_abs(V[i0, i1, i2, i3, i4] - V[i0, i1, i2, i3 - 1, i4]) * my_sign(V[i0, i1, i2, i3, i4])
+			V_i_minus_2[0] = V[i0, i1, i2, i3 - 1, i4] + my_abs(V[i0, i1, i2, i3, i4] - V[i0, i1, i2, i3 - 1, i4]) * my_sign(V[i0, i1, i2, i3 - 1, i4])
 			V_i_plus_1[0] = V[i0, i1, i2, i3 + 1, i4]
 			V_i_plus_2[0] = V[i0, i1, i2, i3 + 2, i4]
 		with hcl.elif_(i3 == V.shape[3] - 1):
@@ -269,7 +269,7 @@ def secondOrder_ENO5D_X3(i0, i1, i2, i3, i4, V, g):
 			V_i_minus_1[0] = V[i0, i1, i2, i3 - 1, i4]
 			V_i_minus_2[0] = V[i0, i1, i2, i3 - 2, i4]
 			V_i_plus_1[0] = V[i0, i1, i2, i3 + 1, i4]
-			V_i_plus_2[0] =V[i0, i1, i2, i3, i4] + my_abs(V[i0, i1, i2, i3 + 1, i4] - V[i0, i1, i2, i3, i4]) * my_sign(V[i0, i1, i2, i3, i4])
+			V_i_plus_2[0] = V[i0, i1, i2, i3 + 1, i4] + my_abs(V[i0, i1, i2, i3 + 1, i4] - V[i0, i1, i2, i3, i4]) * my_sign(V[i0, i1, i2, i3 + 1, i4])
 		with hcl.else_():
 			V_i_minus_1[0] = V[i0, i1, i2, i3 - 1, i4]
 			V_i_minus_2[0] = V[i0, i1, i2, i3 - 2, i4]
@@ -337,7 +337,7 @@ def secondOrder_ENO5D_X4(i0, i1, i2, i3, i4, V, g):
 			V_i_plus_2[0] = V[i0, i1, i2, i3, i4 + 2]
 		with hcl.elif_(i4 == 1):
 			V_i_minus_1[0] = V[i0, i1, i2, i3, i4 - 1]
-			V_i_minus_2[0] = V[i0, i1, i2, i3, i4] + my_abs(V[i0, i1, i2, i3, i4] - V[i0, i1, i2, i3, i4 - 1]) * my_sign(V[i0, i1, i2, i3, i4])
+			V_i_minus_2[0] = V[i0, i1, i2, i3, i4 - 1] + my_abs(V[i0, i1, i2, i3, i4] - V[i0, i1, i2, i3, i4 - 1]) * my_sign(V[i0, i1, i2, i3, i4 - 1])
 			V_i_plus_1[0] = V[i0, i1, i2, i3, i4 + 1]
 			V_i_plus_2[0] = V[i0, i1, i2, i3, i4 + 2]
 		with hcl.elif_(i4 == V.shape[4] - 1):
@@ -349,7 +349,7 @@ def secondOrder_ENO5D_X4(i0, i1, i2, i3, i4, V, g):
 			V_i_minus_1[0] = V[i0, i1, i2, i3, i4 - 1]
 			V_i_minus_2[0] = V[i0, i1, i2, i3, i4 - 2]
 			V_i_plus_1[0] = V[i0, i1, i2, i3, i4 + 1]
-			V_i_plus_2[0] =V[i0, i1, i2, i3, i4] + my_abs(V[i0, i1, i2, i3, i4 + 1] - V[i0, i1, i2, i3, i4]) * my_sign(V[i0, i1, i2, i3, i4])
+			V_i_plus_2[0] = V[i0, i1, i2, i3, i4 + 1] + my_abs(V[i0, i1, i2, i3, i4 + 1] - V[i0, i1, i2, i3, i4]) * my_sign(V[i0, i1, i2, i3, i4 + 1])
 		with hcl.else_():
 			V_i_minus_1[0] = V[i0, i1, i2, i3, i4 - 1]
 			V_i_minus_2[0] = V[i0, i1, i2, i3, i4 - 2]

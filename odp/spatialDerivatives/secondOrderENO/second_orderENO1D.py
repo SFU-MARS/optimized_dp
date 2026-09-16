@@ -17,7 +17,7 @@ def secondOrder_ENO1D_X0(i0, V, g):
 			V_i_plus_2[0] = V[i0 + 2]
 		with hcl.elif_(i0 == 1):
 			V_i_minus_1[0] = V[i0 - 1]
-			V_i_minus_2[0] = V[i0] + my_abs(V[i0] - V[i0 - 1]) * my_sign(V[i0])
+			V_i_minus_2[0] = V[i0 - 1] + my_abs(V[i0] - V[i0 - 1]) * my_sign(V[i0 - 1])
 			V_i_plus_1[0] = V[i0 + 1]
 			V_i_plus_2[0] = V[i0 + 2]
 		with hcl.elif_(i0 == V.shape[0] - 1):
@@ -29,7 +29,7 @@ def secondOrder_ENO1D_X0(i0, V, g):
 			V_i_minus_1[0] = V[i0 - 1]
 			V_i_minus_2[0] = V[i0 - 2]
 			V_i_plus_1[0] = V[i0 + 1]
-			V_i_plus_2[0] =V[i0] + my_abs(V[i0 + 1] - V[i0]) * my_sign(V[i0])
+			V_i_plus_2[0] =V[i0 + 1] + my_abs(V[i0 + 1] - V[i0]) * my_sign(V[i0 + 1])
 		with hcl.else_():
 			V_i_minus_1[0] = V[i0 - 1]
 			V_i_minus_2[0] = V[i0 - 2]
