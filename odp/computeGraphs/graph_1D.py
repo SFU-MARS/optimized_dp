@@ -49,7 +49,7 @@ def graph_1D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
                 if accuracy == "low":
                     dV_dx_L[0], dV_dx_R[0] = spa_derivX(i, V_init, g)
                 if accuracy == "medium":
-                    dV_dx_L[0], dV_dx_R[0] = secondOrderX(i, V_init, g)
+                    dV_dx_L[0], dV_dx_R[0] = secondOrder_ENO1D_X0(i, V_init, g)
 
                 # Saves spatial derivative diff into tables
                 deriv_diff1[i] = dV_dx_R[0] - dV_dx_L[0]
@@ -173,7 +173,7 @@ def graph_1D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
                         dV_dx_L[0], dV_dx_R[0] = spa_derivX(i, V_array, g)
                 if accuracy == "medium":
                     if deriv_dim == 1:
-                        dV_dx_L[0], dV_dx_R[0] = secondOrderX(i, V_array, g)
+                        dV_dx_L[0], dV_dx_R[0] = secondOrder_ENO1D_X0(i, V_array, g)
 
                 Deriv_array[i] = (dV_dx_L[0] + dV_dx_R[0]) / 2
 
