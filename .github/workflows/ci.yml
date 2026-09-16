@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Fix libtinfo5 dependency
+        run: sudo apt-get update && sudo apt-get install -y libtinfo5
+
+      - name: Set up Miniconda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          environment-file: environment.yml
+          activate-environment: ${{ env.odp }}
+          auto-activate-base: false
+
+      - name: Install optimized_dp package
+        shell: bash -l {0}
+        run: pip install -e .
+
+      - name: Run tests
+        shell: bash -l {0}
+        run: pytest test/*.py -v
