@@ -16,7 +16,7 @@ def CylinderShape(
         ignore_dims: List, 
         center: List, 
         radius: float,
-        quadratic: bool = True
+        quadratic: bool = False
         ) -> np.ndarray:
     """
     Creates an axis-aligned cylinder implicit surface function
@@ -27,9 +27,7 @@ def CylinderShape(
         center (List) :  List specifying the center of cylinder
         radius (float): Radius of cylinder
         quadratic: (bool): Uses a quadratic function if True (linear if False)
-                           Setting this to True can reduce numerical errors 
-                           from dissipation
-
+                           
     Returns:
         np.ndarray: implicit surface function of the cylinder
     """
@@ -137,7 +135,7 @@ def ShapeEllipsoid(
         grid: Grid, 
         center: np.ndarray, 
         semiAxLen: List,
-        quadratic: bool = True
+        quadratic: bool = False
         ) -> np.ndarray:
     """
     Creates an axis-aligned ellipsoid implicit surface function
@@ -147,9 +145,7 @@ def ShapeEllipsoid(
         center (List) :  List specifying the center of the ellipsoid
         semiAxLen (List): List specifying the semi-axis lengths
         quadratic: (bool): Uses a quadratic function if True (linear if False)
-                           Setting this to True can reduce numerical errors 
-                           from dissipation
-
+                           
     Returns:
         np.ndarray: implicit surface function of the ellipsoid    
     """    

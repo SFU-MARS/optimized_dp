@@ -68,7 +68,7 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
              saveAllTimeSteps=False,
              accuracy="medium", untilConvergent=False, epsilon=2e-3,
              computeTimeToReach=False, solve_forward=False):
-
+    
     print("Welcome to optimized_dp \n")
     if type(multiple_value) == list:
         # We have both goal and obstacle set
@@ -100,6 +100,15 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
             constraint_i = constraint
 
         init_value = np.maximum(target, -constraint_i)
+
+    # check accuracy doc string
+    if accuracy not in ["low", "medium"]:
+        raise ValueError("Accuracy must be either 'low' or 'medium'")
+    
+    if accuracy == "low":
+        print("Using low accuracy, 1st order ENO scheme + 1st order TVD RK integration")
+    elif accuracy == "medium":
+        print("Using medium accuracy, 2nd order ENO scheme + 2nd order TVD RK integration")
 
     # Tensors input to our computation graph
     V_t = hcl.asarray(init_value)
