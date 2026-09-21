@@ -443,6 +443,9 @@ def computeSpatDerivArray(grid, V, deriv_dim, accuracy="low"):
     hcl.init()
     hcl.config.init_dtype = hcl.Float(32)
 
+    if accuracy not in ["low", "medium"]:
+        raise ValueError("Accuracy must be either 'low' or 'medium'")
+        
     # Need to make sure that value array has the same size as grid
     assert list(V.shape) == list(grid.pts_each_dim)
 
