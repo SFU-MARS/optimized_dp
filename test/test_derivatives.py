@@ -73,6 +73,7 @@ def test_3d_against_analytical():
     (4, 15),  # 15^4 = 50,625 points
     (5, 11),  # 11^5 = 161,051 points
     (6, 8),   # 8^6 = 262,144 points
+    (7, 5)    # 5^7 = 78,125 points
 ])
 def test_against_computeSpatDerivArray(dims, pts_per_dim):
     """Ensure the Python ENO schemes match the backend computeSpatDerivArray across N-dimensions."""

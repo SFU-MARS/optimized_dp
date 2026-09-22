@@ -394,7 +394,7 @@ def graph_6D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
                     with hcl.for_(0, V_array.shape[2], name="k") as k:
                         with hcl.for_(0, V_array.shape[3], name="l") as l:
                             with hcl.for_(0, V_array.shape[4], name="m") as m:
-                                with hcl.for_(0, V_init.shape[5], name="n") as n:
+                                with hcl.for_(0, V_array.shape[5], name="n") as n:
                                     dV_dx_L = hcl.scalar(0, "dV_dx_L")
                                     dV_dx_R = hcl.scalar(0, "dV_dx_R")
                                     if accuracy == "low":
