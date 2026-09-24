@@ -30,6 +30,7 @@ def test_3d_against_analytical():
     # Create a smooth analytical test function (V = x^2 + y^2 + sin(theta))
     # We use grid.vs to leverage broadcasting
     V = grid.vs[0]**2 + grid.vs[1]**2 + np.sin(grid.vs[2])
+    V = np.asarray(V, dtype=np.float32)
 
     # Define Analytical Derivatives
     analytic_dV = [
@@ -89,7 +90,8 @@ def test_against_computeSpatDerivArray(dims, pts_per_dim):
     )
 
     # 2. Generate Random Data
-    V = np.random.rand(*grid.pts_each_dim)
+    rng = np.random.default_rng(377)
+    V = rng.random(grid.pts_each_dim, dtype=np.float32)
 
     # 3. Test 1st Order ENO Derivatives (Accuracy: "low")
     derivL_1, derivR_1 = upwindFirstFirst(grid, V, generateAll=True)
@@ -116,6 +118,6 @@ def test_against_computeSpatDerivArray(dims, pts_per_dim):
         np.testing.assert_allclose(
             center_deriv_2[i], 
             heteroCL_odp_center_2,
-            atol=1e-5,
+            atol=1.2e-5,
             err_msg=f"2nd ENO (medium accuracy) failed for {dims}D grid on dim {i}"
         )

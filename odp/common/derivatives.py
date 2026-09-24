@@ -106,6 +106,7 @@ def upwindFirstFirst(
 
 def _upwindFirstENO2(grid, data: np.ndarray, dim: int) -> Tuple[np.ndarray, np.ndarray]:
     """2nd order ENO directional spatial derivative approximation."""
+
     dx = grid.dx[dim]
     n_pts = data.shape[dim]
 
