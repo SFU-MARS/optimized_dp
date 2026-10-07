@@ -4,6 +4,14 @@ import plotly.express as px
 from odp.Grid import Grid
 import numpy as np
 
+def visualize_plots(V, grid, plot_option):
+    # Only plots last value array for now
+    if plot_option.plot_type == "set":
+        plot_isosurface(grid, V, plot_option)
+    elif plot_option.plot_type == "value":
+        plot_valuefunction(grid, V, plot_option)
+    return
+
 def plot_isosurface(grid, my_V, plot_option):
 
     dims_plot = plot_option.dims_plot
@@ -552,12 +560,4 @@ def downsample(g, data, scale):
 
     return g_out, data_out
 
-def visualize_plots(V, grid, plot_option):
-    # Only plots last value array for now
-    if plot_option.plot_type == "set":
-        plot_isosurface(grid, V, plot_option)
-    elif plot_option.plot_type == "value":
-        plot_valuefunction(grid, V, plot_option)
-
-    return
        
