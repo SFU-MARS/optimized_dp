@@ -6,7 +6,7 @@ from odp.Plots import plot_isosurface, plot_valuefunction
 
 # Backward reachable set computation library
 from odp.computeGraphs import graph_1D, graph_2D, graph_3D, graph_4D, graph_5D, graph_6D, graph_7D, graph_8D
-from odp.TimeToReach import TTR_1D, TTR_2D, TTR_3D, TTR_4D, TTR_5D, TTR_6D
+from odp.TimeToReach import TTR_1D, TTR_2D, TTR_3D, TTR_4D, TTR_5D, TTR_6D, TTR_7D, TTR_8D
 
 # Value Iteration library
 from odp.valueIteration import value_iteration_2D, value_iteration_3D, value_iteration_4D, value_iteration_5D, value_iteration_6D
@@ -395,6 +395,10 @@ def TTRSolver(dynamics_obj, grid, multiple_value, epsilon, verbose=True):
         list_x5 = np.reshape(grid.vs[4], grid.pts_each_dim[4])
     if grid.dims >= 6:
         list_x6 = np.reshape(grid.vs[5], grid.pts_each_dim[5])
+    if grid.dims >= 7:
+        list_x7 = np.reshape(grid.vs[6], grid.pts_each_dim[6])
+    if grid.dims >= 8:
+        list_x8 = np.reshape(grid.vs[7], grid.pts_each_dim[7])
 
     # Convert states vector to hcl array type
     list_x1 = hcl.asarray(list_x1)
@@ -408,6 +412,10 @@ def TTRSolver(dynamics_obj, grid, multiple_value, epsilon, verbose=True):
         list_x5 = hcl.asarray(list_x5)
     if grid.dims >= 6:
         list_x6 = hcl.asarray(list_x6)
+    if grid.dims >= 7:
+        list_x7 = hcl.asarray(list_x7)
+    if grid.dims >= 8:
+        list_x8 = hcl.asarray(list_x8)
 
     # Get executable
     if grid.dims == 1:
@@ -424,6 +432,10 @@ def TTRSolver(dynamics_obj, grid, multiple_value, epsilon, verbose=True):
         print(solve_TTR)
     if grid.dims == 6:
         solve_TTR = TTR_6D(dynamics_obj, grid)
+    if grid.dims == 7:
+        solve_TTR = TTR_7D(dynamics_obj, grid)
+    if grid.dims == 8:
+        solve_TTR = TTR_8D(dynamics_obj, grid)
     print("Got Executable\n")
 
     # Print out code for different backend
@@ -449,6 +461,10 @@ def TTRSolver(dynamics_obj, grid, multiple_value, epsilon, verbose=True):
             solve_TTR(V_0, constraint, list_x1, list_x2, list_x3, list_x4, list_x5)
         if grid.dims == 6:
             solve_TTR(V_0, constraint, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6)
+        if grid.dims == 7:
+            solve_TTR(V_0, constraint, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6, list_x7)
+        if grid.dims == 8:
+            solve_TTR(V_0, constraint, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6, list_x7, list_x8)
 
         error = np.max(np.abs(prev_val - V_0.asnumpy()))
         prev_val = V_0.asnumpy()
