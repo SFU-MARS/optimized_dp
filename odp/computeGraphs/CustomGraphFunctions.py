@@ -1,5 +1,13 @@
 import heterocl as hcl
 import numpy as np
+
+# Whether the Dissipation stage must evaluate the optimal disturbance at every grid point.
+# Dynamics classes whose opt_dstb does not depend on the state can set
+# `dstb_state_dependent = False` so it is evaluated once per time step instead.
+# Defaults to True (exact for any dynamics).
+def dstb_depends_on_state(my_object):
+    return getattr(my_object, "dstb_state_dependent", True)
+
 # Custom function
 
 def my_min(a,b):
@@ -54,68 +62,4 @@ def my_sign(x):
     with hcl.if_(x < 0):
         sign[0] = -1
     return sign[0]
-
-# ########################## 3D SPATIAL DERIVATIVE FUNCTION #################################
-#
-# def spa_derivX(i, j, k, V, g):
-#     left_deriv = hcl.scalar(0, "left_deriv")
-#     right_deriv = hcl.scalar(0, "right_deriv")
-#     with hcl.if_(i == 0):
-#         left_boundary = hcl.scalar(0, "left_boundary")
-#         left_boundary[0] = V[k, j, i] + my_abs(V[k, j, i + 1] - V[k, j, i]) * my_sign(
-#             V[k, j, i])
-#         left_deriv[0] = (V[k, j, i] - left_boundary[0]) / g.dx[0]
-#         right_deriv[0] = (V[k, j, i + 1] - V[k, j, i]) / g.dx[0]
-#     with hcl.elif_(i == V.shape[2] - 1):
-#         right_boundary = hcl.scalar(0, "right_boundary")
-#         right_boundary[0] = V[k, j, i] + my_abs(V[k, j, i] - V[k, j, i - 1]) * my_sign(
-#             V[k, j, i])
-#         left_deriv[0] = (V[k, j, i] - V[k, j, i - 1]) / g.dx[0]
-#         right_deriv[0] = (right_boundary[0] - V[k, j, i]) / g.dx[0]
-#     with hcl.elif_(i != 0 and i != V.shape[2] - 1):
-#         left_deriv[0] = (V[k, j, i] - V[k, j, i-1]) / g.dx[0]
-#         right_deriv[0] = (V[k, j, i+1] - V[k, j, i]) / g.dx[0]
-#     return left_deriv[0], right_deriv[0]
-#
-#
-# def spa_derivY(i, j, k, V, g):
-#     left_deriv = hcl.scalar(0, "left_deriv")
-#     right_deriv = hcl.scalar(0, "right_deriv")
-#     with hcl.if_(j == 0):
-#         left_boundary = hcl.scalar(0, "left_boundary")
-#         left_boundary[0] = V[k, j, i] + my_abs(V[k, j + 1, i] - V[k, j, i]) * my_sign(
-#             V[k, j, i])
-#         left_deriv[0] = (V[k, j, i] - left_boundary[0]) / g.dx[1]
-#         right_deriv[0] = (V[k, j + 1, i] - V[k, j, i]) / g.dx[1]
-#     with hcl.elif_(j == V.shape[1] - 1):
-#         right_boundary = hcl.scalar(0, "right_boundary")
-#         right_boundary[0] = V[k, j, i] + my_abs(V[k, j, i] - V[k, j - 1, i]) * my_sign(
-#             V[k, j, i])
-#         left_deriv[0] = (V[k, j, i] - V[k, j - 1, i]) / g.dx[1]
-#         right_deriv[0] = (right_boundary[0] - V[k, j, i]) / g.dx[1]
-#     with hcl.elif_(j != 0 and j != V.shape[1] - 1):
-#         left_deriv[0] = (V[k, j, i] - V[k, j - 1, i]) / g.dx[1]
-#         right_deriv[0] = (V[k, j + 1, i] - V[k, j, i]) / g.dx[1]
-#     return left_deriv[0], right_deriv[0]
-#
-# def spa_derivT(i, j, k, V, g):
-#     left_deriv = hcl.scalar(0, "left_deriv")
-#     right_deriv = hcl.scalar(0, "right_deriv")
-#     with hcl.if_(k == 0):
-#         left_boundary = hcl.scalar(0, "left_boundary")
-#         # left_boundary[0] = V_init[i,j,50]
-#         left_boundary[0] = V[V.shape[0] - 1, j, i]
-#         left_deriv[0] = (V[k, j, i] - left_boundary[0]) / g.dx[2]
-#         right_deriv[0] = (V[k + 1, j, i] - V[k, j, i]) / g.dx[2]
-#     with hcl.elif_(k == V.shape[0] - 1):
-#         right_boundary = hcl.scalar(0, "right_boundary")
-#         right_boundary[0] = V[0, j, i]
-#         left_deriv[0] = (V[k, j, i] - V[k-1, j, i]) / g.dx[2]
-#         right_deriv[0] = (right_boundary[0] - V[k, j, i]) / g.dx[2]
-#     with hcl.elif_(k != 0 and k != V.shape[0] - 1):
-#         left_deriv[0] = (V[k, j, i] - V[k-1, j, i]) / g.dx[2]
-#         right_deriv[0] = (V[k+1, j, i] - V[k, j, i]) / g.dx[2]
-#     return left_deriv[0], right_deriv[0]
-
-
 

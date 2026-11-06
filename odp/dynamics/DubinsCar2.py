@@ -24,6 +24,9 @@ def _require_hcl(method_name):
 
 
 class DubinsCar2:
+    # opt_dstb does not depend on the state, so the Dissipation stage evaluates it once per time step
+    dstb_state_dependent = False
+
     def __init__(self, x=[0,0,0], uMin=[-0.1, -1.0], uMax =[0.8, 1.0], dMax=[0,0,0], uMode="min", dMode="max"):
         self.x = x
         self.dMax = dMax

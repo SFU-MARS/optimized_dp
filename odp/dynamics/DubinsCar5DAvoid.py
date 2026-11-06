@@ -30,6 +30,9 @@ def my_sign(x):
     return sign[0]
 
 class DubinsCar5DAvoid:
+    # opt_dstb does not depend on the state, so the Dissipation stage evaluates it once per time step
+    dstb_state_dependent = False
+
     def __init__(self, x=[0,0,0,0,0], u_theta_max = 1, u_v_max = 1, d_theta_max=1, d_v_max=1, uMode="min", dMode="max"):
         self.x = x
         self.u_theta_max = u_theta_max

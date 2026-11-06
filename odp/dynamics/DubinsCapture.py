@@ -17,6 +17,9 @@ class DubinsCapture:
         
         where x, y, theta are the state variables, w is the control input, d is the disturbance input, and speed is a constant.
     """
+    # opt_dstb does not depend on the state, so the Dissipation stage evaluates it once per time step
+    dstb_state_dependent = False
+
     def __init__(self, x=None, wMax=1.0, w_speed=1.0,
                 d_speed=1.0, dMax=1.0, uMode="max",
                 dMode="min"):

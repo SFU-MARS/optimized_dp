@@ -108,6 +108,7 @@ def graph_2D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
 
         # Calculate the dissipation
         with hcl.Stage("Dissipation"):
+            dstb_state_dependent = dstb_depends_on_state(my_object)
             # Storing alphas
             dOptL1 = hcl.scalar(0, "dOptL1")
             dOptL2 = hcl.scalar(0, "dOptL2")
@@ -126,6 +127,17 @@ def graph_2D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
             uOptU1 = hcl.scalar(0, "uOptU1")
             uOptU2 = hcl.scalar(0, "uOptU2")
 
+            # Optimal disturbance at the LOWER/UPPER BOUND derivatives. If the dynamics sets
+            # dstb_state_dependent = False, opt_dstb does not depend on the state and is evaluated once
+            # here; otherwise it is evaluated at every grid point inside the loop below.
+            if not dstb_state_dependent:
+                # Find LOWER BOUND optimal disturbance
+                dOptL1[0], dOptL2[0] = my_object.opt_dstb(t,  (x1[0], x2[0]),\
+                                                                    (min_deriv1[0], min_deriv2[0]))
+
+                dOptU1[0], dOptU2[0] = my_object.opt_dstb(t, (x1[0], x2[0]),\
+                                                                    (max_deriv1[0], max_deriv2[0]))
+
             with hcl.for_(0, V_init.shape[0], name="i") as i:
                 with hcl.for_(0, V_init.shape[1], name="j") as j:
                     dx_LL1 = hcl.scalar(0, "dx_LL1")
@@ -140,12 +152,13 @@ def graph_2D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
                     dx_LU1 = hcl.scalar(0, "dx_LU1")
                     dx_LU2 = hcl.scalar(0, "dx_LU2")
 
-                    # Find LOWER BOUND optimal disturbance
-                    dOptL1[0], dOptL2[0] = my_object.opt_dstb(t,  (x1[i], x2[j]),\
-                                                                        (min_deriv1[0], min_deriv2[0]))
+                    if dstb_state_dependent:
+                        # Find LOWER BOUND optimal disturbance
+                        dOptL1[0], dOptL2[0] = my_object.opt_dstb(t,  (x1[i], x2[j]),\
+                                                                            (min_deriv1[0], min_deriv2[0]))
 
-                    dOptU1[0], dOptU2[0] = my_object.opt_dstb(t, (x1[i], x2[j]),\
-                                                                        (max_deriv1[0], max_deriv2[0]))
+                        dOptU1[0], dOptU2[0] = my_object.opt_dstb(t, (x1[i], x2[j]),\
+                                                                            (max_deriv1[0], max_deriv2[0]))
 
                     # Find LOWER BOUND optimal control
                     uOptL1[0], uOptL2[0] = my_object.opt_ctrl(t, (x1[i], x2[j]), \

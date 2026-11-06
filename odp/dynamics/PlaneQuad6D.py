@@ -11,6 +11,9 @@ omega_dot = u
 """
 
 class PlaneQuad6D:
+    # opt_dstb does not depend on the state, so the Dissipation stage evaluates it once per time step
+    dstb_state_dependent = False
+
     def __init__(self, x=[0,0,0,0,0,0], uMin=[-16,-5], uMax=[16,5], dMin=[0,0,0],
                  dMax=[0,0,0], uMode="min", dMode="max"):
         

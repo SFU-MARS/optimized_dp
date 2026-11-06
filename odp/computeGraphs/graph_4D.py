@@ -160,38 +160,34 @@ def graph_4D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
 
         # Calculate dissipation amount
         with hcl.Stage("Dissipation"):
+            dstb_state_dependent = dstb_depends_on_state(my_object)
             # Storing alphas
             dOptL1 = hcl.scalar(0, "dOptL1")
             dOptL2 = hcl.scalar(0, "dOptL2")
             dOptL3 = hcl.scalar(0, "dOptL3")
             dOptL4 = hcl.scalar(0, "dOptL4")
             # Find UPPER BOUND optimal disturbance
-            dOptU1 = hcl.scalar(0, "dOptL1")
-            dOptU2 = hcl.scalar(0, "dOptL2")
-            dOptU3 = hcl.scalar(0, "dOptL3")
-            dOptU4 = hcl.scalar(0, "dOptL4")
+            dOptU1 = hcl.scalar(0, "dOptU1")
+            dOptU2 = hcl.scalar(0, "dOptU2")
+            dOptU3 = hcl.scalar(0, "dOptU3")
+            dOptU4 = hcl.scalar(0, "dOptU4")
 
             alpha1 = hcl.scalar(0, "alpha1")
             alpha2 = hcl.scalar(0, "alpha2")
             alpha3 = hcl.scalar(0, "alpha3")
             alpha4 = hcl.scalar(0, "alpha4")
 
-            """ 
-                NOTE: If optimal adversarial disturbance is not dependent on states
-                , the below approximate LOWER/UPPER BOUND optimal disturbance is  accurate.
-                If that's not the case, move the next two statements into the nested loops and modify the states passed in 
-                as my_object.opt_dstb(t, (x1[i], x2[j], x3[k], x4[l], ...), ...).
-                The reason we don't have this line in the nested loop by default is to avoid redundant computations
-                for certain systems where disturbance are not dependent on states.
-                In general, dissipation amount can just be approximates.  
-            """
-            dOptL1[0], dOptL2[0], dOptL3[0], dOptL4[0] = my_object.opt_dstb(t, (x1[0], x2[0], x3[0], x4[0]),
-                                                                            (min_deriv1[0], min_deriv2[0], \
-                                                                            min_deriv3[0], min_deriv4[0]))
+            # Optimal disturbance at the LOWER/UPPER BOUND derivatives. If the dynamics sets
+            # dstb_state_dependent = False, opt_dstb does not depend on the state and is evaluated once
+            # here; otherwise it is evaluated at every grid point inside the loop below.
+            if not dstb_state_dependent:
+                dOptL1[0], dOptL2[0], dOptL3[0], dOptL4[0] = my_object.opt_dstb(t, (x1[0], x2[0], x3[0], x4[0]),
+                                                                                (min_deriv1[0], min_deriv2[0], \
+                                                                                min_deriv3[0], min_deriv4[0]))
 
-            dOptU1[0], dOptL2[0], dOptL3[0], dOptL4[0] = my_object.opt_dstb(t, (x1[0], x2[0], x3[0], x4[0]),
-                                                                            (max_deriv1[0], max_deriv2[0], \
-                                                                            max_deriv3[0], max_deriv4[0]))
+                dOptU1[0], dOptU2[0], dOptU3[0], dOptU4[0] = my_object.opt_dstb(t, (x1[0], x2[0], x3[0], x4[0]),
+                                                                                (max_deriv1[0], max_deriv2[0], \
+                                                                                max_deriv3[0], max_deriv4[0]))
             uOptL1 = hcl.scalar(0, "uOptL1")
             uOptL2 = hcl.scalar(0, "uOptL2")
             uOptL3 = hcl.scalar(0, "uOptL3")
@@ -227,13 +223,15 @@ def graph_4D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
                             dx_LU3 = hcl.scalar(0, "dx_LU3")
                             dx_LU4 = hcl.scalar(0, "dx_LU4")
 
-                            # dOptL1[0], dOptL2[0], dOptL3[0], dOptL4[0] = my_object.opt_dstb(t, (x1[i], x2[j], x3[k], x4[l]),
-                            #                                                 (min_deriv1[0], min_deriv2[0], \
-                            #                                                 min_deriv3[0], min_deriv4[0]))
-
-                            # dOptU1[0], dOptL2[0], dOptL3[0], dOptL4[0] = my_object.opt_dstb(t, (x1[i], x2[j], x3[k], x4[l]),
-                            #                                                 (max_deriv1[0], max_deriv2[0], \
-                            #                                                 max_deriv3[0], max_deriv4[0]))
+                            if dstb_state_dependent:
+                                # Find LOWER BOUND optimal disturbance
+                                dOptL1[0], dOptL2[0], dOptL3[0], dOptL4[0] = my_object.opt_dstb(t, (x1[i], x2[j], x3[k], x4[l]),
+                                                                                (min_deriv1[0], min_deriv2[0], \
+                                                                                min_deriv3[0], min_deriv4[0]))
+                                # Find UPPER BOUND optimal disturbance
+                                dOptU1[0], dOptU2[0], dOptU3[0], dOptU4[0] = my_object.opt_dstb(t, (x1[i], x2[j], x3[k], x4[l]),
+                                                                                (max_deriv1[0], max_deriv2[0], \
+                                                                                max_deriv3[0], max_deriv4[0]))
 
                             # Find LOWER BOUND optimal control
                             uOptL1[0], uOptL2[0], uOptL3[0], uOptL4[0]= my_object.opt_ctrl(t, (x1[i], x2[j], x3[k], x4[l]),

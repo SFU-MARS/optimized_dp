@@ -8,6 +8,9 @@ except ImportError:
     HCL_AVAILABLE = False
 
 class Plane2D:
+    # opt_dstb does not depend on the state, so the Dissipation stage evaluates it once per time step
+    dstb_state_dependent = False
+
     # Dynamics: x_dot = vx, y_dot = vy
     #          vx_dot \in [vxMin, vxMax], vy_dot \in [vyMin, vyMax]
     def __init__(self, x=[0,0], vxMin=-1, vxMax=1, vyMin=-1, vyMax=1, uMode="min"):

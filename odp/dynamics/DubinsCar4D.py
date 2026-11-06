@@ -14,6 +14,9 @@ except ImportError:
  theta_dot = w
  """
 class DubinsCar4D:
+    # opt_dstb does not depend on the state, so the Dissipation stage evaluates it once per time step
+    dstb_state_dependent = False
+
     def __init__(self, x=[0,0,0,0], uMin = [-1,-1], uMax = [1,1], dMin = [-0.25,-0.25],
                  dMax=[0.25,0.25], uMode="min", dMode="max"):
         """Creates a Dublin Car with the following states:

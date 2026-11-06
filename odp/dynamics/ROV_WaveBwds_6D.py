@@ -11,6 +11,9 @@ except ImportError:
 from odp.computeGraphs.CustomGraphFunctions import my_abs
 
 class ROV_WaveBwds_6D:
+    # opt_dstb does not depend on the state, so the Dissipation stage evaluates it once per time step
+    dstb_state_dependent = False
+
     def __init__(self, x=[0, 0, 0, 0, 0, 0], uMin=np.array([-6, -15]), uMax=np.array([6, 15]), pMin=np.array([-0.2, -0.15]), pMax=np.array([0.2, 0.15]),
                  dMin=np.array([-0.02, -0.02, -0.01, -0.01]), dMax=np.array([0.02, 0.02, 0.01, 0.01]),
                  dims=6, uMode="min", dMode="max"):

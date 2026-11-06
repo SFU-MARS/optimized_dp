@@ -23,6 +23,9 @@ L := wheelbase of car
 """
 
 class DubinsCar4D2:
+    # opt_dstb does not depend on the state, so the Dissipation stage evaluates it once per time step
+    dstb_state_dependent = False
+
     def __init__(
         self,
         x=[0, 0, 0, 0],

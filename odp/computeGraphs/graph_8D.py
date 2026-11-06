@@ -201,6 +201,7 @@ def graph_8D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
 												max_deriv7[0] = dV_dx_R7[0]
 
 		with hcl.Stage("Dissipation"):
+			dstb_state_dependent = dstb_depends_on_state(my_object)
 			uOptL0 = hcl.scalar(0, "uOptL0")
 			uOptL1 = hcl.scalar(0, "uOptL1")
 			uOptL2 = hcl.scalar(0, "uOptL2")
@@ -241,6 +242,15 @@ def graph_8D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
 			alpha5 = hcl.scalar(0, "alpha5")
 			alpha6 = hcl.scalar(0, "alpha6")
 			alpha7 = hcl.scalar(0, "alpha7")
+			# Optimal disturbance at the LOWER/UPPER BOUND derivatives. If the dynamics sets
+			# dstb_state_dependent = False, opt_dstb does not depend on the state and is evaluated once
+			# here; otherwise it is evaluated at every grid point inside the loop below.
+			if not dstb_state_dependent:
+				dOptL0[0], dOptL1[0], dOptL2[0], dOptL3[0], dOptL4[0], dOptL5[0], dOptL6[0], dOptL7[0] = my_object.opt_dstb(t, (x0[0], x1[0], x2[0], x3[0], x4[0], x5[0], x6[0], x7[0]), 
+                                                                    (min_deriv0[0], min_deriv1[0], min_deriv2[0], min_deriv3[0], min_deriv4[0], min_deriv5[0], min_deriv6[0], min_deriv7[0]) )
+				dOptU0[0], dOptU1[0], dOptU2[0], dOptU3[0], dOptU4[0], dOptU5[0], dOptU6[0], dOptU7[0] = my_object.opt_dstb(t, (x0[0], x1[0], x2[0], x3[0], x4[0], x5[0], x6[0], x7[0]), 
+                                                                    (max_deriv0[0], max_deriv1[0], max_deriv2[0], max_deriv3[0], max_deriv4[0], max_deriv5[0], max_deriv6[0], max_deriv7[0]) )
+
 			with hcl.for_(0, V_init.shape[0], name="i0") as i0:
 				with hcl.for_(0, V_init.shape[1], name="i1") as i1:
 					with hcl.for_(0, V_init.shape[2], name="i2") as i2:
@@ -282,9 +292,10 @@ def graph_8D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
 											dx_LL6 = hcl.scalar(0, "dx_LL6")
 											dx_LL7 = hcl.scalar(0, "dx_LL7")
 
-											dOptL0[0], dOptL1[0], dOptL2[0], dOptL3[0], dOptL4[0], dOptL5[0], dOptL6[0], dOptL7[0] = my_object.opt_dstb(t, (x0[i0], x1[i1], x2[i2], x3[i3], x4[i4], x5[i5], x6[i6], x7[i7]), 
+											if dstb_state_dependent:
+												dOptL0[0], dOptL1[0], dOptL2[0], dOptL3[0], dOptL4[0], dOptL5[0], dOptL6[0], dOptL7[0] = my_object.opt_dstb(t, (x0[i0], x1[i1], x2[i2], x3[i3], x4[i4], x5[i5], x6[i6], x7[i7]), 
                                                                     (min_deriv0[0], min_deriv1[0], min_deriv2[0], min_deriv3[0], min_deriv4[0], min_deriv5[0], min_deriv6[0], min_deriv7[0]) )
-											dOptU0[0], dOptU1[0], dOptU2[0], dOptU3[0], dOptU4[0], dOptU5[0], dOptU6[0], dOptU7[0] = my_object.opt_dstb(t, (x0[i0], x1[i1], x2[i2], x3[i3], x4[i4], x5[i5], x6[i6], x7[i7]), 
+												dOptU0[0], dOptU1[0], dOptU2[0], dOptU3[0], dOptU4[0], dOptU5[0], dOptU6[0], dOptU7[0] = my_object.opt_dstb(t, (x0[i0], x1[i1], x2[i2], x3[i3], x4[i4], x5[i5], x6[i6], x7[i7]), 
                                                                     (max_deriv0[0], max_deriv1[0], max_deriv2[0], max_deriv3[0], max_deriv4[0], max_deriv5[0], max_deriv6[0], max_deriv7[0]) )
 											uOptL0[0], uOptL1[0], uOptL2[0], uOptL3[0], uOptL4[0], uOptL5[0], uOptL6[0], uOptL7[0] = my_object.opt_ctrl(t, (x0[i0], x1[i1], x2[i2], x3[i3], x4[i4], x5[i5], x6[i6], x7[i7]), 
                                                                     (min_deriv0[0], min_deriv1[0], min_deriv2[0], min_deriv3[0], min_deriv4[0], min_deriv5[0], min_deriv6[0], min_deriv7[0]) )
