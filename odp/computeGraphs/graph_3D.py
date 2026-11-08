@@ -38,6 +38,19 @@ def graph_3D(my_object, g, compMethod, accuracy, solve_forward=False, generate_S
         max_alpha1 = hcl.scalar(-1e9, "max_alpha1")
         max_alpha2 = hcl.scalar(-1e9, "max_alpha2")
         max_alpha3 = hcl.scalar(-1e9, "max_alpha3")
+
+        # Per-row (outermost index) running max/min, so threads of the parallel loops never write
+        # the same location; reduced serially into the scalars above
+        N0 = V_init.shape[0]
+        max_deriv1_rows = hcl.compute((N0,), lambda x: -1e9, "max_deriv1_rows")
+        max_deriv2_rows = hcl.compute((N0,), lambda x: -1e9, "max_deriv2_rows")
+        max_deriv3_rows = hcl.compute((N0,), lambda x: -1e9, "max_deriv3_rows")
+        min_deriv1_rows = hcl.compute((N0,), lambda x: 1e9, "min_deriv1_rows")
+        min_deriv2_rows = hcl.compute((N0,), lambda x: 1e9, "min_deriv2_rows")
+        min_deriv3_rows = hcl.compute((N0,), lambda x: 1e9, "min_deriv3_rows")
+        max_alpha1_rows = hcl.compute((N0,), lambda x: -1e9, "max_alpha1_rows")
+        max_alpha2_rows = hcl.compute((N0,), lambda x: -1e9, "max_alpha2_rows")
+        max_alpha3_rows = hcl.compute((N0,), lambda x: -1e9, "max_alpha3_rows")
         def step_bound():  # Function to calculate time step
             stepBoundInv = hcl.scalar(0, "stepBoundInv")
             stepBound = hcl.scalar(0, "stepBound")
@@ -98,68 +111,45 @@ def graph_3D(my_object, g, compMethod, accuracy, solve_forward=False, generate_S
                         else: # backward
                             V_new[i, j, k] = -(dx_dt * dV_dx[0] + dy_dt * dV_dy[0] + dtheta_dt * dV_dT[0])
 
-                        # Get derivMin
-                        with hcl.if_(dV_dx_L[0] < min_deriv1[0]):
-                            min_deriv1[0] = dV_dx_L[0]
-                        with hcl.if_(dV_dx_R[0] < min_deriv1[0]):
-                            min_deriv1[0] = dV_dx_R[0]
+                        # Get derivMin (per row i)
+                        update_row_min(min_deriv1_rows, i, dV_dx_L[0])
+                        update_row_min(min_deriv1_rows, i, dV_dx_R[0])
+                        update_row_min(min_deriv2_rows, i, dV_dy_L[0])
+                        update_row_min(min_deriv2_rows, i, dV_dy_R[0])
+                        update_row_min(min_deriv3_rows, i, dV_dT_L[0])
+                        update_row_min(min_deriv3_rows, i, dV_dT_R[0])
 
-                        with hcl.if_(dV_dy_L[0] < min_deriv2[0]):
-                            min_deriv2[0] = dV_dy_L[0]
-                        with hcl.if_(dV_dy_R[0] < min_deriv2[0]):
-                            min_deriv2[0] = dV_dy_R[0]
-
-                        with hcl.if_(dV_dT_L[0] < min_deriv3[0]):
-                            min_deriv3[0] = dV_dT_L[0]
-                        with hcl.if_(dV_dT_R[0] < min_deriv3[0]):
-                            min_deriv3[0] = dV_dT_R[0]
-
-                        # Get derivMax
-                        with hcl.if_(dV_dx_L[0] > max_deriv1[0]):
-                            max_deriv1[0] = dV_dx_L[0]
-                        with hcl.if_(dV_dx_R[0] > max_deriv1[0]):
-                            max_deriv1[0] = dV_dx_R[0]
-
-                        with hcl.if_(dV_dy_L[0] > max_deriv2[0]):
-                            max_deriv2[0] = dV_dy_L[0]
-                        with hcl.if_(dV_dy_R[0] > max_deriv2[0]):
-                            max_deriv2[0] = dV_dy_R[0]
-
-                        with hcl.if_(dV_dT_L[0] > max_deriv3[0]):
-                            max_deriv3[0] = dV_dT_L[0]
-                        with hcl.if_(dV_dT_R[0] > max_deriv3[0]):
-                            max_deriv3[0] = dV_dT_R[0]
+                        # Get derivMax (per row i)
+                        update_row_max(max_deriv1_rows, i, dV_dx_L[0])
+                        update_row_max(max_deriv1_rows, i, dV_dx_R[0])
+                        update_row_max(max_deriv2_rows, i, dV_dy_L[0])
+                        update_row_max(max_deriv2_rows, i, dV_dy_R[0])
+                        update_row_max(max_deriv3_rows, i, dV_dT_L[0])
+                        update_row_max(max_deriv3_rows, i, dV_dT_R[0])
 
         # Calculate the dissipation
         with hcl.Stage("Dissipation"):
             dstb_state_dependent = dstb_depends_on_state(my_object)
-            # Storing alphas
-            dOptL1 = hcl.scalar(0, "dOptL1")
-            dOptL2 = hcl.scalar(0, "dOptL2")
-            dOptL3 = hcl.scalar(0, "dOptL3")
-            # Find UPPER BOUND optimal disturbance
-            dOptU1 = hcl.scalar(0, "dOptU1")
-            dOptU2 = hcl.scalar(0, "dOptU2")
-            dOptU3 = hcl.scalar(0, "dOptU3")
 
-            alpha1 = hcl.scalar(0, "alpha1")
-            alpha2 = hcl.scalar(0, "alpha2")
-            alpha3 = hcl.scalar(0, "alpha3")
-
-            # Lower bound optimal control
-            uOptL1 = hcl.scalar(0, "uOptL1")
-            uOptL2 = hcl.scalar(0, "uOptL2")
-            uOptL3 = hcl.scalar(0, "uOptL3")
-
-            # Find UPPER BOUND optimal disturbance
-            uOptU1 = hcl.scalar(0, "uOptU1")
-            uOptU2 = hcl.scalar(0, "uOptU2")
-            uOptU3 = hcl.scalar(0, "uOptU3")
+            # Reduce the per-row derivative bounds of the Hamiltonian stage (serial, N0 iterations)
+            rows_min(min_deriv1_rows, min_deriv1, "r_min1")
+            rows_min(min_deriv2_rows, min_deriv2, "r_min2")
+            rows_min(min_deriv3_rows, min_deriv3, "r_min3")
+            rows_max(max_deriv1_rows, max_deriv1, "r_max1")
+            rows_max(max_deriv2_rows, max_deriv2, "r_max2")
+            rows_max(max_deriv3_rows, max_deriv3, "r_max3")
 
             # Optimal disturbance at the LOWER/UPPER BOUND derivatives. If the dynamics sets
             # dstb_state_dependent = False, opt_dstb does not depend on the state and is evaluated once
-            # here; otherwise it is evaluated at every grid point inside the loop below.
+            # here (read-only inside the parallel loop); otherwise it is evaluated at every grid point
+            # inside the loop below.
             if not dstb_state_dependent:
+                dOptL1 = hcl.scalar(0, "dOptL1")
+                dOptL2 = hcl.scalar(0, "dOptL2")
+                dOptL3 = hcl.scalar(0, "dOptL3")
+                dOptU1 = hcl.scalar(0, "dOptU1")
+                dOptU2 = hcl.scalar(0, "dOptU2")
+                dOptU3 = hcl.scalar(0, "dOptU3")
                 # Find LOWER BOUND optimal disturbance
                 dOptL1[0], dOptL2[0], dOptL3[0] = my_object.opt_dstb(t,  (x1[0], x2[0], x3[0]),\
                                                                     (min_deriv1[0], min_deriv2[0],min_deriv3[0]))
@@ -168,6 +158,24 @@ def graph_3D(my_object, g, compMethod, accuracy, solve_forward=False, generate_S
                                                                     (max_deriv1[0], max_deriv2[0],max_deriv3[0]))
 
             with hcl.for_(0, V_init.shape[0], name="i") as i:
+                # Per-point variables: declared once per outer index (inside the parallel loop, so private
+                # to each thread) and reused for every point of that row
+                alpha1 = hcl.scalar(0, "alpha1")
+                alpha2 = hcl.scalar(0, "alpha2")
+                alpha3 = hcl.scalar(0, "alpha3")
+                uOptL1 = hcl.scalar(0, "uOptL1")
+                uOptL2 = hcl.scalar(0, "uOptL2")
+                uOptL3 = hcl.scalar(0, "uOptL3")
+                uOptU1 = hcl.scalar(0, "uOptU1")
+                uOptU2 = hcl.scalar(0, "uOptU2")
+                uOptU3 = hcl.scalar(0, "uOptU3")
+                if dstb_state_dependent:
+                    dOptL1 = hcl.scalar(0, "dOptL1")
+                    dOptL2 = hcl.scalar(0, "dOptL2")
+                    dOptL3 = hcl.scalar(0, "dOptL3")
+                    dOptU1 = hcl.scalar(0, "dOptU1")
+                    dOptU2 = hcl.scalar(0, "dOptU2")
+                    dOptU3 = hcl.scalar(0, "dOptU3")
                 with hcl.for_(0, V_init.shape[1], name="j") as j:
                     with hcl.for_(0, V_init.shape[2], name="k") as k:
                         dx_LL1 = hcl.scalar(0, "dx_LL1")
@@ -185,6 +193,11 @@ def graph_3D(my_object, g, compMethod, accuracy, solve_forward=False, generate_S
                         dx_LU1 = hcl.scalar(0, "dx_LU1")
                         dx_LU2 = hcl.scalar(0, "dx_LU2")
                         dx_LU3 = hcl.scalar(0, "dx_LU3")
+
+
+                        # Lower bound optimal control
+
+                        # Upper bound optimal control
 
                         if dstb_state_dependent:
                             # Find LOWER BOUND optimal disturbance
@@ -252,15 +265,15 @@ def graph_3D(my_object, g, compMethod, accuracy, solve_forward=False, generate_S
                         # Finally
                         V_new[i, j, k] = -(V_new[i, j, k] - diss[0])
 
-                        # Calculate alphas
-                        with hcl.if_(alpha1[0] > max_alpha1[0]):
-                            max_alpha1[0] = alpha1[0]
-                        with hcl.if_(alpha2[0] > max_alpha2[0]):
-                            max_alpha2[0] = alpha2[0]
-                        with hcl.if_(alpha3[0] > max_alpha3[0]):
-                            max_alpha3[0] = alpha3[0]
+                        # Largest alphas (per row i)
+                        update_row_max(max_alpha1_rows, i, alpha1[0])
+                        update_row_max(max_alpha2_rows, i, alpha2[0])
+                        update_row_max(max_alpha3_rows, i, alpha3[0])
 
-
+            # Reduce the per-row alphas for the CFL time step (serial, N0 iterations)
+            rows_max(max_alpha1_rows, max_alpha1, "r_alpha1")
+            rows_max(max_alpha2_rows, max_alpha2, "r_alpha2")
+            rows_max(max_alpha3_rows, max_alpha3, "r_alpha3")
 
         # Update largest time step - CFL condition
         hcl.update(delta_t, lambda x: step_bound())

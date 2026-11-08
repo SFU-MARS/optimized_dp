@@ -8,6 +8,27 @@ import numpy as np
 def dstb_depends_on_state(my_object):
     return getattr(my_object, "dstb_state_dependent", True)
 
+# Race-free max/min over a grid inside a stage whose outermost loop is parallel.
+# Each outer index keeps its own running max/min in rows[i] (only the thread that owns
+# row i writes it), and rows_max/rows_min reduces the rows serially into result[0].
+def update_row_max(rows, i, value):
+    with hcl.if_(value > rows[i]):
+        rows[i] = value
+
+def update_row_min(rows, i, value):
+    with hcl.if_(value < rows[i]):
+        rows[i] = value
+
+def rows_max(rows, result, name):
+    with hcl.for_(0, rows.shape[0], name=name) as r:
+        with hcl.if_(rows[r] > result[0]):
+            result[0] = rows[r]
+
+def rows_min(rows, result, name):
+    with hcl.for_(0, rows.shape[0], name=name) as r:
+        with hcl.if_(rows[r] < result[0]):
+            result[0] = rows[r]
+
 # Custom function
 
 def my_min(a,b):

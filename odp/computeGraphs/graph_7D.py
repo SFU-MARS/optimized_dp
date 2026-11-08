@@ -49,6 +49,31 @@ def graph_7D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
 		max_alpha5 = hcl.scalar(-1e9, "max_alpha5")
 		max_alpha6 = hcl.scalar(-1e9, "max_alpha6")
 
+		# Per-row (outermost index) running max/min, so threads of the parallel loops never write
+		# the same location; reduced serially into the scalars above
+		N0 = V_init.shape[0]
+		max_deriv0_rows = hcl.compute((N0,), lambda x: -1e9, "max_deriv0_rows")
+		max_deriv1_rows = hcl.compute((N0,), lambda x: -1e9, "max_deriv1_rows")
+		max_deriv2_rows = hcl.compute((N0,), lambda x: -1e9, "max_deriv2_rows")
+		max_deriv3_rows = hcl.compute((N0,), lambda x: -1e9, "max_deriv3_rows")
+		max_deriv4_rows = hcl.compute((N0,), lambda x: -1e9, "max_deriv4_rows")
+		max_deriv5_rows = hcl.compute((N0,), lambda x: -1e9, "max_deriv5_rows")
+		max_deriv6_rows = hcl.compute((N0,), lambda x: -1e9, "max_deriv6_rows")
+		max_alpha0_rows = hcl.compute((N0,), lambda x: -1e9, "max_alpha0_rows")
+		max_alpha1_rows = hcl.compute((N0,), lambda x: -1e9, "max_alpha1_rows")
+		max_alpha2_rows = hcl.compute((N0,), lambda x: -1e9, "max_alpha2_rows")
+		max_alpha3_rows = hcl.compute((N0,), lambda x: -1e9, "max_alpha3_rows")
+		max_alpha4_rows = hcl.compute((N0,), lambda x: -1e9, "max_alpha4_rows")
+		max_alpha5_rows = hcl.compute((N0,), lambda x: -1e9, "max_alpha5_rows")
+		max_alpha6_rows = hcl.compute((N0,), lambda x: -1e9, "max_alpha6_rows")
+		min_deriv0_rows = hcl.compute((N0,), lambda x: 1e9, "min_deriv0_rows")
+		min_deriv1_rows = hcl.compute((N0,), lambda x: 1e9, "min_deriv1_rows")
+		min_deriv2_rows = hcl.compute((N0,), lambda x: 1e9, "min_deriv2_rows")
+		min_deriv3_rows = hcl.compute((N0,), lambda x: 1e9, "min_deriv3_rows")
+		min_deriv4_rows = hcl.compute((N0,), lambda x: 1e9, "min_deriv4_rows")
+		min_deriv5_rows = hcl.compute((N0,), lambda x: 1e9, "min_deriv5_rows")
+		min_deriv6_rows = hcl.compute((N0,), lambda x: 1e9, "min_deriv6_rows")
+
 		def step_bound(): #Function to calculate time step
 			stepBoundInv = hcl.scalar(0, "stepBoundInv")
 			stepBound = hcl.scalar(0, "stepBound")
@@ -122,114 +147,121 @@ def graph_7D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
  (dV_dx0[0], dV_dx1[0], dV_dx2[0], dV_dx3[0], dV_dx4[0], dV_dx5[0], dV_dx6[0]))
 										dx_dt0, dx_dt1, dx_dt2, dx_dt3, dx_dt4, dx_dt5, dx_dt6 = my_object.dynamics(t, (x0[i0], x1[i1], x2[i2], x3[i3], x4[i4], x5[i5], x6[i6]), uOpt, dOpt)
 										V_new[i0, i1, i2, i3, i4, i5, i6] = -(dx_dt0 * dV_dx0[0] + dx_dt1 * dV_dx1[0] + dx_dt2 * dV_dx2[0] + dx_dt3 * dV_dx3[0] + dx_dt4 * dV_dx4[0] + dx_dt5 * dV_dx5[0] + dx_dt6 * dV_dx6[0])
-										with hcl.if_(dV_dx_L0[0] < min_deriv0[0]):
-											min_deriv0[0] = dV_dx_L0[0]
-										with hcl.if_(dV_dx_L0[0] > max_deriv0[0]):
-											max_deriv0[0] = dV_dx_L0[0]
-										with hcl.if_(dV_dx_R0[0] < min_deriv0[0]):
-											min_deriv0[0] = dV_dx_R0[0]
-										with hcl.if_(dV_dx_R0[0] > max_deriv0[0]):
-											max_deriv0[0] = dV_dx_R0[0]
-										with hcl.if_(dV_dx_L1[0] < min_deriv1[0]):
-											min_deriv1[0] = dV_dx_L1[0]
-										with hcl.if_(dV_dx_L1[0] > max_deriv1[0]):
-											max_deriv1[0] = dV_dx_L1[0]
-										with hcl.if_(dV_dx_R1[0] < min_deriv1[0]):
-											min_deriv1[0] = dV_dx_R1[0]
-										with hcl.if_(dV_dx_R1[0] > max_deriv1[0]):
-											max_deriv1[0] = dV_dx_R1[0]
-										with hcl.if_(dV_dx_L2[0] < min_deriv2[0]):
-											min_deriv2[0] = dV_dx_L2[0]
-										with hcl.if_(dV_dx_L2[0] > max_deriv2[0]):
-											max_deriv2[0] = dV_dx_L2[0]
-										with hcl.if_(dV_dx_R2[0] < min_deriv2[0]):
-											min_deriv2[0] = dV_dx_R2[0]
-										with hcl.if_(dV_dx_R2[0] > max_deriv2[0]):
-											max_deriv2[0] = dV_dx_R2[0]
-										with hcl.if_(dV_dx_L3[0] < min_deriv3[0]):
-											min_deriv3[0] = dV_dx_L3[0]
-										with hcl.if_(dV_dx_L3[0] > max_deriv3[0]):
-											max_deriv3[0] = dV_dx_L3[0]
-										with hcl.if_(dV_dx_R3[0] < min_deriv3[0]):
-											min_deriv3[0] = dV_dx_R3[0]
-										with hcl.if_(dV_dx_R3[0] > max_deriv3[0]):
-											max_deriv3[0] = dV_dx_R3[0]
-										with hcl.if_(dV_dx_L4[0] < min_deriv4[0]):
-											min_deriv4[0] = dV_dx_L4[0]
-										with hcl.if_(dV_dx_L4[0] > max_deriv4[0]):
-											max_deriv4[0] = dV_dx_L4[0]
-										with hcl.if_(dV_dx_R4[0] < min_deriv4[0]):
-											min_deriv4[0] = dV_dx_R4[0]
-										with hcl.if_(dV_dx_R4[0] > max_deriv4[0]):
-											max_deriv4[0] = dV_dx_R4[0]
-										with hcl.if_(dV_dx_L5[0] < min_deriv5[0]):
-											min_deriv5[0] = dV_dx_L5[0]
-										with hcl.if_(dV_dx_L5[0] > max_deriv5[0]):
-											max_deriv5[0] = dV_dx_L5[0]
-										with hcl.if_(dV_dx_R5[0] < min_deriv5[0]):
-											min_deriv5[0] = dV_dx_R5[0]
-										with hcl.if_(dV_dx_R5[0] > max_deriv5[0]):
-											max_deriv5[0] = dV_dx_R5[0]
-										with hcl.if_(dV_dx_L6[0] < min_deriv6[0]):
-											min_deriv6[0] = dV_dx_L6[0]
-										with hcl.if_(dV_dx_L6[0] > max_deriv6[0]):
-											max_deriv6[0] = dV_dx_L6[0]
-										with hcl.if_(dV_dx_R6[0] < min_deriv6[0]):
-											min_deriv6[0] = dV_dx_R6[0]
-										with hcl.if_(dV_dx_R6[0] > max_deriv6[0]):
-											max_deriv6[0] = dV_dx_R6[0]
+										update_row_min(min_deriv0_rows, i0, dV_dx_L0[0])
+										update_row_max(max_deriv0_rows, i0, dV_dx_L0[0])
+										update_row_min(min_deriv0_rows, i0, dV_dx_R0[0])
+										update_row_max(max_deriv0_rows, i0, dV_dx_R0[0])
+										update_row_min(min_deriv1_rows, i0, dV_dx_L1[0])
+										update_row_max(max_deriv1_rows, i0, dV_dx_L1[0])
+										update_row_min(min_deriv1_rows, i0, dV_dx_R1[0])
+										update_row_max(max_deriv1_rows, i0, dV_dx_R1[0])
+										update_row_min(min_deriv2_rows, i0, dV_dx_L2[0])
+										update_row_max(max_deriv2_rows, i0, dV_dx_L2[0])
+										update_row_min(min_deriv2_rows, i0, dV_dx_R2[0])
+										update_row_max(max_deriv2_rows, i0, dV_dx_R2[0])
+										update_row_min(min_deriv3_rows, i0, dV_dx_L3[0])
+										update_row_max(max_deriv3_rows, i0, dV_dx_L3[0])
+										update_row_min(min_deriv3_rows, i0, dV_dx_R3[0])
+										update_row_max(max_deriv3_rows, i0, dV_dx_R3[0])
+										update_row_min(min_deriv4_rows, i0, dV_dx_L4[0])
+										update_row_max(max_deriv4_rows, i0, dV_dx_L4[0])
+										update_row_min(min_deriv4_rows, i0, dV_dx_R4[0])
+										update_row_max(max_deriv4_rows, i0, dV_dx_R4[0])
+										update_row_min(min_deriv5_rows, i0, dV_dx_L5[0])
+										update_row_max(max_deriv5_rows, i0, dV_dx_L5[0])
+										update_row_min(min_deriv5_rows, i0, dV_dx_R5[0])
+										update_row_max(max_deriv5_rows, i0, dV_dx_R5[0])
+										update_row_min(min_deriv6_rows, i0, dV_dx_L6[0])
+										update_row_max(max_deriv6_rows, i0, dV_dx_L6[0])
+										update_row_min(min_deriv6_rows, i0, dV_dx_R6[0])
+										update_row_max(max_deriv6_rows, i0, dV_dx_R6[0])
 
 		with hcl.Stage("Dissipation"):
 			dstb_state_dependent = dstb_depends_on_state(my_object)
-			uOptL0 = hcl.scalar(0, "uOptL0")
-			uOptL1 = hcl.scalar(0, "uOptL1")
-			uOptL2 = hcl.scalar(0, "uOptL2")
-			uOptL3 = hcl.scalar(0, "uOptL3")
-			uOptL4 = hcl.scalar(0, "uOptL4")
-			uOptL5 = hcl.scalar(0, "uOptL5")
-			uOptL6 = hcl.scalar(0, "uOptL6")
-			uOptL7 = hcl.scalar(0, "uOptL7")
-			uOptU0 = hcl.scalar(0, "uOptU0")
-			uOptU1 = hcl.scalar(0, "uOptU1")
-			uOptU2 = hcl.scalar(0, "uOptU2")
-			uOptU3 = hcl.scalar(0, "uOptU3")
-			uOptU4 = hcl.scalar(0, "uOptU4")
-			uOptU5 = hcl.scalar(0, "uOptU5")
-			uOptU6 = hcl.scalar(0, "uOptU6")
-			uOptU7 = hcl.scalar(0, "uOptU7")
-			dOptL0 = hcl.scalar(0, "dOptL0")
-			dOptL1 = hcl.scalar(0, "dOptL1")
-			dOptL2 = hcl.scalar(0, "dOptL2")
-			dOptL3 = hcl.scalar(0, "dOptL3")
-			dOptL4 = hcl.scalar(0, "dOptL4")
-			dOptL5 = hcl.scalar(0, "dOptL5")
-			dOptL6 = hcl.scalar(0, "dOptL6")
-			dOptL7 = hcl.scalar(0, "dOptL7")
-			dOptU0 = hcl.scalar(0, "dOptU0")
-			dOptU1 = hcl.scalar(0, "dOptU1")
-			dOptU2 = hcl.scalar(0, "dOptU2")
-			dOptU3 = hcl.scalar(0, "dOptU3")
-			dOptU4 = hcl.scalar(0, "dOptU4")
-			dOptU5 = hcl.scalar(0, "dOptU5")
-			dOptU6 = hcl.scalar(0, "dOptU6")
-			dOptU7 = hcl.scalar(0, "dOptU7")
-			alpha0 = hcl.scalar(0, "alpha0")
-			alpha1 = hcl.scalar(0, "alpha1")
-			alpha2 = hcl.scalar(0, "alpha2")
-			alpha3 = hcl.scalar(0, "alpha3")
-			alpha4 = hcl.scalar(0, "alpha4")
-			alpha5 = hcl.scalar(0, "alpha5")
-			alpha6 = hcl.scalar(0, "alpha6")
+
+			# Reduce the per-row derivative bounds of the Hamiltonian stage (serial, N0 iterations)
+			rows_min(min_deriv0_rows, min_deriv0, "r_min_deriv0")
+			rows_min(min_deriv1_rows, min_deriv1, "r_min_deriv1")
+			rows_min(min_deriv2_rows, min_deriv2, "r_min_deriv2")
+			rows_min(min_deriv3_rows, min_deriv3, "r_min_deriv3")
+			rows_min(min_deriv4_rows, min_deriv4, "r_min_deriv4")
+			rows_min(min_deriv5_rows, min_deriv5, "r_min_deriv5")
+			rows_min(min_deriv6_rows, min_deriv6, "r_min_deriv6")
+			rows_max(max_deriv0_rows, max_deriv0, "r_max_deriv0")
+			rows_max(max_deriv1_rows, max_deriv1, "r_max_deriv1")
+			rows_max(max_deriv2_rows, max_deriv2, "r_max_deriv2")
+			rows_max(max_deriv3_rows, max_deriv3, "r_max_deriv3")
+			rows_max(max_deriv4_rows, max_deriv4, "r_max_deriv4")
+			rows_max(max_deriv5_rows, max_deriv5, "r_max_deriv5")
+			rows_max(max_deriv6_rows, max_deriv6, "r_max_deriv6")
 			# Optimal disturbance at the LOWER/UPPER BOUND derivatives. If the dynamics sets
 			# dstb_state_dependent = False, opt_dstb does not depend on the state and is evaluated once
 			# here; otherwise it is evaluated at every grid point inside the loop below.
 			if not dstb_state_dependent:
+				dOptL0 = hcl.scalar(0, "dOptL0")
+				dOptL1 = hcl.scalar(0, "dOptL1")
+				dOptL2 = hcl.scalar(0, "dOptL2")
+				dOptL3 = hcl.scalar(0, "dOptL3")
+				dOptL4 = hcl.scalar(0, "dOptL4")
+				dOptL5 = hcl.scalar(0, "dOptL5")
+				dOptL6 = hcl.scalar(0, "dOptL6")
+				dOptL7 = hcl.scalar(0, "dOptL7")
+				dOptU0 = hcl.scalar(0, "dOptU0")
+				dOptU1 = hcl.scalar(0, "dOptU1")
+				dOptU2 = hcl.scalar(0, "dOptU2")
+				dOptU3 = hcl.scalar(0, "dOptU3")
+				dOptU4 = hcl.scalar(0, "dOptU4")
+				dOptU5 = hcl.scalar(0, "dOptU5")
+				dOptU6 = hcl.scalar(0, "dOptU6")
+				dOptU7 = hcl.scalar(0, "dOptU7")
 				dOptL0[0], dOptL1[0], dOptL2[0], dOptL3[0], dOptL4[0], dOptL5[0], dOptL6[0], dOptL7[0] = my_object.opt_dstb(t, (x0[0], x1[0], x2[0], x3[0], x4[0], x5[0], x6[0]), 
                                                                     (min_deriv0[0], min_deriv1[0], min_deriv2[0], min_deriv3[0], min_deriv4[0], min_deriv5[0], min_deriv6[0]) )
 				dOptU0[0], dOptU1[0], dOptU2[0], dOptU3[0], dOptU4[0], dOptU5[0], dOptU6[0], dOptU7[0] = my_object.opt_dstb(t, (x0[0], x1[0], x2[0], x3[0], x4[0], x5[0], x6[0]), 
                                                                     (max_deriv0[0], max_deriv1[0], max_deriv2[0], max_deriv3[0], max_deriv4[0], max_deriv5[0], max_deriv6[0]) )
 
 			with hcl.for_(0, V_init.shape[0], name="i0") as i0:
+				# Per-point variables: declared once per outer index (inside the parallel loop, so private
+				# to each thread) and reused for every point of that row
+				alpha0 = hcl.scalar(0, "alpha0")
+				alpha1 = hcl.scalar(0, "alpha1")
+				alpha2 = hcl.scalar(0, "alpha2")
+				alpha3 = hcl.scalar(0, "alpha3")
+				alpha4 = hcl.scalar(0, "alpha4")
+				alpha5 = hcl.scalar(0, "alpha5")
+				alpha6 = hcl.scalar(0, "alpha6")
+				uOptL0 = hcl.scalar(0, "uOptL0")
+				uOptL1 = hcl.scalar(0, "uOptL1")
+				uOptL2 = hcl.scalar(0, "uOptL2")
+				uOptL3 = hcl.scalar(0, "uOptL3")
+				uOptL4 = hcl.scalar(0, "uOptL4")
+				uOptL5 = hcl.scalar(0, "uOptL5")
+				uOptL6 = hcl.scalar(0, "uOptL6")
+				uOptL7 = hcl.scalar(0, "uOptL7")
+				uOptU0 = hcl.scalar(0, "uOptU0")
+				uOptU1 = hcl.scalar(0, "uOptU1")
+				uOptU2 = hcl.scalar(0, "uOptU2")
+				uOptU3 = hcl.scalar(0, "uOptU3")
+				uOptU4 = hcl.scalar(0, "uOptU4")
+				uOptU5 = hcl.scalar(0, "uOptU5")
+				uOptU6 = hcl.scalar(0, "uOptU6")
+				uOptU7 = hcl.scalar(0, "uOptU7")
+				if dstb_state_dependent:
+					dOptL0 = hcl.scalar(0, "dOptL0")
+					dOptL1 = hcl.scalar(0, "dOptL1")
+					dOptL2 = hcl.scalar(0, "dOptL2")
+					dOptL3 = hcl.scalar(0, "dOptL3")
+					dOptL4 = hcl.scalar(0, "dOptL4")
+					dOptL5 = hcl.scalar(0, "dOptL5")
+					dOptL6 = hcl.scalar(0, "dOptL6")
+					dOptL7 = hcl.scalar(0, "dOptL7")
+					dOptU0 = hcl.scalar(0, "dOptU0")
+					dOptU1 = hcl.scalar(0, "dOptU1")
+					dOptU2 = hcl.scalar(0, "dOptU2")
+					dOptU3 = hcl.scalar(0, "dOptU3")
+					dOptU4 = hcl.scalar(0, "dOptU4")
+					dOptU5 = hcl.scalar(0, "dOptU5")
+					dOptU6 = hcl.scalar(0, "dOptU6")
+					dOptU7 = hcl.scalar(0, "dOptU7")
 				with hcl.for_(0, V_init.shape[1], name="i1") as i1:
 					with hcl.for_(0, V_init.shape[2], name="i2") as i2:
 						with hcl.for_(0, V_init.shape[3], name="i3") as i3:
@@ -338,20 +370,22 @@ def graph_7D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
 										diss = hcl.scalar(0, "diss")
 										diss[0] = 0.5 * (deriv_diff0[i0, i1, i2, i3, i4, i5, i6] * alpha0[0] + deriv_diff1[i0, i1, i2, i3, i4, i5, i6] * alpha1[0] + deriv_diff2[i0, i1, i2, i3, i4, i5, i6] * alpha2[0] + deriv_diff3[i0, i1, i2, i3, i4, i5, i6] * alpha3[0] + deriv_diff4[i0, i1, i2, i3, i4, i5, i6] * alpha4[0] + deriv_diff5[i0, i1, i2, i3, i4, i5, i6] * alpha5[0] + deriv_diff6[i0, i1, i2, i3, i4, i5, i6] * alpha6[0])
 										V_new[i0, i1, i2, i3, i4, i5, i6] = -(V_new[i0, i1, i2, i3, i4, i5, i6] - diss[0])
-										with hcl.if_(alpha0[0] > max_alpha0[0]):
-											max_alpha0[0] = alpha0[0]
-										with hcl.if_(alpha1[0] > max_alpha1[0]):
-											max_alpha1[0] = alpha1[0]
-										with hcl.if_(alpha2[0] > max_alpha2[0]):
-											max_alpha2[0] = alpha2[0]
-										with hcl.if_(alpha3[0] > max_alpha3[0]):
-											max_alpha3[0] = alpha3[0]
-										with hcl.if_(alpha4[0] > max_alpha4[0]):
-											max_alpha4[0] = alpha4[0]
-										with hcl.if_(alpha5[0] > max_alpha5[0]):
-											max_alpha5[0] = alpha5[0]
-										with hcl.if_(alpha6[0] > max_alpha6[0]):
-											max_alpha6[0] = alpha6[0]
+										update_row_max(max_alpha0_rows, i0, alpha0[0])
+										update_row_max(max_alpha1_rows, i0, alpha1[0])
+										update_row_max(max_alpha2_rows, i0, alpha2[0])
+										update_row_max(max_alpha3_rows, i0, alpha3[0])
+										update_row_max(max_alpha4_rows, i0, alpha4[0])
+										update_row_max(max_alpha5_rows, i0, alpha5[0])
+										update_row_max(max_alpha6_rows, i0, alpha6[0])
+
+			# Reduce the per-row alphas for the CFL time step (serial, N0 iterations)
+			rows_max(max_alpha0_rows, max_alpha0, "r_max_alpha0")
+			rows_max(max_alpha1_rows, max_alpha1, "r_max_alpha1")
+			rows_max(max_alpha2_rows, max_alpha2, "r_max_alpha2")
+			rows_max(max_alpha3_rows, max_alpha3, "r_max_alpha3")
+			rows_max(max_alpha4_rows, max_alpha4, "r_max_alpha4")
+			rows_max(max_alpha5_rows, max_alpha5, "r_max_alpha5")
+			rows_max(max_alpha6_rows, max_alpha6, "r_max_alpha6")
 		hcl.update(delta_t, lambda x: step_bound())
 
 	def returnDerivative(V_array, Deriv_array):
