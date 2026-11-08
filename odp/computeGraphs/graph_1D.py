@@ -64,8 +64,6 @@ def graph_1D(my_object, g, compMethod, accuracy, generate_SpatDeriv=False, deriv
                 # Calculate average gradient
                 dV_dx[0] = (dV_dx_L + dV_dx_R) / 2
 
-                V_new[i] = dV_dx[0]*2
-
                 # Use method of DubinsCar to solve optimal control instead
                 uOpt = my_object.opt_ctrl(t, (x1[i],),
                                                 (dV_dx[0],))
