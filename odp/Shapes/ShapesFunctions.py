@@ -126,7 +126,7 @@ def Intersection(shape1: np.ndarray, shape2: np.ndarray) -> np.ndarray:
         shape2 (np.ndarray): implicit surface representation of a shape
 
     Returns:
-        np.ndarray: the element-wise minimum of two shapes
+        np.ndarray: the element-wise maximum of two shapes
     """
     return np.maximum(shape1, shape2)
 
