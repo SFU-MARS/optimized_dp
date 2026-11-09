@@ -60,6 +60,9 @@ class ROV_WaveBwds_6D:
         uOpt2 = hcl.scalar(0, "uOpt2")
         uOpt3 = hcl.scalar(0, "uOpt3")
         uOpt4 = hcl.scalar(0, "uOpt4")
+        # Just create and pass back, even though they're not used
+        uOpt5 = hcl.scalar(0, "uOpt5")
+        uOpt6 = hcl.scalar(0, "uOpt6")
 
         parSum1 = hcl.scalar(0, "parSum1")
         parSum2 = hcl.scalar(0, "parSum2")
@@ -87,13 +90,16 @@ class ROV_WaveBwds_6D:
             with hcl.elif_(parSum2[0] < 0):
                 uOpt2[0] = self.uMax[1]
 
-        return (uOpt1[0], uOpt2[0], uOpt3[0], uOpt4[0])
+        return (uOpt1[0], uOpt2[0], uOpt3[0], uOpt4[0], uOpt5[0], uOpt6[0])
 
     def opt_dstb(self, t, state, spat_deriv):
         dOpt1 = hcl.scalar(0, "dOpt1")
         dOpt2 = hcl.scalar(0, "dOpt2")
         dOpt3 = hcl.scalar(0, "dOpt3")
         dOpt4 = hcl.scalar(0, "dOpt4")
+        # Just create and pass back, even though they're not used
+        dOpt5 = hcl.scalar(0, "dOpt5")
+        dOpt6 = hcl.scalar(0, "dOpt6")
 
         with hcl.if_(self.dMode == "max"):
             with hcl.if_(spat_deriv[0] > 0):
@@ -137,7 +143,7 @@ class ROV_WaveBwds_6D:
             with hcl.elif_(spat_deriv[3] < 0):
                 dOpt4[0] = self.dMax[3]
 
-        return (dOpt1[0], dOpt2[0], dOpt3[0], dOpt4[0])
+        return (dOpt1[0], dOpt2[0], dOpt3[0], dOpt4[0], dOpt5[0], dOpt6[0])
 
     def dynamics(self, t, state, uOpt, dOpt): # Assume order of state is (x_a, z_a, u_r, w_r, x, z)
         # Some constants for convenience
@@ -172,14 +178,14 @@ class ROV_WaveBwds_6D:
 
         x3_dot[0] = (1/(self.m - self.X_udot))*(-Phi_11[0]*(self.b - self.X_udot)* state[2] + (self.b - self.m)*(G1[0] * self.omega * hcl.sin(sigma[0])) +\
          Phi_11[0] * (state[2] + G1*hcl.cos(sigma[0])) + Phi_21[0]*(state[3] + G1[0]*(-hcl.sin(sigma[0]))) - (self.X_u + self.X_uu * my_abs(state[2]))*state[2] + \
-        self.B[0,0]*uOpt[0] + self.B[0,1]*uOpt[1]) + dOpt[2]
+        uOpt[0]*self.B[0,0] + uOpt[1]*self.B[0,1]) + dOpt[2]
 
         x4_dot[0] = (1/(self.m - self.Z_wdot))*(-Phi_22*(self.b - self.Z_wdot)*state[3] + \
          (self.b - self.m) * (G1 * self.omega * hcl.cos(sigma[0])) + \
          Phi_12[0] * (state[2] + G1 * hcl.cos(sigma[0])) + \
          Phi_22[0] * (state[3] + G1 * (-hcl.sin(sigma[0]))) - \
          (-(self.W - self.Buoy)) - (self.Z_w + self.Z_ww * my_abs(state[3])) * state[3] + \
-         self.B[1,0] * uOpt[0] + self.B[1,1] * uOpt[1]) + \
+         uOpt[0] * self.B[1,0] + uOpt[1] * self.B[1,1]) + \
          dOpt[3]
 
         x5_dot[0] = state[2] + G1[0] * hcl.cos(sigma[0]) + dOpt[0]

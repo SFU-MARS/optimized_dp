@@ -147,8 +147,8 @@ class DubinsAirplane6D:
         y_dot[0] = self.v * hcl.cos(state[4]) * hcl.sin(state[3]) + dOpt[1]
         z_dot[0] = self.v * hcl.sin(state[4]) + dOpt[2]
         psi_dot[0] = self.g / self.v * (hcl.sin(state[5]) / hcl.cos(state[5]))
-        gamma_dot[0] = uOpt[1]
-        phi_dot[0] = uOpt[2]
+        gamma_dot[0] = uOpt[0]
+        phi_dot[0] = uOpt[1]
 
         return (x_dot[0], y_dot[0], z_dot[0], psi_dot[0], gamma_dot[0], phi_dot[0])
 
@@ -181,8 +181,8 @@ class DubinsAirplane6D:
         y_dot = self.v * np.cos(state[4]) * np.sin(state[3])
         z_dot = self.v * np.sin(state[4])
         psi_dot = self.g / self.v * np.tan(state[5])
-        gamma_dot = action[1]
-        phi_dot = action[2]
+        gamma_dot = action[0]
+        phi_dot = action[1]
 
         return (x_dot, y_dot, z_dot, psi_dot, gamma_dot, phi_dot)
 
