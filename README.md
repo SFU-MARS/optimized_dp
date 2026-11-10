@@ -23,6 +23,23 @@ Please install the following:
 
     ```sudo apt install libtinfo5 ``` 
 
+# Reproducible environment (Docker)
+The toolbox relies on HeteroCL 0.3 and LLVM 6.0, which are no longer actively maintained. To make sure the toolbox can still be installed and run in the future, the exact tested environment (HeteroCL 0.3, LLVM 6.0, Python 3.8, Ubuntu 22.04) is provided as a [`Dockerfile`](Dockerfile), and all of its packages are archived on Zenodo: https://doi.org/10.5281/zenodo.24118105
+
+The archive `odp-conda-pkgs-linux-64.tar.gz` contains every conda package of the environment (listed with checksums in [`environment-linux-64.lock`](environment-linux-64.lock)), so the image can be built without access to the conda channels.
+
+You only need [Docker](https://docs.docker.com/get-docker/) installed. Download the archive into the root of this repository, then build the image (on Windows, run the commands in Git Bash or WSL):
+```
+tar -xzf odp-conda-pkgs-linux-64.tar.gz
+docker build --build-context conda-pkgs=./conda-pkgs -t optimized_dp .
+```
+Leaving out `--build-context conda-pkgs=./conda-pkgs` downloads the same packages from the conda channels instead, as long as they are still available.
+
+Then run the tests, or open a shell with your local copy of the repository mounted:
+```
+docker run --rm optimized_dp pytest test
+docker run --rm -it -v "$PWD:/opt/optimized_dp" optimized_dp bash
+```
 
 # Solving the Hamilton-Jacobi-Issac (HJI) PDE
 * We provide a running example of solving HJI PDE in the file [`examples/plotting_example.py`](https://github.com/SFU-MARS/optimized_dp/examples/examples.py):
@@ -118,6 +135,13 @@ class DubinsCapture:
         (...)
         return (x_dot[0], y_dot[0], theta_dot[0])
 ``` 
+
+### Optional: state-independent disturbance
+When computing the artificial dissipation, the solver by default evaluates `opt_dstb` at every grid point, which is exact for any dynamics. If your `opt_dstb` does not use `state`, you can add the class attribute below so that `opt_dstb` is evaluated only once per time step, which saves some computation:
+```python
+class DubinsCapture:
+    dstb_state_dependent = False
+```
 
 
 # Time-to-Reach computation

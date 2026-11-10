@@ -174,3 +174,5 @@ cython_debug/
 # Output files
 *.html
 *.png
+# Archived conda packages (see scripts/download_conda_packages.sh)
+conda-pkgs/

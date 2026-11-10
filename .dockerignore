@@ -1,0 +1,10 @@
+.git
+.github
+.pytest_cache
+.vscode
+**/__pycache__
+**/*.pyc
+odp.egg-info
+**/*.npy
+conda-pkgs
+**/*.tar.gz
