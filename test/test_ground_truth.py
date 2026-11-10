@@ -181,7 +181,7 @@ class GridMDP:
         self.dx = [float(dx) for dx in grid.dx]
         self.maxTransitions = 2
 
-    def transition(self, sVals, iVals, u):
+    def transition(self, sVals, u):
         trans_matrix = hcl.compute((self.maxTransitions, 1 + self.dims), lambda *x: 0, "trans_matrix")
         trans_matrix[0, 0] = MOVE_PROBABILITY
         trans_matrix[1, 0] = 1 - MOVE_PROBABILITY
@@ -195,7 +195,7 @@ class GridMDP:
             trans_matrix[1, k + 1] = sVals[k]
         return trans_matrix
 
-    def reward(self, sVals, iVals, u):
+    def reward(self, sVals, u):
         rwd = hcl.scalar(0, "rwd")
         rwd[0] = -0.01 * u
         for k in range(self.dims):
