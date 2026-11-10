@@ -39,12 +39,11 @@ class pendulum_2d_example:
         self.coeff2 = 3.0/(self.m * self.l * self.l)
         self.maxTransitions = 1 
 
-    def transition(self, sVals, iVals, u):
+    def transition(self, sVals, u):
         """
         Transition function for the pendulum system (adopted from ).
         Inputs:    
             sVals: state values [theta, theta_dot]
-            iVals: indices of the state values in the grid
             u: action taken (torque applied)
         Outputs:
             trans_matrix: a 2D matrix containing the possible successor states when taking u from current state sVals.
@@ -84,12 +83,11 @@ class pendulum_2d_example:
         return trans_matrix
 
     # Return the reward for taking action from state
-    def reward(self, sVals, iVals, u):
+    def reward(self, sVals, u):
         """
         Reward function for the pendulum system (adopted from openAI gym).
         Inputs:
             sVals: state values [theta, theta_dot]
-            iVals: indices of the state values in the grid
             u: action taken (torque applied)
         Outputs:
             rwd: the reward for taking action u from state sVals

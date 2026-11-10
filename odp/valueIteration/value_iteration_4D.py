@@ -9,9 +9,9 @@ def updateVopt(obj, current_indices, actions, V, gamma, bounds, ptsEachDim):
 
         sVals = discreteIndexToContinuousState(current_indices, bounds, ptsEachDim)
         # call the transition function to obtain the outcome(s) of action a from state (si,sj,sk)
-        transition_matrix = obj.transition(sVals, current_indices, actions[a])
+        transition_matrix = obj.transition(sVals, actions[a])
         # initialize the value of the action using the immediate reward of taking that action
-        intermeds[a] = obj.reward(sVals, current_indices, actions[a])
+        intermeds[a] = obj.reward(sVals, actions[a])
         # add the value of each possible successor state to the estimated value of taking action a
         with hcl.for_(0, transition_matrix.shape[0], name="si") as si:
             p[0]     = transition_matrix[si,0]

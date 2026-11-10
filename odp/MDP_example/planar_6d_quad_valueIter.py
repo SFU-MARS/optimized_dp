@@ -9,7 +9,6 @@ from itertools import product
 
 import numpy as np
 import math
-from memory_profiler import memory_usage
 
 import heterocl as hcl
 import os
@@ -92,12 +91,11 @@ class planar_6d_example:
         return next_state
 
 
-    def transition(self, sVals, iVals, u):
+    def transition(self, sVals, u):
         """
         Transition function for the planar quadrotor system.
         Inputs:    
             sVals: state values 
-            iVals: indices of the state values in the grid
             u: action taken 
         Outputs:
             trans_matrix: a 2D matrix containing the possible successor states when taking u from current state sVals.
@@ -114,12 +112,11 @@ class planar_6d_example:
         return trans_matrix
 
     # Return the reward for taking action from state
-    def reward(self, sVals, iVals, u):
+    def reward(self, sVals, u):
         """
         Reward function for the pendulum system (adopted from openAI gym).
         Inputs:
             sVals: state values [theta, theta_dot]
-            iVals: indices of the state values in the grid
             u: action taken (torque applied)
         Outputs:
             rwd: the reward for taking action u from state sVals
@@ -147,14 +144,9 @@ class planar_6d_example:
             rwd[0] = -1
         return rwd[0]
     
-# pendulum_system = planar_6d_example()
-# result = solveValueIteration(planar_6d_example(),
-#                              grid=g, action_space=controls,
-#                              gamma=gamma, epsilon=epsilon,
-#                              maxIters=maxIters
-#                              )
-# np.save('hcl_planar_6d_example.npy', result)
-memory_usage_planar_6d, result = memory_usage((solveValueIteration, (planar_6d_example(), g, controls, gamma, epsilon, maxIters))
-                                      ,retval=True, interval=0.1, max_usage=True)
-print(f"Peak memory usage for planar 6D quadrotor example: {memory_usage_planar_6d} MB")
+result = solveValueIteration(planar_6d_example(),
+                             grid=g, action_space=controls,
+                             gamma=gamma, epsilon=epsilon,
+                             maxIters=maxIters
+                             )
 np.save('hcl_planar_6d_example_2.npy', result)

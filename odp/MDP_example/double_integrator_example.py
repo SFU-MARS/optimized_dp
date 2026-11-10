@@ -31,7 +31,7 @@ class double_integrator_lqr:
         self.max_x2 = bounds[1, 1]
         self.maxTransitions = 1 
 
-    def transition(self, sVals, iVals, u):
+    def transition(self, sVals, u):
         trans_matrix = hcl.compute((self.maxTransitions, (1 + 2)), lambda *x: 0, "trans_matrix")
         
         # Variable declaration
@@ -70,7 +70,7 @@ class double_integrator_lqr:
 
         return trans_matrix
 
-    def reward(self, sVals, iVals, u):
+    def reward(self, sVals, u):
         rwd = hcl.scalar(0, "rwd")
         x1 = hcl.scalar(0, "x1")
         x2 = hcl.scalar(0, "x2")
