@@ -53,5 +53,5 @@ print("Maximum value {}".format(np.max(V_0)))
 
 # Visualize result
 po = PlotOptions(do_plot=True, plotDims=[0,1,2], slicesCut=[],
-                  min_isosurface=0, max_isosurface=0)
+                  min_isosurface=0, max_isosurface=2.)
 visualize_plots(V_0, g, po)
