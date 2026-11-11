@@ -11,6 +11,15 @@ from odp.TimeToReach import TTR_1D, TTR_2D, TTR_3D, TTR_4D, TTR_5D, TTR_6D, TTR_
 # Value Iteration library
 from odp.valueIteration import value_iteration_2D, value_iteration_3D, value_iteration_4D, value_iteration_5D, value_iteration_6D
 
+# Executables for each number of dimensions
+_GRAPHS = {1: graph_1D, 2: graph_2D, 3: graph_3D, 4: graph_4D, 5: graph_5D, 6: graph_6D, 7: graph_7D, 8: graph_8D}
+_TTR_SOLVERS = {1: TTR_1D, 2: TTR_2D, 3: TTR_3D, 4: TTR_4D, 5: TTR_5D, 6: TTR_6D, 7: TTR_7D, 8: TTR_8D}
+_VALUE_ITERATIONS = {2: value_iteration_2D, 3: value_iteration_3D, 4: value_iteration_4D,
+                     5: value_iteration_5D, 6: value_iteration_6D}
+
+def _state_arrays(grid):
+    return [hcl.asarray(np.reshape(grid.vs[d], grid.pts_each_dim[d])) for d in range(grid.dims)]
+
 def solveValueIteration(MDP_obj, grid, action_space,
                         gamma=0.9, epsilon=1e-3, maxIters=1000):
     print("Welcome to optimized_dp \n")
@@ -32,16 +41,7 @@ def solveValueIteration(MDP_obj, grid, action_space,
     bounds = hcl.asarray(bounds)
     ptsEachDim = hcl.asarray(grid.pts_each_dim)
     
-    if bounds.shape[0] == 2:
-        f = value_iteration_2D(MDP_obj, grid.pts_each_dim, bounds, action_space)
-    if bounds.shape[0] == 3:
-        f = value_iteration_3D(MDP_obj, grid.pts_each_dim, bounds, action_space)
-    if bounds.shape[0] == 4:
-        f = value_iteration_4D(MDP_obj, grid.pts_each_dim, bounds, action_space)
-    if bounds.shape[0] == 5:
-        f = value_iteration_5D(MDP_obj, grid.pts_each_dim, bounds, action_space)
-    if bounds.shape[0] == 6:
-        f = value_iteration_6D(MDP_obj, grid.pts_each_dim, bounds, action_space)
+    f = _VALUE_ITERATIONS[bounds.shape[0]](MDP_obj, grid.pts_each_dim, bounds, action_space)
 
     # Build the graph and use the executable
     # Now use the executable
@@ -129,65 +129,13 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
     # For debugging purposes
     #probe = hcl.asarray(np.zeros(tuple(grid.pts_each_dim)))
 
-    # Array for each state values
-    list_x1 = np.reshape(grid.vs[0], grid.pts_each_dim[0])
-    if grid.dims >= 2:
-        list_x2 = np.reshape(grid.vs[1], grid.pts_each_dim[1])
-    if grid.dims >= 3:
-        list_x3 = np.reshape(grid.vs[2], grid.pts_each_dim[2])
-    if grid.dims >= 4:
-        list_x4 = np.reshape(grid.vs[3], grid.pts_each_dim[3])
-    if grid.dims >= 5:
-        list_x5 = np.reshape(grid.vs[4], grid.pts_each_dim[4])
-    if grid.dims >= 6:
-        list_x6 = np.reshape(grid.vs[5], grid.pts_each_dim[5])
-    if grid.dims >= 7:
-        list_x7 = np.reshape(grid.vs[6], grid.pts_each_dim[6])
-    if grid.dims >= 8:
-        list_x8 = np.reshape(grid.vs[7], grid.pts_each_dim[7])
-
-    # Convert state arrays to hcl array type
-    list_x1 = hcl.asarray(list_x1)
-    if grid.dims >= 2:
-        list_x2 = hcl.asarray(list_x2)
-    if grid.dims >= 3:
-        list_x3 = hcl.asarray(list_x3)
-    if grid.dims >= 4:
-        list_x4 = hcl.asarray(list_x4)
-    if grid.dims >= 5:
-        list_x5 = hcl.asarray(list_x5)
-    if grid.dims >= 6:
-        list_x6 = hcl.asarray(list_x6)
-    if grid.dims >= 7:
-        list_x7 = hcl.asarray(list_x7)
-    if grid.dims >= 8:
-        list_x8 = hcl.asarray(list_x8)
+    # Array for each state values, in hcl array type
+    list_xs = _state_arrays(grid)
 
     # Get executable, obstacle check intial value function
-    if grid.dims == 1:
-        solve_pde = graph_1D(dynamics_obj, grid, compMethod["TargetSetMode"], accuracy)
-
-    if grid.dims == 2:
-        solve_pde = graph_2D(dynamics_obj, grid, compMethod["TargetSetMode"], accuracy)
-
-    if grid.dims == 3:
-        solve_pde = graph_3D(dynamics_obj, grid, compMethod["TargetSetMode"], accuracy, 
-                             solve_forward=solve_forward)
-
-    if grid.dims == 4:
-        solve_pde = graph_4D(dynamics_obj, grid, compMethod["TargetSetMode"], accuracy)
-
-    if grid.dims == 5:
-        solve_pde = graph_5D(dynamics_obj, grid, compMethod["TargetSetMode"], accuracy)
-
-    if grid.dims == 6:
-        solve_pde = graph_6D(dynamics_obj, grid, compMethod["TargetSetMode"], accuracy)
-
-    if grid.dims == 7:
-        solve_pde = graph_7D(dynamics_obj, grid, compMethod["TargetSetMode"], accuracy)
-
-    if grid.dims == 8:
-        solve_pde = graph_8D(dynamics_obj, grid, compMethod["TargetSetMode"], accuracy)
+    # Only graph_3D supports forward reachability
+    graph_kwargs = {"solve_forward": solve_forward} if grid.dims == 3 else {}
+    solve_pde = _GRAPHS[grid.dims](dynamics_obj, grid, compMethod["TargetSetMode"], accuracy, **graph_kwargs)
 
     """ Be careful, for high-dimensional array (5D or higher), saving value arrays at all the time steps may 
     cause your computer to run out of memory """
@@ -220,22 +168,7 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
             t = hcl.asarray(np.array([tNow]))
 
             # Run the execution and pass input into graph
-            if grid.dims == 1:
-                solve_pde(Hamiltonian, V_t, list_x1, delta_t, t, l0)
-            if grid.dims == 2:
-                solve_pde(Hamiltonian, V_t, list_x1, list_x2, delta_t, t, l0)
-            if grid.dims == 3:
-                solve_pde(Hamiltonian, V_t, list_x1, list_x2, list_x3, delta_t, t, l0)
-            if grid.dims == 4:
-                solve_pde(Hamiltonian, V_t, list_x1, list_x2, list_x3, list_x4, delta_t, t, l0)
-            if grid.dims == 5:
-                solve_pde(Hamiltonian, V_t, list_x1, list_x2, list_x3, list_x4, list_x5, delta_t, t, l0)
-            if grid.dims == 6:
-                solve_pde(Hamiltonian, V_t, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6, delta_t, t, l0)
-            if grid.dims == 7:
-                solve_pde(Hamiltonian, V_t, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6, list_x7, delta_t, t, l0)
-            if grid.dims == 8:
-                solve_pde(Hamiltonian, V_t, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6, list_x7, list_x8, delta_t, t, l0)
+            solve_pde(Hamiltonian, V_t, *list_xs, delta_t, t, l0)
 
             # Smallest timestep to integrate according to CFL condition
             dt = delta_t.asnumpy()[0]
@@ -259,22 +192,7 @@ def HJSolver(dynamics_obj, grid, multiple_value, tau, compMethod,
                 
                 
                 # Compute phi at t = (n + 2)
-                if grid.dims == 1:
-                    solve_pde(Hamiltonian, V_tp1, list_x1, delta_t, t1, l0)
-                if grid.dims == 2:
-                    solve_pde(Hamiltonian, V_tp1, list_x1, list_x2, delta_t, t1 , l0)
-                if grid.dims == 3:
-                    solve_pde(Hamiltonian, V_tp1, list_x1, list_x2, list_x3, delta_t, t1, l0)
-                if grid.dims == 4:
-                    solve_pde(Hamiltonian, V_tp1, list_x1, list_x2, list_x3, list_x4, delta_t, t1, l0)
-                if grid.dims == 5:
-                    solve_pde(Hamiltonian, V_tp1, list_x1, list_x2, list_x3, list_x4, list_x5, delta_t, t1, l0)
-                if grid.dims == 6:
-                    solve_pde(Hamiltonian, V_tp1, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6, delta_t, t1, l0)
-                if grid.dims == 7:
-                    solve_pde(Hamiltonian, V_tp1, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6, list_x7, delta_t, t1, l0)
-                if grid.dims == 8:
-                    solve_pde(Hamiltonian, V_tp1, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6, list_x7, list_x8, delta_t, t1, l0)
+                solve_pde(Hamiltonian, V_tp1, *list_xs, delta_t, t1, l0)
                 # Integrate
                 # TODO: In-place update for more memory efficiency
                 V_tp2 = V_tp1.asnumpy() + Hamiltonian.asnumpy() *  dt
@@ -383,59 +301,13 @@ def TTRSolver(dynamics_obj, grid, multiple_value, epsilon, verbose=True):
     
     prev_val = np.zeros(init_value.shape)
 
-    # Re-shape states vector
-    list_x1 = np.reshape(grid.vs[0], grid.pts_each_dim[0])
-    if grid.dims >= 2:
-        list_x2 = np.reshape(grid.vs[1], grid.pts_each_dim[1])
-    if grid.dims >= 3:
-        list_x3 = np.reshape(grid.vs[2], grid.pts_each_dim[2])
-    if grid.dims >= 4:
-        list_x4 = np.reshape(grid.vs[3], grid.pts_each_dim[3])
-    if grid.dims >= 5:
-        list_x5 = np.reshape(grid.vs[4], grid.pts_each_dim[4])
-    if grid.dims >= 6:
-        list_x6 = np.reshape(grid.vs[5], grid.pts_each_dim[5])
-    if grid.dims >= 7:
-        list_x7 = np.reshape(grid.vs[6], grid.pts_each_dim[6])
-    if grid.dims >= 8:
-        list_x8 = np.reshape(grid.vs[7], grid.pts_each_dim[7])
-
-    # Convert states vector to hcl array type
-    list_x1 = hcl.asarray(list_x1)
-    if grid.dims >= 2:
-        list_x2 = hcl.asarray(list_x2)
-    if grid.dims >= 3:
-        list_x3 = hcl.asarray(list_x3)
-    if grid.dims >= 4:
-        list_x4 = hcl.asarray(list_x4)
-    if grid.dims >= 5:
-        list_x5 = hcl.asarray(list_x5)
-    if grid.dims >= 6:
-        list_x6 = hcl.asarray(list_x6)
-    if grid.dims >= 7:
-        list_x7 = hcl.asarray(list_x7)
-    if grid.dims >= 8:
-        list_x8 = hcl.asarray(list_x8)
+    # States vectors in hcl array type
+    list_xs = _state_arrays(grid)
+    # TTR_1D does not take a constraint
+    ttr_inputs = [V_0, *list_xs] if grid.dims == 1 else [V_0, constraint, *list_xs]
 
     # Get executable
-    if grid.dims == 1:
-        solve_TTR = TTR_1D(dynamics_obj, grid)
-    if grid.dims == 2:
-        solve_TTR = TTR_2D(dynamics_obj, grid)
-    if grid.dims == 3:
-        solve_TTR = TTR_3D(dynamics_obj, grid)
-    if grid.dims == 4:
-        solve_TTR = TTR_4D(dynamics_obj, grid)
-    if grid.dims == 5:
-        print("Using TTR_5D")
-        solve_TTR = TTR_5D(dynamics_obj, grid)
-        print(solve_TTR)
-    if grid.dims == 6:
-        solve_TTR = TTR_6D(dynamics_obj, grid)
-    if grid.dims == 7:
-        solve_TTR = TTR_7D(dynamics_obj, grid)
-    if grid.dims == 8:
-        solve_TTR = TTR_8D(dynamics_obj, grid)
+    solve_TTR = _TTR_SOLVERS[grid.dims](dynamics_obj, grid)
     print("Got Executable\n")
 
     # Print out code for different backend
@@ -449,22 +321,7 @@ def TTRSolver(dynamics_obj, grid, multiple_value, epsilon, verbose=True):
         if verbose:
             print("Iteration: {} Error: {}".format(count, error))
         count += 1
-        if grid.dims == 1:
-            solve_TTR(V_0, list_x1)
-        if grid.dims == 2:
-            solve_TTR(V_0, constraint, list_x1, list_x2)
-        if grid.dims == 3:
-            solve_TTR(V_0, constraint, list_x1, list_x2, list_x3)
-        if grid.dims == 4:
-            solve_TTR(V_0, constraint, list_x1, list_x2, list_x3, list_x4)
-        if grid.dims == 5:
-            solve_TTR(V_0, constraint, list_x1, list_x2, list_x3, list_x4, list_x5)
-        if grid.dims == 6:
-            solve_TTR(V_0, constraint, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6)
-        if grid.dims == 7:
-            solve_TTR(V_0, constraint, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6, list_x7)
-        if grid.dims == 8:
-            solve_TTR(V_0, constraint, list_x1, list_x2, list_x3, list_x4, list_x5, list_x6, list_x7, list_x8)
+        solve_TTR(*ttr_inputs)
 
         error = np.max(np.abs(prev_val - V_0.asnumpy()))
         prev_val = V_0.asnumpy()
@@ -490,30 +347,8 @@ def computeSpatDerivArray(grid, V, deriv_dim, accuracy="low"):
     spatial_deriv = hcl.asarray(np.zeros(tuple(grid.pts_each_dim)))
 
     # Get executable, obstacle check intial value function
-    if grid.dims == 1:
-        compute_SpatDeriv = graph_1D(None, grid, "None", accuracy,
-                                     generate_SpatDeriv=True, deriv_dim=deriv_dim)
-    if grid.dims == 2:
-        compute_SpatDeriv = graph_2D(None, grid, "None", accuracy,
-                                     generate_SpatDeriv=True, deriv_dim=deriv_dim)
-    if grid.dims == 3:
-        compute_SpatDeriv = graph_3D(None, grid, "None", accuracy,
-                                     generate_SpatDeriv=True, deriv_dim=deriv_dim)
-    if grid.dims == 4:
-        compute_SpatDeriv = graph_4D(None, grid, "None", accuracy,
-                                     generate_SpatDeriv=True, deriv_dim=deriv_dim)
-    if grid.dims == 5:
-        compute_SpatDeriv = graph_5D(None, grid, "None", accuracy,
-                                     generate_SpatDeriv=True, deriv_dim=deriv_dim)
-    if grid.dims == 6:
-        compute_SpatDeriv = graph_6D(None, grid, "None", accuracy,
-                                     generate_SpatDeriv=True, deriv_dim=deriv_dim)
-    if grid.dims == 7:
-        compute_SpatDeriv = graph_7D(None, grid, "None", accuracy,
-                                     generate_SpatDeriv=True, deriv_dim=deriv_dim)
-    if grid.dims == 8:
-        compute_SpatDeriv = graph_8D(None, grid, "None", accuracy,
-                                     generate_SpatDeriv=True, deriv_dim=deriv_dim)
+    compute_SpatDeriv = _GRAPHS[grid.dims](None, grid, "None", accuracy,
+                                           generate_SpatDeriv=True, deriv_dim=deriv_dim)
 
     compute_SpatDeriv(V_0, spatial_deriv)
     return spatial_deriv.asnumpy()
