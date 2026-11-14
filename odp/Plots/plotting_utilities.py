@@ -494,7 +494,6 @@ def pre_plot(plot_option, grid, V_ori):
     # so that original grid is not modified
     grid_min = np.array(grid.min).copy()
     grid_max = np.array(grid.max).copy()
-    dims = grid.dims # Scalar - no issue
     Ns = np.array(grid.pts_each_dim).copy()
 
     delete_idx = []
@@ -504,7 +503,6 @@ def pre_plot(plot_option, grid, V_ori):
         if i not in dims_plot:
             idx[i] = plot_option.slices[slice_idx]
             slice_idx += 1
-            dims = dims -1
             delete_idx.append(i)
     Ns = np.delete(Ns, delete_idx)
     grid_min = np.delete(grid_min, delete_idx)
@@ -512,7 +510,7 @@ def pre_plot(plot_option, grid, V_ori):
 
     V = V_ori[tuple(idx)]
     # Create a new grid
-    grid = Grid(grid_min, grid_max, dims, Ns)
+    grid = Grid(grid_min, grid_max, Ns)
 
     if not plot_option.downsample:
         return grid, V
@@ -548,7 +546,7 @@ def downsample(g, data, scale):
         Ns[i] = grid_pts[idx[i]].shape[0]
         grid_max[i] = grid_pts[idx[i]][-1]
     data_out = data[tuple(idx)]
-    g_out = Grid(grid_min, grid_max, g.dims, Ns)
+    g_out = Grid(grid_min, grid_max, Ns)
 
     return g_out, data_out
 

@@ -22,7 +22,6 @@ def test_3d_against_analytical():
     grid = Grid(
         minBounds=[-2., -2., -np.pi],
         maxBounds=[2., 2., np.pi],
-        dims=3,
         pts_each_dim=[150, 150, 72],
         periodicDims=[2]
     )
@@ -85,7 +84,6 @@ def test_against_computeSpatDerivArray(dims, pts_per_dim):
     grid = Grid(
         minBounds=[-2.0] * dims,
         maxBounds=[2.0] * dims,
-        dims=dims,
         pts_each_dim=[pts_per_dim] * dims,
         periodicDims=[dims - 1] 
     )

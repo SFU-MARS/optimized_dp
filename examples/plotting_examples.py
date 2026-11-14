@@ -36,7 +36,7 @@ grid_max = np.array([4.0, 4.0, 4.0, math.pi])
 dims = 4
 N = np.array([40, 40, 10, 36])
 pd=[3]
-g = Grid(grid_min, grid_max, dims, N, pd)
+g = Grid(grid_min, grid_max, N, pd)
 
 # STEP 2: Generate initial values for grid using shape functions
 center = np.zeros(dims)
@@ -71,7 +71,7 @@ grid_max = np.array([4.0, 4.0, math.pi])
 dims = 3
 N = np.array([50, 50, 50])
 pd=[2]
-g = Grid(grid_min, grid_max, dims, N, pd)
+g = Grid(grid_min, grid_max, N, pd)
 
 # STEP 2: Generate initial values for grid using shape functions
 center = np.zeros(dims)
@@ -117,7 +117,7 @@ grid_min = np.array([-4.0, -4.0])
 grid_max = np.array([4.0, 4.0])
 dims = 2
 N = np.array([150, 150])
-g_2 = Grid(grid_min, grid_max, dims, N)
+g_2 = Grid(grid_min, grid_max, N)
 
 # STEP 2: Generate initial values for grid using shape functions
 target_min = np.array([-1.0, -1.0])

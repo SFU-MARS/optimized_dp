@@ -14,7 +14,7 @@ from odp.solver import HJSolver, computeSpatDerivArray
 import math
 
 # Define grid
-g = Grid(np.array([-4.0, -4.0, -math.pi]), np.array([4.0, 4.0, math.pi]), 3, np.array([40, 40, 40]), [2])
+g = Grid(np.array([-4.0, -4.0, -math.pi]), np.array([4.0, 4.0, math.pi]), np.array([40, 40, 40]), [2])
 
 # Implicit function for the initial value function
 Initial_value_f = CylinderShape(g, [2], np.zeros(3), 1)

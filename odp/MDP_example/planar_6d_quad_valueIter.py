@@ -16,7 +16,6 @@ import os
 # 6D planar quadrotor example
 g = Grid(minBounds=np.array([0., 0., -2, -2., -math.pi, -5.]),
          maxBounds=np.array([4., 4., 2., 2.,  math.pi, 5.]),
-         dims=6,
          pts_each_dim=np.array([40, 40, 30, 30, 36, 10]))
 
 thrust_control = np.linspace(0, 16, 16)

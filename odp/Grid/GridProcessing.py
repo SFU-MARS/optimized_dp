@@ -8,7 +8,6 @@ class Grid:
         self,
         minBounds: List,
         maxBounds: List,
-        dims: int,
         pts_each_dim: List,
         periodicDims: List = [],
     ):
@@ -16,15 +15,14 @@ class Grid:
         Args:
             minBounds (list): The lower bounds of each dimension in the grid
             maxBounds (list): The upper bounds of each dimension in the grid
-            dims (int): The dimension of grid
             pts_each_dim (list): The number of points for each dimension in the grid
             periodicDim (list, optional): A list of periodic dimentions (0-indexed). Defaults to [].
         """
-        assert len(minBounds) == len(maxBounds) == len(pts_each_dim) == dims
+        assert len(minBounds) == len(maxBounds) == len(pts_each_dim)
 
         self.max = np.array(maxBounds)
         self.min = np.array(minBounds)
-        self.dims = dims
+        self.dims = len(maxBounds)
         self.pts_each_dim = np.array(pts_each_dim)
         self.pDim = periodicDims
 
@@ -46,7 +44,7 @@ class Grid:
         self.grid_points[i] is a numpy array with length pts_each_dim[i] 
         """
         self.grid_points = []
-        for i in range(dims):
+        for i in range(self.dims):
             tmp = np.linspace(self.min[i], self.max[i], num=self.pts_each_dim[i])
             broadcast_map = np.ones(self.dims, dtype=int)
             broadcast_map[i] = self.pts_each_dim[i]

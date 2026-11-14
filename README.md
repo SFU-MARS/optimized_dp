@@ -50,7 +50,7 @@ grid_max = np.array([4.0, 4.0, math.pi])
 dims = 3
 N = np.array([150, 150, 150])
 pd=[2]
-g = Grid(grid_min, grid_max, dims, N, pd)
+g = Grid(grid_min, grid_max, N, pd)
 
 # STEP 2: Generate initial values for grid using shape functions
 center = np.zeros(dims)
@@ -149,7 +149,7 @@ class DubinsCapture:
 ```python
 # -------------------------------- ONE-SHOT TTR COMPUTATION ---------------------------------- #
 g = Grid(minBounds=np.array([-3.0, -1.0, -math.pi]), maxBounds=np.array([3.0, 4.0, math.pi]),
-         dims=3, pts_each_dim=np.array([50, 50, 50]), periodicDims=[2])
+         pts_each_dim=np.array([50, 50, 50]), periodicDims=[2])
 # Car is trying to reach the target
 my_car = DubinsCar(uMode="min")
 

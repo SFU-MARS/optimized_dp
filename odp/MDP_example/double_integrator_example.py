@@ -13,7 +13,6 @@ ptsEachDim = np.array([601, 601])
 
 g = Grid(minBounds=bounds[:, 0],
          maxBounds=bounds[:, 1],
-         dims=2,
          pts_each_dim=ptsEachDim)
 
 # Action space (acceleration limits)

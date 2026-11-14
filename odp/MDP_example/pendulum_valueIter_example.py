@@ -15,7 +15,6 @@ ptsEachDim = np.array([201, 401])
 
 g = Grid(minBounds=np.array([-math.pi, -8.]),
          maxBounds=np.array([math.pi, 8.]),
-         dims=2,
          pts_each_dim=np.array([201, 401]))
 
 # Set goal to b

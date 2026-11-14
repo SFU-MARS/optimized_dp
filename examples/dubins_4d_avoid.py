@@ -14,7 +14,7 @@ from odp.solver import HJSolver, computeSpatDerivArray
 import math
 
 # Define grid
-g = Grid(np.array([-3.0, -1.0, 0.0, -math.pi]), np.array([3.0, 4.0, 4.0, math.pi]), 4, np.array([60, 60, 20, 36]), [3])
+g = Grid(np.array([-3.0, -1.0, 0.0, -math.pi]), np.array([3.0, 4.0, 4.0, math.pi]), np.array([60, 60, 20, 36]), [3])
 
 # Define my object
 my_car = DubinsCar4D2(uMode="max", dMode="min")

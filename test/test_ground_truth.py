@@ -72,7 +72,7 @@ def np_dynamics(x, u, d):
 
 
 def make_grid(dims, pts, periodic=()):
-    return Grid(np.array([-1.0] * dims), np.array([1.0] * dims), dims, np.array([pts] * dims), list(periodic))
+    return Grid(np.array([-1.0] * dims), np.array([1.0] * dims), np.array([pts] * dims), list(periodic))
 
 
 def states(grid):
