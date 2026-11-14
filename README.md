@@ -6,7 +6,7 @@ The repo contains implementation of dynamic programming based algorithms in opti
 
 <!-- ![Avoid](images/avoid.png) -->
 
-In comparison with previous works, our toolbox strives to be both efficient in implementation while being user-friendly. This is reflected in our choice of having Python as a language for initializing problems and having python-like HeteroCL [3] language for the core algorithms implementation and dynamical systems specification. Our implementation is 7-32x faster than the [Level Set Toolbox](https://github.com/risk-sensitive-reachability/ToolboxLS) and [HelperOC](https://github.com/HJReachability/helperOC) and 2-3x faster than [BEACLS](https://hjreachability.github.io/beacls/) implementation in C++. Please find more details about using the repo for solving your problems in this page, and should you have any questions/problems/requests please direct the messages to Minh Bui at buiminhb@sfu.ca 
+In comparison with previous works, our toolbox strives to be both efficient in implementation while being user-friendly. This is reflected in our choice of having Python as a language for initializing problems and having python-like HeteroCL [3] language for the core algorithms implementation and dynamical systems specification. Our implementation is 7-32x faster than the [Level Set Toolbox](https://github.com/risk-sensitive-reachability/ToolboxLS) and [HelperOC](https://github.com/HJReachability/helperOC), 2-3x faster than [BEACLS](https://hjreachability.github.io/beacls/) implementation in C++, and 5.2-38x faster than [hj_reachability](https://github.com/StanfordASL/hj_reachability) on CPU. Please find more details about using the repo for solving your problems in this page, and should you have any questions/problems/requests please direct the messages to Minh Bui at buiminhb@sfu.ca 
 
 # Quickstart (Ubuntu 18, 20, 22)
 Please install the following:
@@ -80,13 +80,6 @@ visualize_plots(result_3D, g, po2)
 ```
 Running the above code should result in the isosurface plot in the browser as follow:
 ![Demo animation](images/Dubins_capture_evolve.gif)
-<!-- ![BallPic](images/ball_pic.png)
-<div align="center">
-<img src="images/3D_0_sublevel_set.png" width="500" height="400">
-</div>         -->
-
-
-
 
 ## Plotting options
 * You can get to specify the types of plots, the slices of the value function to plot in the case of high-dimensional value function through object `PlotOptions`
@@ -100,7 +93,7 @@ Running the above code should result in the isosurface plot in the browser as fo
 
 
 ## System dynamics specification
-Examples of dynamical system specifications are provided in the folder ```dynamics/```, and has the following structre. All the  
+Examples of dynamical system specifications are provided in the folder ```dynamics/```, and has the following structre.  
 ```python 
 import heterocl as hcl
 
