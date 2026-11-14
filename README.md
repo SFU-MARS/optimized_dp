@@ -1,4 +1,4 @@
-# Optimized Dynamic Programming-Based Algorithms Solver (OptimizedDP)
+# Optimized Dynamic Programming-Based Optimal Control Algorithms (OptimizedDP)
 The repo contains implementation of dynamic programming based algorithms in optimal control. Specifically, the solver supports 3 main classes of algorithms: level set based algorithm for solving Hamilton-Jacobi-Issac (HJI) partial differential equation (PDE) arising in reachability analysis and differential games [1], time-to-reach (TTR) computations of dynamical systems in reachability analysis [2], and value-iterations algorithm for solving continuous state-space action-space Markov Decision Process (MDP). All these algorithms share the property of being implemented on a multidimensional grid and hence, their computational complexities increase exponentially as a function of dimension. For all the aforementioned algorithms, our toolbox allows computation up to 6 dimensions, which we think is the limit of dynammic programming on most modern personal computers.
 <div align="center">
     <img src="images/avoid.png" width="470" height="240">
