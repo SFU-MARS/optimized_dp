@@ -42,18 +42,17 @@ docker run --rm -it -v "$PWD:/opt/optimized_dp" optimized_dp bash
 ```
 
 # Solving the Hamilton-Jacobi-Issac (HJI) PDE
-* We provide a running example of solving HJI PDE in the file [`examples/plotting_example.py`](https://github.com/SFU-MARS/optimized_dp/examples/examples.py):
+* We provide a few running examples in folder `examples/` for solving HJI PDE (`examples/pursuit_evasion_game.py, dubins_4d_avoid.py, plotting_examples.py`). Typically these examples follow this structures:
 ```python
 # STEP 1: Define grid
 grid_min = np.array([-4.0, -4.0, -math.pi])
 grid_max = np.array([4.0, 4.0, math.pi])
-dims = 3
 N = np.array([150, 150, 150])
-pd=[2]
-g = Grid(grid_min, grid_max, N, pd)
+periodicDims = [2]
+g = Grid(grid_min, grid_max, N, periodicDims)
 
 # STEP 2: Generate initial values for grid using shape functions
-center = np.zeros(dims)
+center = np.zeros(3)
 radius = 1.0
 ignore_dims = [2]
 Initial_value_f = CylinderShape(g, ignore_dims, center, radius)
@@ -68,39 +67,40 @@ tau = np.arange(start=0, stop=Lookback_length + small_number, step=t_step)
 # STEP 4: System dynamics for computation
 sys = DubinsCapture(uMode="max", dMode="min")
 
-# STEP 5: Initialize plotting option
-po1 = PlotOptions(do_plot=False, plot_type="set", plotDims=[0,1,2])
+# STEP 5: Call HJSolver function
+compMethod = { "TargetSetMode": "minVWithV0"} # V_{t+1} <- min(V_{t+1}, l_0): Backward Reachable Tube computation
+result_3D = HJSolver(sys, g, Initial_value_f, tau, compMethod, po1, saveAllTimeSteps=True)
 
-# STEP 6: Call HJSolver function
-compMethod = { "TargetSetMode": "None"}
-result_3 = HJSolver(sys, g, Initial_value_f, tau, compMethod, po1, saveAllTimeSteps=True)
+# STEP 6: Initialize plotting option
+po2 = PlotOptions(do_plot=True, plot_type="value", plotDims=[0,1],
+                  slicesCut=[0], colorscale="Bluered", save_fig=False, filename="plots/3D_0_sublevel_set.png", interactive_html=True)
+
+# STEP 7: Call Plotting function
+visualize_plots(result_3D, g, po2)
 ```
-* To run the example, execute the command `python3 examples/plotting_example.py`
-* If the parameter `do_plot` is set to `True`, when initializing `PlotOptions`. The parameter `saveAllTimeSteps` is set to `False` in `HJSolver`, an static 3D plot will show on pop-up browser.
-<!-- ![BallPic](images/ball_pic.png) -->
+Running the above code should result in the isosurface plot in the browser as follow:
+![Demo animation](images/Dubins_capture_evolve.gif)
+<!-- ![BallPic](images/ball_pic.png)
 <div align="center">
 <img src="images/3D_0_sublevel_set.png" width="500" height="400">
-</div>        
-
-* If interactive 3D animation needs to be visualized, and outputs need to be saved locally
-```python
-# While file needs to be saved locally, set save_fig=True and filename, recommend to set interactive_html=True for better visualization
-po2 = PlotOptions(do_plot=False, plot_type="set", plotDims=[0,1,2],
-                  slicesCut=[1], colorscale="Bluered", save_fig=True, filename="plots/3D_0_sublevel_set", interactive_html=True)
-
-# STEP 6: Call Plotting function
-plot_isosurface(g, result_3, po2)
-```
-
-<!-- * Check the interactive result [`images/3D_0_sublevel_set.html`](https://github.com/SFU-MARS/optimized_dp/images/3D_0_sublevel_set.html) -->
+</div>         -->
 
 
-* For computing result higher than 6D, check [`examples/examples.py`](https://github.com/SFU-MARS/optimized_dp/examples/examples.py)
-* Notes: For 6 dimensions, recommended grid size is 20-30 each dimension on system with 32Gbs of DRAM.
-* Create a class file in folder dynamics/ to specify your own system dynamics. Remember to import the class in your running example.  
+
+
+## Plotting options
+* You can get to specify the types of plots, the slices of the value function to plot in the case of high-dimensional value function through object `PlotOptions`
+* If `plot_type=set` in `PlotOptions`, 2D or 3D isosurface (zero level-set) will be plotted. In the case of 2D, the plot will look  like this.
+![Demo animation](images/2D_set_plot.gif)
+
+* If `plot_type=val` in `PlotOptions`, the z-axis is the value, and the plot will look like this   
+![Demo animation](images/2D_val_plot.gif)
+
+
+
 
 ## System dynamics specification
-It can noticed in ```user_definer.py``` that the class DubinsCapture is imported from the folder ```dynamics/```, where our example system dynamics. 
+Examples of dynamical system specifications are provided in the folder ```dynamics/```, and has the following structre. All the  
 ```python 
 import heterocl as hcl
 
@@ -143,6 +143,19 @@ class DubinsCapture:
     dstb_state_dependent = False
 ```
 
+### Solving reach-avoid game
+To specify a reach-avoid game problem, we just need to add an obstacle set and extra method when calling the `HJSolver`.
+```python
+reach_set = ...
+avoid_set = ... 
+
+compMethods = {"TargetSetMode": "minVWithVTarget", "ObstacleSetMode": "maxVWithObstacle"} 
+
+result = HJSolver(sys_dynamics, grid, [reach_set, avoid_set], tau, compMethods, po, saveAllTimeSteps=None) 
+
+```
+
+
 
 # Time-to-Reach computation
 * We have provided an example in [`examples/TTR_example.py`](https://github.com/SFU-MARS/optimized_dp/examples/TTR_example.py):
@@ -162,12 +175,75 @@ po = PlotOptions( "3d_plot", plotDims=[0,1,2], slicesCut=[],
 epsilon = 0.001
 V_0 = TTRSolver(my_car, g, targetSet, epsilon, po)
 ```
-* To run the example : `python3 TTR_example.py`
-# Current code structure
-* solver.py: Containing python APIs to interact with the numerical solver
-* dynamics/ : User's dynamical system specification
-* Shapes/ShapesFunctions.py : Add-in functions for initializing different shapes/intial value functions
-* computeGraphs/CustomGraphFunctions.py: Ready-to-user HeteroCL style utility functions
+# Discretized Value Iterations
+The solver also computes the optimal value function of a discrete-time MDP whose state space is the same multidimensional grid (2D-6D supported). You specify the problem as a class with two methods, `transition` and `reward`, and pass an array of actions:
+
+```python
+g = Grid(minBounds=np.array([-math.pi, -8.]), maxBounds=np.array([math.pi, 8.]), pts_each_dim=np.array([201, 401]))
+
+# Action space: a 1D array of actions, or a 2D array of shape (num_actions, num_inputs)
+torques = np.linspace(-2., 2., 41)
+
+V = solveValueIteration(pendulum_system, grid=g, action_space=torques,
+                        gamma=np.array([0.99]), epsilon=np.array([1.117e-5]),
+                        maxIters=np.array([1500]))
+```
+Iteration stops when `max|V_new - V_old| < epsilon`, or after `maxIters` sweeps.
+
+## MDP system specification
+```python
+class pendulum_2d_example:
+    def __init__(self):
+        self.maxTransitions = 1   # number of successor states of one action
+
+    def transition(self, sVals, u):
+        # Successor states of action u taken at state sVals.
+        # Returns a matrix of shape (maxTransitions, 1 + dims), where row i is
+        # [probability, next_state_0, ..., next_state_{dims-1}]. The probabilities must sum to 1.
+        trans_matrix = hcl.compute((self.maxTransitions, 1 + 2), lambda *x: 0, "trans_matrix")
+        (...)
+        trans_matrix[0, 0] = 1.0            # deterministic: one successor, probability 1
+        trans_matrix[0, 1] = new_th[0]
+        trans_matrix[0, 2] = newthdot[0]
+        return trans_matrix
+
+    def reward(self, sVals, u):
+        # Immediate reward of taking u at sVals. Returns a scalar.
+        rwd = hcl.scalar(0, "rwd")
+        rwd[0] = -(sVals[0] * sVals[0] + 0.1 * sVals[1] * sVals[1] + 0.001 * u * u)
+        return rwd[0]
+```
+Notes:
+* `sVals` holds the continuous state of the grid point; `u` is one entry of `action_space`. If `action_space` is 2D, `u` is a row, so a system with two inputs reads them as `u[0]` and `u[1]`.
+* Both methods are traced into the compute graph, so they are written in HeteroCL (`hcl.scalar`, `hcl.if_`, `hcl.sin`, ...), in the same style as the dynamics classes.
+* Successor states are mapped back to the grid by nearest-neighbour lookup, so keep them inside the grid bounds (clip them in `transition` if the dynamics can leave the domain).
+* The first value of the row is the probability of the next state happening
+* For a stochastic system, set `maxTransitions` to the number of successor states and fill one row per outcome.
+
+## Examples
+The examples are in [`odp/MDP_example/`](odp/MDP_example/) and are run directly, e.g. `python3 odp/MDP_example/pendulum_valueIter_example.py`:
+* [`pendulum_valueIter_example.py`](odp/MDP_example/pendulum_valueIter_example.py): inverted pendulum using the OpenAI Gym dynamics and reward.
+* [`double_integrator_example.py`](odp/MDP_example/double_integrator_example.py): double integrator with an LQR cost
+* [`planar_6d_quad_valueIter.py`](odp/MDP_example/planar_6d_quad_valueIter.py): 6D planar quadrotor reach-avoid problem.
+
+# Current Project Structure
+* `solver.py`: the python APIs of the toolbox - `HJSolver`, `TTRSolver` and `solveValueIteration`. Each one builds the compute graph for the dimension of the given grid, then runs the time/iteration loop.
+* `Grid/`: the `Grid` class - bounds, number of points per dimension, periodic dimensions, grid spacing `dx`, and helpers to convert states to indices (`get_indices`, `get_values`).
+* `dynamics/`: user's dynamical system specification - one class per system, providing `opt_ctrl`, `opt_dstb` and `dynamics`. Add your own system here and import it in your running example.
+* `Shapes/ShapesFunctions.py`: add-in functions for initializing different shapes/initial value functions (cylinders, rectangles, ellipsoids, half-spaces, and unions/intersections of them).
+* `computeGraphs/`: the core HJ PDE solver, as one `graph_*D.py` per dimension (1D-8D). Each builds the HeteroCL graph of the Hamiltonian and dissipation stages and the CFL time step.
+  * `computeGraphs/CustomGraphFunctions.py`: ready-to-use HeteroCL style utility functions (min/max, absolute value, reductions) used by the graphs.
+* `spatialDerivatives/`, `common/derivatives.py`: upwind spatial derivatives - first-order ENO and second-order ENO, in HeteroCL and in NumPy respectively.
+* `TimeToReach/`: the time-to-reach solver, one `TimeToReach_*D.py` per dimension (1D-8D), solving the stationary HJ equation by value iteration until convergence.
+* `valueIteration/`: the MDP value iteration graphs, one `value_iteration_*D.py` per dimension (2D-6D).
+* `MDP_example/`: runnable value iteration examples (see above).
+* `Plots/`: plotting utilities - `plot_isosurface` and `plot_valuefunction`, with slicing and downsampling of high-dimensional value functions.
+* `compute_trajectory.py`, `compute_trajectory_TTR.py`: roll out optimal trajectories from a computed value function (`compute_opt_traj`, `compute_opt_traj_TTR`).
+* `examples/`: runnable reachability examples. `test/`: the test suite, run with `pytest test`.
+
+# Running tips
+* Notes: For 6 dimensions, recommended grid size is 20-30 each dimension on system with 32Gbs of DRAM.
+* Create a class file in folder dynamics/ to specify your own system dynamics. Remember to import the class in your running example.  
 
 ### Paper and Citation (Bibtex)  
 Please cite our paper (https://arxiv.org/abs/2204.05520) if you use the toolbox in your research:
