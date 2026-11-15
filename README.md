@@ -265,7 +265,7 @@ Please cite our paper (https://arxiv.org/abs/2204.05520) if you use the toolbox 
 
 # References
 [1] "Hamilton–Jacobi Reachability: Some Recent Theoretical Advances and Applications in Unmanned Airspace Management" by Mo Chen and Claire J. Tomlin in 
-Annual Review of Control, Robotics, and Autonomous Systems 2018 1:1, 333-358 [pdf](https://sfumars.com/wp-content/papers/2018_ar_hjreach.pdf)
+Annual Review of Control, Robotics, and Autonomous Systems 2018 1:1, 333-358 [pdf](https://www.annualreviews.org/content/journals/10.1146/annurev-control-060117-104941)
 
 [2] "One-Shot Computation of Reachable Sets for Differential Games" by Insoon Yang [pdf](https://dl.acm.org/doi/pdf/10.1145/2461328.2461359?casa_token=GmZ6JB2DhLwAAAAA:qRSxxQisIcNpNo6nJHWbi5lRSmxFWk_gL2dXxilkpPi3PsgwxwPSs5hCdcuV7Elx1PTQ84cAGFQ)
 
