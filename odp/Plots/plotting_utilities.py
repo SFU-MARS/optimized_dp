@@ -1,8 +1,24 @@
+import os
+
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import plotly.express as px
 from odp.Grid import Grid
 import numpy as np
+
+
+def _save_paths(plot_option):
+    """Image and html paths to save a figure to.
+
+    plot_option.filename is the image path; plotly infers the image format from its extension, so
+    an extension-less filename is saved as .png. The html file replaces that extension instead of
+    appending to it, e.g. "plots/set.png" -> "plots/set.html".
+    """
+    if plot_option.filename is None:
+        raise ValueError("PlotOptions.save_fig is True but no filename was given")
+    base, ext = os.path.splitext(plot_option.filename)
+    return (plot_option.filename if ext else base + ".png"), base + ".html"
+
 
 def plot_isosurface(grid, my_V, plot_option):
 
@@ -256,10 +272,11 @@ def plot_isosurface(grid, my_V, plot_option):
 
     # Local figure save
     if plot_option.save_fig:
+        image_path, html_path = _save_paths(plot_option)
         if plot_option.interactive_html:
-            fig.write_html(plot_option.filename + ".html")
+            fig.write_html(html_path)
         # Save an image by default
-        fig.write_image(plot_option.filename)
+        fig.write_image(image_path)
 
 
 def plot_valuefunction(grid, my_V, plot_option):
@@ -410,10 +427,11 @@ def plot_valuefunction(grid, my_V, plot_option):
         print("Please check the plot on your browser.")
         # Local figure save
     if plot_option.save_fig:
+        image_path, html_path = _save_paths(plot_option)
         if plot_option.interactive_html:
-            fig.write_html(plot_option.filename + ".html")
+            fig.write_html(html_path)
         else:
-            fig.write_image(plot_option.filename)
+            fig.write_image(image_path)
 
 ###################################################################################################################################
 def slider_define(fig, duration=300):

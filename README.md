@@ -9,8 +9,9 @@ The repo contains implementation of dynamic programming based algorithms in opti
 In comparison with previous works, our toolbox strives to be both efficient in implementation while being user-friendly. This is reflected in our choice of having Python as a language for initializing problems and having python-like HeteroCL [3] language for the core algorithms implementation and dynamical systems specification. Our implementation is 7-32x faster than the [Level Set Toolbox](https://github.com/risk-sensitive-reachability/ToolboxLS) and [HelperOC](https://github.com/HJReachability/helperOC), 2-3x faster than [BEACLS](https://hjreachability.github.io/beacls/) implementation in C++, and 5.2-38x faster than [hj_reachability](https://github.com/StanfordASL/hj_reachability) on CPU. Please find more details about using the repo for solving your problems in this page, and should you have any questions/problems/requests please direct the messages to Minh Bui at buiminhb@sfu.ca 
 
 # Quickstart (Ubuntu 18, 20, 22)
-Please install the following:
+Please install with the following instructions:
 * Install Anaconda (https://docs.anaconda.com/anaconda/install/linux/)
+* Clone this github repo and `cd optimized_dp/`
 * Create a virtual environemnt using the provided `environment.yml`
 
     ``` conda env create -f environment.yml ```
@@ -23,7 +24,7 @@ Please install the following:
 
     ```sudo apt install libtinfo5 ``` 
 
-# Reproducible environment (Docker)
+# (Optional) Reproducible environment with Docker
 The toolbox relies on HeteroCL 0.3 and LLVM 6.0, which are no longer actively maintained. To make sure the toolbox can still be installed and run in the future, the exact tested environment (HeteroCL 0.3, LLVM 6.0, Python 3.8, Ubuntu 22.04) is provided as a [`Dockerfile`](Dockerfile), and all of its packages are archived on Zenodo: https://doi.org/10.5281/zenodo.24118105
 
 The archive `odp-conda-pkgs-linux-64.tar.gz` contains every conda package of the environment (listed with checksums in [`environment-linux-64.lock`](environment-linux-64.lock)), so the image can be built without access to the conda channels.
